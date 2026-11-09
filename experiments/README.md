@@ -14,4 +14,4 @@
 | ResNet · 마지막 활성화 편집 | [YAML](resnet-gelu/generator/input.yaml) | [코드](resnet-gelu/response_review/generated_model.py) | [자료 안내](resnet-gelu/README.md) |
 `—`는 아직 복원 코드가 없는 자료입니다. 각 자료는 선택된 블록·핵심 연산을 대상으로 하며, 이 목록은 검증 판정표가 아닙니다.
 
-[실행 예제](resnet/README.md) · [파일 출처](manifest.json) · [프로젝트 소개](../README.md)
+[파일 출처](manifest.json) · [프로젝트 소개](../README.md)

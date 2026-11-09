@@ -1,11 +1,7 @@
-# S4
+# s4
 
-rank-1 DPLR의 제한된 핵심부, Nfull=4·H=channels=1, 순환 계산을 이용한 임펄스 커널 표현를 대상으로 한 표현 자료입니다.
+[YAML](representation.yaml) · 복원 코드 추가 예정 · [생성 입력·설정](generation-input.json)
 
-[YAML](representation.yaml) · [생성 입력·설정](generation-input.json)
-
-현재는 표현 자료를 제공하며, 복원 코드는 이후 추가할 예정입니다. 검증 구현과 상세 기록은 이 폴더에 함께 보관합니다.
-
-이 폴더는 자료 열람용이며, 검증기 단독 실행에 필요한 연구 환경 전체를 포함하지 않습니다.
+선택된 블록·핵심 연산의 표현 자료입니다. 아키텍처 계보에 따라 자료를 확장하고 있습니다.
 
 [전체 자료](../README.md) · [프로젝트 소개](../../README.md)

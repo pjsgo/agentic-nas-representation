@@ -1,7 +1,7 @@
 {
   "version": 1,
   "export_date_kst": "2026-11-09",
-  "description": "Historical artifacts; paths relative to the private research root identify provenance, not runtime dependencies. SHA256 records byte identity or declared redaction. No new generation.",
+  "description": "Selected YAML, original generated code and generation inputs. Research validation records are maintained outside this portfolio.",
   "files": [
     {
       "file": "experiments/resnet/generator/input.yaml",
@@ -11,66 +11,10 @@
       "transformation": "none"
     },
     {
-      "file": "experiments/resnet/generator/prompt.txt",
-      "source": "runs/20261102T054907186861Z_resnet_source_grounded_v0_2/generator/prompt.txt",
-      "source_sha256": "de9a026e4db32bef0d29a593778352383f2447655c74362e4054c26c96c92eaa",
-      "sha256": "de9a026e4db32bef0d29a593778352383f2447655c74362e4054c26c96c92eaa",
-      "transformation": "none"
-    },
-    {
-      "file": "experiments/resnet/generator/vocabulary.md",
-      "source": "runs/20261102T054907186861Z_resnet_source_grounded_v0_2/generator/vocabulary.md",
-      "source_sha256": "17a888e329c268a456890c025b1b02d5388fd0a43ac6c5554b2bb38f333935f4",
-      "sha256": "efb2ff39941b93f69281a9050ad4776dc6c4eb359249ba8d881be4e9872bae4b",
-      "transformation": "none; documentation link relocation"
-    },
-    {
       "file": "experiments/resnet/response_review/generated_model.py",
       "source": "runs/20261102T054907186861Z_resnet_source_grounded_v0_2/response_review/generated_model.py",
       "source_sha256": "9e81cbce3448ac459fa678087dc2c9ec4fee0dcc0bcd570408ccad449ecde504",
       "sha256": "9e81cbce3448ac459fa678087dc2c9ec4fee0dcc0bcd570408ccad449ecde504",
-      "transformation": "none"
-    },
-    {
-      "file": "experiments/resnet/response_review/format_review.json",
-      "source": "runs/20261102T054907186861Z_resnet_source_grounded_v0_2/response_review/format_review.json",
-      "source_sha256": "ec6c2877917cb5a0a9d5a81e4d8cd7805f15c618962ad8766998d0cc054ff0d1",
-      "sha256": "ec6c2877917cb5a0a9d5a81e4d8cd7805f15c618962ad8766998d0cc054ff0d1",
-      "transformation": "none"
-    },
-    {
-      "file": "experiments/resnet/evaluation_plan.json",
-      "source": "runs/20261102T054907186861Z_resnet_source_grounded_v0_2/evaluation_plan.json",
-      "source_sha256": "0c7863efa50e9c08fda3df46be9d18d265afc309d10258604354eecc250ca56e",
-      "sha256": "0c7863efa50e9c08fda3df46be9d18d265afc309d10258604354eecc250ca56e",
-      "transformation": "none"
-    },
-    {
-      "file": "experiments/resnet/evaluate_forward.py",
-      "source": "runs/20261102T054907186861Z_resnet_source_grounded_v0_2/evaluate_forward.py",
-      "source_sha256": "776399019f47553724c9b834a54972cb0f079e0c65aad2269172f840bb555155",
-      "sha256": "776399019f47553724c9b834a54972cb0f079e0c65aad2269172f840bb555155",
-      "transformation": "none"
-    },
-    {
-      "file": "experiments/resnet/structural_review.json",
-      "source": "runs/20261102T054907186861Z_resnet_source_grounded_v0_2/structural_review.json",
-      "source_sha256": "c4ee0b3653e104273ace00880bb0d07c9b8c095bc751755f83ea1edc7d2e513a",
-      "sha256": "0147571e9a5ace0090e92d8b39f424c7b9d6d5635d6f9c5e74ae453eeb15616b",
-      "transformation": "host path redaction"
-    },
-    {
-      "file": "experiments/resnet/recorded/results.json",
-      "source": "runs/20261102T054907186861Z_resnet_source_grounded_v0_2/validation/results.json",
-      "source_sha256": "5b6de15778bca7cbb1d3713b1720a375ce730c24999811a3f584f3fca96e64fd",
-      "sha256": "5b6de15778bca7cbb1d3713b1720a375ce730c24999811a3f584f3fca96e64fd",
-      "transformation": "none"
-    },
-    {
-      "file": "experiments/resnet/recorded/state_mapping.json",
-      "source": "runs/20261102T054907186861Z_resnet_source_grounded_v0_2/validation/state_mapping.json",
-      "source_sha256": "021612fce6eee1668028060db7fca31f832f056ac1925f17a661bd3566d65d07",
-      "sha256": "021612fce6eee1668028060db7fca31f832f056ac1925f17a661bd3566d65d07",
       "transformation": "none"
     },
     {
@@ -88,87 +32,10 @@
       "transformation": "none"
     },
     {
-      "file": "experiments/resnet-gelu/generator/prompt.txt",
-      "source": "runs/20261102T064629619253Z_controlled_post_add_gelu_v0_2/generator/prompt.txt",
-      "source_sha256": "de9a026e4db32bef0d29a593778352383f2447655c74362e4054c26c96c92eaa",
-      "sha256": "de9a026e4db32bef0d29a593778352383f2447655c74362e4054c26c96c92eaa",
-      "transformation": "none"
-    },
-    {
-      "file": "experiments/resnet-gelu/generator/vocabulary.md",
-      "source": "runs/20261102T064629619253Z_controlled_post_add_gelu_v0_2/generator/vocabulary.md",
-      "source_sha256": "812ac8bdb6ef6ed1c22910ab39e57e90dc1c6df4553f7617972ca07c036db246",
-      "sha256": "4a5db59911f09d9bc6ab091bb1ffdc3db41868c6cd0486af3b781b94c57b86a4",
-      "transformation": "none; documentation link relocation"
-    },
-    {
       "file": "experiments/resnet-gelu/response_review/generated_model.py",
       "source": "runs/20261102T064629619253Z_controlled_post_add_gelu_v0_2/response_review/generated_model.py",
       "source_sha256": "03af8d0762c76b240fb8976d9250441d0b756b81c5efbabfbeea14db45aa8737",
       "sha256": "03af8d0762c76b240fb8976d9250441d0b756b81c5efbabfbeea14db45aa8737",
-      "transformation": "none"
-    },
-    {
-      "file": "experiments/resnet-gelu/response_review/format_review.json",
-      "source": "runs/20261102T064629619253Z_controlled_post_add_gelu_v0_2/response_review/format_review.json",
-      "source_sha256": "f4fbd1155eb4b0d04c0368300a97508381ac27bc5eeb8172fd1160fd442fbdb5",
-      "sha256": "f4fbd1155eb4b0d04c0368300a97508381ac27bc5eeb8172fd1160fd442fbdb5",
-      "transformation": "none"
-    },
-    {
-      "file": "experiments/resnet-gelu/evaluation_plan.json",
-      "source": "runs/20261102T064629619253Z_controlled_post_add_gelu_v0_2/evaluation_plan.json",
-      "source_sha256": "b556a7c5acb00645a62886b148073bf0722358980fe187f699326ab34a03d9d6",
-      "sha256": "57f9c444f5b415c42e141eff75f166771bd62a1cc25e6afa82bc8122ddb7f164",
-      "transformation": "host path redaction"
-    },
-    {
-      "file": "experiments/resnet-gelu/validate_edit.py",
-      "source": "runs/20261102T064629619253Z_controlled_post_add_gelu_v0_2/validate_edit.py",
-      "source_sha256": "90bd00c6359aa7ec7eb6126631744e453b28883f393d0f1e055882a2c4bfc611",
-      "sha256": "90bd00c6359aa7ec7eb6126631744e453b28883f393d0f1e055882a2c4bfc611",
-      "transformation": "none"
-    },
-    {
-      "file": "experiments/resnet-gelu/candidate_review.json",
-      "source": "runs/20261102T064629619253Z_controlled_post_add_gelu_v0_2/candidate_review.json",
-      "source_sha256": "1c222a54b0a3f716c823bc89bbc7b0f31e0d9818ef940d7db3a034a75c138ce3",
-      "sha256": "1c222a54b0a3f716c823bc89bbc7b0f31e0d9818ef940d7db3a034a75c138ce3",
-      "transformation": "none"
-    },
-    {
-      "file": "experiments/resnet-gelu/edit_specification.md",
-      "source": "runs/20261102T064629619253Z_controlled_post_add_gelu_v0_2/edit_specification.md",
-      "source_sha256": "830182df9ad91a0de1702d72319ea2951aa075e6739fa0733b0a5949bf04b5e8",
-      "sha256": "37162caa6d0f069e24552df3349a2b0b92537b92a1280eb6068c913964c7ef69",
-      "transformation": "none; documentation link relocation; unbundled reference links marked as historical paths"
-    },
-    {
-      "file": "experiments/resnet-gelu/yaml_changes.diff",
-      "source": "runs/20261102T064629619253Z_controlled_post_add_gelu_v0_2/yaml_changes.diff",
-      "source_sha256": "3c1b39a7ffec493ed879e8004d14581083a00fdf139f4dc59f22d7e1fd5aea4d",
-      "sha256": "3c1b39a7ffec493ed879e8004d14581083a00fdf139f4dc59f22d7e1fd5aea4d",
-      "transformation": "none"
-    },
-    {
-      "file": "experiments/resnet-gelu/original_input.yaml",
-      "source": "runs/20261102T064629619253Z_controlled_post_add_gelu_v0_2/original_input.yaml",
-      "source_sha256": "3163c396f3209e7328de4f40b28a7d5736bf257a9e41670278366634a811e51b",
-      "sha256": "3163c396f3209e7328de4f40b28a7d5736bf257a9e41670278366634a811e51b",
-      "transformation": "none"
-    },
-    {
-      "file": "experiments/resnet-gelu/recorded/results.json",
-      "source": "runs/20261102T064629619253Z_controlled_post_add_gelu_v0_2/validation/results.json",
-      "source_sha256": "507cf923902feb1233cea6178d11f52432631c0495f0f1b56ea6a79f8cbf64ae",
-      "sha256": "507cf923902feb1233cea6178d11f52432631c0495f0f1b56ea6a79f8cbf64ae",
-      "transformation": "none"
-    },
-    {
-      "file": "experiments/resnet-gelu/recorded/state_mapping.json",
-      "source": "runs/20261102T064629619253Z_controlled_post_add_gelu_v0_2/validation/state_mapping.json",
-      "source_sha256": "3e89863ba2167afc4d435bbf0601e60f2917bb454a5a69f22f7954baa037d82c",
-      "sha256": "3e89863ba2167afc4d435bbf0601e60f2917bb454a5a69f22f7954baa037d82c",
       "transformation": "none"
     },
     {
@@ -228,74 +95,11 @@
       "transformation": "none"
     },
     {
-      "file": "experiments/transformer/validator.py",
-      "source": "parallel_coverage/20261105/transformer/validator.py",
-      "source_sha256": "b777631d3cc65c42e3596f92b770c4a6af68bb273d685517181765da5cc6f735",
-      "sha256": "b777631d3cc65c42e3596f92b770c4a6af68bb273d685517181765da5cc6f735",
-      "transformation": "none"
-    },
-    {
-      "file": "experiments/transformer/fixtures/plan.json",
-      "source": "parallel_coverage/20261105/transformer/fixtures/plan.json",
-      "source_sha256": "304eb17268162ab1e2a25681c16e7b2102e81540303f1f73ab0a912251ffae8b",
-      "sha256": "304eb17268162ab1e2a25681c16e7b2102e81540303f1f73ab0a912251ffae8b",
-      "transformation": "none"
-    },
-    {
-      "file": "experiments/transformer/source_mapping.md",
-      "source": "parallel_coverage/20261105/transformer/source_mapping.md",
-      "source_sha256": "7a374603d6e5e72c151141625e326db56993ac5ed625ea2d0935e6b0525ebb84",
-      "sha256": "7a374603d6e5e72c151141625e326db56993ac5ed625ea2d0935e6b0525ebb84",
-      "transformation": "none"
-    },
-    {
-      "file": "experiments/transformer/recorded/results.json",
-      "source": "parallel_coverage/20261105/transformer/validation/results.json",
-      "source_sha256": "fbcdc0be575a9ae5125804957b3793878f2c194c1051695bb141696aa91a7125",
-      "sha256": "f8f574f29a5c3f2af5418b5240788c18a8de1d26c82ce435741828fbc10e7b18",
-      "transformation": "none; transport endpoint redaction"
-    },
-    {
       "file": "experiments/transformer/generation-input.json",
       "source": "parallel_coverage/20261105/transformer/requests/request.json",
       "source_sha256": "9858d87fd69a918c508d45ccce8cfc80088966e29c3f234e176c96ef0c78e28a",
       "sha256": "9858d87fd69a918c508d45ccce8cfc80088966e29c3f234e176c96ef0c78e28a",
       "transformation": "allowlisted model settings and messages; transport omitted"
-    },
-    {
-      "file": "experiments/transformer/candidate_validation.py",
-      "source": "parallel_coverage/20261105/transformer/candidate_validation.py",
-      "source_sha256": "5372879c2f56fcc6846fa964d04099580eeba407be5fdeb4089aab7d5cc02baf",
-      "sha256": "5372879c2f56fcc6846fa964d04099580eeba407be5fdeb4089aab7d5cc02baf",
-      "transformation": "none"
-    },
-    {
-      "file": "experiments/transformer/validation/generated_structure.json",
-      "source": "parallel_coverage/20261105/transformer/validation/generated_structure.json",
-      "source_sha256": "35aa0db1d37733ee37d73081feb8591cfafc6c17f5c337eb1fd5947706e5ad53",
-      "sha256": "35aa0db1d37733ee37d73081feb8591cfafc6c17f5c337eb1fd5947706e5ad53",
-      "transformation": "none"
-    },
-    {
-      "file": "experiments/transformer/validation/generated_numerical.json",
-      "source": "parallel_coverage/20261105/transformer/validation/generated_numerical.json",
-      "source_sha256": "79952bb4f2929ba353f81a77948fd39988665b80220e136266a81ed4477950e5",
-      "sha256": "79952bb4f2929ba353f81a77948fd39988665b80220e136266a81ed4477950e5",
-      "transformation": "none"
-    },
-    {
-      "file": "experiments/transformer/generated_entrypoint.json",
-      "source": "parallel_coverage/20261105/transformer/generated_entrypoint.json",
-      "source_sha256": "993bddfb282b1e11c96d4299331d744e840d89b6c7145c3c70abe984579c41c4",
-      "sha256": "993bddfb282b1e11c96d4299331d744e840d89b6c7145c3c70abe984579c41c4",
-      "transformation": "none"
-    },
-    {
-      "file": "experiments/transformer/generated_semantic_mapping.json",
-      "source": "parallel_coverage/20261105/transformer/generated_semantic_mapping.json",
-      "source_sha256": "912fcd44efd8e797079a9b4b0c633d6726de62bccc8c5be8474e1f0fff79cc5b",
-      "sha256": "912fcd44efd8e797079a9b4b0c633d6726de62bccc8c5be8474e1f0fff79cc5b",
-      "transformation": "none"
     },
     {
       "file": "experiments/lstm/representation.yaml",
@@ -312,53 +116,11 @@
       "transformation": "none"
     },
     {
-      "file": "experiments/lstm/validator.py",
-      "source": "parallel_coverage/20261105/lstm/validator.py",
-      "source_sha256": "9507a481e83092721d28c92569c9ee811157ff384a8ef108c6f4e4fb03da0658",
-      "sha256": "9507a481e83092721d28c92569c9ee811157ff384a8ef108c6f4e4fb03da0658",
-      "transformation": "none"
-    },
-    {
-      "file": "experiments/lstm/fixtures/plan.json",
-      "source": "parallel_coverage/20261105/lstm/fixtures/plan.json",
-      "source_sha256": "0e720a12d2df7b63707d87e9586f71cdb210a064fd222c8f0019a2ed45772a2e",
-      "sha256": "0e720a12d2df7b63707d87e9586f71cdb210a064fd222c8f0019a2ed45772a2e",
-      "transformation": "none"
-    },
-    {
-      "file": "experiments/lstm/source_mapping.md",
-      "source": "parallel_coverage/20261105/lstm/source_mapping.md",
-      "source_sha256": "f79dbf9a93053f2fb29e65eae75833ac90cdfcc9cb959c2f79b7f045ce34ed87",
-      "sha256": "c41fb7e91eb1cd394058b33af20a82e680d2fa7b7389b481657a87027b24c0b2",
-      "transformation": "host path redaction"
-    },
-    {
-      "file": "experiments/lstm/recorded/results.json",
-      "source": "parallel_coverage/20261105/lstm/validation/results.json",
-      "source_sha256": "c195c003b6c848a3e36b3c16cb3df515855a55d9cd2ce6dc4a53f8ea37a0b224",
-      "sha256": "c195c003b6c848a3e36b3c16cb3df515855a55d9cd2ce6dc4a53f8ea37a0b224",
-      "transformation": "none"
-    },
-    {
       "file": "experiments/lstm/generation-input.json",
       "source": "parallel_coverage/20261105/lstm/requests/request.json",
       "source_sha256": "7f9db7f319cbb894bc68ab13d661df2ab03efe37285e0bfd18569e2072c71dd3",
       "sha256": "7f9db7f319cbb894bc68ab13d661df2ab03efe37285e0bfd18569e2072c71dd3",
       "transformation": "allowlisted model settings and messages; transport omitted"
-    },
-    {
-      "file": "experiments/lstm/validation/candidate_detailed_results.json",
-      "source": "parallel_coverage/20261105/lstm/validation/candidate_detailed_results.json",
-      "source_sha256": "a281b01ec07b33aefdbe8723ca5081e1105516cc9620b0c9ba414604d7409936",
-      "sha256": "a281b01ec07b33aefdbe8723ca5081e1105516cc9620b0c9ba414604d7409936",
-      "transformation": "none"
-    },
-    {
-      "file": "experiments/lstm/evaluations/t_ge_1_v1/results.json",
-      "source": "parallel_coverage/20261105/lstm/evaluations/t_ge_1_v1/results.json",
-      "source_sha256": "b94ea18764e7371b5f485fbd205d1df33a329d4ccc083a9b95390be2ba528e61",
-      "sha256": "b94ea18764e7371b5f485fbd205d1df33a329d4ccc083a9b95390be2ba528e61",
-      "transformation": "none"
     },
     {
       "file": "experiments/seq2seq/representation.yaml",
@@ -375,34 +137,6 @@
       "transformation": "none"
     },
     {
-      "file": "experiments/seq2seq/validator.py",
-      "source": "parallel_coverage/20261105/seq2seq/revisions/02_bentrevett/validator.py",
-      "source_sha256": "b45813463fb63d7e3a9b2c2ceda5c6bb9d867056b23fc5307058c27e532ecd18",
-      "sha256": "b45813463fb63d7e3a9b2c2ceda5c6bb9d867056b23fc5307058c27e532ecd18",
-      "transformation": "none"
-    },
-    {
-      "file": "experiments/seq2seq/fixtures/plan.json",
-      "source": "parallel_coverage/20261105/seq2seq/revisions/02_bentrevett/fixtures/plan.json",
-      "source_sha256": "8e8f8623ba1be84b946a13817ab35a161f37c29f029e531a8286d7e1a4397899",
-      "sha256": "8e8f8623ba1be84b946a13817ab35a161f37c29f029e531a8286d7e1a4397899",
-      "transformation": "none"
-    },
-    {
-      "file": "experiments/seq2seq/source_mapping.md",
-      "source": "parallel_coverage/20261105/seq2seq/revisions/02_bentrevett/source_mapping.md",
-      "source_sha256": "7b9c898df482e974b2676805e263973b8c06224cfce36e17c4b2da6a1d5f247b",
-      "sha256": "7b9c898df482e974b2676805e263973b8c06224cfce36e17c4b2da6a1d5f247b",
-      "transformation": "none"
-    },
-    {
-      "file": "experiments/seq2seq/recorded/results.json",
-      "source": "parallel_coverage/20261105/seq2seq/revisions/02_bentrevett/postcall_audit/final_results.json",
-      "source_sha256": "13c5ae6214cf82f6085ad58ced70dffd2581b50aa7a6e56c8213ded436cd65d6",
-      "sha256": "13c5ae6214cf82f6085ad58ced70dffd2581b50aa7a6e56c8213ded436cd65d6",
-      "transformation": "none"
-    },
-    {
       "file": "experiments/seq2seq/generation-input.json",
       "source": "parallel_coverage/20261105/seq2seq/revisions/02_bentrevett/requests/request.json",
       "source_sha256": "2fb2c940e497260ea147c1d85749247ccb9c8659ef35e028ec45adde9a245446",
@@ -410,66 +144,10 @@
       "transformation": "allowlisted model settings and messages; transport omitted"
     },
     {
-      "file": "experiments/seq2seq/validation/generated_evaluation.json",
-      "source": "parallel_coverage/20261105/seq2seq/revisions/02_bentrevett/validation/generated_evaluation.json",
-      "source_sha256": "578eb90e14a9da7bdd44d89a5baa92744df9587c3f3398a2f417fae4f03f1e13",
-      "sha256": "5b3503a537c80412e5025fb59f1d286e0a51d976f168ef3df06672566d4764be",
-      "transformation": "host path redaction"
-    },
-    {
-      "file": "experiments/seq2seq/generated_model.metadata.json",
-      "source": "parallel_coverage/20261105/seq2seq/revisions/02_bentrevett/generated_model.metadata.json",
-      "source_sha256": "326e35a371ef5b5e61ed96e5b970188cd4d2f027bc9ccf578c418c3589228b03",
-      "sha256": "326e35a371ef5b5e61ed96e5b970188cd4d2f027bc9ccf578c418c3589228b03",
-      "transformation": "none"
-    },
-    {
       "file": "experiments/linear-transformer/representation.yaml",
       "source": "parallel_coverage/20261105/linear_transformer/representation.yaml",
       "source_sha256": "128937ce513e4f554e3d1dca483472b8183bb1b4eb3705b62a20a25599f3ef38",
       "sha256": "128937ce513e4f554e3d1dca483472b8183bb1b4eb3705b62a20a25599f3ef38",
-      "transformation": "none"
-    },
-    {
-      "file": "experiments/linear-transformer/validator.py",
-      "source": "parallel_coverage/20261105/linear_transformer/validator.py",
-      "source_sha256": "5c5aa0d0ed9210e511c3a075ce06abe63eb7b582190b673339365c832c4d0a91",
-      "sha256": "5c5aa0d0ed9210e511c3a075ce06abe63eb7b582190b673339365c832c4d0a91",
-      "transformation": "none"
-    },
-    {
-      "file": "experiments/linear-transformer/fixtures/plan.json",
-      "source": "parallel_coverage/20261105/linear_transformer/fixtures/plan.json",
-      "source_sha256": "bd33d7821a5fd89382608d0f941a74a18ec339514e7fea826f2b8afec8fe34b6",
-      "sha256": "bd33d7821a5fd89382608d0f941a74a18ec339514e7fea826f2b8afec8fe34b6",
-      "transformation": "none"
-    },
-    {
-      "file": "experiments/linear-transformer/source_mapping.md",
-      "source": "parallel_coverage/20261105/linear_transformer/source_mapping.md",
-      "source_sha256": "58b02edfd00f0ecff053ff8f969e24af027c335335e18596919f9a65e9d5f9e5",
-      "sha256": "58b02edfd00f0ecff053ff8f969e24af027c335335e18596919f9a65e9d5f9e5",
-      "transformation": "none"
-    },
-    {
-      "file": "experiments/linear-transformer/recorded/results.json",
-      "source": "parallel_coverage/20261105/linear_transformer/validation/results.json",
-      "source_sha256": "1c07771414973110394e70d0c10f26fb8a336c2d4ee79b36b494ece1e74fdc5c",
-      "sha256": "1c07771414973110394e70d0c10f26fb8a336c2d4ee79b36b494ece1e74fdc5c",
-      "transformation": "none"
-    },
-    {
-      "file": "experiments/linear-transformer/followup_20261105_schema_numerical_v1/representation_decomposed_v0_3.yaml",
-      "source": "parallel_coverage/20261105/linear_transformer/followup_20261105_schema_numerical_v1/representation_decomposed_v0_3.yaml",
-      "source_sha256": "55c8ebe47f0954fbfa325b57cc9ed497bacf84838bd6c747001eefbeb0eefeff",
-      "sha256": "55c8ebe47f0954fbfa325b57cc9ed497bacf84838bd6c747001eefbeb0eefeff",
-      "transformation": "none"
-    },
-    {
-      "file": "experiments/linear-transformer/followup_20261105_schema_numerical_v1/validation/results.json",
-      "source": "parallel_coverage/20261105/linear_transformer/followup_20261105_schema_numerical_v1/validation/results.json",
-      "source_sha256": "a99a032051fd33b4e091405037cd80d047b129d5a69e8b770b3af311d38df1f7",
-      "sha256": "a99a032051fd33b4e091405037cd80d047b129d5a69e8b770b3af311d38df1f7",
       "transformation": "none"
     },
     {
@@ -480,53 +158,11 @@
       "transformation": "none"
     },
     {
-      "file": "experiments/s4/validator.py",
-      "source": "parallel_coverage/20261105/s4/validator.py",
-      "source_sha256": "eff49537bd5c32e7e9378c057e54e2ac95d89941990bcb53c2e66f0a52ad1e6a",
-      "sha256": "eff49537bd5c32e7e9378c057e54e2ac95d89941990bcb53c2e66f0a52ad1e6a",
-      "transformation": "none"
-    },
-    {
-      "file": "experiments/s4/fixtures/plan.json",
-      "source": "parallel_coverage/20261105/s4/fixtures/plan.json",
-      "source_sha256": "eb3416babad2430cc9ed16c5573574520ff469f85233406fd45e374f82c9c46d",
-      "sha256": "eb3416babad2430cc9ed16c5573574520ff469f85233406fd45e374f82c9c46d",
-      "transformation": "none"
-    },
-    {
-      "file": "experiments/s4/source_mapping.md",
-      "source": "parallel_coverage/20261105/s4/source_mapping.md",
-      "source_sha256": "abe02f59226daccffb47d93b980df086442c3b38c260a2778d31146c2b6122cf",
-      "sha256": "abe02f59226daccffb47d93b980df086442c3b38c260a2778d31146c2b6122cf",
-      "transformation": "none"
-    },
-    {
-      "file": "experiments/s4/recorded/results.json",
-      "source": "parallel_coverage/20261105/s4/validation/preflight.json",
-      "source_sha256": "45e968c7ce6705e38f0906ae6e81bd334d37201396d2ba5383fed86c53da693a",
-      "sha256": "a59944165fb4fdb1c9bb39d6d75f4b163008a4a11292b1de90a0980c9e0ccc3b",
-      "transformation": "host path redaction"
-    },
-    {
       "file": "experiments/s4/generation-input.json",
       "source": "parallel_coverage/20261105/s4/requests/request.json",
       "source_sha256": "0b7c23ed879f1b39587e9535a2220b8cf79f80f8117631484a966ee08b770e19",
       "sha256": "0b7c23ed879f1b39587e9535a2220b8cf79f80f8117631484a966ee08b770e19",
       "transformation": "allowlisted model settings and messages; transport omitted"
-    },
-    {
-      "file": "experiments/s4/validation/negative_tests.json",
-      "source": "parallel_coverage/20261105/s4/validation/negative_tests.json",
-      "source_sha256": "362a6b9cad68babfb2bbe6651c50ca9ebc97a6c5a6fc94f94a5a9f0673c2d1bf",
-      "sha256": "362a6b9cad68babfb2bbe6651c50ca9ebc97a6c5a6fc94f94a5a9f0673c2d1bf",
-      "transformation": "none"
-    },
-    {
-      "file": "experiments/s4/schema_delta.md",
-      "source": "parallel_coverage/20261105/s4/schema_delta.md",
-      "source_sha256": "d7f2c167c727d1ca970c98e1123448afb925db9542d3ddc66c963f9104f64566",
-      "sha256": "d7f2c167c727d1ca970c98e1123448afb925db9542d3ddc66c963f9104f64566",
-      "transformation": "none"
     },
     {
       "file": "experiments/mamba/representation.yaml",
@@ -543,60 +179,11 @@
       "transformation": "none"
     },
     {
-      "file": "experiments/mamba/validator.py",
-      "source": "parallel_coverage/20261105/mamba/validator.py",
-      "source_sha256": "b1da76d60a206943aa7df9f3335bfd13ec14b88ea7b5f2d17c2133a5bd85cc63",
-      "sha256": "b1da76d60a206943aa7df9f3335bfd13ec14b88ea7b5f2d17c2133a5bd85cc63",
-      "transformation": "none"
-    },
-    {
-      "file": "experiments/mamba/fixtures/plan.json",
-      "source": "parallel_coverage/20261105/mamba/fixtures/plan.json",
-      "source_sha256": "6ef8a6ad855c4909d38238fac427a859dc6eb09c21161a6056a7b6a759d479f4",
-      "sha256": "6ef8a6ad855c4909d38238fac427a859dc6eb09c21161a6056a7b6a759d479f4",
-      "transformation": "none"
-    },
-    {
-      "file": "experiments/mamba/source_mapping.md",
-      "source": "parallel_coverage/20261105/mamba/source_mapping.md",
-      "source_sha256": "02f786c6398106f0541a62ba159fea2b3f2353671649ecc910cf05eadaeb8d64",
-      "sha256": "bd54dd37b48390e5552e07df67d4a0e3605c369b4a9614619efa7a6d1a23c3cf",
-      "transformation": "none; host path redaction"
-    },
-    {
-      "file": "experiments/mamba/recorded/results.json",
-      "source": "parallel_coverage/20261105/mamba/validation/results.json",
-      "source_sha256": "59196376c4a5e89777b9f9f21a4f00bb0ddff68f3683d2aca0f02c49028ddbb8",
-      "sha256": "ecafb665db62e804ac74752dd0bc1f4d20f535a3d9411c3aad13a5c25042bb84",
-      "transformation": "none; transport endpoint redaction"
-    },
-    {
       "file": "experiments/mamba/generation-input.json",
       "source": "parallel_coverage/20261105/mamba/requests/request.json",
       "source_sha256": "be48af596c03f861f12b017a0f7e1d3593ebcb3cdf48c0e15e2c1fcfaf92a820",
       "sha256": "be48af596c03f861f12b017a0f7e1d3593ebcb3cdf48c0e15e2c1fcfaf92a820",
       "transformation": "allowlisted model settings and messages; transport omitted"
-    },
-    {
-      "file": "experiments/mamba/validation/candidate_diagnostics.json",
-      "source": "parallel_coverage/20261105/mamba/validation/candidate_diagnostics.json",
-      "source_sha256": "6dd4639631cae6687bfc3c238e27e096b5ea7c8aa10c5d4db28d81c6516da438",
-      "sha256": "6dd4639631cae6687bfc3c238e27e096b5ea7c8aa10c5d4db28d81c6516da438",
-      "transformation": "none"
-    },
-    {
-      "file": "experiments/mamba/validation/structure_explanation.json",
-      "source": "parallel_coverage/20261105/mamba/validation/structure_explanation.json",
-      "source_sha256": "c1db5e9d76db06231a750daae8c64ffd9b0930973a61d286528111a9176f2e61",
-      "sha256": "c1db5e9d76db06231a750daae8c64ffd9b0930973a61d286528111a9176f2e61",
-      "transformation": "none"
-    },
-    {
-      "file": "experiments/seq2seq/followups/20261109_structure_v1_1/results.json",
-      "source": "parallel_coverage/20261105/seq2seq/evaluations/20261109_structure_v1_1/results.json",
-      "source_sha256": "1320c44aec13a987c76e3450eb6bb060aea4ec79fb56f05e733381b450d3d06a",
-      "sha256": "a14a6d66b2064f39539562a8c2cbb5ac3780fc5f65d6a869945127e17dd77380",
-      "transformation": "host path redaction"
     }
   ]
 }

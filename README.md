@@ -10,9 +10,9 @@
 
 ## 현재 작업
 
-선택된 블록과 핵심 연산을 대상으로 YAML 표현, 복원 코드, 검증 도구를 구성했습니다. 이 레포에는 실제 산출물을 아키텍처별로 정리하고 있으며, 연구 진행에 맞춰 자료를 추가합니다.
+선택된 블록과 핵심 연산을 대상으로 YAML 표현과 복원 코드를 정리했습니다. 이 레포에는 실제 산출물을 아키텍처별로 정리하고 있으며, 연구 진행에 맞춰 자료를 추가합니다.
 
-[아키텍처별 YAML·복원 코드](experiments/README.md) · [작업 요약](results/summary.md) · [실행 예제](experiments/resnet/README.md)
+[아키텍처별 YAML·복원 코드](experiments/README.md) · [작업 요약](results/summary.md)
 
 ## 앞으로의 방향
 

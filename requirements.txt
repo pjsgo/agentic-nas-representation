@@ -1,5 +1,0 @@
-# Historical CPU evaluator environment (Python 3.10).
-# Choose the appropriate official CPU wheels for your platform.
-torch==2.2.1
-torchvision==0.17.1
-numpy==1.26.3
