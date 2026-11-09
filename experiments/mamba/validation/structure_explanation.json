@@ -1,0 +1,192 @@
+{
+  "status": "DIAGNOSTIC_ONLY",
+  "frozen_fingerprints_match_by_role": {
+    "output": false,
+    "final_state": false,
+    "delta_positive.output": false,
+    "delta_layout.output": false,
+    "rates_exp.output": true,
+    "rates_negative.output": true,
+    "rates_batch.output": true,
+    "rates_time.output": true,
+    "delta_state.output": false,
+    "decay_argument.output": false,
+    "decay.output": false,
+    "B_channel.output": true,
+    "discrete_B.output": false,
+    "u_state.output": true,
+    "drive.output": false,
+    "updated.output": false,
+    "readout_vector.output": false,
+    "recurrence.readouts": false,
+    "skip.output": true,
+    "pre_gate.output": false,
+    "gated.output": false
+  },
+  "expected_first_operations": [
+    {
+      "operator": "aten.softplus.default",
+      "args": "(arg2_1,)",
+      "kwargs": "{}"
+    },
+    {
+      "operator": "aten.transpose.int",
+      "args": "(softplus, 1, 2)",
+      "kwargs": "{}"
+    },
+    {
+      "operator": "aten.exp.default",
+      "args": "(_tensor_constant0,)",
+      "kwargs": "{}"
+    },
+    {
+      "operator": "aten.neg.default",
+      "args": "(exp,)",
+      "kwargs": "{}"
+    },
+    {
+      "operator": "aten.unsqueeze.default",
+      "args": "(neg, 0)",
+      "kwargs": "{}"
+    },
+    {
+      "operator": "aten.unsqueeze.default",
+      "args": "(unsqueeze, 2)",
+      "kwargs": "{}"
+    },
+    {
+      "operator": "aten.unsqueeze.default",
+      "args": "(transpose, 3)",
+      "kwargs": "{}"
+    },
+    {
+      "operator": "aten.mul.Tensor",
+      "args": "(unsqueeze_1, unsqueeze_2)",
+      "kwargs": "{}"
+    },
+    {
+      "operator": "aten.exp.default",
+      "args": "(mul,)",
+      "kwargs": "{}"
+    },
+    {
+      "operator": "aten.unsqueeze.default",
+      "args": "(arg3_1, 1)",
+      "kwargs": "{}"
+    },
+    {
+      "operator": "aten.mul.Tensor",
+      "args": "(unsqueeze_2, unsqueeze_3)",
+      "kwargs": "{}"
+    },
+    {
+      "operator": "aten.unsqueeze.default",
+      "args": "(arg0_1, 3)",
+      "kwargs": "{}"
+    },
+    {
+      "operator": "aten.mul.Tensor",
+      "args": "(mul_1, unsqueeze_4)",
+      "kwargs": "{}"
+    },
+    {
+      "operator": "aten.select.int",
+      "args": "(exp_1, 2, 0)",
+      "kwargs": "{}"
+    },
+    {
+      "operator": "aten.select.int",
+      "args": "(mul_2, 2, 0)",
+      "kwargs": "{}"
+    },
+    {
+      "operator": "aten.select.int",
+      "args": "(arg4_1, 1, 0)",
+      "kwargs": "{}"
+    }
+  ],
+  "candidate_first_operations": [
+    {
+      "operator": "aten.softplus.default",
+      "args": "(arg2_1, 1.0, 20.0)",
+      "kwargs": "{}"
+    },
+    {
+      "operator": "aten.transpose.int",
+      "args": "(softplus, 1, 2)",
+      "kwargs": "{}"
+    },
+    {
+      "operator": "aten.exp.default",
+      "args": "(_param_constant0,)",
+      "kwargs": "{}"
+    },
+    {
+      "operator": "aten.neg.default",
+      "args": "(exp,)",
+      "kwargs": "{}"
+    },
+    {
+      "operator": "aten.unsqueeze.default",
+      "args": "(neg, 0)",
+      "kwargs": "{}"
+    },
+    {
+      "operator": "aten.unsqueeze.default",
+      "args": "(unsqueeze, 2)",
+      "kwargs": "{}"
+    },
+    {
+      "operator": "aten.unsqueeze.default",
+      "args": "(transpose, 3)",
+      "kwargs": "{}"
+    },
+    {
+      "operator": "aten.mul.Tensor",
+      "args": "(unsqueeze_1, unsqueeze_2)",
+      "kwargs": "{}"
+    },
+    {
+      "operator": "aten.exp.default",
+      "args": "(mul,)",
+      "kwargs": "{}"
+    },
+    {
+      "operator": "aten.unsqueeze.default",
+      "args": "(arg3_1, 1)",
+      "kwargs": "{}"
+    },
+    {
+      "operator": "aten.mul.Tensor",
+      "args": "(unsqueeze_2, unsqueeze_3)",
+      "kwargs": "{}"
+    },
+    {
+      "operator": "aten.unsqueeze.default",
+      "args": "(arg0_1, 3)",
+      "kwargs": "{}"
+    },
+    {
+      "operator": "aten.mul.Tensor",
+      "args": "(mul_1, unsqueeze_4)",
+      "kwargs": "{}"
+    },
+    {
+      "operator": "aten.empty.memory_format",
+      "args": "([2, 3, 4],)",
+      "kwargs": "{'dtype': torch.float32, 'device': device(type='cpu'), 'pin_memory': False}"
+    },
+    {
+      "operator": "aten.slice.Tensor",
+      "args": "(exp_1, 0, 0, 9223372036854775807)",
+      "kwargs": "{}"
+    },
+    {
+      "operator": "aten.slice.Tensor",
+      "args": "(slice_1, 1, 0, 9223372036854775807)",
+      "kwargs": "{}"
+    }
+  ],
+  "frozen_validator_unchanged": true,
+  "no_equivalence_rule_added": true
+}

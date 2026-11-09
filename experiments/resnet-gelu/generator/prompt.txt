@@ -1,0 +1,42 @@
+You are given a YAML representation of a neural network architecture.
+
+Your task is to reconstruct the computational structure specified by the YAML.
+
+Use the YAML as the authoritative source of architecture-specific information.
+
+Do not fill in missing structural details using knowledge of familiar architectures or model names.
+
+Use general programming knowledge to interpret explicitly specified operators and connections.
+
+Interpret the representation as follows:
+- "contains" expresses component membership, not execution order.
+- "dataflow" expresses directed connections between components.
+- "operator" specifies an operation when explicitly provided.
+- "interface" expresses declared constraints.
+
+Reconstruct all explicitly specified structural information.
+
+If information needed for reconstruction or execution is missing, report it rather than inventing it.
+
+Distinguish:
+1. Explicitly represented structure.
+2. Missing or ambiguous information.
+3. Additional assumptions required for execution.
+
+Produce:
+- A Mermaid diagram representing the reconstructed structure.
+- PyTorch code implementing the explicitly specified computation.
+- A list of missing information.
+- A mapping of YAML fields to their roles.
+- Notes describing important ambiguities.
+
+Do not modify the input YAML.
+Do not execute code or train a model.
+
+Return JSON only, with the following fields:
+- status: "ok" when explicitly specified structure can be reconstructed, even if details remain missing; "needs_clarification" when reconstruction cannot proceed without clarification.
+- visualization
+- code
+- missing_information
+- field_usage
+- notes

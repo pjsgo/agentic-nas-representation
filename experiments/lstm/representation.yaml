@@ -1,0 +1,1044 @@
+{
+  "representation_version": "0.3-candidate.1",
+  "operator_profile": "tensor_pytorch_2_2_1_v0_3_r1",
+  "architecture": "recurrent_tensor_region",
+  "architecture_entry": "root",
+  "factors": {
+    "root": {
+      "contains": [
+        "iterate"
+      ]
+    },
+    "iterate": {
+      "scan": {
+        "body": "body",
+        "axis": 1,
+        "direction": "forward",
+        "sequence_inputs": {
+          "x": {
+            "input": "sequence",
+            "axis": 1
+          }
+        },
+        "invariant_inputs": {},
+        "carries": {
+          "carry_a": {
+            "input": "initial_a",
+            "body_input": "previous_a",
+            "body_output": "next_a",
+            "output": "final_a"
+          },
+          "carry_b": {
+            "input": "initial_b",
+            "body_input": "previous_b",
+            "body_output": "next_b",
+            "output": "final_b"
+          }
+        },
+        "emits": {
+          "sequence_out": {
+            "body_output": "next_a",
+            "axis": 1
+          }
+        },
+        "empty": "return_initial"
+      }
+    },
+    "body": {
+      "contains": [
+        "affine_a",
+        "affine_b",
+        "combine",
+        "partition",
+        "gate_a",
+        "gate_b",
+        "gate_c",
+        "gate_d",
+        "retain",
+        "write",
+        "update",
+        "readout",
+        "expose"
+      ]
+    },
+    "affine_a": {
+      "operator": "linear",
+      "attributes": {
+        "bias": true
+      }
+    },
+    "affine_b": {
+      "operator": "linear",
+      "attributes": {
+        "bias": true
+      }
+    },
+    "combine": {
+      "operator": "add",
+      "attributes": {
+        "inplace": false
+      }
+    },
+    "partition": {
+      "operator": "split",
+      "attributes": {
+        "sections": [
+          5,
+          5,
+          5,
+          5
+        ],
+        "dim": 1
+      }
+    },
+    "gate_a": {
+      "operator": "sigmoid"
+    },
+    "gate_b": {
+      "operator": "sigmoid"
+    },
+    "gate_c": {
+      "operator": "tanh"
+    },
+    "gate_d": {
+      "operator": "sigmoid"
+    },
+    "retain": {
+      "operator": "mul"
+    },
+    "write": {
+      "operator": "mul"
+    },
+    "update": {
+      "operator": "add",
+      "attributes": {
+        "inplace": false
+      }
+    },
+    "readout": {
+      "operator": "tanh"
+    },
+    "expose": {
+      "operator": "mul"
+    }
+  },
+  "dataflow": [
+    [
+      "root.sequence",
+      "iterate.sequence"
+    ],
+    [
+      "root.initial_a",
+      "iterate.initial_a"
+    ],
+    [
+      "root.initial_b",
+      "iterate.initial_b"
+    ],
+    [
+      "iterate.sequence_out",
+      "root.sequence_out"
+    ],
+    [
+      "iterate.final_a",
+      "root.final_a"
+    ],
+    [
+      "iterate.final_b",
+      "root.final_b"
+    ],
+    [
+      "body.x",
+      "affine_a.input"
+    ],
+    [
+      "body.previous_a",
+      "affine_b.input"
+    ],
+    [
+      "parameters.p0",
+      "affine_a.weight"
+    ],
+    [
+      "parameters.p1",
+      "affine_b.weight"
+    ],
+    [
+      "parameters.p2",
+      "affine_a.bias"
+    ],
+    [
+      "parameters.p3",
+      "affine_b.bias"
+    ],
+    [
+      "affine_a.output",
+      "combine.main"
+    ],
+    [
+      "affine_b.output",
+      "combine.shortcut"
+    ],
+    [
+      "combine.output",
+      "partition.input"
+    ],
+    [
+      "partition.output0",
+      "gate_a.input"
+    ],
+    [
+      "partition.output1",
+      "gate_b.input"
+    ],
+    [
+      "partition.output2",
+      "gate_c.input"
+    ],
+    [
+      "partition.output3",
+      "gate_d.input"
+    ],
+    [
+      "gate_b.output",
+      "retain.left"
+    ],
+    [
+      "body.previous_b",
+      "retain.right"
+    ],
+    [
+      "gate_a.output",
+      "write.left"
+    ],
+    [
+      "gate_c.output",
+      "write.right"
+    ],
+    [
+      "retain.output",
+      "update.main"
+    ],
+    [
+      "write.output",
+      "update.shortcut"
+    ],
+    [
+      "update.output",
+      "readout.input"
+    ],
+    [
+      "gate_d.output",
+      "expose.left"
+    ],
+    [
+      "readout.output",
+      "expose.right"
+    ],
+    [
+      "expose.output",
+      "body.next_a"
+    ],
+    [
+      "update.output",
+      "body.next_b"
+    ]
+  ],
+  "interface": {
+    "root": {
+      "symbols": {
+        "B": "positive_integer",
+        "T": "positive_integer"
+      },
+      "inputs": {
+        "sequence": {
+          "shape": [
+            "B",
+            "T",
+            4
+          ],
+          "axes": [
+            "batch",
+            "time",
+            "feature"
+          ],
+          "dtype": "float32",
+          "name": "x"
+        },
+        "initial_a": {
+          "shape": [
+            "B",
+            5
+          ],
+          "axes": [
+            "batch",
+            "hidden"
+          ],
+          "dtype": "float32",
+          "name": "h0"
+        },
+        "initial_b": {
+          "shape": [
+            "B",
+            5
+          ],
+          "axes": [
+            "batch",
+            "hidden"
+          ],
+          "dtype": "float32",
+          "name": "c0"
+        }
+      },
+      "outputs": {
+        "sequence_out": {
+          "shape": [
+            "B",
+            "T",
+            5
+          ],
+          "axes": [
+            "batch",
+            "time",
+            "hidden"
+          ],
+          "dtype": "float32",
+          "name": "y"
+        },
+        "final_a": {
+          "shape": [
+            "B",
+            5
+          ],
+          "axes": [
+            "batch",
+            "hidden"
+          ],
+          "dtype": "float32",
+          "name": "hn"
+        },
+        "final_b": {
+          "shape": [
+            "B",
+            5
+          ],
+          "axes": [
+            "batch",
+            "hidden"
+          ],
+          "dtype": "float32",
+          "name": "cn"
+        }
+      }
+    },
+    "iterate": {
+      "inputs": {
+        "sequence": {
+          "shape": [
+            "B",
+            "T",
+            4
+          ],
+          "axes": [
+            "batch",
+            "time",
+            "feature"
+          ],
+          "dtype": "float32",
+          "name": "x"
+        },
+        "initial_a": {
+          "shape": [
+            "B",
+            5
+          ],
+          "axes": [
+            "batch",
+            "hidden"
+          ],
+          "dtype": "float32",
+          "name": "h0"
+        },
+        "initial_b": {
+          "shape": [
+            "B",
+            5
+          ],
+          "axes": [
+            "batch",
+            "hidden"
+          ],
+          "dtype": "float32",
+          "name": "c0"
+        }
+      },
+      "outputs": {
+        "sequence_out": {
+          "shape": [
+            "B",
+            "T",
+            5
+          ],
+          "axes": [
+            "batch",
+            "time",
+            "hidden"
+          ],
+          "dtype": "float32",
+          "name": "y"
+        },
+        "final_a": {
+          "shape": [
+            "B",
+            5
+          ],
+          "axes": [
+            "batch",
+            "hidden"
+          ],
+          "dtype": "float32",
+          "name": "hn"
+        },
+        "final_b": {
+          "shape": [
+            "B",
+            5
+          ],
+          "axes": [
+            "batch",
+            "hidden"
+          ],
+          "dtype": "float32",
+          "name": "cn"
+        }
+      }
+    },
+    "body": {
+      "inputs": {
+        "x": {
+          "shape": [
+            "B",
+            4
+          ],
+          "axes": [
+            "batch",
+            "feature"
+          ],
+          "dtype": "float32"
+        },
+        "previous_a": {
+          "shape": [
+            "B",
+            5
+          ],
+          "axes": [
+            "batch",
+            "hidden"
+          ],
+          "dtype": "float32"
+        },
+        "previous_b": {
+          "shape": [
+            "B",
+            5
+          ],
+          "axes": [
+            "batch",
+            "hidden"
+          ],
+          "dtype": "float32"
+        }
+      },
+      "outputs": {
+        "next_a": {
+          "shape": [
+            "B",
+            5
+          ],
+          "axes": [
+            "batch",
+            "hidden"
+          ],
+          "dtype": "float32"
+        },
+        "next_b": {
+          "shape": [
+            "B",
+            5
+          ],
+          "axes": [
+            "batch",
+            "hidden"
+          ],
+          "dtype": "float32"
+        }
+      }
+    },
+    "affine_a": {
+      "inputs": {
+        "input": {
+          "shape": [
+            "B",
+            4
+          ],
+          "axes": [
+            "batch",
+            "feature"
+          ],
+          "dtype": "float32"
+        },
+        "weight": {
+          "shape": [
+            20,
+            4
+          ],
+          "axes": [
+            "out",
+            "in"
+          ],
+          "dtype": "float32"
+        },
+        "bias": {
+          "shape": [
+            20
+          ],
+          "axes": [
+            "out"
+          ],
+          "dtype": "float32"
+        }
+      },
+      "outputs": {
+        "output": {
+          "shape": [
+            "B",
+            20
+          ],
+          "axes": [
+            "batch",
+            "gate_feature"
+          ],
+          "dtype": "float32"
+        }
+      }
+    },
+    "affine_b": {
+      "inputs": {
+        "input": {
+          "shape": [
+            "B",
+            5
+          ],
+          "axes": [
+            "batch",
+            "hidden"
+          ],
+          "dtype": "float32"
+        },
+        "weight": {
+          "shape": [
+            20,
+            5
+          ],
+          "axes": [
+            "out",
+            "in"
+          ],
+          "dtype": "float32"
+        },
+        "bias": {
+          "shape": [
+            20
+          ],
+          "axes": [
+            "out"
+          ],
+          "dtype": "float32"
+        }
+      },
+      "outputs": {
+        "output": {
+          "shape": [
+            "B",
+            20
+          ],
+          "axes": [
+            "batch",
+            "gate_feature"
+          ],
+          "dtype": "float32"
+        }
+      }
+    },
+    "combine": {
+      "inputs": {
+        "main": {
+          "shape": [
+            "B",
+            20
+          ],
+          "axes": [
+            "batch",
+            "gate_feature"
+          ],
+          "dtype": "float32"
+        },
+        "shortcut": {
+          "shape": [
+            "B",
+            20
+          ],
+          "axes": [
+            "batch",
+            "gate_feature"
+          ],
+          "dtype": "float32"
+        }
+      },
+      "outputs": {
+        "output": {
+          "shape": [
+            "B",
+            20
+          ],
+          "axes": [
+            "batch",
+            "gate_feature"
+          ],
+          "dtype": "float32"
+        }
+      }
+    },
+    "partition": {
+      "inputs": {
+        "input": {
+          "shape": [
+            "B",
+            20
+          ],
+          "axes": [
+            "batch",
+            "gate_feature"
+          ],
+          "dtype": "float32"
+        }
+      },
+      "outputs": {
+        "output0": {
+          "shape": [
+            "B",
+            5
+          ],
+          "axes": [
+            "batch",
+            "hidden"
+          ],
+          "dtype": "float32"
+        },
+        "output1": {
+          "shape": [
+            "B",
+            5
+          ],
+          "axes": [
+            "batch",
+            "hidden"
+          ],
+          "dtype": "float32"
+        },
+        "output2": {
+          "shape": [
+            "B",
+            5
+          ],
+          "axes": [
+            "batch",
+            "hidden"
+          ],
+          "dtype": "float32"
+        },
+        "output3": {
+          "shape": [
+            "B",
+            5
+          ],
+          "axes": [
+            "batch",
+            "hidden"
+          ],
+          "dtype": "float32"
+        }
+      }
+    },
+    "gate_a": {
+      "inputs": {
+        "input": {
+          "shape": [
+            "B",
+            5
+          ],
+          "axes": [
+            "batch",
+            "hidden"
+          ],
+          "dtype": "float32"
+        }
+      },
+      "outputs": {
+        "output": {
+          "shape": [
+            "B",
+            5
+          ],
+          "axes": [
+            "batch",
+            "hidden"
+          ],
+          "dtype": "float32"
+        }
+      }
+    },
+    "gate_b": {
+      "inputs": {
+        "input": {
+          "shape": [
+            "B",
+            5
+          ],
+          "axes": [
+            "batch",
+            "hidden"
+          ],
+          "dtype": "float32"
+        }
+      },
+      "outputs": {
+        "output": {
+          "shape": [
+            "B",
+            5
+          ],
+          "axes": [
+            "batch",
+            "hidden"
+          ],
+          "dtype": "float32"
+        }
+      }
+    },
+    "gate_c": {
+      "inputs": {
+        "input": {
+          "shape": [
+            "B",
+            5
+          ],
+          "axes": [
+            "batch",
+            "hidden"
+          ],
+          "dtype": "float32"
+        }
+      },
+      "outputs": {
+        "output": {
+          "shape": [
+            "B",
+            5
+          ],
+          "axes": [
+            "batch",
+            "hidden"
+          ],
+          "dtype": "float32"
+        }
+      }
+    },
+    "gate_d": {
+      "inputs": {
+        "input": {
+          "shape": [
+            "B",
+            5
+          ],
+          "axes": [
+            "batch",
+            "hidden"
+          ],
+          "dtype": "float32"
+        }
+      },
+      "outputs": {
+        "output": {
+          "shape": [
+            "B",
+            5
+          ],
+          "axes": [
+            "batch",
+            "hidden"
+          ],
+          "dtype": "float32"
+        }
+      }
+    },
+    "readout": {
+      "inputs": {
+        "input": {
+          "shape": [
+            "B",
+            5
+          ],
+          "axes": [
+            "batch",
+            "hidden"
+          ],
+          "dtype": "float32"
+        }
+      },
+      "outputs": {
+        "output": {
+          "shape": [
+            "B",
+            5
+          ],
+          "axes": [
+            "batch",
+            "hidden"
+          ],
+          "dtype": "float32"
+        }
+      }
+    },
+    "retain": {
+      "inputs": {
+        "left": {
+          "shape": [
+            "B",
+            5
+          ],
+          "axes": [
+            "batch",
+            "hidden"
+          ],
+          "dtype": "float32"
+        },
+        "right": {
+          "shape": [
+            "B",
+            5
+          ],
+          "axes": [
+            "batch",
+            "hidden"
+          ],
+          "dtype": "float32"
+        }
+      },
+      "outputs": {
+        "output": {
+          "shape": [
+            "B",
+            5
+          ],
+          "axes": [
+            "batch",
+            "hidden"
+          ],
+          "dtype": "float32"
+        }
+      }
+    },
+    "write": {
+      "inputs": {
+        "left": {
+          "shape": [
+            "B",
+            5
+          ],
+          "axes": [
+            "batch",
+            "hidden"
+          ],
+          "dtype": "float32"
+        },
+        "right": {
+          "shape": [
+            "B",
+            5
+          ],
+          "axes": [
+            "batch",
+            "hidden"
+          ],
+          "dtype": "float32"
+        }
+      },
+      "outputs": {
+        "output": {
+          "shape": [
+            "B",
+            5
+          ],
+          "axes": [
+            "batch",
+            "hidden"
+          ],
+          "dtype": "float32"
+        }
+      }
+    },
+    "expose": {
+      "inputs": {
+        "left": {
+          "shape": [
+            "B",
+            5
+          ],
+          "axes": [
+            "batch",
+            "hidden"
+          ],
+          "dtype": "float32"
+        },
+        "right": {
+          "shape": [
+            "B",
+            5
+          ],
+          "axes": [
+            "batch",
+            "hidden"
+          ],
+          "dtype": "float32"
+        }
+      },
+      "outputs": {
+        "output": {
+          "shape": [
+            "B",
+            5
+          ],
+          "axes": [
+            "batch",
+            "hidden"
+          ],
+          "dtype": "float32"
+        }
+      }
+    },
+    "update": {
+      "inputs": {
+        "main": {
+          "shape": [
+            "B",
+            5
+          ],
+          "axes": [
+            "batch",
+            "hidden"
+          ],
+          "dtype": "float32"
+        },
+        "shortcut": {
+          "shape": [
+            "B",
+            5
+          ],
+          "axes": [
+            "batch",
+            "hidden"
+          ],
+          "dtype": "float32"
+        }
+      },
+      "outputs": {
+        "output": {
+          "shape": [
+            "B",
+            5
+          ],
+          "axes": [
+            "batch",
+            "hidden"
+          ],
+          "dtype": "float32"
+        }
+      }
+    }
+  },
+  "parameters": {
+    "p0": {
+      "shape": [
+        20,
+        4
+      ],
+      "dtype": "float32",
+      "requires_grad": true,
+      "initialization": "fixture_supplied"
+    },
+    "p1": {
+      "shape": [
+        20,
+        5
+      ],
+      "dtype": "float32",
+      "requires_grad": true,
+      "initialization": "fixture_supplied"
+    },
+    "p2": {
+      "shape": [
+        20
+      ],
+      "dtype": "float32",
+      "requires_grad": true,
+      "initialization": "fixture_supplied"
+    },
+    "p3": {
+      "shape": [
+        20
+      ],
+      "dtype": "float32",
+      "requires_grad": true,
+      "initialization": "fixture_supplied"
+    }
+  },
+  "state": {
+    "carry_a": {
+      "shape": [
+        "B",
+        5
+      ],
+      "axes": [
+        "batch",
+        "hidden"
+      ],
+      "dtype": "float32",
+      "initial": "external"
+    },
+    "carry_b": {
+      "shape": [
+        "B",
+        5
+      ],
+      "axes": [
+        "batch",
+        "hidden"
+      ],
+      "dtype": "float32",
+      "initial": "external"
+    }
+  },
+  "dependency": {
+    "body.next_a": [
+      "body.x",
+      "body.previous_a",
+      "body.previous_b"
+    ],
+    "body.next_b": [
+      "body.x",
+      "body.previous_a",
+      "body.previous_b"
+    ]
+  }
+}

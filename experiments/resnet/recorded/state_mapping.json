@@ -1,0 +1,133 @@
+{
+  "status": "passed",
+  "mapping": [
+    {
+      "kind": "parameter",
+      "source": "conv1.weight",
+      "destination": "conv1.weight",
+      "shape": [
+        64,
+        64,
+        3,
+        3
+      ],
+      "dtype": "torch.float32",
+      "basis": "manually reviewed computational role and module-local field name"
+    },
+    {
+      "kind": "parameter",
+      "source": "bn1.weight",
+      "destination": "bn1.weight",
+      "shape": [
+        64
+      ],
+      "dtype": "torch.float32",
+      "basis": "manually reviewed computational role and module-local field name"
+    },
+    {
+      "kind": "parameter",
+      "source": "bn1.bias",
+      "destination": "bn1.bias",
+      "shape": [
+        64
+      ],
+      "dtype": "torch.float32",
+      "basis": "manually reviewed computational role and module-local field name"
+    },
+    {
+      "kind": "buffer",
+      "source": "bn1.running_mean",
+      "destination": "bn1.running_mean",
+      "shape": [
+        64
+      ],
+      "dtype": "torch.float32",
+      "basis": "manually reviewed computational role and module-local field name"
+    },
+    {
+      "kind": "buffer",
+      "source": "bn1.running_var",
+      "destination": "bn1.running_var",
+      "shape": [
+        64
+      ],
+      "dtype": "torch.float32",
+      "basis": "manually reviewed computational role and module-local field name"
+    },
+    {
+      "kind": "buffer",
+      "source": "bn1.num_batches_tracked",
+      "destination": "bn1.num_batches_tracked",
+      "shape": [],
+      "dtype": "torch.int64",
+      "basis": "manually reviewed computational role and module-local field name"
+    },
+    {
+      "kind": "parameter",
+      "source": "conv2.weight",
+      "destination": "conv2.weight",
+      "shape": [
+        64,
+        64,
+        3,
+        3
+      ],
+      "dtype": "torch.float32",
+      "basis": "manually reviewed computational role and module-local field name"
+    },
+    {
+      "kind": "parameter",
+      "source": "bn2.weight",
+      "destination": "bn2.weight",
+      "shape": [
+        64
+      ],
+      "dtype": "torch.float32",
+      "basis": "manually reviewed computational role and module-local field name"
+    },
+    {
+      "kind": "parameter",
+      "source": "bn2.bias",
+      "destination": "bn2.bias",
+      "shape": [
+        64
+      ],
+      "dtype": "torch.float32",
+      "basis": "manually reviewed computational role and module-local field name"
+    },
+    {
+      "kind": "buffer",
+      "source": "bn2.running_mean",
+      "destination": "bn2.running_mean",
+      "shape": [
+        64
+      ],
+      "dtype": "torch.float32",
+      "basis": "manually reviewed computational role and module-local field name"
+    },
+    {
+      "kind": "buffer",
+      "source": "bn2.running_var",
+      "destination": "bn2.running_var",
+      "shape": [
+        64
+      ],
+      "dtype": "torch.float32",
+      "basis": "manually reviewed computational role and module-local field name"
+    },
+    {
+      "kind": "buffer",
+      "source": "bn2.num_batches_tracked",
+      "destination": "bn2.num_batches_tracked",
+      "shape": [],
+      "dtype": "torch.int64",
+      "basis": "manually reviewed computational role and module-local field name"
+    }
+  ],
+  "strict_load": true,
+  "mapping_is_bijective": true,
+  "parameters": 6,
+  "buffers": 6,
+  "all_values_exactly_equal_after_transfer": true,
+  "no_shape_only_matching_or_manual_code_repair": true
+}

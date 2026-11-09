@@ -1,0 +1,62 @@
+{
+  "status": "FROZEN_BEFORE_SOURCE_REFERENCE_EXECUTION",
+  "scope": "Original S4 rank-1 DPLR, H=1, channels=1, full state 4 (two conjugate pairs), bilinear discretization; raw fixture-supplied source parameter storage; causal recurrence plus impulse kernel output of the same length as input. No S4D.",
+  "device": "cpu",
+  "dtype": "float64",
+  "complex_dtype": "complex128",
+  "mode": "eval",
+  "rtol": 1e-09,
+  "atol": 1e-10,
+  "threads": 1,
+  "interop_threads": 1,
+  "seeds": [
+    1701,
+    1702,
+    1703
+  ],
+  "cases": "fixtures/cases.json",
+  "lengths": [
+    4,
+    7,
+    3
+  ],
+  "batch_sizes": [
+    2,
+    1,
+    2
+  ],
+  "step_sizes": [
+    0.2,
+    0.7,
+    1.1
+  ],
+  "initial_state": "external real-pair tensor [B,1,2,2], nonzero in two cases; equivalent conjugate-completed complex state in official oracle",
+  "outputs": [
+    "kernel [1,1,T] with k[0]=C*dB",
+    "y [B,1,T] after transition including D*u",
+    "h_final real pairs [B,1,2,2]"
+  ],
+  "state_provenance": "All seven raw Parameters are source-identical role/shape/dtype/identity; derived discretization is not a Parameter. Source C_tilde caching/l_kernel buffer semantics excluded from the raw recurrent subunit; separate fresh official FFT forward numerically crosschecks equivalence.",
+  "fixtures_memory_budget_mib": 512,
+  "process_memory_budget_mib": 2048,
+  "timeout_seconds": 120,
+  "unsupported": [
+    "general rank",
+    "n_ssm/H sharing larger than one",
+    "training/gradients",
+    "initializer fidelity after fixture transfer",
+    "C_tilde mutation/cache protocol",
+    "FFT algorithm structural preservation",
+    "nonlinear DNN block/dropout/bidirectional variants"
+  ],
+  "train_grad": "NOT_RUN",
+  "initializer_fidelity": "NOT_RUN",
+  "tolerance_changes_after_generation": false,
+  "evaluation_probes": {
+    "parameter_perturbation": "+0.13 per raw Parameter role, all entries; source-derived output dependency checks",
+    "external_state_perturbation": "+0.17, kernel unchanged",
+    "input_signal_perturbation": "+0.17, kernel unchanged at fixed length",
+    "runtime_trace_name_independence": "Wrap in a differently named Module/parameter prefix and verify normalized ATen DAG equality",
+    "test_visibility": "All fixture and test code withheld from generation payload"
+  }
+}

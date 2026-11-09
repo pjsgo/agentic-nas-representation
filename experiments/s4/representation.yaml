@@ -1,0 +1,6418 @@
+representation_version: 0.3-candidate.1
+operator_profile: tensor_pytorch_2_2_1_v0_3_r1
+architecture: linear_state_unit
+architecture_entry: unit
+description: Verified restricted rank-one diagonal-plus-low-rank linear state-space core, four full complex conjugate-completed
+  coordinates (two stored pairs), H=channels=1. Real-pair raw Parameters; bilinear stepping and impulse-response
+  kernel generation. Kernel output uses the equivalent recurrent algorithm, not FFT or cache mutation. External
+  state; eval; supplied parameter values.
+factors:
+  unit:
+    contains:
+    - prepare
+    - sequence_scan
+    - f0167
+    - f0168
+    - kernel_scan
+    - f0169
+    - f0170
+    - f0171
+    - f0172
+  prepare:
+    contains:
+    - f0000
+    - f0001
+    - f0002
+    - f0003
+    - f0004
+    - f0005
+    - f0006
+    - f0007
+    - f0008
+    - f0009
+    - f0010
+    - f0011
+    - f0012
+    - f0013
+    - f0014
+    - f0015
+    - f0016
+    - f0017
+    - f0018
+    - f0019
+    - f0020
+    - f0021
+    - f0022
+    - f0023
+    - f0024
+    - f0025
+    - f0026
+    - f0027
+    - f0028
+    - f0029
+    - f0030
+    - f0031
+    - f0032
+    - f0033
+    - f0034
+    - f0035
+    - f0036
+    - f0037
+    - f0038
+    - f0039
+    - f0040
+    - f0041
+    - f0042
+    - f0043
+    - f0047
+    - f0048
+    - f0049
+    - f0050
+    - f0051
+  f0000:
+    operator: constant
+    attributes:
+      value: 1.0
+      dtype: float64
+  f0001:
+    operator: constant
+    attributes:
+      value: 2.0
+      dtype: float64
+  f0002:
+    operator: exp
+  f0003:
+    operator: exp
+  f0004:
+    operator: neg
+  f0005:
+    operator: neg
+  f0006:
+    operator: slice
+    attributes:
+      axis: 3
+      start: 0
+      stop: 1
+      step: 1
+  f0007:
+    operator: squeeze
+    attributes:
+      dim: 3
+  f0008:
+    operator: squeeze
+    attributes:
+      dim: 0
+  f0009:
+    operator: slice
+    attributes:
+      axis: 3
+      start: 1
+      stop: 2
+      step: 1
+  f0010:
+    operator: squeeze
+    attributes:
+      dim: 3
+  f0011:
+    operator: squeeze
+    attributes:
+      dim: 0
+  f0012:
+    operator: neg
+  f0013:
+    operator: slice
+    attributes:
+      axis: 3
+      start: 0
+      stop: 1
+      step: 1
+  f0014:
+    operator: squeeze
+    attributes:
+      dim: 3
+  f0015:
+    operator: squeeze
+    attributes:
+      dim: 0
+  f0016:
+    operator: slice
+    attributes:
+      axis: 3
+      start: 1
+      stop: 2
+      step: 1
+  f0017:
+    operator: squeeze
+    attributes:
+      dim: 3
+  f0018:
+    operator: squeeze
+    attributes:
+      dim: 0
+  f0019:
+    operator: slice
+    attributes:
+      axis: 3
+      start: 0
+      stop: 1
+      step: 1
+  f0020:
+    operator: squeeze
+    attributes:
+      dim: 3
+  f0021:
+    operator: squeeze
+    attributes:
+      dim: 0
+  f0022:
+    operator: slice
+    attributes:
+      axis: 3
+      start: 1
+      stop: 2
+      step: 1
+  f0023:
+    operator: squeeze
+    attributes:
+      dim: 3
+  f0024:
+    operator: squeeze
+    attributes:
+      dim: 0
+  f0025:
+    operator: div
+  f0026:
+    operator: sub
+  f0027:
+    operator: neg
+  f0028:
+    operator: mul
+  f0029:
+    operator: mul
+  f0030:
+    operator: add
+    attributes:
+      inplace: false
+  f0031:
+    operator: div
+  f0032:
+    operator: neg
+  f0033:
+    operator: div
+  f0034:
+    operator: add
+    attributes:
+      inplace: false
+  f0035:
+    operator: mul
+  f0036:
+    operator: mul
+  f0037:
+    operator: sub
+  f0038:
+    operator: mul
+  f0039:
+    operator: mul
+  f0040:
+    operator: add
+    attributes:
+      inplace: false
+  f0041:
+    operator: mul
+  f0042:
+    operator: mul
+  f0043:
+    operator: sub
+  f0047:
+    operator: sum
+    attributes:
+      dim: 1
+      keepdim: true
+  f0048:
+    operator: mul
+  f0049:
+    operator: add
+    attributes:
+      inplace: false
+  f0050:
+    operator: div
+  f0051:
+    operator: div
+  sequence_body:
+    contains:
+    - f0052
+    - f0053
+    - f0054
+    - f0055
+    - f0056
+    - f0057
+    - f0058
+    - f0059
+    - f0063
+    - f0064
+    - f0065
+    - f0066
+    - f0067
+    - f0068
+    - f0069
+    - f0070
+    - f0071
+    - f0072
+    - f0073
+    - f0074
+    - f0075
+    - f0076
+    - f0077
+    - f0078
+    - f0079
+    - f0080
+    - f0081
+    - f0082
+    - f0083
+    - f0087
+    - f0088
+    - f0089
+    - f0090
+    - f0091
+    - f0092
+    - f0093
+    - f0094
+    - f0095
+    - f0096
+    - f0097
+    - f0098
+    - f0099
+    - f0100
+    - f0101
+    - f0102
+    - f0106
+    - f0107
+  f0052:
+    operator: constant
+    attributes:
+      value: 2.0
+      dtype: float64
+  f0053:
+    operator: slice
+    attributes:
+      axis: 3
+      start: 0
+      stop: 1
+      step: 1
+  f0054:
+    operator: squeeze
+    attributes:
+      dim: 3
+  f0055:
+    operator: slice
+    attributes:
+      axis: 3
+      start: 1
+      stop: 2
+      step: 1
+  f0056:
+    operator: squeeze
+    attributes:
+      dim: 3
+  f0057:
+    operator: mul
+  f0058:
+    operator: mul
+  f0059:
+    operator: sub
+  f0063:
+    operator: sum
+    attributes:
+      dim: 2
+      keepdim: true
+  f0064:
+    operator: mul
+  f0065:
+    operator: mul
+  f0066:
+    operator: mul
+  f0067:
+    operator: sub
+  f0068:
+    operator: mul
+  f0069:
+    operator: mul
+  f0070:
+    operator: add
+    attributes:
+      inplace: false
+  f0071:
+    operator: mul
+  f0072:
+    operator: mul
+  f0073:
+    operator: sub
+  f0074:
+    operator: sub
+  f0075:
+    operator: unsqueeze
+    attributes:
+      dim: 2
+  f0076:
+    operator: mul
+  f0077:
+    operator: mul
+  f0078:
+    operator: mul
+  f0079:
+    operator: add
+    attributes:
+      inplace: false
+  f0080:
+    operator: add
+    attributes:
+      inplace: false
+  f0081:
+    operator: mul
+  f0082:
+    operator: mul
+  f0083:
+    operator: sub
+  f0087:
+    operator: sum
+    attributes:
+      dim: 2
+      keepdim: true
+  f0088:
+    operator: mul
+  f0089:
+    operator: mul
+  f0090:
+    operator: mul
+  f0091:
+    operator: sub
+  f0092:
+    operator: sub
+  f0093:
+    operator: mul
+  f0094:
+    operator: mul
+  f0095:
+    operator: sub
+  f0096:
+    operator: mul
+  f0097:
+    operator: mul
+  f0098:
+    operator: add
+    attributes:
+      inplace: false
+  f0099:
+    operator: stack
+    attributes:
+      count: 2
+      dim: 3
+  f0100:
+    operator: mul
+  f0101:
+    operator: mul
+  f0102:
+    operator: sub
+  f0106:
+    operator: sum
+    attributes:
+      dim: 2
+      keepdim: false
+  f0107:
+    operator: mul
+  kernel_body:
+    contains:
+    - f0108
+    - f0109
+    - f0110
+    - f0111
+    - f0112
+    - f0113
+    - f0114
+    - f0115
+    - f0116
+    - f0117
+    - f0118
+    - f0122
+    - f0123
+    - f0124
+    - f0125
+    - f0126
+    - f0127
+    - f0128
+    - f0129
+    - f0130
+    - f0131
+    - f0132
+    - f0133
+    - f0134
+    - f0135
+    - f0136
+    - f0137
+    - f0138
+    - f0139
+    - f0140
+    - f0141
+    - f0142
+    - f0146
+    - f0147
+    - f0148
+    - f0149
+    - f0150
+    - f0151
+    - f0152
+    - f0153
+    - f0154
+    - f0155
+    - f0156
+    - f0157
+    - f0158
+    - f0159
+    - f0160
+    - f0161
+    - f0165
+    - f0166
+  f0108:
+    operator: constant
+    attributes:
+      value: 2.0
+      dtype: float64
+  f0109:
+    operator: zeros_like
+  f0110:
+    operator: add
+    attributes:
+      inplace: false
+  f0111:
+    operator: zeros_like
+  f0112:
+    operator: slice
+    attributes:
+      axis: 3
+      start: 0
+      stop: 1
+      step: 1
+  f0113:
+    operator: squeeze
+    attributes:
+      dim: 3
+  f0114:
+    operator: slice
+    attributes:
+      axis: 3
+      start: 1
+      stop: 2
+      step: 1
+  f0115:
+    operator: squeeze
+    attributes:
+      dim: 3
+  f0116:
+    operator: mul
+  f0117:
+    operator: mul
+  f0118:
+    operator: sub
+  f0122:
+    operator: sum
+    attributes:
+      dim: 2
+      keepdim: true
+  f0123:
+    operator: mul
+  f0124:
+    operator: mul
+  f0125:
+    operator: mul
+  f0126:
+    operator: sub
+  f0127:
+    operator: mul
+  f0128:
+    operator: mul
+  f0129:
+    operator: add
+    attributes:
+      inplace: false
+  f0130:
+    operator: mul
+  f0131:
+    operator: mul
+  f0132:
+    operator: sub
+  f0133:
+    operator: sub
+  f0134:
+    operator: unsqueeze
+    attributes:
+      dim: 2
+  f0135:
+    operator: mul
+  f0136:
+    operator: mul
+  f0137:
+    operator: mul
+  f0138:
+    operator: add
+    attributes:
+      inplace: false
+  f0139:
+    operator: add
+    attributes:
+      inplace: false
+  f0140:
+    operator: mul
+  f0141:
+    operator: mul
+  f0142:
+    operator: sub
+  f0146:
+    operator: sum
+    attributes:
+      dim: 2
+      keepdim: true
+  f0147:
+    operator: mul
+  f0148:
+    operator: mul
+  f0149:
+    operator: mul
+  f0150:
+    operator: sub
+  f0151:
+    operator: sub
+  f0152:
+    operator: mul
+  f0153:
+    operator: mul
+  f0154:
+    operator: sub
+  f0155:
+    operator: mul
+  f0156:
+    operator: mul
+  f0157:
+    operator: add
+    attributes:
+      inplace: false
+  f0158:
+    operator: stack
+    attributes:
+      count: 2
+      dim: 3
+  f0159:
+    operator: mul
+  f0160:
+    operator: mul
+  f0161:
+    operator: sub
+  f0165:
+    operator: sum
+    attributes:
+      dim: 2
+      keepdim: false
+  f0166:
+    operator: mul
+  sequence_scan:
+    scan:
+      body: sequence_body
+      axis: 2
+      direction: forward
+      sequence_inputs:
+        x:
+          input: u
+          axis: 2
+      invariant_inputs:
+        dr: dr
+        di: di
+        er: er
+        ei: ei
+        pr: pr
+        pi: pi
+        qr: qr
+        qi: qi
+        rr: rr
+        ri: ri
+        br: br
+        bi: bi
+        cr: cr
+        ci: ci
+      carries:
+        sequence_scan_carry:
+          input: s0
+          body_input: s
+          body_output: s_next
+          output: sf
+      emits:
+        sequence:
+          body_output: v
+          axis: 2
+      empty: return_initial
+  f0167:
+    operator: slice
+    attributes:
+      axis: 0
+      start: 0
+      stop: 1
+      step: 1
+  f0168:
+    operator: zeros_like
+  kernel_scan:
+    scan:
+      body: kernel_body
+      axis: 2
+      direction: forward
+      sequence_inputs:
+        x:
+          input: u
+          axis: 2
+      invariant_inputs:
+        dr: dr
+        di: di
+        er: er
+        ei: ei
+        pr: pr
+        pi: pi
+        qr: qr
+        qi: qi
+        rr: rr
+        ri: ri
+        br: br
+        bi: bi
+        cr: cr
+        ci: ci
+      carries:
+        kernel_scan_carry:
+          input: s0
+          body_input: s
+          body_output: s_next
+          output: sf
+        kernel_scan_pulse:
+          input: flag0
+          body_input: flag
+          body_output: flag_next
+          output: flagf
+      emits:
+        sequence:
+          body_output: v
+          axis: 2
+      empty: return_initial
+  f0169:
+    operator: constant
+    attributes:
+      value:
+      - - 1.0
+      dtype: float64
+  f0170:
+    operator: unsqueeze
+    attributes:
+      dim: 2
+  f0171:
+    operator: mul
+  f0172:
+    operator: add
+    attributes:
+      inplace: false
+parameters:
+  p0:
+    shape:
+    - 1
+    - 1
+    dtype: float64
+    requires_grad: true
+    initialization: fixture_supplied
+  p1:
+    shape:
+    - 1
+    - 2
+    dtype: float64
+    requires_grad: true
+    initialization: fixture_supplied
+  p2:
+    shape:
+    - 1
+    - 2
+    dtype: float64
+    requires_grad: true
+    initialization: fixture_supplied
+  p3:
+    shape:
+    - 1
+    - 1
+    - 2
+    - 2
+    dtype: float64
+    requires_grad: true
+    initialization: fixture_supplied
+  p4:
+    shape:
+    - 1
+    - 1
+    - 2
+    - 2
+    dtype: float64
+    requires_grad: true
+    initialization: fixture_supplied
+  p5:
+    shape:
+    - 1
+    - 1
+    - 2
+    - 2
+    dtype: float64
+    requires_grad: true
+    initialization: fixture_supplied
+  p6:
+    shape:
+    - 1
+    - 1
+    dtype: float64
+    requires_grad: true
+    initialization: fixture_supplied
+dataflow:
+- - parameters.p0
+  - f0002.input
+- - parameters.p1
+  - f0003.input
+- - f0003.output
+  - f0004.input
+- - parameters.p2
+  - f0005.input
+- - parameters.p5
+  - f0006.input
+- - f0006.output
+  - f0007.input
+- - f0007.output
+  - f0008.input
+- - parameters.p5
+  - f0009.input
+- - f0009.output
+  - f0010.input
+- - f0010.output
+  - f0011.input
+- - f0011.output
+  - f0012.input
+- - parameters.p3
+  - f0013.input
+- - f0013.output
+  - f0014.input
+- - f0014.output
+  - f0015.input
+- - parameters.p3
+  - f0016.input
+- - f0016.output
+  - f0017.input
+- - f0017.output
+  - f0018.input
+- - parameters.p4
+  - f0019.input
+- - f0019.output
+  - f0020.input
+- - f0020.output
+  - f0021.input
+- - parameters.p4
+  - f0022.input
+- - f0022.output
+  - f0023.input
+- - f0023.output
+  - f0024.input
+- - f0001.output
+  - f0025.left
+- - f0002.output
+  - f0025.right
+- - f0025.output
+  - f0026.left
+- - f0004.output
+  - f0026.right
+- - f0005.output
+  - f0027.input
+- - f0026.output
+  - f0028.left
+- - f0026.output
+  - f0028.right
+- - f0027.output
+  - f0029.left
+- - f0027.output
+  - f0029.right
+- - f0028.output
+  - f0030.main
+- - f0029.output
+  - f0030.shortcut
+- - f0026.output
+  - f0031.left
+- - f0030.output
+  - f0031.right
+- - f0027.output
+  - f0032.input
+- - f0032.output
+  - f0033.left
+- - f0030.output
+  - f0033.right
+- - f0025.output
+  - f0034.main
+- - f0004.output
+  - f0034.shortcut
+- - f0008.output
+  - f0035.left
+- - f0031.output
+  - f0035.right
+- - f0012.output
+  - f0036.left
+- - f0033.output
+  - f0036.right
+- - f0035.output
+  - f0037.left
+- - f0036.output
+  - f0037.right
+- - f0008.output
+  - f0038.left
+- - f0033.output
+  - f0038.right
+- - f0012.output
+  - f0039.left
+- - f0031.output
+  - f0039.right
+- - f0038.output
+  - f0040.main
+- - f0039.output
+  - f0040.shortcut
+- - f0037.output
+  - f0041.left
+- - f0008.output
+  - f0041.right
+- - f0040.output
+  - f0042.left
+- - f0011.output
+  - f0042.right
+- - f0041.output
+  - f0043.left
+- - f0042.output
+  - f0043.right
+- - f0043.output
+  - f0047.input
+- - f0001.output
+  - f0048.left
+- - f0047.output
+  - f0048.right
+- - f0000.output
+  - f0049.main
+- - f0048.output
+  - f0049.shortcut
+- - f0037.output
+  - f0050.left
+- - f0049.output
+  - f0050.right
+- - f0040.output
+  - f0051.left
+- - f0049.output
+  - f0051.right
+- - f0031.output
+  - prepare.dr
+- - f0033.output
+  - prepare.di
+- - f0034.output
+  - prepare.er
+- - f0005.output
+  - prepare.ei
+- - f0008.output
+  - prepare.pr
+- - f0011.output
+  - prepare.pi
+- - f0008.output
+  - prepare.qr
+- - f0012.output
+  - prepare.qi
+- - f0050.output
+  - prepare.rr
+- - f0051.output
+  - prepare.ri
+- - f0015.output
+  - prepare.br
+- - f0018.output
+  - prepare.bi
+- - f0021.output
+  - prepare.cr
+- - f0024.output
+  - prepare.ci
+- - sequence_body.s
+  - f0053.input
+- - f0053.output
+  - f0054.input
+- - sequence_body.s
+  - f0055.input
+- - f0055.output
+  - f0056.input
+- - sequence_body.qr
+  - f0057.left
+- - f0054.output
+  - f0057.right
+- - sequence_body.qi
+  - f0058.left
+- - f0056.output
+  - f0058.right
+- - f0057.output
+  - f0059.left
+- - f0058.output
+  - f0059.right
+- - f0059.output
+  - f0063.input
+- - f0063.output
+  - f0064.left
+- - f0052.output
+  - f0064.right
+- - sequence_body.er
+  - f0065.left
+- - f0054.output
+  - f0065.right
+- - sequence_body.ei
+  - f0066.left
+- - f0056.output
+  - f0066.right
+- - f0065.output
+  - f0067.left
+- - f0066.output
+  - f0067.right
+- - sequence_body.er
+  - f0068.left
+- - f0056.output
+  - f0068.right
+- - sequence_body.ei
+  - f0069.left
+- - f0054.output
+  - f0069.right
+- - f0068.output
+  - f0070.main
+- - f0069.output
+  - f0070.shortcut
+- - sequence_body.pr
+  - f0071.left
+- - f0064.output
+  - f0071.right
+- - sequence_body.pi
+  - f0072.left
+- - f0064.output
+  - f0072.right
+- - f0067.output
+  - f0073.left
+- - f0071.output
+  - f0073.right
+- - f0070.output
+  - f0074.left
+- - f0072.output
+  - f0074.right
+- - sequence_body.x
+  - f0075.input
+- - f0052.output
+  - f0076.left
+- - f0075.output
+  - f0076.right
+- - sequence_body.br
+  - f0077.left
+- - f0076.output
+  - f0077.right
+- - sequence_body.bi
+  - f0078.left
+- - f0076.output
+  - f0078.right
+- - f0073.output
+  - f0079.main
+- - f0077.output
+  - f0079.shortcut
+- - f0074.output
+  - f0080.main
+- - f0078.output
+  - f0080.shortcut
+- - sequence_body.rr
+  - f0081.left
+- - f0079.output
+  - f0081.right
+- - sequence_body.ri
+  - f0082.left
+- - f0080.output
+  - f0082.right
+- - f0081.output
+  - f0083.left
+- - f0082.output
+  - f0083.right
+- - f0083.output
+  - f0087.input
+- - f0087.output
+  - f0088.left
+- - f0052.output
+  - f0088.right
+- - sequence_body.pr
+  - f0089.left
+- - f0088.output
+  - f0089.right
+- - sequence_body.pi
+  - f0090.left
+- - f0088.output
+  - f0090.right
+- - f0079.output
+  - f0091.left
+- - f0089.output
+  - f0091.right
+- - f0080.output
+  - f0092.left
+- - f0090.output
+  - f0092.right
+- - sequence_body.dr
+  - f0093.left
+- - f0091.output
+  - f0093.right
+- - sequence_body.di
+  - f0094.left
+- - f0092.output
+  - f0094.right
+- - f0093.output
+  - f0095.left
+- - f0094.output
+  - f0095.right
+- - sequence_body.dr
+  - f0096.left
+- - f0092.output
+  - f0096.right
+- - sequence_body.di
+  - f0097.left
+- - f0091.output
+  - f0097.right
+- - f0096.output
+  - f0098.main
+- - f0097.output
+  - f0098.shortcut
+- - f0095.output
+  - f0099.input0
+- - f0098.output
+  - f0099.input1
+- - f0099.output
+  - sequence_body.s_next
+- - sequence_body.cr
+  - f0100.left
+- - f0095.output
+  - f0100.right
+- - sequence_body.ci
+  - f0101.left
+- - f0098.output
+  - f0101.right
+- - f0100.output
+  - f0102.left
+- - f0101.output
+  - f0102.right
+- - f0102.output
+  - f0106.input
+- - f0052.output
+  - f0107.left
+- - f0106.output
+  - f0107.right
+- - f0107.output
+  - sequence_body.v
+- - kernel_body.x
+  - f0109.input
+- - f0109.output
+  - f0110.main
+- - kernel_body.flag
+  - f0110.shortcut
+- - kernel_body.flag
+  - f0111.input
+- - f0111.output
+  - kernel_body.flag_next
+- - kernel_body.s
+  - f0112.input
+- - f0112.output
+  - f0113.input
+- - kernel_body.s
+  - f0114.input
+- - f0114.output
+  - f0115.input
+- - kernel_body.qr
+  - f0116.left
+- - f0113.output
+  - f0116.right
+- - kernel_body.qi
+  - f0117.left
+- - f0115.output
+  - f0117.right
+- - f0116.output
+  - f0118.left
+- - f0117.output
+  - f0118.right
+- - f0118.output
+  - f0122.input
+- - f0122.output
+  - f0123.left
+- - f0108.output
+  - f0123.right
+- - kernel_body.er
+  - f0124.left
+- - f0113.output
+  - f0124.right
+- - kernel_body.ei
+  - f0125.left
+- - f0115.output
+  - f0125.right
+- - f0124.output
+  - f0126.left
+- - f0125.output
+  - f0126.right
+- - kernel_body.er
+  - f0127.left
+- - f0115.output
+  - f0127.right
+- - kernel_body.ei
+  - f0128.left
+- - f0113.output
+  - f0128.right
+- - f0127.output
+  - f0129.main
+- - f0128.output
+  - f0129.shortcut
+- - kernel_body.pr
+  - f0130.left
+- - f0123.output
+  - f0130.right
+- - kernel_body.pi
+  - f0131.left
+- - f0123.output
+  - f0131.right
+- - f0126.output
+  - f0132.left
+- - f0130.output
+  - f0132.right
+- - f0129.output
+  - f0133.left
+- - f0131.output
+  - f0133.right
+- - f0110.output
+  - f0134.input
+- - f0108.output
+  - f0135.left
+- - f0134.output
+  - f0135.right
+- - kernel_body.br
+  - f0136.left
+- - f0135.output
+  - f0136.right
+- - kernel_body.bi
+  - f0137.left
+- - f0135.output
+  - f0137.right
+- - f0132.output
+  - f0138.main
+- - f0136.output
+  - f0138.shortcut
+- - f0133.output
+  - f0139.main
+- - f0137.output
+  - f0139.shortcut
+- - kernel_body.rr
+  - f0140.left
+- - f0138.output
+  - f0140.right
+- - kernel_body.ri
+  - f0141.left
+- - f0139.output
+  - f0141.right
+- - f0140.output
+  - f0142.left
+- - f0141.output
+  - f0142.right
+- - f0142.output
+  - f0146.input
+- - f0146.output
+  - f0147.left
+- - f0108.output
+  - f0147.right
+- - kernel_body.pr
+  - f0148.left
+- - f0147.output
+  - f0148.right
+- - kernel_body.pi
+  - f0149.left
+- - f0147.output
+  - f0149.right
+- - f0138.output
+  - f0150.left
+- - f0148.output
+  - f0150.right
+- - f0139.output
+  - f0151.left
+- - f0149.output
+  - f0151.right
+- - kernel_body.dr
+  - f0152.left
+- - f0150.output
+  - f0152.right
+- - kernel_body.di
+  - f0153.left
+- - f0151.output
+  - f0153.right
+- - f0152.output
+  - f0154.left
+- - f0153.output
+  - f0154.right
+- - kernel_body.dr
+  - f0155.left
+- - f0151.output
+  - f0155.right
+- - kernel_body.di
+  - f0156.left
+- - f0150.output
+  - f0156.right
+- - f0155.output
+  - f0157.main
+- - f0156.output
+  - f0157.shortcut
+- - f0154.output
+  - f0158.input0
+- - f0157.output
+  - f0158.input1
+- - f0158.output
+  - kernel_body.s_next
+- - kernel_body.cr
+  - f0159.left
+- - f0154.output
+  - f0159.right
+- - kernel_body.ci
+  - f0160.left
+- - f0157.output
+  - f0160.right
+- - f0159.output
+  - f0161.left
+- - f0160.output
+  - f0161.right
+- - f0161.output
+  - f0165.input
+- - f0108.output
+  - f0166.left
+- - f0165.output
+  - f0166.right
+- - f0166.output
+  - kernel_body.v
+- - unit.u
+  - sequence_scan.u
+- - unit.h0
+  - sequence_scan.s0
+- - prepare.dr
+  - sequence_scan.dr
+- - prepare.di
+  - sequence_scan.di
+- - prepare.er
+  - sequence_scan.er
+- - prepare.ei
+  - sequence_scan.ei
+- - prepare.pr
+  - sequence_scan.pr
+- - prepare.pi
+  - sequence_scan.pi
+- - prepare.qr
+  - sequence_scan.qr
+- - prepare.qi
+  - sequence_scan.qi
+- - prepare.rr
+  - sequence_scan.rr
+- - prepare.ri
+  - sequence_scan.ri
+- - prepare.br
+  - sequence_scan.br
+- - prepare.bi
+  - sequence_scan.bi
+- - prepare.cr
+  - sequence_scan.cr
+- - prepare.ci
+  - sequence_scan.ci
+- - unit.u
+  - f0167.input
+- - parameters.p5
+  - f0168.input
+- - f0167.output
+  - kernel_scan.u
+- - f0168.output
+  - kernel_scan.s0
+- - prepare.dr
+  - kernel_scan.dr
+- - prepare.di
+  - kernel_scan.di
+- - prepare.er
+  - kernel_scan.er
+- - prepare.ei
+  - kernel_scan.ei
+- - prepare.pr
+  - kernel_scan.pr
+- - prepare.pi
+  - kernel_scan.pi
+- - prepare.qr
+  - kernel_scan.qr
+- - prepare.qi
+  - kernel_scan.qi
+- - prepare.rr
+  - kernel_scan.rr
+- - prepare.ri
+  - kernel_scan.ri
+- - prepare.br
+  - kernel_scan.br
+- - prepare.bi
+  - kernel_scan.bi
+- - prepare.cr
+  - kernel_scan.cr
+- - prepare.ci
+  - kernel_scan.ci
+- - f0169.output
+  - kernel_scan.flag0
+- - parameters.p6
+  - f0170.input
+- - unit.u
+  - f0171.left
+- - f0170.output
+  - f0171.right
+- - sequence_scan.sequence
+  - f0172.main
+- - f0171.output
+  - f0172.shortcut
+- - f0172.output
+  - unit.y
+- - sequence_scan.sf
+  - unit.h_final
+- - kernel_scan.sequence
+  - unit.kernel
+interface:
+  unit:
+    inputs:
+      u:
+        shape:
+        - B
+        - 1
+        - T
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+      h0:
+        shape:
+        - B
+        - 1
+        - 2
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        - axis3
+        dtype: float64
+    outputs:
+      kernel:
+        shape:
+        - 1
+        - 1
+        - T
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+      y:
+        shape:
+        - B
+        - 1
+        - T
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+      h_final:
+        shape:
+        - B
+        - 1
+        - 2
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        - axis3
+        dtype: float64
+    symbols:
+      B: positive_integer
+      T: positive_integer
+  prepare:
+    inputs: {}
+    outputs:
+      dr:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      di:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      er:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      ei:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      pr:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      pi:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      qr:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      qi:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      rr:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      ri:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      br:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      bi:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      cr:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      ci:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+  f0000:
+    inputs: {}
+    outputs:
+      output:
+        shape: []
+        axes: []
+        dtype: float64
+  f0001:
+    inputs: {}
+    outputs:
+      output:
+        shape: []
+        axes: []
+        dtype: float64
+  f0002:
+    inputs:
+      input:
+        shape:
+        - 1
+        - 1
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+  f0003:
+    inputs:
+      input:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+  f0004:
+    inputs:
+      input:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+  f0005:
+    inputs:
+      input:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+  f0006:
+    inputs:
+      input:
+        shape:
+        - 1
+        - 1
+        - 2
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        - axis3
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        - 2
+        - 1
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        - axis3
+        dtype: float64
+  f0007:
+    inputs:
+      input:
+        shape:
+        - 1
+        - 1
+        - 2
+        - 1
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        - axis3
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0008:
+    inputs:
+      input:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+  f0009:
+    inputs:
+      input:
+        shape:
+        - 1
+        - 1
+        - 2
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        - axis3
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        - 2
+        - 1
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        - axis3
+        dtype: float64
+  f0010:
+    inputs:
+      input:
+        shape:
+        - 1
+        - 1
+        - 2
+        - 1
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        - axis3
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0011:
+    inputs:
+      input:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+  f0012:
+    inputs:
+      input:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+  f0013:
+    inputs:
+      input:
+        shape:
+        - 1
+        - 1
+        - 2
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        - axis3
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        - 2
+        - 1
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        - axis3
+        dtype: float64
+  f0014:
+    inputs:
+      input:
+        shape:
+        - 1
+        - 1
+        - 2
+        - 1
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        - axis3
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0015:
+    inputs:
+      input:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+  f0016:
+    inputs:
+      input:
+        shape:
+        - 1
+        - 1
+        - 2
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        - axis3
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        - 2
+        - 1
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        - axis3
+        dtype: float64
+  f0017:
+    inputs:
+      input:
+        shape:
+        - 1
+        - 1
+        - 2
+        - 1
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        - axis3
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0018:
+    inputs:
+      input:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+  f0019:
+    inputs:
+      input:
+        shape:
+        - 1
+        - 1
+        - 2
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        - axis3
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        - 2
+        - 1
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        - axis3
+        dtype: float64
+  f0020:
+    inputs:
+      input:
+        shape:
+        - 1
+        - 1
+        - 2
+        - 1
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        - axis3
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0021:
+    inputs:
+      input:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+  f0022:
+    inputs:
+      input:
+        shape:
+        - 1
+        - 1
+        - 2
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        - axis3
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        - 2
+        - 1
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        - axis3
+        dtype: float64
+  f0023:
+    inputs:
+      input:
+        shape:
+        - 1
+        - 1
+        - 2
+        - 1
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        - axis3
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0024:
+    inputs:
+      input:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+  f0025:
+    inputs:
+      left:
+        shape: []
+        axes: []
+        dtype: float64
+      right:
+        shape:
+        - 1
+        - 1
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+  f0026:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 1
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      right:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+  f0027:
+    inputs:
+      input:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+  f0028:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      right:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+  f0029:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      right:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+  f0030:
+    inputs:
+      main:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      shortcut:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+  f0031:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      right:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+  f0032:
+    inputs:
+      input:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+  f0033:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      right:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+  f0034:
+    inputs:
+      main:
+        shape:
+        - 1
+        - 1
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      shortcut:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+  f0035:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      right:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+  f0036:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      right:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+  f0037:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      right:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+  f0038:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      right:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+  f0039:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      right:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+  f0040:
+    inputs:
+      main:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      shortcut:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+  f0041:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      right:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+  f0042:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      right:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+  f0043:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      right:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+  f0047:
+    inputs:
+      input:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+  f0048:
+    inputs:
+      left:
+        shape: []
+        axes: []
+        dtype: float64
+      right:
+        shape:
+        - 1
+        - 1
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+  f0049:
+    inputs:
+      main:
+        shape: []
+        axes: []
+        dtype: float64
+      shortcut:
+        shape:
+        - 1
+        - 1
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+  f0050:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      right:
+        shape:
+        - 1
+        - 1
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+  f0051:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      right:
+        shape:
+        - 1
+        - 1
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+  sequence_body:
+    inputs:
+      x:
+        shape:
+        - B
+        - 1
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      s:
+        shape:
+        - B
+        - 1
+        - 2
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        - axis3
+        dtype: float64
+      dr:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      di:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      er:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      ei:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      pr:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      pi:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      qr:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      qi:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      rr:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      ri:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      br:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      bi:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      cr:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      ci:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+    outputs:
+      v:
+        shape:
+        - B
+        - 1
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      s_next:
+        shape:
+        - B
+        - 1
+        - 2
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        - axis3
+        dtype: float64
+  f0052:
+    inputs: {}
+    outputs:
+      output:
+        shape: []
+        axes: []
+        dtype: float64
+  f0053:
+    inputs:
+      input:
+        shape:
+        - B
+        - 1
+        - 2
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        - axis3
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - B
+        - 1
+        - 2
+        - 1
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        - axis3
+        dtype: float64
+  f0054:
+    inputs:
+      input:
+        shape:
+        - B
+        - 1
+        - 2
+        - 1
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        - axis3
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0055:
+    inputs:
+      input:
+        shape:
+        - B
+        - 1
+        - 2
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        - axis3
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - B
+        - 1
+        - 2
+        - 1
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        - axis3
+        dtype: float64
+  f0056:
+    inputs:
+      input:
+        shape:
+        - B
+        - 1
+        - 2
+        - 1
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        - axis3
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0057:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      right:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0058:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      right:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0059:
+    inputs:
+      left:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+      right:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0063:
+    inputs:
+      input:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - B
+        - 1
+        - 1
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0064:
+    inputs:
+      left:
+        shape:
+        - B
+        - 1
+        - 1
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+      right:
+        shape: []
+        axes: []
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - B
+        - 1
+        - 1
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0065:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      right:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0066:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      right:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0067:
+    inputs:
+      left:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+      right:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0068:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      right:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0069:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      right:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0070:
+    inputs:
+      main:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+      shortcut:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0071:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      right:
+        shape:
+        - B
+        - 1
+        - 1
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0072:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      right:
+        shape:
+        - B
+        - 1
+        - 1
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0073:
+    inputs:
+      left:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+      right:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0074:
+    inputs:
+      left:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+      right:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0075:
+    inputs:
+      input:
+        shape:
+        - B
+        - 1
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - B
+        - 1
+        - 1
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0076:
+    inputs:
+      left:
+        shape: []
+        axes: []
+        dtype: float64
+      right:
+        shape:
+        - B
+        - 1
+        - 1
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - B
+        - 1
+        - 1
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0077:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      right:
+        shape:
+        - B
+        - 1
+        - 1
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0078:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      right:
+        shape:
+        - B
+        - 1
+        - 1
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0079:
+    inputs:
+      main:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+      shortcut:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0080:
+    inputs:
+      main:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+      shortcut:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0081:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      right:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0082:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      right:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0083:
+    inputs:
+      left:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+      right:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0087:
+    inputs:
+      input:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - B
+        - 1
+        - 1
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0088:
+    inputs:
+      left:
+        shape:
+        - B
+        - 1
+        - 1
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+      right:
+        shape: []
+        axes: []
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - B
+        - 1
+        - 1
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0089:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      right:
+        shape:
+        - B
+        - 1
+        - 1
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0090:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      right:
+        shape:
+        - B
+        - 1
+        - 1
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0091:
+    inputs:
+      left:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+      right:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0092:
+    inputs:
+      left:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+      right:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0093:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      right:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0094:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      right:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0095:
+    inputs:
+      left:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+      right:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0096:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      right:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0097:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      right:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0098:
+    inputs:
+      main:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+      shortcut:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0099:
+    inputs:
+      input0:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+      input1:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - B
+        - 1
+        - 2
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        - axis3
+        dtype: float64
+  f0100:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      right:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0101:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      right:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0102:
+    inputs:
+      left:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+      right:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0106:
+    inputs:
+      input:
+        shape:
+        - B
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - B
+        - 1
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+  f0107:
+    inputs:
+      left:
+        shape: []
+        axes: []
+        dtype: float64
+      right:
+        shape:
+        - B
+        - 1
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - B
+        - 1
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+  kernel_body:
+    inputs:
+      x:
+        shape:
+        - 1
+        - 1
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      s:
+        shape:
+        - 1
+        - 1
+        - 2
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        - axis3
+        dtype: float64
+      dr:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      di:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      er:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      ei:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      pr:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      pi:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      qr:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      qi:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      rr:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      ri:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      br:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      bi:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      cr:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      ci:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      flag:
+        shape:
+        - 1
+        - 1
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+    outputs:
+      v:
+        shape:
+        - 1
+        - 1
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      s_next:
+        shape:
+        - 1
+        - 1
+        - 2
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        - axis3
+        dtype: float64
+      flag_next:
+        shape:
+        - 1
+        - 1
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+  f0108:
+    inputs: {}
+    outputs:
+      output:
+        shape: []
+        axes: []
+        dtype: float64
+  f0109:
+    inputs:
+      input:
+        shape:
+        - 1
+        - 1
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+  f0110:
+    inputs:
+      main:
+        shape:
+        - 1
+        - 1
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      shortcut:
+        shape:
+        - 1
+        - 1
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+  f0111:
+    inputs:
+      input:
+        shape:
+        - 1
+        - 1
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+  f0112:
+    inputs:
+      input:
+        shape:
+        - 1
+        - 1
+        - 2
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        - axis3
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        - 2
+        - 1
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        - axis3
+        dtype: float64
+  f0113:
+    inputs:
+      input:
+        shape:
+        - 1
+        - 1
+        - 2
+        - 1
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        - axis3
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0114:
+    inputs:
+      input:
+        shape:
+        - 1
+        - 1
+        - 2
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        - axis3
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        - 2
+        - 1
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        - axis3
+        dtype: float64
+  f0115:
+    inputs:
+      input:
+        shape:
+        - 1
+        - 1
+        - 2
+        - 1
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        - axis3
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0116:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      right:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0117:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      right:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0118:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+      right:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0122:
+    inputs:
+      input:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        - 1
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0123:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 1
+        - 1
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+      right:
+        shape: []
+        axes: []
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        - 1
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0124:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      right:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0125:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      right:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0126:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+      right:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0127:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      right:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0128:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      right:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0129:
+    inputs:
+      main:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+      shortcut:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0130:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      right:
+        shape:
+        - 1
+        - 1
+        - 1
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0131:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      right:
+        shape:
+        - 1
+        - 1
+        - 1
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0132:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+      right:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0133:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+      right:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0134:
+    inputs:
+      input:
+        shape:
+        - 1
+        - 1
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        - 1
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0135:
+    inputs:
+      left:
+        shape: []
+        axes: []
+        dtype: float64
+      right:
+        shape:
+        - 1
+        - 1
+        - 1
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        - 1
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0136:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      right:
+        shape:
+        - 1
+        - 1
+        - 1
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0137:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      right:
+        shape:
+        - 1
+        - 1
+        - 1
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0138:
+    inputs:
+      main:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+      shortcut:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0139:
+    inputs:
+      main:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+      shortcut:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0140:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      right:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0141:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      right:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0142:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+      right:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0146:
+    inputs:
+      input:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        - 1
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0147:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 1
+        - 1
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+      right:
+        shape: []
+        axes: []
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        - 1
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0148:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      right:
+        shape:
+        - 1
+        - 1
+        - 1
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0149:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      right:
+        shape:
+        - 1
+        - 1
+        - 1
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0150:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+      right:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0151:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+      right:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0152:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      right:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0153:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      right:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0154:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+      right:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0155:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      right:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0156:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      right:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0157:
+    inputs:
+      main:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+      shortcut:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0158:
+    inputs:
+      input0:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+      input1:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        - 2
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        - axis3
+        dtype: float64
+  f0159:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      right:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0160:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      right:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0161:
+    inputs:
+      left:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+      right:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0165:
+    inputs:
+      input:
+        shape:
+        - 1
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+  f0166:
+    inputs:
+      left:
+        shape: []
+        axes: []
+        dtype: float64
+      right:
+        shape:
+        - 1
+        - 1
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+  sequence_scan:
+    inputs:
+      u:
+        shape:
+        - B
+        - 1
+        - T
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+      s0:
+        shape:
+        - B
+        - 1
+        - 2
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        - axis3
+        dtype: float64
+      dr:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      di:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      er:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      ei:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      pr:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      pi:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      qr:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      qi:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      rr:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      ri:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      br:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      bi:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      cr:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      ci:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+    outputs:
+      sequence:
+        shape:
+        - B
+        - 1
+        - T
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+      sf:
+        shape:
+        - B
+        - 1
+        - 2
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        - axis3
+        dtype: float64
+  f0167:
+    inputs:
+      input:
+        shape:
+        - B
+        - 1
+        - T
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        - T
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0168:
+    inputs:
+      input:
+        shape:
+        - 1
+        - 1
+        - 2
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        - axis3
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        - 2
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        - axis3
+        dtype: float64
+  kernel_scan:
+    inputs:
+      u:
+        shape:
+        - 1
+        - 1
+        - T
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+      s0:
+        shape:
+        - 1
+        - 1
+        - 2
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        - axis3
+        dtype: float64
+      dr:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      di:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      er:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      ei:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      pr:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      pi:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      qr:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      qi:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      rr:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      ri:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      br:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      bi:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      cr:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      ci:
+        shape:
+        - 1
+        - 2
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+      flag0:
+        shape:
+        - 1
+        - 1
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+    outputs:
+      sequence:
+        shape:
+        - 1
+        - 1
+        - T
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+      sf:
+        shape:
+        - 1
+        - 1
+        - 2
+        - 2
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        - axis3
+        dtype: float64
+      flagf:
+        shape:
+        - 1
+        - 1
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+  f0169:
+    inputs: {}
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+  f0170:
+    inputs:
+      input:
+        shape:
+        - 1
+        - 1
+        axes:
+        - axis0
+        - axis1
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - 1
+        - 1
+        - 1
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0171:
+    inputs:
+      left:
+        shape:
+        - B
+        - 1
+        - T
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+      right:
+        shape:
+        - 1
+        - 1
+        - 1
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - B
+        - 1
+        - T
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+  f0172:
+    inputs:
+      main:
+        shape:
+        - B
+        - 1
+        - T
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+      shortcut:
+        shape:
+        - B
+        - 1
+        - T
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+    outputs:
+      output:
+        shape:
+        - B
+        - 1
+        - T
+        axes:
+        - axis0
+        - axis1
+        - axis2
+        dtype: float64
+state:
+  sequence_scan_carry:
+    shape:
+    - B
+    - 1
+    - 2
+    - 2
+    axes:
+    - axis0
+    - axis1
+    - axis2
+    - axis3
+    initial: external
+  kernel_scan_carry:
+    shape:
+    - 1
+    - 1
+    - 2
+    - 2
+    axes:
+    - axis0
+    - axis1
+    - axis2
+    - axis3
+    initial: external
+  kernel_scan_pulse:
+    shape:
+    - 1
+    - 1
+    axes:
+    - axis0
+    - axis1
+    initial: external
+dependency:
+  unit.y:
+  - unit.u
+  - unit.h0
+  - parameters.p0
+  - parameters.p1
+  - parameters.p2
+  - parameters.p3
+  - parameters.p4
+  - parameters.p5
+  - parameters.p6
+  unit.kernel:
+  - unit.u
+  - parameters.p0
+  - parameters.p1
+  - parameters.p2
+  - parameters.p3
+  - parameters.p4
+  - parameters.p5
+  unit.h_final:
+  - unit.u
+  - unit.h0
+  - parameters.p0
+  - parameters.p1
+  - parameters.p2
+  - parameters.p3
+  - parameters.p5

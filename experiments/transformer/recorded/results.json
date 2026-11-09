@@ -1,0 +1,167 @@
+{
+  "status": "FAIL",
+  "phase": "COMPLETE_ONE_ATTEMPT_UNTOUCHED_EVALUATION",
+  "evaluation": {
+    "source_grounding": "PASS",
+    "representable_scope": "PASS",
+    "structural_fidelity": "PASS",
+    "dataflow_attributes": "PASS",
+    "resource_identity": "FAIL",
+    "state_recurrence_dependency": "INCONCLUSIVE",
+    "numerical_fidelity": "INCONCLUSIVE",
+    "schema_consistency": "FAIL",
+    "source_reference_match": "PASS",
+    "validator_preflight": "PASS"
+  },
+  "requested_checks": {
+    "qkv_projection_attention": "PASS",
+    "multi_head": "PASS",
+    "residual_layernorm_order": "PASS",
+    "ffn_dataflow": "PASS",
+    "parameter_resource_correspondence": "FAIL",
+    "conditional_intermediate_forward": "PASS",
+    "strict_parameter_aligned_numerical_fidelity": "INCONCLUSIVE",
+    "common_schema_fidelity": "FAIL"
+  },
+  "status_semantics": {
+    "PASS": "Affirmatively verified in declared scope",
+    "FAIL": "Executed evidence shows a required contract violation",
+    "INCONCLUSIVE": "Not established; a prerequisite/evaluator limit blocks the claim"
+  },
+  "axis_notes": {
+    "structural_fidelity": "Functional tensor operations and grouping traceability only; original Module object structure excluded",
+    "resource_identity": "Ordinary tensor roles are bijective/distinct, but 0 of 12 required Parameter types/grad metadata are reconstructed",
+    "numerical_fidelity": "Strict Parameter-aligned PASS withheld. Conditional arithmetic after exact value copy into original ordinary tensors passes all nine fixtures with zero error.",
+    "schema_consistency": "Generated Common Schema Fidelity FAIL. Submitted frozen YAML remains schema-consistent PASS; no common schema change or new delta.",
+    "state_recurrence_dependency": "Stateless scope has no recurrent carries; not applicable, no claim made"
+  },
+  "failure_categories": [
+    "PARAMETER_MAPPING",
+    "SCHEMA_INCONSISTENT"
+  ],
+  "api": {
+    "requests_made": 1,
+    "http_status": 200,
+    "duration_seconds": 75.09230554796522,
+    "endpoint": "<generation-endpoint>",
+    "model": "Qwen3.8-27B",
+    "request_sha256": "9858d87fd69a918c508d45ccce8cfc80088966e29c3f234e176c96ef0c78e28a",
+    "raw_response_sha256": "e71e245535ab775da384f1ea0514085b630b097bd7de6ba74143ee2e52f0164f",
+    "usage": {
+      "completion_tokens": 2246,
+      "prompt_tokens": 15141,
+      "total_tokens": 17387,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "finish_reason": "stop",
+    "retries": 0,
+    "redirects": false,
+    "slot_released": true,
+    "budget_remaining": 0,
+    "presend_gate": "requests/presend_checks.json",
+    "approval": "requests/user_approval.json",
+    "slot": "requests/api_slot_reservation.json"
+  },
+  "generated": {
+    "sha256": "27033c63fef8d8ce9f32030e939cebad7dae91ce4d805403cfaa0c727a16496a",
+    "code_exactly_from_response": true,
+    "modified": false,
+    "syntax": "PASS",
+    "whole_source_review": "PASS",
+    "missing_information": [],
+    "assumptions": []
+  },
+  "local_preflight": {
+    "status": "PASS",
+    "fixture_count": 9,
+    "mandatory_checks": {
+      "source_pinned": "PASS",
+      "source_reference_match": "PASS",
+      "source_to_yaml_mapping": "PASS",
+      "schema_consistency": "PASS",
+      "reference_acceptance": "PASS",
+      "negative_tests": "PASS",
+      "state_mapping": "PASS",
+      "fixture_nonvacuity": "PASS"
+    },
+    "negative_controls": 27,
+    "additional_mapping_negative_controls": 2,
+    "candidate_interface_selftest": "PASS",
+    "metrics": {
+      "source_slow_final_max_abs": 2.682209014892578e-07,
+      "source_optimized_final_max_abs": 3.5762786865234375e-07,
+      "source_intermediate_max_abs": 3.5762786865234375e-07,
+      "yaml_reference_intermediate_max_abs": 0.0
+    },
+    "tolerances": {
+      "rtol": 1e-05,
+      "atol": 1e-06
+    },
+    "exit_code": 0,
+    "process_duration_seconds": 2.065705185988918,
+    "internal_duration_seconds": 0.6171858830493875,
+    "frozen_artifact_count": 30
+  },
+  "conditional_numerical": {
+    "status": "PASS",
+    "fixture_count": 9,
+    "trace_roles_including_y": 18,
+    "forward_max_abs": 0.0,
+    "forward_max_rel": 0.0,
+    "intermediate_max_abs": 0.0,
+    "rtol": 1e-05,
+    "atol": 1e-06,
+    "state_handling": "copy_ fixture values into existing ordinary tensors; no Parameter promotion or replacement"
+  },
+  "strict_parameter_alignment": "FAIL",
+  "strict_frozen_validator": {
+    "user_facing_status": "INCONCLUSIVE",
+    "raw_status": "BLOCKED",
+    "reason": "'UnitA' object has no attribute 'eval'",
+    "code_or_validator_repair": false
+  },
+  "evaluator_limit": "Frozen candidate entry assumes .eval() and nn.Module enumeration. The generated plain-object factory cannot use that adapter; this is reported separately and does not by itself violate excluded original Module hierarchy fidelity. Supplemental read-only observation reuses preflight-hashed runtime_structure semantics to assess actual forward operations.",
+  "schema_delta_used": false,
+  "common_files_modified": false,
+  "generated_code_repaired": false,
+  "second_api_request": false,
+  "compute": {
+    "policy": "compute-v1.0",
+    "managed_cpu_light_jobs": 2,
+    "threads": 1,
+    "gpu_used": false,
+    "jobs_released": true,
+    "commands": "logs/generated_commands.json"
+  },
+  "evidence": [
+    "requests/api_attempt.json",
+    "requests/response_metadata.json",
+    "requests/raw_response.json",
+    "validation/response_parse.json",
+    "validation/candidate_review.json",
+    "validation/generated_state.json",
+    "validation/generated_structure.json",
+    "validation/generated_numerical.json",
+    "validation/generated_frozen_validator.json",
+    "validation/generated_summary.json",
+    "logs/generated_commands.json"
+  ],
+  "exclusions": [
+    "Original Module object hierarchy",
+    "Source default initialization/RNG",
+    "Training/dropout randomness",
+    "Gradient evaluation",
+    "Agent Edit"
+  ],
+  "limits": [
+    "One encoder functional block; finite fixtures only",
+    "Conditional forward success does not repair missing Parameter semantics",
+    "No architecture-wide or Agent Edit claim"
+  ],
+  "blockers": [
+    "This run cannot meet Parameter/Common Schema fidelity with the untouched response; the sole API attempt is consumed. No retry or code repair performed."
+  ],
+  "completed_at_utc": "2026-11-05T09:22:15.584553+00:00"
+}

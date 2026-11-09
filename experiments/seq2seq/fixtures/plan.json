@@ -1,0 +1,61 @@
+{
+  "scope": "Pre-embedded one-layer LSTM encoder/identity handoff/teacher-forced decoder and vocabulary projection",
+  "device": "cpu",
+  "dtype": "float32",
+  "mode": "eval",
+  "threads": 1,
+  "batch": 2,
+  "encoder_embedding": 3,
+  "decoder_embedding": 5,
+  "hidden": 4,
+  "vocabulary": 7,
+  "source_vocabulary": 9,
+  "n_layers": 1,
+  "dropout": 0.0,
+  "teacher_forcing_ratio": 1.0,
+  "cases": [
+    {
+      "seed": 1701,
+      "source_length": 3,
+      "decoder_steps": 2
+    },
+    {
+      "seed": 1702,
+      "source_length": 4,
+      "decoder_steps": 3
+    },
+    {
+      "seed": 1703,
+      "source_length": 2,
+      "decoder_steps": 4
+    }
+  ],
+  "rtol": 1e-05,
+  "atol": 1e-06,
+  "initial_encoder_state": "Exact zeros as source nn.LSTM default; explicit YAML constants",
+  "decoder_initial_state": "Nonzero encoder final hidden/cell, identity handoff",
+  "nonzero_external_state_supplement": "Cross-check each source recurrent module against manual cells with nonzero hidden/cell; not a changed architecture interface",
+  "target_shift": "Original trg[:-1] embeddings; decoder step j predicts original output[j+1]. Exclude unused leading zero output[0].",
+  "parameter_provenance": "CPU Generator seed; signed nonzero uniform values, all ten selected Parameters aligned; embedding weights outside core only in source fixture",
+  "outputs": [
+    "logits",
+    "encoder_sequence",
+    "encoder_h",
+    "encoder_c",
+    "bridge_h",
+    "bridge_c",
+    "decoder_sequence",
+    "decoder_h",
+    "decoder_c"
+  ],
+  "unsupported": [
+    "token lookup in reconstruction",
+    "training/dropout",
+    "multiple layers",
+    "bidirectionality",
+    "autoregressive feedback/EOS",
+    "general batch size",
+    "initializer fidelity"
+  ],
+  "fixture_memory_budget_mib": 512
+}

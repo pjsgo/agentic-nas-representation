@@ -1,0 +1,47 @@
+{
+  "original_runner_output": "generator/runs/20261102T065409629232Z",
+  "raw_response_sha256": "f1450d47d96e3c7fb011f93f2f5672b28d41504c232717b8949cd1d1dc3410c6",
+  "original_runner_state": "generated_pending_review",
+  "failures": [],
+  "generated_code_executed": false,
+  "returned_model": "Qwen3.8-27B",
+  "finish_reason": "stop",
+  "usage": {
+    "completion_tokens": 1654,
+    "prompt_tokens": 2690,
+    "total_tokens": 4344,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    }
+  },
+  "strict_json": true,
+  "derived_outer_fence_extraction": false,
+  "required_field_types": {
+    "status": true,
+    "visualization": true,
+    "code": true,
+    "missing_information": true,
+    "field_usage": true,
+    "notes": true
+  },
+  "model_output_status": "ok",
+  "code_sha256": "03af8d0762c76b240fb8976d9250441d0b756b81c5efbabfbeea14db45aa8737",
+  "code_exact_response_string": true,
+  "python_syntax": "passed",
+  "imports": [
+    "torch",
+    "torch.nn"
+  ],
+  "forbidden_import_or_dynamic_execution_candidates": [],
+  "classes": [
+    {
+      "name": "BasicBlock",
+      "line": 4,
+      "end_line": 93
+    }
+  ],
+  "top_level_functions": [],
+  "manual_source_review_required_before_execution": true,
+  "runner_extracted_code_identical": true,
+  "strict_format_pass": true
+}

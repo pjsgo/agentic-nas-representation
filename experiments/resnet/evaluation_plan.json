@@ -1,0 +1,103 @@
+{
+  "fixed_before_api_call": true,
+  "device": "cpu",
+  "dtype": "float32",
+  "mode": "eval",
+  "torch_threads": 1,
+  "reference_constructor": {
+    "inplanes": 64,
+    "planes": 64,
+    "stride": 1,
+    "downsample": null
+  },
+  "reference_seed": 20261102,
+  "bn_fixture_seed": 1729,
+  "bn_fixture": "deterministic non-default affine parameters and running buffers: weight=0.5+uniform, bias=0.1*normal, mean=0.2*normal, variance=0.5+uniform, num_batches_tracked=[7,11]",
+  "state_mapping_policy": "one-to-one mapping based on source-grounded module roles and actual generated code; never match by shape alone; ambiguous or incomplete mapping is a failure",
+  "comparison": {
+    "function": "torch.testing.assert_close",
+    "rtol": 1e-05,
+    "atol": 1e-06,
+    "check_dtype": true,
+    "check_device": true
+  },
+  "cases": [
+    {
+      "name": "normal_minimal",
+      "kind": "normal",
+      "shape": [
+        1,
+        64,
+        1,
+        1
+      ],
+      "seed": 1001
+    },
+    {
+      "name": "normal_rectangular",
+      "kind": "normal",
+      "shape": [
+        2,
+        64,
+        7,
+        11
+      ],
+      "seed": 1002
+    },
+    {
+      "name": "normal_square",
+      "kind": "normal",
+      "shape": [
+        1,
+        64,
+        16,
+        16
+      ],
+      "seed": 1003
+    },
+    {
+      "name": "zeros",
+      "kind": "zeros",
+      "shape": [
+        2,
+        64,
+        3,
+        5
+      ]
+    },
+    {
+      "name": "ones",
+      "kind": "ones",
+      "shape": [
+        1,
+        64,
+        8,
+        8
+      ]
+    },
+    {
+      "name": "signed_ramp",
+      "kind": "ramp",
+      "shape": [
+        3,
+        64,
+        5,
+        9
+      ]
+    },
+    {
+      "name": "noncontiguous_normal",
+      "kind": "noncontiguous_normal",
+      "shape": [
+        2,
+        64,
+        6,
+        10
+      ],
+      "seed": 1004
+    }
+  ],
+  "strict_format_policy": "original runner JSON acceptance remains authoritative; if only an exact outer Markdown fence blocks parsing, preserve failure and create a reversible derived extraction for downstream diagnostics without changing code",
+  "code_execution_policy": "inspect complete generated source first; reject original implementation import, unsafe side effects, and source retrieval; do not edit generated code",
+  "success_policy": "strict format, syntax, structural fidelity including resource/mutation/static-contract semantics, unambiguous complete state mapping, model instantiation and all forward cases must pass for full pipeline success"
+}

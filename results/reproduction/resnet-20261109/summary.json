@@ -1,0 +1,15 @@
+{
+  "kind": "historical_evaluator_rerun",
+  "passed": true,
+  "candidate_modified": false,
+  "api_calls": 0,
+  "cases_passed": 7,
+  "case_count": 7,
+  "environment": {
+    "torch": "2.2.1",
+    "torchvision": "0.17.1",
+    "numpy": "1.26.3"
+  },
+  "python": "3.10.13",
+  "scope": "BasicBlock identity shortcut, CPU float32 eval; no training or full model claim"
+}

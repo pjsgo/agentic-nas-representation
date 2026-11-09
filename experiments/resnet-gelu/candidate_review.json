@@ -1,0 +1,78 @@
+{
+  "safe_to_execute": true,
+  "full_source_manually_reviewed": true,
+  "code_sha256": "03af8d0762c76b240fb8976d9250441d0b756b81c5efbabfbeea14db45aa8737",
+  "entrypoint": {
+    "kind": "class",
+    "name": "BasicBlock",
+    "kwargs": {}
+  },
+  "imports": [
+    "torch",
+    "torch.nn"
+  ],
+  "original_or_reference_import": false,
+  "network_or_filesystem_or_dynamic_code": false,
+  "generated_code_modified": false,
+  "format_review": "response_review/format_review.json",
+  "observations": [
+    {
+      "item": "conv1_bn1",
+      "lines": [
+        9,
+        28
+      ],
+      "judgment": "YAML attributes preserved"
+    },
+    {
+      "item": "inner_relu",
+      "lines": [
+        33,
+        75
+      ],
+      "judgment": "ReLU inplace=True preserved"
+    },
+    {
+      "item": "conv2_bn2",
+      "lines": [
+        36,
+        55
+      ],
+      "judgment": "YAML attributes preserved"
+    },
+    {
+      "item": "last_activation",
+      "lines": [
+        59,
+        91
+      ],
+      "judgment": "separate GELU approximate=none, no inplace/target"
+    },
+    {
+      "item": "shortcut_add",
+      "lines": [
+        64,
+        88
+      ],
+      "judgment": "direct x shortcut; main h.add_(x)"
+    },
+    {
+      "item": "resource_split",
+      "lines": [
+        33,
+        59
+      ],
+      "judgment": "two independent activation Modules"
+    },
+    {
+      "item": "forward",
+      "lines": [
+        61,
+        93
+      ],
+      "judgment": "no additional arithmetic, runtime guard, reshaping, detach or clone"
+    }
+  ],
+  "candidate_names_are_not_validation_constraints": true,
+  "runtime_state_mapping_and_forward_still_required": true
+}

@@ -1,0 +1,129 @@
+{
+  "status": "FROZEN_INPUTS_NUMERICAL_NOT_RUN",
+  "scope": "Mamba-1 selective-scan core source lines 263-279; no full-block claim",
+  "device": "cpu",
+  "dtype": "float32",
+  "mode": "eval",
+  "torch_threads": 1,
+  "seeds": [
+    1701,
+    1702,
+    1703
+  ],
+  "input_ports": [
+    "u",
+    "gate",
+    "delta_logits",
+    "B",
+    "C",
+    "initial_state"
+  ],
+  "output_ports": [
+    "output",
+    "final_state"
+  ],
+  "parameter_roles": {
+    "p_A_log": {
+      "shape": [
+        3,
+        2
+      ],
+      "requires_grad": true
+    },
+    "p_D": {
+      "shape": [
+        3
+      ],
+      "requires_grad": true
+    }
+  },
+  "buffer_roles": {},
+  "module_operators": [],
+  "initial_state": "External nonzero signed tensor; immutable input, returned final state separately",
+  "identity_policy": "Bijective Parameter role map; distinct objects and nonaliasing storage; no buffers or computational Module operators in the selected slice.",
+  "tolerances": {
+    "all_outputs": {
+      "rtol": 1e-05,
+      "atol": 1e-06
+    },
+    "all_intermediates": {
+      "rtol": 1e-05,
+      "atol": 1e-06
+    }
+  },
+  "intermediates": [
+    "delta",
+    "B",
+    "C",
+    "decay",
+    "drive",
+    "states",
+    "readout",
+    "pre_gate",
+    "output"
+  ],
+  "cases": [
+    {
+      "name": "signed_dense",
+      "batch": 2,
+      "time": 4,
+      "seed": 1701,
+      "kind": "dense"
+    },
+    {
+      "name": "impulse",
+      "batch": 2,
+      "time": 4,
+      "seed": 1702,
+      "kind": "impulse"
+    },
+    {
+      "name": "single_step",
+      "batch": 1,
+      "time": 1,
+      "seed": 1703,
+      "kind": "dense"
+    },
+    {
+      "name": "longer_sequence",
+      "batch": 2,
+      "time": 7,
+      "seed": 1703,
+      "kind": "dense"
+    }
+  ],
+  "domain": {
+    "batch": "positive_integer",
+    "time": "positive_integer",
+    "channels": 3,
+    "state_size": 2,
+    "training": false,
+    "gradient_tests": false,
+    "empty_sequence": false
+  },
+  "nonvacuity_checks": [
+    "signed nonzero parameter/state/input values",
+    "delta/B/C vary by token for T>1",
+    "B!=T!=channels in at least one fixture",
+    "nonzero finite output/state",
+    "each applicable mutant must fail at least one actual fixture",
+    "input/Parameter immutability"
+  ],
+  "unsupported": [
+    "input/gate projection",
+    "causal convolution and crop",
+    "delta projection/bias calculation",
+    "B/C generation from upstream input",
+    "output projection",
+    "full block/model",
+    "Mamba-2",
+    "cache continuation",
+    "mixed precision",
+    "initializer equivalence",
+    "training/gradients"
+  ],
+  "numerical_run_status": "BLOCKED_COMPUTE_SLOT_PENDING",
+  "compute_policy": "No torch import/model execution until explicit coordinator reservation; at most two active compute workers globally; no automatic enforcement assumed.",
+  "memory_budget_mib": 512,
+  "timeout_seconds": 120
+}

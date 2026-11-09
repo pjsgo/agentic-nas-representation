@@ -1,0 +1,1210 @@
+{
+  "format_pass": true,
+  "syntax_pass": true,
+  "static_structure_pass": true,
+  "instantiation": "passed",
+  "runtime_structure": "passed",
+  "state_mapping": "passed",
+  "forward_comparison": "passed",
+  "failures": [],
+  "cases": [
+    {
+      "name": "normal_minimal",
+      "shape": [
+        1,
+        64,
+        1,
+        1
+      ],
+      "kind": "normal",
+      "input_stride": [
+        64,
+        1,
+        1,
+        1
+      ],
+      "input_contiguous": true,
+      "status": "passed",
+      "original_trace": {
+        "call_order": [
+          "conv1",
+          "bn1",
+          "relu",
+          "conv2",
+          "bn2",
+          "relu"
+        ],
+        "direct_dataflow_preserved": true,
+        "same_relu_object_called_twice": true,
+        "main_tensor_updated_inplace_by_add": true,
+        "both_relus_update_input_inplace": true,
+        "events": [
+          {
+            "role": "conv1",
+            "module_id": 140623667145664,
+            "input_version": 0,
+            "input_pointer": 97316608,
+            "output_version": 0,
+            "output_pointer": 99141056
+          },
+          {
+            "role": "bn1",
+            "module_id": 140623667145760,
+            "input_version": 0,
+            "input_pointer": 99141056,
+            "output_version": 0,
+            "output_pointer": 99399040
+          },
+          {
+            "role": "relu",
+            "module_id": 140623667145712,
+            "input_version": 0,
+            "input_pointer": 99399040,
+            "output_version": 1,
+            "output_pointer": 99399040
+          },
+          {
+            "role": "conv2",
+            "module_id": 140623667147344,
+            "input_version": 1,
+            "input_pointer": 99399040,
+            "output_version": 0,
+            "output_pointer": 101826432
+          },
+          {
+            "role": "bn2",
+            "module_id": 140623667147440,
+            "input_version": 0,
+            "input_pointer": 101826432,
+            "output_version": 0,
+            "output_pointer": 84939904
+          },
+          {
+            "role": "relu",
+            "module_id": 140623667145712,
+            "input_version": 1,
+            "input_pointer": 84939904,
+            "output_version": 2,
+            "output_pointer": 84939904
+          }
+        ]
+      },
+      "generated_trace": {
+        "call_order": [
+          "conv1",
+          "bn1",
+          "relu",
+          "conv2",
+          "bn2",
+          "relu"
+        ],
+        "direct_dataflow_preserved": true,
+        "same_relu_object_called_twice": true,
+        "main_tensor_updated_inplace_by_add": true,
+        "both_relus_update_input_inplace": true,
+        "events": [
+          {
+            "role": "conv1",
+            "module_id": 140623667143024,
+            "input_version": 0,
+            "input_pointer": 97509312,
+            "output_version": 0,
+            "output_pointer": 103693568
+          },
+          {
+            "role": "bn1",
+            "module_id": 140623667144560,
+            "input_version": 0,
+            "input_pointer": 103693568,
+            "output_version": 0,
+            "output_pointer": 101276288
+          },
+          {
+            "role": "relu",
+            "module_id": 140623667144608,
+            "input_version": 0,
+            "input_pointer": 101276288,
+            "output_version": 1,
+            "output_pointer": 101276288
+          },
+          {
+            "role": "conv2",
+            "module_id": 140623667144656,
+            "input_version": 1,
+            "input_pointer": 101276288,
+            "output_version": 0,
+            "output_pointer": 100626048
+          },
+          {
+            "role": "bn2",
+            "module_id": 140623667144704,
+            "input_version": 0,
+            "input_pointer": 100626048,
+            "output_version": 0,
+            "output_pointer": 93535936
+          },
+          {
+            "role": "relu",
+            "module_id": 140623667144608,
+            "input_version": 1,
+            "input_pointer": 93535936,
+            "output_version": 2,
+            "output_pointer": 93535936
+          }
+        ]
+      },
+      "max_absolute_error": 0.0,
+      "mean_absolute_error": 0.0
+    },
+    {
+      "name": "normal_rectangular",
+      "shape": [
+        2,
+        64,
+        7,
+        11
+      ],
+      "kind": "normal",
+      "input_stride": [
+        4928,
+        77,
+        11,
+        1
+      ],
+      "input_contiguous": true,
+      "status": "passed",
+      "original_trace": {
+        "call_order": [
+          "conv1",
+          "bn1",
+          "relu",
+          "conv2",
+          "bn2",
+          "relu"
+        ],
+        "direct_dataflow_preserved": true,
+        "same_relu_object_called_twice": true,
+        "main_tensor_updated_inplace_by_add": true,
+        "both_relus_update_input_inplace": true,
+        "events": [
+          {
+            "role": "conv1",
+            "module_id": 140623667145664,
+            "input_version": 0,
+            "input_pointer": 105655296,
+            "output_version": 0,
+            "output_pointer": 105851648
+          },
+          {
+            "role": "bn1",
+            "module_id": 140623667145760,
+            "input_version": 0,
+            "input_pointer": 105851648,
+            "output_version": 0,
+            "output_pointer": 105912960
+          },
+          {
+            "role": "relu",
+            "module_id": 140623667145712,
+            "input_version": 0,
+            "input_pointer": 105912960,
+            "output_version": 1,
+            "output_pointer": 105912960
+          },
+          {
+            "role": "conv2",
+            "module_id": 140623667147344,
+            "input_version": 1,
+            "input_pointer": 105912960,
+            "output_version": 0,
+            "output_pointer": 105952512
+          },
+          {
+            "role": "bn2",
+            "module_id": 140623667147440,
+            "input_version": 0,
+            "input_pointer": 105952512,
+            "output_version": 0,
+            "output_pointer": 106004288
+          },
+          {
+            "role": "relu",
+            "module_id": 140623667145712,
+            "input_version": 1,
+            "input_pointer": 106004288,
+            "output_version": 2,
+            "output_pointer": 106004288
+          }
+        ]
+      },
+      "generated_trace": {
+        "call_order": [
+          "conv1",
+          "bn1",
+          "relu",
+          "conv2",
+          "bn2",
+          "relu"
+        ],
+        "direct_dataflow_preserved": true,
+        "same_relu_object_called_twice": true,
+        "main_tensor_updated_inplace_by_add": true,
+        "both_relus_update_input_inplace": true,
+        "events": [
+          {
+            "role": "conv1",
+            "module_id": 140623667143024,
+            "input_version": 0,
+            "input_pointer": 105694848,
+            "output_version": 0,
+            "output_pointer": 106061888
+          },
+          {
+            "role": "bn1",
+            "module_id": 140623667144560,
+            "input_version": 0,
+            "input_pointer": 106061888,
+            "output_version": 0,
+            "output_pointer": 106101376
+          },
+          {
+            "role": "relu",
+            "module_id": 140623667144608,
+            "input_version": 0,
+            "input_pointer": 106101376,
+            "output_version": 1,
+            "output_pointer": 106101376
+          },
+          {
+            "role": "conv2",
+            "module_id": 140623667144656,
+            "input_version": 1,
+            "input_pointer": 106101376,
+            "output_version": 0,
+            "output_pointer": 106140864
+          },
+          {
+            "role": "bn2",
+            "module_id": 140623667144704,
+            "input_version": 0,
+            "input_pointer": 106140864,
+            "output_version": 0,
+            "output_pointer": 106180352
+          },
+          {
+            "role": "relu",
+            "module_id": 140623667144608,
+            "input_version": 1,
+            "input_pointer": 106180352,
+            "output_version": 2,
+            "output_pointer": 106180352
+          }
+        ]
+      },
+      "max_absolute_error": 0.0,
+      "mean_absolute_error": 0.0
+    },
+    {
+      "name": "normal_square",
+      "shape": [
+        1,
+        64,
+        16,
+        16
+      ],
+      "kind": "normal",
+      "input_stride": [
+        16384,
+        256,
+        16,
+        1
+      ],
+      "input_contiguous": true,
+      "status": "passed",
+      "original_trace": {
+        "call_order": [
+          "conv1",
+          "bn1",
+          "relu",
+          "conv2",
+          "bn2",
+          "relu"
+        ],
+        "direct_dataflow_preserved": true,
+        "same_relu_object_called_twice": true,
+        "main_tensor_updated_inplace_by_add": true,
+        "both_relus_update_input_inplace": true,
+        "events": [
+          {
+            "role": "conv1",
+            "module_id": 140623667145664,
+            "input_version": 0,
+            "input_pointer": 106554944,
+            "output_version": 0,
+            "output_pointer": 106061888
+          },
+          {
+            "role": "bn1",
+            "module_id": 140623667145760,
+            "input_version": 0,
+            "input_pointer": 106061888,
+            "output_version": 0,
+            "output_pointer": 105912960
+          },
+          {
+            "role": "relu",
+            "module_id": 140623667145712,
+            "input_version": 0,
+            "input_pointer": 105912960,
+            "output_version": 1,
+            "output_pointer": 105912960
+          },
+          {
+            "role": "conv2",
+            "module_id": 140623667147344,
+            "input_version": 1,
+            "input_pointer": 105912960,
+            "output_version": 0,
+            "output_pointer": 105655296
+          },
+          {
+            "role": "bn2",
+            "module_id": 140623667147440,
+            "input_version": 0,
+            "input_pointer": 105655296,
+            "output_version": 0,
+            "output_pointer": 107341888
+          },
+          {
+            "role": "relu",
+            "module_id": 140623667145712,
+            "input_version": 1,
+            "input_pointer": 107341888,
+            "output_version": 2,
+            "output_pointer": 107341888
+          }
+        ]
+      },
+      "generated_trace": {
+        "call_order": [
+          "conv1",
+          "bn1",
+          "relu",
+          "conv2",
+          "bn2",
+          "relu"
+        ],
+        "direct_dataflow_preserved": true,
+        "same_relu_object_called_twice": true,
+        "main_tensor_updated_inplace_by_add": true,
+        "both_relus_update_input_inplace": true,
+        "events": [
+          {
+            "role": "conv1",
+            "module_id": 140623667143024,
+            "input_version": 0,
+            "input_pointer": 106620608,
+            "output_version": 0,
+            "output_pointer": 107407552
+          },
+          {
+            "role": "bn1",
+            "module_id": 140623667144560,
+            "input_version": 0,
+            "input_pointer": 107407552,
+            "output_version": 0,
+            "output_pointer": 107473216
+          },
+          {
+            "role": "relu",
+            "module_id": 140623667144608,
+            "input_version": 0,
+            "input_pointer": 107473216,
+            "output_version": 1,
+            "output_pointer": 107473216
+          },
+          {
+            "role": "conv2",
+            "module_id": 140623667144656,
+            "input_version": 1,
+            "input_pointer": 107473216,
+            "output_version": 0,
+            "output_pointer": 107538880
+          },
+          {
+            "role": "bn2",
+            "module_id": 140623667144704,
+            "input_version": 0,
+            "input_pointer": 107538880,
+            "output_version": 0,
+            "output_pointer": 107604544
+          },
+          {
+            "role": "relu",
+            "module_id": 140623667144608,
+            "input_version": 1,
+            "input_pointer": 107604544,
+            "output_version": 2,
+            "output_pointer": 107604544
+          }
+        ]
+      },
+      "max_absolute_error": 0.0,
+      "mean_absolute_error": 0.0
+    },
+    {
+      "name": "zeros",
+      "shape": [
+        2,
+        64,
+        3,
+        5
+      ],
+      "kind": "zeros",
+      "input_stride": [
+        960,
+        15,
+        5,
+        1
+      ],
+      "input_contiguous": true,
+      "status": "passed",
+      "original_trace": {
+        "call_order": [
+          "conv1",
+          "bn1",
+          "relu",
+          "conv2",
+          "bn2",
+          "relu"
+        ],
+        "direct_dataflow_preserved": true,
+        "same_relu_object_called_twice": true,
+        "main_tensor_updated_inplace_by_add": true,
+        "both_relus_update_input_inplace": true,
+        "events": [
+          {
+            "role": "conv1",
+            "module_id": 140623667145664,
+            "input_version": 0,
+            "input_pointer": 106331008,
+            "output_version": 0,
+            "output_pointer": 106398592
+          },
+          {
+            "role": "bn1",
+            "module_id": 140623667145760,
+            "input_version": 0,
+            "input_pointer": 106398592,
+            "output_version": 0,
+            "output_pointer": 106390784
+          },
+          {
+            "role": "relu",
+            "module_id": 140623667145712,
+            "input_version": 0,
+            "input_pointer": 106390784,
+            "output_version": 1,
+            "output_pointer": 106390784
+          },
+          {
+            "role": "conv2",
+            "module_id": 140623667147344,
+            "input_version": 1,
+            "input_pointer": 106390784,
+            "output_version": 0,
+            "output_pointer": 106426752
+          },
+          {
+            "role": "bn2",
+            "module_id": 140623667147440,
+            "input_version": 0,
+            "input_pointer": 106426752,
+            "output_version": 0,
+            "output_pointer": 106418944
+          },
+          {
+            "role": "relu",
+            "module_id": 140623667145712,
+            "input_version": 1,
+            "input_pointer": 106418944,
+            "output_version": 2,
+            "output_pointer": 106418944
+          }
+        ]
+      },
+      "generated_trace": {
+        "call_order": [
+          "conv1",
+          "bn1",
+          "relu",
+          "conv2",
+          "bn2",
+          "relu"
+        ],
+        "direct_dataflow_preserved": true,
+        "same_relu_object_called_twice": true,
+        "main_tensor_updated_inplace_by_add": true,
+        "both_relus_update_input_inplace": true,
+        "events": [
+          {
+            "role": "conv1",
+            "module_id": 140623667143024,
+            "input_version": 0,
+            "input_pointer": 106318720,
+            "output_version": 0,
+            "output_pointer": 106410176
+          },
+          {
+            "role": "bn1",
+            "module_id": 140623667144560,
+            "input_version": 0,
+            "input_pointer": 106410176,
+            "output_version": 0,
+            "output_pointer": 106434560
+          },
+          {
+            "role": "relu",
+            "module_id": 140623667144608,
+            "input_version": 0,
+            "input_pointer": 106434560,
+            "output_version": 1,
+            "output_pointer": 106434560
+          },
+          {
+            "role": "conv2",
+            "module_id": 140623667144656,
+            "input_version": 1,
+            "input_pointer": 106434560,
+            "output_version": 0,
+            "output_pointer": 105851648
+          },
+          {
+            "role": "bn2",
+            "module_id": 140623667144704,
+            "input_version": 0,
+            "input_pointer": 105851648,
+            "output_version": 0,
+            "output_pointer": 105859392
+          },
+          {
+            "role": "relu",
+            "module_id": 140623667144608,
+            "input_version": 1,
+            "input_pointer": 105859392,
+            "output_version": 2,
+            "output_pointer": 105859392
+          }
+        ]
+      },
+      "max_absolute_error": 0.0,
+      "mean_absolute_error": 0.0
+    },
+    {
+      "name": "ones",
+      "shape": [
+        1,
+        64,
+        8,
+        8
+      ],
+      "kind": "ones",
+      "input_stride": [
+        4096,
+        64,
+        8,
+        1
+      ],
+      "input_contiguous": true,
+      "status": "passed",
+      "original_trace": {
+        "call_order": [
+          "conv1",
+          "bn1",
+          "relu",
+          "conv2",
+          "bn2",
+          "relu"
+        ],
+        "direct_dataflow_preserved": true,
+        "same_relu_object_called_twice": true,
+        "main_tensor_updated_inplace_by_add": true,
+        "both_relus_update_input_inplace": true,
+        "events": [
+          {
+            "role": "conv1",
+            "module_id": 140623667145664,
+            "input_version": 0,
+            "input_pointer": 106061888,
+            "output_version": 0,
+            "output_pointer": 105912960
+          },
+          {
+            "role": "bn1",
+            "module_id": 140623667145760,
+            "input_version": 0,
+            "input_pointer": 105912960,
+            "output_version": 0,
+            "output_pointer": 105929472
+          },
+          {
+            "role": "relu",
+            "module_id": 140623667145712,
+            "input_version": 0,
+            "input_pointer": 105929472,
+            "output_version": 1,
+            "output_pointer": 105929472
+          },
+          {
+            "role": "conv2",
+            "module_id": 140623667147344,
+            "input_version": 1,
+            "input_pointer": 105929472,
+            "output_version": 0,
+            "output_pointer": 105945984
+          },
+          {
+            "role": "bn2",
+            "module_id": 140623667147440,
+            "input_version": 0,
+            "input_pointer": 105945984,
+            "output_version": 0,
+            "output_pointer": 105962496
+          },
+          {
+            "role": "relu",
+            "module_id": 140623667145712,
+            "input_version": 1,
+            "input_pointer": 105962496,
+            "output_version": 2,
+            "output_pointer": 105962496
+          }
+        ]
+      },
+      "generated_trace": {
+        "call_order": [
+          "conv1",
+          "bn1",
+          "relu",
+          "conv2",
+          "bn2",
+          "relu"
+        ],
+        "direct_dataflow_preserved": true,
+        "same_relu_object_called_twice": true,
+        "main_tensor_updated_inplace_by_add": true,
+        "both_relus_update_input_inplace": true,
+        "events": [
+          {
+            "role": "conv1",
+            "module_id": 140623667143024,
+            "input_version": 0,
+            "input_pointer": 106078336,
+            "output_version": 0,
+            "output_pointer": 105979008
+          },
+          {
+            "role": "bn1",
+            "module_id": 140623667144560,
+            "input_version": 0,
+            "input_pointer": 105979008,
+            "output_version": 0,
+            "output_pointer": 106418944
+          },
+          {
+            "role": "relu",
+            "module_id": 140623667144608,
+            "input_version": 0,
+            "input_pointer": 106418944,
+            "output_version": 1,
+            "output_pointer": 106418944
+          },
+          {
+            "role": "conv2",
+            "module_id": 140623667144656,
+            "input_version": 1,
+            "input_pointer": 106418944,
+            "output_version": 0,
+            "output_pointer": 107637056
+          },
+          {
+            "role": "bn2",
+            "module_id": 140623667144704,
+            "input_version": 0,
+            "input_pointer": 107637056,
+            "output_version": 0,
+            "output_pointer": 107653568
+          },
+          {
+            "role": "relu",
+            "module_id": 140623667144608,
+            "input_version": 1,
+            "input_pointer": 107653568,
+            "output_version": 2,
+            "output_pointer": 107653568
+          }
+        ]
+      },
+      "max_absolute_error": 0.0,
+      "mean_absolute_error": 0.0
+    },
+    {
+      "name": "signed_ramp",
+      "shape": [
+        3,
+        64,
+        5,
+        9
+      ],
+      "kind": "ramp",
+      "input_stride": [
+        2880,
+        45,
+        9,
+        1
+      ],
+      "input_contiguous": true,
+      "status": "passed",
+      "original_trace": {
+        "call_order": [
+          "conv1",
+          "bn1",
+          "relu",
+          "conv2",
+          "bn2",
+          "relu"
+        ],
+        "direct_dataflow_preserved": true,
+        "same_relu_object_called_twice": true,
+        "main_tensor_updated_inplace_by_add": true,
+        "both_relus_update_input_inplace": true,
+        "events": [
+          {
+            "role": "conv1",
+            "module_id": 140623667145664,
+            "input_version": 0,
+            "input_pointer": 105723008,
+            "output_version": 0,
+            "output_pointer": 105912960
+          },
+          {
+            "role": "bn1",
+            "module_id": 140623667145760,
+            "input_version": 0,
+            "input_pointer": 105912960,
+            "output_version": 0,
+            "output_pointer": 106249664
+          },
+          {
+            "role": "relu",
+            "module_id": 140623667145712,
+            "input_version": 0,
+            "input_pointer": 106249664,
+            "output_version": 1,
+            "output_pointer": 106249664
+          },
+          {
+            "role": "conv2",
+            "module_id": 140623667147344,
+            "input_version": 1,
+            "input_pointer": 106249664,
+            "output_version": 0,
+            "output_pointer": 106554880
+          },
+          {
+            "role": "bn2",
+            "module_id": 140623667147440,
+            "input_version": 0,
+            "input_pointer": 106554880,
+            "output_version": 0,
+            "output_pointer": 106589504
+          },
+          {
+            "role": "relu",
+            "module_id": 140623667145712,
+            "input_version": 1,
+            "input_pointer": 106589504,
+            "output_version": 2,
+            "output_pointer": 106589504
+          }
+        ]
+      },
+      "generated_trace": {
+        "call_order": [
+          "conv1",
+          "bn1",
+          "relu",
+          "conv2",
+          "bn2",
+          "relu"
+        ],
+        "direct_dataflow_preserved": true,
+        "same_relu_object_called_twice": true,
+        "main_tensor_updated_inplace_by_add": true,
+        "both_relus_update_input_inplace": true,
+        "events": [
+          {
+            "role": "conv1",
+            "module_id": 140623667143024,
+            "input_version": 0,
+            "input_pointer": 106180352,
+            "output_version": 0,
+            "output_pointer": 105950912
+          },
+          {
+            "role": "bn1",
+            "module_id": 140623667144560,
+            "input_version": 0,
+            "input_pointer": 105950912,
+            "output_version": 0,
+            "output_pointer": 106624128
+          },
+          {
+            "role": "relu",
+            "module_id": 140623667144608,
+            "input_version": 0,
+            "input_pointer": 106624128,
+            "output_version": 1,
+            "output_pointer": 106624128
+          },
+          {
+            "role": "conv2",
+            "module_id": 140623667144656,
+            "input_version": 1,
+            "input_pointer": 106624128,
+            "output_version": 0,
+            "output_pointer": 106903104
+          },
+          {
+            "role": "bn2",
+            "module_id": 140623667144704,
+            "input_version": 0,
+            "input_pointer": 106903104,
+            "output_version": 0,
+            "output_pointer": 106937728
+          },
+          {
+            "role": "relu",
+            "module_id": 140623667144608,
+            "input_version": 1,
+            "input_pointer": 106937728,
+            "output_version": 2,
+            "output_pointer": 106937728
+          }
+        ]
+      },
+      "max_absolute_error": 0.0,
+      "mean_absolute_error": 0.0
+    },
+    {
+      "name": "noncontiguous_normal",
+      "shape": [
+        2,
+        64,
+        6,
+        10
+      ],
+      "kind": "noncontiguous_normal",
+      "input_stride": [
+        3840,
+        60,
+        1,
+        6
+      ],
+      "input_contiguous": false,
+      "status": "passed",
+      "original_trace": {
+        "call_order": [
+          "conv1",
+          "bn1",
+          "relu",
+          "conv2",
+          "bn2",
+          "relu"
+        ],
+        "direct_dataflow_preserved": true,
+        "same_relu_object_called_twice": true,
+        "main_tensor_updated_inplace_by_add": true,
+        "both_relus_update_input_inplace": true,
+        "events": [
+          {
+            "role": "conv1",
+            "module_id": 140623667145664,
+            "input_version": 0,
+            "input_pointer": 106094784,
+            "output_version": 0,
+            "output_pointer": 107376576
+          },
+          {
+            "role": "bn1",
+            "module_id": 140623667145760,
+            "input_version": 0,
+            "input_pointer": 107376576,
+            "output_version": 0,
+            "output_pointer": 105655296
+          },
+          {
+            "role": "relu",
+            "module_id": 140623667145712,
+            "input_version": 0,
+            "input_pointer": 105655296,
+            "output_version": 1,
+            "output_pointer": 105655296
+          },
+          {
+            "role": "conv2",
+            "module_id": 140623667147344,
+            "input_version": 1,
+            "input_pointer": 105655296,
+            "output_version": 0,
+            "output_pointer": 106686272
+          },
+          {
+            "role": "bn2",
+            "module_id": 140623667147440,
+            "input_version": 0,
+            "input_pointer": 106686272,
+            "output_version": 0,
+            "output_pointer": 106554880
+          },
+          {
+            "role": "relu",
+            "module_id": 140623667145712,
+            "input_version": 1,
+            "input_pointer": 106554880,
+            "output_version": 2,
+            "output_pointer": 106554880
+          }
+        ]
+      },
+      "generated_trace": {
+        "call_order": [
+          "conv1",
+          "bn1",
+          "relu",
+          "conv2",
+          "bn2",
+          "relu"
+        ],
+        "direct_dataflow_preserved": true,
+        "same_relu_object_called_twice": true,
+        "main_tensor_updated_inplace_by_add": true,
+        "both_relus_update_input_inplace": true,
+        "events": [
+          {
+            "role": "conv1",
+            "module_id": 140623667143024,
+            "input_version": 0,
+            "input_pointer": 106061888,
+            "output_version": 0,
+            "output_pointer": 106897600
+          },
+          {
+            "role": "bn1",
+            "module_id": 140623667144560,
+            "input_version": 0,
+            "input_pointer": 106897600,
+            "output_version": 0,
+            "output_pointer": 105912960
+          },
+          {
+            "role": "relu",
+            "module_id": 140623667144608,
+            "input_version": 0,
+            "input_pointer": 105912960,
+            "output_version": 1,
+            "output_pointer": 105912960
+          },
+          {
+            "role": "conv2",
+            "module_id": 140623667144656,
+            "input_version": 1,
+            "input_pointer": 105912960,
+            "output_version": 0,
+            "output_pointer": 105722944
+          },
+          {
+            "role": "bn2",
+            "module_id": 140623667144704,
+            "input_version": 0,
+            "input_pointer": 105722944,
+            "output_version": 0,
+            "output_pointer": 106249280
+          },
+          {
+            "role": "relu",
+            "module_id": 140623667144608,
+            "input_version": 1,
+            "input_pointer": 106249280,
+            "output_version": 2,
+            "output_pointer": 106249280
+          }
+        ]
+      },
+      "max_absolute_error": 0.0,
+      "mean_absolute_error": 0.0
+    }
+  ],
+  "generated_code_modified": false,
+  "original_source_provided_to_llm": false,
+  "evaluation_plan_fixed_before_request": true,
+  "entrypoint": "BasicBlock()",
+  "runtime_attributes": {
+    "conv1": {
+      "type": "Conv2d",
+      "original": {
+        "in_channels": 64,
+        "out_channels": 64,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "padding_mode": "zeros"
+      },
+      "generated": {
+        "in_channels": 64,
+        "out_channels": 64,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "padding_mode": "zeros"
+      }
+    },
+    "bn1": {
+      "type": "BatchNorm2d",
+      "original": {
+        "num_features": 64,
+        "eps": 1e-05,
+        "momentum": 0.1,
+        "affine": true,
+        "track_running_stats": true
+      },
+      "generated": {
+        "num_features": 64,
+        "eps": 1e-05,
+        "momentum": 0.1,
+        "affine": true,
+        "track_running_stats": true
+      }
+    },
+    "relu": {
+      "type": "ReLU",
+      "original": {
+        "inplace": true
+      },
+      "generated": {
+        "inplace": true
+      }
+    },
+    "conv2": {
+      "type": "Conv2d",
+      "original": {
+        "in_channels": 64,
+        "out_channels": 64,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "padding_mode": "zeros"
+      },
+      "generated": {
+        "in_channels": 64,
+        "out_channels": 64,
+        "kernel_size": [
+          3,
+          3
+        ],
+        "stride": [
+          1,
+          1
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1,
+        "padding_mode": "zeros"
+      }
+    },
+    "bn2": {
+      "type": "BatchNorm2d",
+      "original": {
+        "num_features": 64,
+        "eps": 1e-05,
+        "momentum": 0.1,
+        "affine": true,
+        "track_running_stats": true
+      },
+      "generated": {
+        "num_features": 64,
+        "eps": 1e-05,
+        "momentum": 0.1,
+        "affine": true,
+        "track_running_stats": true
+      }
+    }
+  },
+  "resource_identity": {
+    "generated_activation_is_relu": true,
+    "module_call_factors": 6,
+    "unique_leaf_module_objects": 5,
+    "independent_conv_bn_modules": true
+  },
+  "mapped_parameters": 6,
+  "mapped_buffers": 6,
+  "eval_state_unchanged_and_original_candidate_still_equal": true,
+  "numerical_comparison": {
+    "function": "torch.testing.assert_close",
+    "rtol": 1e-05,
+    "atol": 1e-06,
+    "check_dtype": true,
+    "check_device": true
+  },
+  "overall_pipeline_pass": true,
+  "generated_code_sha256_after_evaluation": "9e81cbce3448ac459fa678087dc2c9ec4fee0dcc0bcd570408ccad449ecde504",
+  "generated_code_unchanged": true
+}

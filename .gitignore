@@ -1,0 +1,21 @@
+# 로컬 환경 및 인증 파일
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+.venv/
+__pycache__/
+*.py[cod]
+.DS_Store
+# 연구 실행 자료와 검토하지 않은 산출물
+internal/
+requests/
+logs/
+runtime/
+*.pt
+*.pth
+*.zip
+# 업로드할 파일을 명시적으로 선택해야 하며, 이 파일만으로 공개 검토를 대신하지 않습니다.
+# New local reruns; historical selected JSON reports remain tracked.
+outputs/

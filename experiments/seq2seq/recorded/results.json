@@ -1,0 +1,89 @@
+{
+  "status": "INCONCLUSIVE",
+  "frozen_acceptance_verdict": "FAIL",
+  "source_preflight": "PASS",
+  "transport": "PASS",
+  "result_axes": {
+    "encoder_decoder_lstm": {
+      "status": "PASS",
+      "evidence": [
+        "observations.json",
+        "../generated_model.py"
+      ],
+      "reason": "Explicit i/f/g/o equations; exact equality to independent reference for all nine exposed outputs across three fixtures."
+    },
+    "encoder_final_hc_to_decoder_initial": {
+      "status": "PASS",
+      "evidence": [
+        "../validation/generated_evaluation.json"
+      ],
+      "reason": "Observed first decoder hidden/cell are identical tensor objects to last encoder hidden/cell; numerical agreement to source."
+    },
+    "teacher_forcing_100_percent": {
+      "status": "PASS",
+      "evidence": [
+        "../validation/generated_evaluation.json"
+      ],
+      "reason": "Every decoder input equals supplied previous-target embedding at the correct shifted index; no logit feedback."
+    },
+    "recurrence_and_parameter_sharing": {
+      "status": "PASS",
+      "evidence": [
+        "../validation/generated_evaluation.json",
+        "observations.json"
+      ],
+      "reason": "Correct source/target step counts, same carried hidden/cell objects, ten stable Parameter objects reused across all steps; encoder/decoder remain distinct."
+    },
+    "parameter_registration_requires_grad": {
+      "status": "PASS",
+      "evidence": [
+        "observations.json"
+      ],
+      "reason": "10/10 registered Parameters, 355 scalars, requires_grad=True, exact fixture values and no storage aliases or extra buffers."
+    },
+    "intermediate_state_and_final_forward": {
+      "status": "PASS",
+      "evidence": [
+        "../validation/generated_evaluation.json",
+        "observations.json"
+      ],
+      "max_absolute_error_vs_source": 5.960464477539063e-08,
+      "max_absolute_error_vs_independent_reference": 0.0,
+      "rtol": 1e-05,
+      "atol": 1e-06
+    },
+    "common_v0_3_schema_fidelity": {
+      "status": "INCONCLUSIVE",
+      "frozen_detector_status": "FAIL",
+      "evidence": [
+        "../validation/generated_evaluation.json",
+        "diagnostics.json",
+        "dag_diagnosis.json",
+        "allocator_probe.json"
+      ],
+      "reason": "Frozen Runtime DAG matcher distinguishes zero-allocation internal detach. Isolated replay reproduces this without candidate code. Removing only detach of literal zero constants in a diagnostic graph gives equality for all three cases. No frozen test or schema rule was changed and no retroactive PASS is claimed."
+    }
+  },
+  "request_sha256": "2fb2c940e497260ea147c1d85749247ccb9c8659ef35e028ec45adde9a245446",
+  "candidate_sha256": "501facb3aac62aca442b5eb2b63b270f078fa3af59670f69c2943b24759af227",
+  "max_absolute_error_vs_source": 5.960464477539063e-08,
+  "max_absolute_error_vs_independent_reference": 0.0,
+  "fixture_cases": 3,
+  "recorded_api_attempts": 1,
+  "additional_api_calls": 0,
+  "generated_code_modified": false,
+  "frozen_validator_modified": false,
+  "common_schema_modified": false,
+  "scope": "Pre-embedded one-layer, batch=2, float32 CPU eval, teacher-forcing ratio=1 recurrent core only. Token embeddings, initializers, training and general architecture excluded.",
+  "failure_category": "FROZEN_RUNTIME_DAG_MATCHER_LIMITATION",
+  "next_blocker": "Future separately recorded evaluation-policy revision and re-preflight to normalize backend-only detach on non-trainable literal constants. No additional model generation is needed to diagnose this run.",
+  "evidence": [
+    "audit_checks.json",
+    "observations.json",
+    "diagnostics.json",
+    "dag_diagnosis.json",
+    "allocator_probe.json",
+    "../validation/generated_evaluation.json",
+    "../logs/generated_evaluation_wrapper.json"
+  ]
+}

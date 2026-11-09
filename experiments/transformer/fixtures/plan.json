@@ -1,0 +1,155 @@
+{
+  "scope": {
+    "d_model": 8,
+    "nhead": 2,
+    "dim_feedforward": 12,
+    "dropout": 0.1,
+    "activation": "relu",
+    "layer_norm_eps": 1e-05,
+    "batch_first": true,
+    "norm_first": false,
+    "bias": true,
+    "device": "cpu",
+    "dtype": "float32"
+  },
+  "device": "cpu",
+  "dtype": "float32",
+  "mode": "eval",
+  "torch_threads": 1,
+  "seeds": [
+    1701,
+    1702,
+    1703
+  ],
+  "tolerances": {
+    "all_outputs": {
+      "rtol": 1e-05,
+      "atol": 1e-06
+    },
+    "nonfinite": "matching negative infinity allowed only in masked_logits; all other outputs finite"
+  },
+  "cases": [
+    {
+      "id": "b2_t3_unmasked",
+      "B": 2,
+      "T": 3,
+      "mask": "unmasked",
+      "seed": 1701
+    },
+    {
+      "id": "b2_t3_causal",
+      "B": 2,
+      "T": 3,
+      "mask": "causal",
+      "seed": 1701
+    },
+    {
+      "id": "b2_t3_asymmetric",
+      "B": 2,
+      "T": 3,
+      "mask": "asymmetric",
+      "seed": 1701
+    },
+    {
+      "id": "b2_t1_unmasked",
+      "B": 2,
+      "T": 1,
+      "mask": "unmasked",
+      "seed": 1702
+    },
+    {
+      "id": "b2_t1_causal",
+      "B": 2,
+      "T": 1,
+      "mask": "causal",
+      "seed": 1702
+    },
+    {
+      "id": "b2_t1_asymmetric",
+      "B": 2,
+      "T": 1,
+      "mask": "asymmetric",
+      "seed": 1702
+    },
+    {
+      "id": "b1_t5_unmasked",
+      "B": 1,
+      "T": 5,
+      "mask": "unmasked",
+      "seed": 1703
+    },
+    {
+      "id": "b1_t5_causal",
+      "B": 1,
+      "T": 5,
+      "mask": "causal",
+      "seed": 1703
+    },
+    {
+      "id": "b1_t5_asymmetric",
+      "B": 1,
+      "T": 5,
+      "mask": "asymmetric",
+      "seed": 1703
+    }
+  ],
+  "parameter_policy": "All 12 distinct Parameters fixture-supplied, signed nonzero deterministic values; norms affine nontrivial; packed Q/K rows unequal",
+  "buffers": [],
+  "initial_state": "none; stateless encoder",
+  "symbols": {
+    "B": "positive_integer",
+    "T": "positive_integer"
+  },
+  "trace_outputs": [
+    "packed",
+    "q",
+    "k",
+    "v",
+    "q_scaled",
+    "logits",
+    "masked_logits",
+    "weights",
+    "context",
+    "joined",
+    "projected",
+    "r1",
+    "n1",
+    "ff1",
+    "activation",
+    "ff2",
+    "r2",
+    "y"
+  ],
+  "unsupported": [
+    "training",
+    "gradients",
+    "source default initializers",
+    "full source Module object hierarchy",
+    "float/padding masks",
+    "all-masked rows",
+    "empty sequence"
+  ],
+  "candidate_review": "Before import require validation/candidate_review.json with exact candidate SHA256 and reviewed=true; adapter metadata in candidate_adapter.json",
+  "candidate_adapter": {
+    "factory": "arbitrary public factory",
+    "constructor_kwargs": {},
+    "forward_inputs": [
+      "x",
+      "mask"
+    ],
+    "forward_outputs": [
+      "y"
+    ],
+    "parameters": "p_id -> candidate named_parameter path, checked bijectively including aliases",
+    "fx_nodes": "leaf factor ID -> FX node name; verified target/attributes/direct edges, runtime tensors; mapping is only a hint"
+  },
+  "resource_budget": {
+    "fixture_mib_upper_bound": 8,
+    "timeout_seconds": 120
+  },
+  "scheduling": {
+    "status": "USER_RESERVED",
+    "reservation": "Transformer 1 compute slot; all other validation at most 1",
+    "mechanism": "Explicit user coordination in active conversation; no enforced shared lock or cgroup"
+  }
+}

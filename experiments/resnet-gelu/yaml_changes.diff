@@ -1,0 +1,29 @@
+--- original_input.yaml
++++ input_resnet_post_add_gelu_v0_2.yaml
+@@ -1,5 +1,5 @@
+ representation_version: "0.2"
+-operator_profile: pytorch_nn_2_2_1_v0_2
++operator_profile: pytorch_nn_2_2_1_v0_2_gelu1
+ architecture: BasicBlock
+ 
+ factors:
+@@ -57,8 +57,8 @@
+     operator: add
+     attributes: {inplace: true, target: main}
+   activation:
+-    operator: relu
+-    attributes: {inplace: true, target: input}
++    operator: gelu
++    attributes: {approximate: none}
+ 
+ dataflow:
+   - [x, main.input]
+@@ -79,7 +79,7 @@
+   relu: shared_relu_module
+   conv2: conv2_module
+   bn2: bn2_module
+-  activation: shared_relu_module
++  activation: post_add_gelu_module
+ 
+ interface:
+   block:

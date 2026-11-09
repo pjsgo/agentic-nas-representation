@@ -1,0 +1,873 @@
+representation_version: 0.3-candidate.1
+operator_profile: tensor_pytorch_2_2_1_v0_3_r1
+architecture: recurrent_unit_a
+architecture_entry: unit
+factors:
+  unit:
+    contains:
+    - zero_h
+    - zero_c
+    - read_a
+    - handoff
+    - read_b
+  zero_h:
+    operator: constant
+    attributes:
+      value:
+      - - 0.0
+        - 0.0
+        - 0.0
+        - 0.0
+      - - 0.0
+        - 0.0
+        - 0.0
+        - 0.0
+      dtype: float32
+  zero_c:
+    operator: constant
+    attributes:
+      value:
+      - - 0.0
+        - 0.0
+        - 0.0
+        - 0.0
+      - - 0.0
+        - 0.0
+        - 0.0
+        - 0.0
+      dtype: float32
+  step_a:
+    contains:
+    - step_a_lin_i
+    - step_a_lin_h
+    - step_a_sum
+    - step_a_parts
+    - step_a_i
+    - step_a_f
+    - step_a_g
+    - step_a_o
+    - step_a_fc
+    - step_a_ig
+    - step_a_next_c
+    - step_a_ct
+    - step_a_next_h
+  step_a_lin_i:
+    operator: linear
+    attributes:
+      bias: true
+  step_a_lin_h:
+    operator: linear
+    attributes:
+      bias: true
+  step_a_sum:
+    operator: add
+    attributes:
+      inplace: false
+  step_a_parts:
+    operator: split
+    attributes:
+      sections:
+      - 4
+      - 4
+      - 4
+      - 4
+      dim: 1
+  step_a_i:
+    operator: sigmoid
+  step_a_f:
+    operator: sigmoid
+  step_a_g:
+    operator: tanh
+  step_a_o:
+    operator: sigmoid
+  step_a_fc:
+    operator: mul
+  step_a_ig:
+    operator: mul
+  step_a_next_c:
+    operator: add
+    attributes:
+      inplace: false
+  step_a_ct:
+    operator: tanh
+  step_a_next_h:
+    operator: mul
+  cell_b:
+    contains:
+    - cell_b_lin_i
+    - cell_b_lin_h
+    - cell_b_sum
+    - cell_b_parts
+    - cell_b_i
+    - cell_b_f
+    - cell_b_g
+    - cell_b_o
+    - cell_b_fc
+    - cell_b_ig
+    - cell_b_next_c
+    - cell_b_ct
+    - cell_b_next_h
+  cell_b_lin_i:
+    operator: linear
+    attributes:
+      bias: true
+  cell_b_lin_h:
+    operator: linear
+    attributes:
+      bias: true
+  cell_b_sum:
+    operator: add
+    attributes:
+      inplace: false
+  cell_b_parts:
+    operator: split
+    attributes:
+      sections:
+      - 4
+      - 4
+      - 4
+      - 4
+      dim: 1
+  cell_b_i:
+    operator: sigmoid
+  cell_b_f:
+    operator: sigmoid
+  cell_b_g:
+    operator: tanh
+  cell_b_o:
+    operator: sigmoid
+  cell_b_fc:
+    operator: mul
+  cell_b_ig:
+    operator: mul
+  cell_b_next_c:
+    operator: add
+    attributes:
+      inplace: false
+  cell_b_ct:
+    operator: tanh
+  cell_b_next_h:
+    operator: mul
+  step_b:
+    contains:
+    - invoke_b
+    - readout
+  invoke_b:
+    call:
+      region: cell_b
+      inputs:
+        x: x
+        h: h
+        c: c
+      outputs:
+        hn: hn
+        cn: cn
+  readout:
+    operator: linear
+    attributes:
+      bias: true
+  handoff:
+    contains: []
+  read_a:
+    scan:
+      body: step_a
+      axis: 0
+      direction: forward
+      sequence_inputs:
+        x:
+          input: seq
+          axis: 0
+      invariant_inputs: {}
+      carries:
+        a_h:
+          input: h0
+          body_input: h
+          body_output: hn
+          output: hf
+        a_c:
+          input: c0
+          body_input: c
+          body_output: cn
+          output: cf
+      emits:
+        sequence:
+          body_output: hn
+          axis: 0
+      empty: return_initial
+  read_b:
+    scan:
+      body: step_b
+      axis: 0
+      direction: forward
+      sequence_inputs:
+        x:
+          input: seq
+          axis: 0
+      invariant_inputs: {}
+      carries:
+        b_h:
+          input: h0
+          body_input: h
+          body_output: hn
+          output: hf
+        b_c:
+          input: c0
+          body_input: c
+          body_output: cn
+          output: cf
+      emits:
+        sequence:
+          body_output: hn
+          axis: 0
+        scores:
+          body_output: logits
+          axis: 0
+      empty: return_initial
+dataflow:
+- - step_a.x
+  - step_a_lin_i.input
+- - parameters.a_wi
+  - step_a_lin_i.weight
+- - parameters.a_bi
+  - step_a_lin_i.bias
+- - step_a.h
+  - step_a_lin_h.input
+- - parameters.a_wh
+  - step_a_lin_h.weight
+- - parameters.a_bh
+  - step_a_lin_h.bias
+- - step_a_lin_i.output
+  - step_a_sum.main
+- - step_a_lin_h.output
+  - step_a_sum.shortcut
+- - step_a_sum.output
+  - step_a_parts.input
+- - step_a_parts.output0
+  - step_a_i.input
+- - step_a_parts.output1
+  - step_a_f.input
+- - step_a_parts.output2
+  - step_a_g.input
+- - step_a_parts.output3
+  - step_a_o.input
+- - step_a_f.output
+  - step_a_fc.left
+- - step_a.c
+  - step_a_fc.right
+- - step_a_i.output
+  - step_a_ig.left
+- - step_a_g.output
+  - step_a_ig.right
+- - step_a_fc.output
+  - step_a_next_c.main
+- - step_a_ig.output
+  - step_a_next_c.shortcut
+- - step_a_next_c.output
+  - step_a_ct.input
+- - step_a_o.output
+  - step_a_next_h.left
+- - step_a_ct.output
+  - step_a_next_h.right
+- - step_a_next_h.output
+  - step_a.hn
+- - step_a_next_c.output
+  - step_a.cn
+- - cell_b.x
+  - cell_b_lin_i.input
+- - parameters.b_wi
+  - cell_b_lin_i.weight
+- - parameters.b_bi
+  - cell_b_lin_i.bias
+- - cell_b.h
+  - cell_b_lin_h.input
+- - parameters.b_wh
+  - cell_b_lin_h.weight
+- - parameters.b_bh
+  - cell_b_lin_h.bias
+- - cell_b_lin_i.output
+  - cell_b_sum.main
+- - cell_b_lin_h.output
+  - cell_b_sum.shortcut
+- - cell_b_sum.output
+  - cell_b_parts.input
+- - cell_b_parts.output0
+  - cell_b_i.input
+- - cell_b_parts.output1
+  - cell_b_f.input
+- - cell_b_parts.output2
+  - cell_b_g.input
+- - cell_b_parts.output3
+  - cell_b_o.input
+- - cell_b_f.output
+  - cell_b_fc.left
+- - cell_b.c
+  - cell_b_fc.right
+- - cell_b_i.output
+  - cell_b_ig.left
+- - cell_b_g.output
+  - cell_b_ig.right
+- - cell_b_fc.output
+  - cell_b_next_c.main
+- - cell_b_ig.output
+  - cell_b_next_c.shortcut
+- - cell_b_next_c.output
+  - cell_b_ct.input
+- - cell_b_o.output
+  - cell_b_next_h.left
+- - cell_b_ct.output
+  - cell_b_next_h.right
+- - cell_b_next_h.output
+  - cell_b.hn
+- - cell_b_next_c.output
+  - cell_b.cn
+- - step_b.x
+  - invoke_b.x
+- - step_b.h
+  - invoke_b.h
+- - step_b.c
+  - invoke_b.c
+- - invoke_b.hn
+  - step_b.hn
+- - invoke_b.cn
+  - step_b.cn
+- - invoke_b.hn
+  - readout.input
+- - parameters.out_w
+  - readout.weight
+- - parameters.out_b
+  - readout.bias
+- - readout.output
+  - step_b.logits
+- - handoff.h
+  - handoff.ho
+- - handoff.c
+  - handoff.co
+- - unit.source
+  - read_a.seq
+- - unit.target_prev
+  - read_b.seq
+- - zero_h.output
+  - read_a.h0
+- - zero_c.output
+  - read_a.c0
+- - read_a.hf
+  - handoff.h
+- - read_a.cf
+  - handoff.c
+- - handoff.ho
+  - read_b.h0
+- - handoff.co
+  - read_b.c0
+- - read_b.scores
+  - unit.logits
+- - read_a.sequence
+  - unit.encoder_sequence
+- - read_a.hf
+  - unit.encoder_h
+- - read_a.cf
+  - unit.encoder_c
+- - handoff.ho
+  - unit.bridge_h
+- - handoff.co
+  - unit.bridge_c
+- - read_b.sequence
+  - unit.decoder_sequence
+- - read_b.hf
+  - unit.decoder_h
+- - read_b.cf
+  - unit.decoder_c
+interface:
+  unit:
+    inputs:
+      source: &id008
+        shape:
+        - S
+        - 2
+        - 3
+        axes:
+        - source_time
+        - batch
+        - input_feature
+        dtype: float32
+        name: source_embeddings
+      target_prev: &id010
+        shape:
+        - T
+        - 2
+        - 5
+        axes:
+        - target_time
+        - batch
+        - input_feature
+        dtype: float32
+        name: target_prev_embeddings
+    outputs:
+      logits: &id012
+        shape:
+        - T
+        - 2
+        - 7
+        axes:
+        - target_time
+        - batch
+        - vocabulary
+        dtype: float32
+      encoder_sequence: &id009
+        shape:
+        - S
+        - 2
+        - 4
+        axes:
+        - source_time
+        - batch
+        - hidden
+        dtype: float32
+      encoder_h: &id001
+        shape: &id013
+        - 2
+        - 4
+        axes: &id014
+        - batch
+        - hidden
+        dtype: float32
+      encoder_c: *id001
+      bridge_h: *id001
+      bridge_c: *id001
+      decoder_sequence: &id011
+        shape:
+        - T
+        - 2
+        - 4
+        axes:
+        - target_time
+        - batch
+        - hidden
+        dtype: float32
+      decoder_h: *id001
+      decoder_c: *id001
+    symbols:
+      S: positive_integer
+      T: positive_integer
+  zero_h:
+    inputs: {}
+    outputs:
+      output: *id001
+  zero_c:
+    inputs: {}
+    outputs:
+      output: *id001
+  step_a:
+    inputs:
+      x: &id002
+        shape:
+        - 2
+        - 3
+        axes:
+        - batch
+        - input_feature
+        dtype: float32
+      h: *id001
+      c: *id001
+    outputs:
+      hn: *id001
+      cn: *id001
+  step_a_lin_i:
+    inputs:
+      input: *id002
+      weight:
+        shape:
+        - 16
+        - 3
+        axes:
+        - gate_feature
+        - input_feature
+        dtype: float32
+      bias:
+        shape:
+        - 16
+        axes:
+        - gate_feature
+        dtype: float32
+    outputs:
+      output: &id003
+        shape:
+        - 2
+        - 16
+        axes:
+        - batch
+        - gate_feature
+        dtype: float32
+  step_a_lin_h:
+    inputs:
+      input: *id001
+      weight:
+        shape:
+        - 16
+        - 4
+        axes:
+        - gate_feature
+        - hidden
+        dtype: float32
+      bias:
+        shape:
+        - 16
+        axes:
+        - gate_feature
+        dtype: float32
+    outputs:
+      output: *id003
+  step_a_sum:
+    inputs:
+      main: *id003
+      shortcut: *id003
+    outputs:
+      output: *id003
+  step_a_parts:
+    inputs:
+      input: *id003
+    outputs:
+      output0: *id001
+      output1: *id001
+      output2: *id001
+      output3: *id001
+  step_a_i:
+    inputs:
+      input: *id001
+    outputs:
+      output: *id001
+  step_a_f:
+    inputs:
+      input: *id001
+    outputs:
+      output: *id001
+  step_a_g:
+    inputs:
+      input: *id001
+    outputs:
+      output: *id001
+  step_a_o:
+    inputs:
+      input: *id001
+    outputs:
+      output: *id001
+  step_a_fc:
+    inputs:
+      left: *id001
+      right: *id001
+    outputs:
+      output: *id001
+  step_a_ig:
+    inputs:
+      left: *id001
+      right: *id001
+    outputs:
+      output: *id001
+  step_a_next_c:
+    inputs:
+      main: *id001
+      shortcut: *id001
+    outputs:
+      output: *id001
+  step_a_ct:
+    inputs:
+      input: *id001
+    outputs:
+      output: *id001
+  step_a_next_h:
+    inputs:
+      left: *id001
+      right: *id001
+    outputs:
+      output: *id001
+  cell_b:
+    inputs: &id006
+      x: &id004
+        shape:
+        - 2
+        - 5
+        axes:
+        - batch
+        - input_feature
+        dtype: float32
+      h: *id001
+      c: *id001
+    outputs: &id007
+      hn: *id001
+      cn: *id001
+  cell_b_lin_i:
+    inputs:
+      input: *id004
+      weight:
+        shape:
+        - 16
+        - 5
+        axes:
+        - gate_feature
+        - input_feature
+        dtype: float32
+      bias:
+        shape:
+        - 16
+        axes:
+        - gate_feature
+        dtype: float32
+    outputs:
+      output: &id005
+        shape:
+        - 2
+        - 16
+        axes:
+        - batch
+        - gate_feature
+        dtype: float32
+  cell_b_lin_h:
+    inputs:
+      input: *id001
+      weight:
+        shape:
+        - 16
+        - 4
+        axes:
+        - gate_feature
+        - hidden
+        dtype: float32
+      bias:
+        shape:
+        - 16
+        axes:
+        - gate_feature
+        dtype: float32
+    outputs:
+      output: *id005
+  cell_b_sum:
+    inputs:
+      main: *id005
+      shortcut: *id005
+    outputs:
+      output: *id005
+  cell_b_parts:
+    inputs:
+      input: *id005
+    outputs:
+      output0: *id001
+      output1: *id001
+      output2: *id001
+      output3: *id001
+  cell_b_i:
+    inputs:
+      input: *id001
+    outputs:
+      output: *id001
+  cell_b_f:
+    inputs:
+      input: *id001
+    outputs:
+      output: *id001
+  cell_b_g:
+    inputs:
+      input: *id001
+    outputs:
+      output: *id001
+  cell_b_o:
+    inputs:
+      input: *id001
+    outputs:
+      output: *id001
+  cell_b_fc:
+    inputs:
+      left: *id001
+      right: *id001
+    outputs:
+      output: *id001
+  cell_b_ig:
+    inputs:
+      left: *id001
+      right: *id001
+    outputs:
+      output: *id001
+  cell_b_next_c:
+    inputs:
+      main: *id001
+      shortcut: *id001
+    outputs:
+      output: *id001
+  cell_b_ct:
+    inputs:
+      input: *id001
+    outputs:
+      output: *id001
+  cell_b_next_h:
+    inputs:
+      left: *id001
+      right: *id001
+    outputs:
+      output: *id001
+  step_b:
+    inputs:
+      x:
+        shape:
+        - 2
+        - 5
+        axes:
+        - batch
+        - input_feature
+        dtype: float32
+      h: *id001
+      c: *id001
+    outputs:
+      hn: *id001
+      cn: *id001
+      logits:
+        shape:
+        - 2
+        - 7
+        axes:
+        - batch
+        - vocabulary
+        dtype: float32
+  invoke_b:
+    inputs: *id006
+    outputs: *id007
+  readout:
+    inputs:
+      input: *id001
+      weight:
+        shape:
+        - 7
+        - 4
+        axes:
+        - vocabulary
+        - hidden
+        dtype: float32
+      bias:
+        shape:
+        - 7
+        axes:
+        - vocabulary
+        dtype: float32
+    outputs:
+      output:
+        shape:
+        - 2
+        - 7
+        axes:
+        - batch
+        - vocabulary
+        dtype: float32
+  handoff:
+    inputs:
+      h: *id001
+      c: *id001
+    outputs:
+      ho: *id001
+      co: *id001
+  read_a:
+    inputs:
+      seq: *id008
+      h0: *id001
+      c0: *id001
+    outputs:
+      sequence: *id009
+      hf: *id001
+      cf: *id001
+  read_b:
+    inputs:
+      seq: *id010
+      h0: *id001
+      c0: *id001
+    outputs:
+      sequence: *id011
+      hf: *id001
+      cf: *id001
+      scores: *id012
+parameters:
+  a_wi:
+    shape:
+    - 16
+    - 3
+    dtype: float32
+    requires_grad: true
+    initialization: fixture_supplied
+  a_bi:
+    shape:
+    - 16
+    dtype: float32
+    requires_grad: true
+    initialization: fixture_supplied
+  a_wh:
+    shape:
+    - 16
+    - 4
+    dtype: float32
+    requires_grad: true
+    initialization: fixture_supplied
+  a_bh:
+    shape:
+    - 16
+    dtype: float32
+    requires_grad: true
+    initialization: fixture_supplied
+  b_wi:
+    shape:
+    - 16
+    - 5
+    dtype: float32
+    requires_grad: true
+    initialization: fixture_supplied
+  b_bi:
+    shape:
+    - 16
+    dtype: float32
+    requires_grad: true
+    initialization: fixture_supplied
+  b_wh:
+    shape:
+    - 16
+    - 4
+    dtype: float32
+    requires_grad: true
+    initialization: fixture_supplied
+  b_bh:
+    shape:
+    - 16
+    dtype: float32
+    requires_grad: true
+    initialization: fixture_supplied
+  out_w:
+    shape:
+    - 7
+    - 4
+    dtype: float32
+    requires_grad: true
+    initialization: fixture_supplied
+  out_b:
+    shape:
+    - 7
+    dtype: float32
+    requires_grad: true
+    initialization: fixture_supplied
+state:
+  a_h:
+    shape: *id013
+    axes: *id014
+    dtype: float32
+    initial: external
+  a_c:
+    shape: *id013
+    axes: *id014
+    dtype: float32
+    initial: external
+  b_h:
+    shape: *id013
+    axes: *id014
+    dtype: float32
+    initial: external
+  b_c:
+    shape: *id013
+    axes: *id014
+    dtype: float32
+    initial: external
+dependency:
+  unit.logits:
+  - unit.source
+  - unit.target_prev

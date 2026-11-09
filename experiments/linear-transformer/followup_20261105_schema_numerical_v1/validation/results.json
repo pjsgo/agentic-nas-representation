@@ -1,0 +1,121 @@
+{
+  "status": "BLOCKED",
+  "numerical_preflight": "PASS",
+  "common_schema_fidelity": "BLOCKED",
+  "axes": {
+    "source_grounding": "PASS",
+    "representable_scope": "BLOCKED",
+    "structural_fidelity": "BLOCKED",
+    "dataflow_attributes": "PASS",
+    "resource_identity": "BLOCKED",
+    "state_recurrence_dependency": "PASS",
+    "numerical_fidelity": "PASS",
+    "schema_consistency": "BLOCKED",
+    "source_reference_match": "PASS",
+    "validator_preflight": "BLOCKED"
+  },
+  "scope": "Pinned default causal recurrent core; CPU float32 no_grad inference; D=3 M=5; original four fixtures and tolerance unchanged",
+  "baseline": {
+    "status": "PASS",
+    "duration_seconds": 0.17735827004071325,
+    "old_validator_sha256": "5c5aa0d0ed9210e511c3a075ce06abe63eb7b582190b673339365c832c4d0a91",
+    "source_reference_match": "PASS",
+    "reference_acceptance": "PASS",
+    "state_mapping": "PASS",
+    "fixture_nonvacuity": "PASS",
+    "negative_tests": "PASS",
+    "tensor_comparisons": 158,
+    "max_abs_error": 0.0,
+    "max_rel_error": 0.0,
+    "negatives_detected": 10,
+    "negatives_executed": 10,
+    "api_calls": 0,
+    "common_schema_fidelity": "BLOCKED; assessed separately"
+  },
+  "decomposed_graph_numerical": {
+    "status": "PASS",
+    "fixture_count": 4,
+    "max_abs": 1.1920928955078125e-07,
+    "frozen_operator_set_only": true,
+    "full_source_module_identity": "NOT_REPRESENTED"
+  },
+  "elu": {
+    "real_algebra_expressible_with_existing_ops": true,
+    "new_primitive_mathematically_mandatory": false,
+    "tested_decomposition_bitwise_source_exact": false,
+    "all_possible_exact_lowerings_proven_impossible": false,
+    "probe_summaries": {
+      "exp_sub": {
+        "probes": 43,
+        "phi_bitwise_equal_probes": 32,
+        "phi_allclose_probes": 43,
+        "phi_max_abs": 5.960464477539063e-08,
+        "recurrence_fixture_passes": 4,
+        "recurrence_fixture_count": 4,
+        "recurrence_max_abs": 1.1920928955078125e-07,
+        "elu_bitwise_equal_probes": 32,
+        "elu_allclose_probes": 43,
+        "elu_max_abs": 5.960464477539063e-08
+      },
+      "expm1": {
+        "probes": 43,
+        "phi_bitwise_equal_probes": 17,
+        "phi_allclose_probes": 43,
+        "phi_max_abs": 5.960464477539063e-08,
+        "recurrence_fixture_passes": 4,
+        "recurrence_fixture_count": 4,
+        "recurrence_max_abs": 9.5367431640625e-07,
+        "elu_bitwise_equal_probes": 11,
+        "elu_allclose_probes": 43,
+        "elu_max_abs": 5.960464477539063e-08
+      },
+      "collapsed_phi": {
+        "probes": 43,
+        "phi_bitwise_equal_probes": 5,
+        "phi_allclose_probes": 43,
+        "phi_max_abs": 5.960464477539063e-08,
+        "recurrence_fixture_passes": 3,
+        "recurrence_fixture_count": 4,
+        "recurrence_max_abs": 1.3321638107299805e-05
+      }
+    },
+    "strict_profile_equivalence": "NOT_PROVEN",
+    "gradient_all_dtype_all_backend_equivalence": "NOT_RUN"
+  },
+  "feature_map_identity": {
+    "source_shared_module_observed": true,
+    "split_identity_mutation_rejected_by_identity_detector": true,
+    "split_identity_is_numerically_invisible_in_scope": true,
+    "existing_resource_identity_relation_sufficient": true,
+    "existing_resource_allowed_placement_for_composite_call_sufficient": false,
+    "graph_preserves_source_wrapper_identity": false
+  },
+  "validator_gaps": [
+    "Legacy local operator whitelist omitted existing general ops",
+    "Legacy checker assumes primitive ELU and exactly two containment roots",
+    "Complete generated-candidate evaluator not implemented; source/reference and bounded graph interpreter are independently exercised"
+  ],
+  "proposal": {
+    "path": "schema_delta.md",
+    "approved": false,
+    "required_for_full_module_identity": "Explicit Module-backed region definitions with resource binding on their calls",
+    "optional_for_strict_library_op_exactness": "Functional ELU with pinned profile; not mandatory for this tolerance-based numerical scope"
+  },
+  "failure_categories": [
+    "SCHEMA_UNSUPPORTED",
+    "REPRESENTATION_INFORMATION_LOSS"
+  ],
+  "historical_harness_diagnostic": {
+    "initial_analysis_attempt": "FAIL before torch import due to child lease-read/parent commit race",
+    "corrected_in_new_runner": "analyze_numerical_v2.py",
+    "preserved_failure_log": "logs/analysis_execution.json",
+    "changes_to_baseline_tolerance_fixtures_source_reference": false
+  },
+  "compute_policy": "compute-v1.0",
+  "api_requests_made": 0,
+  "qwen_reconstruction": "BLOCKED_AND_NOT_RUN",
+  "request_preparation": "NOT_RUN",
+  "training_gradients_initializer_agent_edit": "NOT_RUN",
+  "old_worker_files_preserved": 46,
+  "report": "result.md"
+}

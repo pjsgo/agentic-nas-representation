@@ -1,0 +1,809 @@
+representation_version: 0.3-candidate.1
+operator_profile: tensor_pytorch_2_2_1_v0_3_r1
+architecture: selective_state_subunit
+architecture_entry: entry
+factors:
+  entry:
+    contains:
+    - delta_positive
+    - delta_layout
+    - rates_exp
+    - rates_negative
+    - rates_batch
+    - rates_time
+    - delta_state
+    - decay_argument
+    - decay
+    - B_channel
+    - discrete_B
+    - u_state
+    - drive
+    - recurrence
+    - D_batch
+    - D_time
+    - skip
+    - pre_gate
+    - gate_activation
+    - gated
+  step:
+    contains:
+    - retained
+    - updated
+    - C_column
+    - readout_product
+    - readout_vector
+  delta_positive:
+    operator: softplus
+    attributes:
+      beta: 1
+      threshold: 20
+  delta_layout:
+    operator: transpose
+    attributes:
+      dim0: 1
+      dim1: 2
+  rates_exp:
+    operator: exp
+  rates_negative:
+    operator: neg
+  rates_batch:
+    operator: unsqueeze
+    attributes:
+      dim: 0
+  rates_time:
+    operator: unsqueeze
+    attributes:
+      dim: 2
+  delta_state:
+    operator: unsqueeze
+    attributes:
+      dim: 3
+  decay_argument:
+    operator: mul
+  decay:
+    operator: exp
+  B_channel:
+    operator: unsqueeze
+    attributes:
+      dim: 1
+  discrete_B:
+    operator: mul
+  u_state:
+    operator: unsqueeze
+    attributes:
+      dim: 3
+  drive:
+    operator: mul
+  recurrence:
+    scan:
+      body: step
+      axis: 2
+      direction: forward
+      sequence_inputs:
+        decay_t:
+          input: decay_sequence
+          axis: 2
+        drive_t:
+          input: drive_sequence
+          axis: 2
+        C_t:
+          input: C_sequence
+          axis: 1
+      invariant_inputs: {}
+      carries:
+        ssm:
+          input: initial
+          body_input: previous
+          body_output: next
+          output: final
+      emits:
+        readouts:
+          body_output: readout
+          axis: 2
+      empty: return_initial
+  retained:
+    operator: mul
+  updated:
+    operator: add
+    attributes:
+      inplace: false
+  C_column:
+    operator: unsqueeze
+    attributes:
+      dim: 2
+  readout_product:
+    operator: matmul
+  readout_vector:
+    operator: squeeze
+    attributes:
+      dim: 2
+  D_batch:
+    operator: unsqueeze
+    attributes:
+      dim: 0
+  D_time:
+    operator: unsqueeze
+    attributes:
+      dim: 2
+  skip:
+    operator: mul
+  pre_gate:
+    operator: add
+    attributes:
+      inplace: false
+  gate_activation:
+    operator: silu
+  gated:
+    operator: mul
+dataflow:
+- - entry.delta_logits
+  - delta_positive.input
+- - delta_positive.output
+  - delta_layout.input
+- - parameters.p_A_log
+  - rates_exp.input
+- - rates_exp.output
+  - rates_negative.input
+- - rates_negative.output
+  - rates_batch.input
+- - rates_batch.output
+  - rates_time.input
+- - delta_layout.output
+  - delta_state.input
+- - rates_time.output
+  - decay_argument.left
+- - delta_state.output
+  - decay_argument.right
+- - decay_argument.output
+  - decay.input
+- - entry.B
+  - B_channel.input
+- - delta_state.output
+  - discrete_B.left
+- - B_channel.output
+  - discrete_B.right
+- - entry.u
+  - u_state.input
+- - discrete_B.output
+  - drive.left
+- - u_state.output
+  - drive.right
+- - decay.output
+  - recurrence.decay_sequence
+- - drive.output
+  - recurrence.drive_sequence
+- - entry.C
+  - recurrence.C_sequence
+- - entry.initial_state
+  - recurrence.initial
+- - step.decay_t
+  - retained.left
+- - step.previous
+  - retained.right
+- - retained.output
+  - updated.main
+- - step.drive_t
+  - updated.shortcut
+- - step.C_t
+  - C_column.input
+- - updated.output
+  - readout_product.left
+- - C_column.output
+  - readout_product.right
+- - readout_product.output
+  - readout_vector.input
+- - updated.output
+  - step.next
+- - readout_vector.output
+  - step.readout
+- - parameters.p_D
+  - D_batch.input
+- - D_batch.output
+  - D_time.input
+- - entry.u
+  - skip.left
+- - D_time.output
+  - skip.right
+- - recurrence.readouts
+  - pre_gate.main
+- - skip.output
+  - pre_gate.shortcut
+- - entry.gate
+  - gate_activation.input
+- - pre_gate.output
+  - gated.left
+- - gate_activation.output
+  - gated.right
+- - gated.output
+  - entry.output
+- - recurrence.final
+  - entry.final_state
+interface:
+  delta_positive:
+    inputs:
+      input: &id051
+        shape:
+        - Batch
+        - Time
+        - 3
+        axes:
+        - batch
+        - time
+        - channel
+        dtype: float32
+    outputs:
+      output:
+        shape: &id001
+        - Batch
+        - Time
+        - 3
+        axes: &id002
+        - batch
+        - time
+        - channel
+        dtype: float32
+  delta_layout:
+    inputs:
+      input:
+        shape: *id001
+        axes: *id002
+        dtype: float32
+    outputs:
+      output:
+        shape: &id009
+        - Batch
+        - 3
+        - Time
+        axes: &id010
+        - batch
+        - channel
+        - time
+        dtype: float32
+  rates_exp:
+    inputs:
+      input:
+        shape:
+        - 3
+        - 2
+        axes:
+        - channel
+        - state
+        dtype: float32
+    outputs:
+      output:
+        shape: &id003
+        - 3
+        - 2
+        axes: &id004
+        - channel
+        - state
+        dtype: float32
+  rates_negative:
+    inputs:
+      input:
+        shape: *id003
+        axes: *id004
+        dtype: float32
+    outputs:
+      output:
+        shape: &id005
+        - 3
+        - 2
+        axes: &id006
+        - channel
+        - state
+        dtype: float32
+  rates_batch:
+    inputs:
+      input:
+        shape: *id005
+        axes: *id006
+        dtype: float32
+    outputs:
+      output:
+        shape: &id007
+        - 1
+        - 3
+        - 2
+        axes: &id008
+        - batch
+        - channel
+        - state
+        dtype: float32
+  rates_time:
+    inputs:
+      input:
+        shape: *id007
+        axes: *id008
+        dtype: float32
+    outputs:
+      output:
+        shape: &id011
+        - 1
+        - 3
+        - 1
+        - 2
+        axes: &id012
+        - batch
+        - channel
+        - time
+        - state
+        dtype: float32
+  delta_state:
+    inputs:
+      input:
+        shape: *id009
+        axes: *id010
+        dtype: float32
+    outputs:
+      output:
+        shape: &id013
+        - Batch
+        - 3
+        - Time
+        - 1
+        axes: &id014
+        - batch
+        - channel
+        - time
+        - state
+        dtype: float32
+  decay_argument:
+    inputs:
+      left:
+        shape: *id011
+        axes: *id012
+        dtype: float32
+      right: &id017
+        shape: *id013
+        axes: *id014
+        dtype: float32
+    outputs:
+      output:
+        shape: &id015
+        - Batch
+        - 3
+        - Time
+        - 2
+        axes: &id016
+        - batch
+        - channel
+        - time
+        - state
+        dtype: float32
+  decay:
+    inputs:
+      input:
+        shape: *id015
+        axes: *id016
+        dtype: float32
+    outputs:
+      output:
+        shape: &id024
+        - Batch
+        - 3
+        - Time
+        - 2
+        axes: &id025
+        - batch
+        - channel
+        - time
+        - state
+        dtype: float32
+  B_channel:
+    inputs:
+      input: &id052
+        shape:
+        - Batch
+        - Time
+        - 2
+        axes:
+        - batch
+        - time
+        - state
+        dtype: float32
+    outputs:
+      output:
+        shape: &id018
+        - Batch
+        - 1
+        - Time
+        - 2
+        axes: &id019
+        - batch
+        - channel
+        - time
+        - state
+        dtype: float32
+  discrete_B:
+    inputs:
+      left: *id017
+      right:
+        shape: *id018
+        axes: *id019
+        dtype: float32
+    outputs:
+      output:
+        shape: &id020
+        - Batch
+        - 3
+        - Time
+        - 2
+        axes: &id021
+        - batch
+        - channel
+        - time
+        - state
+        dtype: float32
+  u_state:
+    inputs:
+      input: &id028
+        shape:
+        - Batch
+        - 3
+        - Time
+        axes:
+        - batch
+        - channel
+        - time
+        dtype: float32
+    outputs:
+      output:
+        shape: &id022
+        - Batch
+        - 3
+        - Time
+        - 1
+        axes: &id023
+        - batch
+        - channel
+        - time
+        - state
+        dtype: float32
+  drive:
+    inputs:
+      left:
+        shape: *id020
+        axes: *id021
+        dtype: float32
+      right:
+        shape: *id022
+        axes: *id023
+        dtype: float32
+    outputs:
+      output:
+        shape: &id026
+        - Batch
+        - 3
+        - Time
+        - 2
+        axes: &id027
+        - batch
+        - channel
+        - time
+        - state
+        dtype: float32
+  recurrence:
+    inputs:
+      decay_sequence:
+        shape: *id024
+        axes: *id025
+        dtype: float32
+      drive_sequence:
+        shape: *id026
+        axes: *id027
+        dtype: float32
+      C_sequence: &id053
+        shape:
+        - Batch
+        - Time
+        - 2
+        axes:
+        - batch
+        - time
+        - state
+        dtype: float32
+      initial: &id029
+        shape:
+        - Batch
+        - 3
+        - 2
+        axes:
+        - batch
+        - channel
+        - state
+        dtype: float32
+    outputs:
+      readouts: *id028
+      final: *id029
+  step:
+    inputs:
+      decay_t: &id030
+        shape:
+        - Batch
+        - 3
+        - 2
+        axes:
+        - batch
+        - channel
+        - state
+        dtype: float32
+      drive_t: *id030
+      C_t: &id033
+        shape:
+        - Batch
+        - 2
+        axes:
+        - batch
+        - state
+        dtype: float32
+      previous: *id030
+    outputs:
+      next: *id030
+      readout:
+        shape:
+        - Batch
+        - 3
+        axes:
+        - batch
+        - channel
+        dtype: float32
+  retained:
+    inputs:
+      left: *id030
+      right: *id030
+    outputs:
+      output:
+        shape: &id031
+        - Batch
+        - 3
+        - 2
+        axes: &id032
+        - batch
+        - channel
+        - state
+        dtype: float32
+  updated:
+    inputs:
+      main:
+        shape: *id031
+        axes: *id032
+        dtype: float32
+      shortcut: *id030
+    outputs:
+      output:
+        shape: &id034
+        - Batch
+        - 3
+        - 2
+        axes: &id035
+        - batch
+        - channel
+        - state
+        dtype: float32
+  C_column:
+    inputs:
+      input: *id033
+    outputs:
+      output:
+        shape: &id036
+        - Batch
+        - 2
+        - 1
+        axes: &id037
+        - batch
+        - state
+        - column
+        dtype: float32
+  readout_product:
+    inputs:
+      left:
+        shape: *id034
+        axes: *id035
+        dtype: float32
+      right:
+        shape: *id036
+        axes: *id037
+        dtype: float32
+    outputs:
+      output:
+        shape: &id038
+        - Batch
+        - 3
+        - 1
+        axes: &id039
+        - batch
+        - channel
+        - column
+        dtype: float32
+  readout_vector:
+    inputs:
+      input:
+        shape: *id038
+        axes: *id039
+        dtype: float32
+    outputs:
+      output:
+        shape:
+        - Batch
+        - 3
+        axes:
+        - batch
+        - channel
+        dtype: float32
+  D_batch:
+    inputs:
+      input:
+        shape:
+        - 3
+        axes:
+        - channel
+        dtype: float32
+    outputs:
+      output:
+        shape: &id040
+        - 1
+        - 3
+        axes: &id041
+        - batch
+        - channel
+        dtype: float32
+  D_time:
+    inputs:
+      input:
+        shape: *id040
+        axes: *id041
+        dtype: float32
+    outputs:
+      output:
+        shape: &id042
+        - 1
+        - 3
+        - 1
+        axes: &id043
+        - batch
+        - channel
+        - time
+        dtype: float32
+  skip:
+    inputs:
+      left: *id028
+      right:
+        shape: *id042
+        axes: *id043
+        dtype: float32
+    outputs:
+      output:
+        shape: &id044
+        - Batch
+        - 3
+        - Time
+        axes: &id045
+        - batch
+        - channel
+        - time
+        dtype: float32
+  pre_gate:
+    inputs:
+      main: *id028
+      shortcut:
+        shape: *id044
+        axes: *id045
+        dtype: float32
+    outputs:
+      output:
+        shape: &id046
+        - Batch
+        - 3
+        - Time
+        axes: &id047
+        - batch
+        - channel
+        - time
+        dtype: float32
+  gate_activation:
+    inputs:
+      input: &id050
+        shape:
+        - Batch
+        - 3
+        - Time
+        axes:
+        - batch
+        - channel
+        - time
+        dtype: float32
+    outputs:
+      output:
+        shape: &id048
+        - Batch
+        - 3
+        - Time
+        axes: &id049
+        - batch
+        - channel
+        - time
+        dtype: float32
+  gated:
+    inputs:
+      left:
+        shape: *id046
+        axes: *id047
+        dtype: float32
+      right:
+        shape: *id048
+        axes: *id049
+        dtype: float32
+    outputs:
+      output:
+        shape:
+        - Batch
+        - 3
+        - Time
+        axes:
+        - batch
+        - channel
+        - time
+        dtype: float32
+  entry:
+    inputs:
+      u: *id028
+      gate: *id050
+      delta_logits: *id051
+      B: *id052
+      C: *id053
+      initial_state: *id029
+    outputs:
+      output: *id028
+      final_state: *id029
+    symbols:
+      Batch: positive_integer
+      Time: positive_integer
+resource: {}
+parameters:
+  p_A_log:
+    shape:
+    - 3
+    - 2
+    dtype: float32
+    requires_grad: true
+    initialization: fixture_supplied
+  p_D:
+    shape:
+    - 3
+    dtype: float32
+    requires_grad: true
+    initialization: fixture_supplied
+buffers: {}
+parameter_bindings: {}
+buffer_bindings: {}
+state:
+  ssm:
+    shape:
+    - Batch
+    - 3
+    - 2
+    axes:
+    - batch
+    - channel
+    - state
+    initial: external
+dependency:
+  entry.output:
+  - entry.u
+  - entry.gate
+  - entry.delta_logits
+  - entry.B
+  - entry.C
+  - entry.initial_state
+  - parameters.p_A_log
+  - parameters.p_D
+  entry.final_state:
+  - entry.u
+  - entry.delta_logits
+  - entry.B
+  - entry.initial_state
+  - parameters.p_A_log
+description: Computational subunit only, positive sequence lengths and float32. External
+  delta_logits includes upstream projection and bias outside this boundary. External
+  B/C are per-token inputs. No convolution, projection, cache or full-block claim.

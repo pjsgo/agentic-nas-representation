@@ -1,0 +1,183 @@
+{
+  "status": "PASS",
+  "evaluation_version": "seq2seq_structure_v1.1",
+  "historical_judgment": {
+    "overall": "INCONCLUSIVE",
+    "frozen_runtime_DAG": "FAIL",
+    "modified": false,
+    "reproduced_fixture_cases": 3,
+    "report": "../../revisions/02_bentrevett/post_api/result.md",
+    "structured_result": "../../revisions/02_bentrevett/validation/post_api_results.json",
+    "postcall_audit_checked": true
+  },
+  "new_evaluation": {
+    "structural_equivalence": "PASS",
+    "scope": "Observed runtime operation/dataflow/attributes/state/identity equivalence for the unchanged pre-embedded one-layer core on three frozen CPU float32 fixtures. Not a universal equivalence proof or retroactive Common Schema acceptance.",
+    "allowed_transform": {
+      "rule": "zero_factory_backend_detach",
+      "factories": [
+        "torch.tensor literal zero",
+        "torch.zeros"
+      ],
+      "requirements": [
+        "fresh literal all-zero [2,4] CPU float32 strided tensor",
+        "requires_grad=false and no Parameter/Buffer/input/carry identity",
+        "detach dispatcher event occurred inside the observed Python zero-allocation call scope",
+        "no explicit Python detach call outside that allocation scope",
+        "detach child canonicalizes only to that proven zero allocation",
+        "same dtype/device/shape/values and unchanged input, Parameter and carry bindings"
+      ],
+      "no_general_detach_elision": true
+    },
+    "forbidden_transforms": [
+      "Explicit detach on inputs, Parameters, carries or zero state outside allocation",
+      "Clone/copy, cast/reshape/permute not declared; changed input/value dependency",
+      "h/c swap, omitted handoff, earlier source state, reset carry",
+      "wrong scan time axis/length/traversal or wrong teacher-forcing shift",
+      "wrong gate operator/order, sequential/in-place state update",
+      "recurrent Parameter clones, tying, lost registration/requires_grad or extra state",
+      "nonzero/differently typed/shaped/trainable/data-dependent zero creation normalized as a literal constant",
+      "new operators, arithmetic reassociation, approximate activation or numeric-only acceptance"
+    ],
+    "criterion_declared_and_hashed_before_model_evaluation": true,
+    "no_numeric_only_acceptance": true,
+    "candidate_sha256": "501facb3aac62aca442b5eb2b63b270f078fa3af59670f69c2943b24759af227",
+    "original_candidate_modified": false,
+    "fixture_seeds": [
+      1701,
+      1702,
+      1703
+    ],
+    "all_nine_output_DAG_roots_match_each_case": true,
+    "state_and_parameter_identity": "PASS",
+    "max_source_absolute_error": 5.960464477539063e-08,
+    "rtol": 1e-05,
+    "atol": 1e-06,
+    "common_schema_or_frozen_validator_modified": false
+  },
+  "execution_evidence": {
+    "command": [
+      "python",
+      "-B",
+      "<research-root>/parallel_coverage/20261105/runtime/compute_v1/coordinator.py",
+      "run",
+      "--worker",
+      "seq2seq",
+      "--queue-timeout",
+      "60",
+      "--timeout",
+      "120",
+      "--",
+      "python",
+      "-B",
+      "<research-root>/parallel_coverage/20261105/seq2seq/evaluations/20261109_structure_v1_1/evaluate.py"
+    ],
+    "wrapper_exit_code": 0,
+    "wall_seconds": 2.481869,
+    "compute": {
+      "policy": "compute-v1.0",
+      "threads": 1,
+      "interop_threads": 1,
+      "affinity": [
+        0
+      ],
+      "duration_seconds": 1.980159
+    },
+    "log": "logs/execution_20261109T112204229680Z.json",
+    "log_sha256": "021d42ea0f5bb01015069def255f16da116690c592cd0f6451bb9becfd17c936",
+    "raw_results": "validation/results.json",
+    "expected_graphs": "validation/expected_graphs.json",
+    "criteria_input_manifest": "frozen_inputs.json",
+    "prior_files_unchanged": {
+      "status": "PASS",
+      "old_files_checked": 179,
+      "changed": []
+    },
+    "common_integrity": {
+      "status": "PASS",
+      "run_root": "<research-root>/parallel_coverage/20261105",
+      "common_manifest_sha256": "5ce36a47fe627640b92740b01fb54ccf6da3786f0f39db68ab738fecee51037f",
+      "preexisting_files_checked": 343,
+      "frozen_entries_checked": 37,
+      "workers_checked": [
+        "seq2seq"
+      ],
+      "setup_only_checks": false,
+      "errors": [],
+      "scope": "Static setup integrity only; no reconstruction or fidelity evaluation."
+    }
+  },
+  "failure_controls": {
+    "positive_control_evaluations": 15,
+    "negative_model_families": 27,
+    "negative_model_evaluations": 81,
+    "rejected_model_evaluations": 81,
+    "runtime_outcomes": {
+      "COMPLETED": 67,
+      "NOT_RUN": 12,
+      "ERROR": 2
+    },
+    "schema_control_families": 9,
+    "schema_counting_note": "Eight malformed-schema controls are rejected statically; one well-formed swapped-carry control is rejected semantically in three of the 81 model evaluations. Do not double count it.",
+    "numeric_equal_rejected_families": [
+      "clone_bridge_hidden",
+      "clone_recurrent_parameter",
+      "detach_decoder_carry",
+      "detach_encoder_carry",
+      "detach_input",
+      "detach_parameter_read",
+      "explicit_detach_zero",
+      "trainable_zero"
+    ],
+    "numeric_equal_rejected_evaluations": 24,
+    "details": "validation/control_summary.json"
+  },
+  "failed_preparation_attempt": {
+    "version": "../20261109_structure_v1",
+    "status": "FAIL_CONTROL_VALIDITY",
+    "reason": "nonzero_initial scalar-add construction had no executable witness under inherited Trace; replaced with an explicit 0.1 initial-state literal in this new folder only. No transformation rule broadened.",
+    "old_attempt_preserved": true,
+    "normalizer_code_hash_identical": true
+  },
+  "limitations": [
+    "Observed three-fixture, ten-Parameter pre-embedded core; no universal program proof",
+    "This post-response criterion version is an exploratory follow-up, not a blinded generation experiment",
+    "New evaluator inherits frozen primitive Trace normalizations and its limited operator subset",
+    "No training/gradient, token lookup, empty sequence, arbitrary batch/multilayer, source Module identity or Agent Edit claim",
+    "Common Schema and historical acceptance policy are unchanged; new PASS applies only to this evaluation version"
+  ],
+  "generated_files": [
+    "artifacts.json",
+    "control_plan.json",
+    "controls.py",
+    "criteria.md",
+    "evaluate.py",
+    "frozen_inputs.json",
+    "history/prior_files.json",
+    "history/state_inventory.json",
+    "launch.py",
+    "logs/execution_20261109T112204229680Z.json",
+    "policy.json",
+    "probe.py",
+    "result.md",
+    "results.json",
+    "structure.py",
+    "validation/control_summary.json",
+    "validation/expected_graphs.json",
+    "validation/results.json"
+  ],
+  "next_steps": [
+    "Review versioned provenance rule and counterexamples before any coordinated shared evaluation-policy adoption",
+    "Keep this candidate and old INCONCLUSIVE immutable; any new acceptance experiment needs its own frozen policy/inputs"
+  ],
+  "prohibited_actions": {
+    "API_calls": 0,
+    "candidate_edits": 0,
+    "common_schema_edits": 0,
+    "package_installs": 0,
+    "shared_environment_changes": 0,
+    "subagents": 0,
+    "commit_push": 0
+  },
+  "recorded_at_kst": "2026-11-09T20:25:29.661111+09:00"
+}

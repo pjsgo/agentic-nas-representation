@@ -1,0 +1,87 @@
+{
+  "frozen_before_generation": true,
+  "device": "cpu",
+  "dtype": "float32",
+  "mode": "eval",
+  "threads": 1,
+  "seeds": [
+    1701,
+    1702,
+    1703
+  ],
+  "cases": [
+    {
+      "B": 2,
+      "T": 3,
+      "I": 4,
+      "H": 5,
+      "seed": 1701
+    },
+    {
+      "B": 2,
+      "T": 1,
+      "I": 4,
+      "H": 5,
+      "seed": 1702
+    },
+    {
+      "B": 2,
+      "T": 5,
+      "I": 4,
+      "H": 5,
+      "seed": 1703
+    },
+    {
+      "B": 2,
+      "T": 0,
+      "I": 4,
+      "H": 5,
+      "seed": 1701,
+      "scope": "schema extension only"
+    }
+  ],
+  "rtol": 1e-05,
+  "atol": 1e-06,
+  "output_tolerances": {
+    "y": {
+      "rtol": 1e-05,
+      "atol": 1e-06
+    },
+    "hn": {
+      "rtol": 1e-05,
+      "atol": 1e-06
+    },
+    "cn": {
+      "rtol": 1e-05,
+      "atol": 1e-06
+    },
+    "all_runtime_intermediates": {
+      "rtol": 1e-05,
+      "atol": 1e-06
+    }
+  },
+  "domain": "B>0;T>=0;I=4;H=5; explicit nonzero unequal initial states",
+  "parameter_provenance": "deterministic signed nonzero fixture values, four distinct exact Parameter objects; no buffers",
+  "state_mapping": "infer roles from live linear operand ancestry and shape, bijective four-Parameter map; sharing checked each step",
+  "intermediates": "ATen tensor ancestry, split gates, every cell update and all emissions; source oracle exposes h/c at every step, native gates are not exposed",
+  "initializer": "fixture_supplied, source default uniform deliberately out of scope",
+  "unsupported": [
+    "unbatched cell",
+    "implicit zero initial state",
+    "training/grad",
+    "dropout",
+    "projection",
+    "multilayer",
+    "bidirectional",
+    "packed sequence",
+    "source native empty sequence"
+  ],
+  "memory_budget_mib": 512,
+  "preflight_timeout_seconds": 120,
+  "public_tests": [
+    "source/reference",
+    "runtime DAG vs YAML executor",
+    "negative mutations"
+  ],
+  "hidden_tests": "No hidden fixtures beyond frozen cases; no post-generation tuning."
+}

@@ -1,0 +1,11 @@
+{
+  "factory": "create_unit_a",
+  "constructor_kwargs": {},
+  "forward_inputs": [
+    "x",
+    "mask"
+  ],
+  "forward_outputs": [
+    "y"
+  ]
+}

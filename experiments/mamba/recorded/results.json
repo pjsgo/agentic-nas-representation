@@ -1,0 +1,331 @@
+{
+  "status": "INCONCLUSIVE",
+  "scope": "Transformers 4.39.3 Mamba-1 selective-scan computational subunit, source lines 263–279, CPU float32, positive T, channels=3/state_size=2",
+  "api_requests_made": 1,
+  "additional_requests_allowed": 0,
+  "candidate_modified": false,
+  "candidate_sha256": "bbed5bbdd8312988e918067c94b7c66b7fafac9b2afe7069e3d017dc9785eab2",
+  "request_sha256": "be48af596c03f861f12b017a0f7e1d3593ebcb3cdf48c0e15e2c1fcfaf92a820",
+  "preflight_sha256": "30e3c27eeac194b736ddde43f307e6561e120ecacaae517dcae5592f04d68e1c",
+  "preflight_status": "PASS",
+  "axes": {
+    "api_transport": {
+      "status": "PASS",
+      "http_status": 200,
+      "attempts": 1
+    },
+    "response_and_syntax": {
+      "status": "PASS",
+      "reason": "Strict JSON, status ok, no computational assumptions/missing_information, entire source reviewed before import."
+    },
+    "source_grounding": {
+      "status": "PASS",
+      "scope": "Transformers 4.39.3 Mamba-1 selective-scan computational subunit, source lines 263–279, CPU float32, positive T, channels=3/state_size=2"
+    },
+    "selective_scan_logical_dataflow": {
+      "status": "PASS",
+      "basis": "Full source review plus observed delta/decay/drive/readout/gates and all per-step states match Source/Reference.",
+      "scope": "Observed fixed fixtures and reviewed loop, not general architecture proof."
+    },
+    "input_dependent_values": {
+      "status": "PASS",
+      "scope": "Per-token external delta_logits/B/C usage and softplus/discretization. Upstream generation and dt_proj bias calculation outside fixed boundary."
+    },
+    "state_recurrence": {
+      "status": "PASS",
+      "basis": "Nonzero initial carry, each next state, same-step C readout and final state match for T=1/4/7; reset/reverse/read-before-update controls rejected."
+    },
+    "parameter_resource_identity": {
+      "status": "PASS",
+      "parameter_count": 2,
+      "computational_module_count": 0,
+      "buffer_count": 0,
+      "basis": "Actual Parameter bijection, shape/dtype/requires_grad/exact values, object and storage distinctness, no input/state/Parameter mutation. Root wrapper Module is not a represented computational operator."
+    },
+    "intermediate_numerical_fidelity": {
+      "status": "PASS",
+      "maximum_errors": {
+        "max_absolute_error": 0.0,
+        "max_relative_error": 0.0
+      }
+    },
+    "forward_numerical_fidelity": {
+      "status": "PASS",
+      "maximum_errors": {
+        "max_absolute_error": 0.0,
+        "max_relative_error": 0.0
+      }
+    },
+    "frozen_validator_structural_acceptance": {
+      "status": "FAIL",
+      "reason": "Candidate runtime tensor dataflow/attributes/carry ancestry differ from the declared graph"
+    },
+    "generated_common_v0_3_schema_fidelity": {
+      "status": "INCONCLUSIVE",
+      "reason": "Frozen runtime fingerprint does not expand equivalent default softplus attributes, nor model scan emit preallocation/copy_ as stack. Observed logical/numerical agreement is insufficient to override this frozen acceptance failure."
+    },
+    "frozen_representation_schema_consistency": {
+      "status": "PASS",
+      "schema_delta_used": false,
+      "scope": "Original frozen YAML/common rules unchanged."
+    },
+    "negative_tests": {
+      "status": "PASS",
+      "numerical_types": 14,
+      "identity_types": 4,
+      "static_types_preflight": 9
+    },
+    "agent_edit": {
+      "status": "INCONCLUSIVE",
+      "reason": "Not studied; no candidate edits allowed or performed."
+    }
+  },
+  "maximum_errors": {
+    "max_absolute_error": 0.0,
+    "max_relative_error": 0.0
+  },
+  "fixture_cases": 4,
+  "fixture_tensor_files": 32,
+  "fixture_tensor_bytes": 1924,
+  "numerical_controls": {
+    "constant_delta": {
+      "status": "PASS",
+      "rejected_fixtures": [
+        "signed_dense",
+        "impulse",
+        "longer_sequence"
+      ],
+      "non_discriminating_fixtures": [
+        "single_step"
+      ]
+    },
+    "constant_B": {
+      "status": "PASS",
+      "rejected_fixtures": [
+        "signed_dense",
+        "longer_sequence"
+      ],
+      "non_discriminating_fixtures": [
+        "impulse",
+        "single_step"
+      ]
+    },
+    "constant_C": {
+      "status": "PASS",
+      "rejected_fixtures": [
+        "signed_dense",
+        "impulse",
+        "longer_sequence"
+      ],
+      "non_discriminating_fixtures": [
+        "single_step"
+      ]
+    },
+    "share_all_token_values": {
+      "status": "PASS",
+      "rejected_fixtures": [
+        "signed_dense",
+        "impulse",
+        "longer_sequence"
+      ],
+      "non_discriminating_fixtures": [
+        "single_step"
+      ]
+    },
+    "omit_softplus": {
+      "status": "PASS",
+      "rejected_fixtures": [
+        "signed_dense",
+        "impulse",
+        "single_step",
+        "longer_sequence"
+      ],
+      "non_discriminating_fixtures": []
+    },
+    "wrong_softplus_threshold": {
+      "status": "PASS",
+      "rejected_fixtures": [
+        "signed_dense",
+        "impulse",
+        "single_step",
+        "longer_sequence"
+      ],
+      "non_discriminating_fixtures": []
+    },
+    "softplus_after_discretization": {
+      "status": "PASS",
+      "rejected_fixtures": [
+        "signed_dense",
+        "impulse",
+        "single_step",
+        "longer_sequence"
+      ],
+      "non_discriminating_fixtures": []
+    },
+    "drop_D": {
+      "status": "PASS",
+      "rejected_fixtures": [
+        "signed_dense",
+        "impulse",
+        "single_step",
+        "longer_sequence"
+      ],
+      "non_discriminating_fixtures": []
+    },
+    "drop_gate": {
+      "status": "PASS",
+      "rejected_fixtures": [
+        "signed_dense",
+        "impulse",
+        "single_step",
+        "longer_sequence"
+      ],
+      "non_discriminating_fixtures": []
+    },
+    "reset_state": {
+      "status": "PASS",
+      "rejected_fixtures": [
+        "signed_dense",
+        "impulse",
+        "longer_sequence"
+      ],
+      "non_discriminating_fixtures": [
+        "single_step"
+      ]
+    },
+    "read_before_update": {
+      "status": "PASS",
+      "rejected_fixtures": [
+        "signed_dense",
+        "impulse",
+        "single_step",
+        "longer_sequence"
+      ],
+      "non_discriminating_fixtures": []
+    },
+    "reverse_scan": {
+      "status": "PASS",
+      "rejected_fixtures": [
+        "signed_dense",
+        "impulse",
+        "longer_sequence"
+      ],
+      "non_discriminating_fixtures": [
+        "single_step"
+      ]
+    },
+    "swap_C_between_batches": {
+      "status": "PASS",
+      "rejected_fixtures": [
+        "signed_dense",
+        "impulse",
+        "longer_sequence"
+      ],
+      "non_discriminating_fixtures": [
+        "single_step"
+      ]
+    },
+    "wrong_A_sign": {
+      "status": "PASS",
+      "rejected_fixtures": [
+        "signed_dense",
+        "impulse",
+        "single_step",
+        "longer_sequence"
+      ],
+      "non_discriminating_fixtures": []
+    }
+  },
+  "identity_controls": {
+    "overlapping_parameter_storage": {
+      "status": "PASS",
+      "observed_rejection": "Parameter storage aliases"
+    },
+    "missing_parameter_role": {
+      "status": "PASS",
+      "observed_rejection": "missing/extra Parameter role"
+    },
+    "duplicate_parameter_role": {
+      "status": "PASS",
+      "observed_rejection": "duplicate Parameter role"
+    },
+    "extra_parameter": {
+      "status": "PASS",
+      "observed_rejection": "unmapped/extra Parameter"
+    }
+  },
+  "numerical_control_trials": 56,
+  "numerical_control_trial_rejections": 48,
+  "failure_categories": [
+    "STRUCTURE_MISMATCH"
+  ],
+  "failure_attribution": "Frozen-validator canonicalization/coverage limitation, not an observed numerical mismatch. Do not reclassify the frozen validator FAIL as PASS.",
+  "root_causes": [
+    {
+      "kind": "DEFAULT_ATTRIBUTE_NORMALIZATION",
+      "expected_fx": "aten.softplus.default(input)",
+      "candidate_fx": "aten.softplus.default(input, 1.0, 20.0)",
+      "observed": "First fingerprint divergence is delta_positive; default-equivalent signature difference propagates to final_state."
+    },
+    {
+      "kind": "SCAN_EMIT_LOWERING",
+      "expected_fx": "aten.stack of per-step readouts",
+      "candidate_fx": "aten.empty plus indexed aten.copy_ into each time slice",
+      "observed": "All slots written before use, external inputs/Parameters unchanged, outputs exact for fixtures. Frozen checker has no equivalence normalization for this lowering."
+    }
+  ],
+  "resources": {
+    "wall_seconds": 2.0151243960135616,
+    "peak_self_rss_mib": 385.890625,
+    "cpu_affinity": [
+      0
+    ],
+    "torch_threads": 1,
+    "torch_interop_threads": 1,
+    "gpu_used": false
+  },
+  "transport": {
+    "status": "RESPONSE_RECEIVED",
+    "attempts": 1,
+    "request_sha256": "be48af596c03f861f12b017a0f7e1d3593ebcb3cdf48c0e15e2c1fcfaf92a820",
+    "endpoint": "<generation-endpoint>",
+    "model": "Qwen3.8-27B",
+    "started_at_utc": "2026-11-05T10:01:23.366753+00:00",
+    "retries": 0,
+    "redirects": false,
+    "stream": false,
+    "http_status": 200,
+    "response_bytes": 8023,
+    "saved_response_bytes": 8023,
+    "raw_response_sha256": "94d823a978f05bad34113abf2f5b99bc150e9f990870bd550a8d3b330a667af1",
+    "credential_echo_redacted": false,
+    "duration_seconds": 70.09272327699,
+    "completed_at_utc": "2026-11-05T10:02:33.459477+00:00"
+  },
+  "compute_events": "logs/post_api_compute_events.json",
+  "scope_exclusions": [
+    "upstream delta/B/C generation and dt_proj bias",
+    "input/gate and output projections",
+    "causal conv/crop/cache protocol",
+    "whole Mamba block/model",
+    "Mamba-2",
+    "mixed precision",
+    "training/gradients",
+    "initializer fidelity"
+  ],
+  "remaining_blockers": [
+    "Original frozen structural acceptance FAIL remains; generated Schema Fidelity cannot receive full PASS.",
+    "A separately versioned validator/equivalence review would be needed to resolve this ambiguity on the same untouched candidate. No such rule change or new API call is performed in this run."
+  ],
+  "evidence": [
+    "validation/candidate_frozen_validator.json",
+    "validation/candidate_diagnostics.json",
+    "validation/structure_explanation.json",
+    "validation/candidate_review.json",
+    "validation/response_parse.json",
+    "requests/api_attempt.json",
+    "requests/transport_metadata.json"
+  ],
+  "common_schema_modified": false,
+  "git_pushes": 0
+}
