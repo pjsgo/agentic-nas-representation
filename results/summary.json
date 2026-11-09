@@ -134,6 +134,6 @@
       "reproduction": "archival_artifacts_only"
     }
   ],
-  "delivery": "LOCAL_DOCUMENTATION_EXPORT_NOT_UPLOADED",
-  "language": "ko"
+  "language": "ko",
+  "repository": "https://github.com/pjsgo/agentic-nas-representation"
 }
