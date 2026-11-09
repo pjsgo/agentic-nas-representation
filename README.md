@@ -1,33 +1,21 @@
-# Agentic NAS · 신경망 구조 표현과 복원
+# Agentic NAS · Architecture Representation
 
-신경망 구조를 YAML로 표현하고, LLM이 복원한 코드가 연산·객체 공유·상태 전달을 보존하는지 연구하고 있습니다.
+## 연구 방향
 
-현재는 선택된 블록과 핵심 연산을 대상으로 실험하고 있습니다. YAML의 기본 구조를 기준으로 유지하면서, 연구에서 다루는 **아키텍처 계보 전체로 표현과 복원을 확장**하고 필요한 정보를 구체화할 계획입니다. 장기적으로는 에이전트의 구조 편집·탐색으로 연결하려 합니다.
+팀에서는 아키텍처 계보(Genealogy)를 바탕으로 신경망 구조를 이해하고, 에이전트가 구조를 편집·탐색할 수 있도록 하는 Agentic NAS를 연구하고 있습니다. 계보에 담긴 구조적 관계를 실제 모델의 표현과 구현으로 연결하는 것이 연구 방향입니다.
 
-진행 중인 팀 연구 · 이 레포는 제가 담당하는 표현·재구성·검증 작업의 자료를 정리합니다.
+## 맡은 부분
 
-## 실제 자료
+저는 이 과정에서 **신경망 구조의 표현과 코드 복원·검증**을 맡고 있습니다. 모델의 연산과 연결, 객체 공유, 상태 전달을 YAML로 표현하고, 이를 바탕으로 LLM이 생성한 코드가 해당 구조를 유지하는지 확인하는 작업입니다. 계보 분석은 팀의 다른 연구원이 담당합니다.
 
-| 사례 | YAML · 복원 코드 · 결과 |
-|---|---|
-| ResNet BasicBlock | [YAML](experiments/resnet/generator/input.yaml) · [코드](experiments/resnet/response_review/generated_model.py) · [7개 입력과 구조 검사 통과](experiments/resnet/README.md) |
-| 마지막 ReLU → GELU 편집 | [YAML](experiments/resnet-gelu/generator/input.yaml) · [코드](experiments/resnet-gelu/response_review/generated_model.py) · [편집 결과](experiments/resnet-gelu/README.md) |
-| Transformer 인코더 핵심부 | [YAML](experiments/transformer/representation.yaml) · [코드](experiments/transformer/generated_model.py) · [Parameter 요건 위반 사례](experiments/transformer/README.md) |
+## 현재 작업
 
-[전체 실험 자료](experiments/README.md) · [범위별 결과](results/summary.md) · [팀 공유 자료의 기준 버전](https://github.com/UVR-WJCHO/AI4Science_archive/tree/3a6b02d51b05c545f4d742b7341afd5abe05f81b/JunseoPark)
+선택된 블록과 핵심 연산을 대상으로 YAML 표현, 복원 코드, 검증 도구를 구성했습니다. 이 레포에는 실제 산출물을 아키텍처별로 정리하고 있으며, 연구 진행에 맞춰 자료를 추가합니다.
 
-실험은 서로 다른 제한된 범위를 다룹니다. 생성 완료와 검증 통과를 구분하며, 전체 모델이나 자율 NAS 성능의 검증을 뜻하지 않습니다.
+[아키텍처별 YAML·복원 코드](experiments/README.md) · [작업 요약](results/summary.md) · [실행 예제](experiments/resnet/README.md)
 
-## 실행 예제
+## 앞으로의 방향
 
-저장된 ResNet 후보를 API 호출 없이 검증할 수 있습니다.
+현재 표현의 기본 구조를 바탕으로 필요한 정보를 구체화하며, 연구에서 다루는 **아키텍처 계보 전체로 표현과 복원 범위를 확장**할 계획입니다. 팀 공유 자료에 아키텍처와 실험이 추가될 때 이 레포도 함께 갱신합니다. 이후에는 이 표현·검증 작업을 에이전트의 구조 편집과 탐색으로 연결하고자 합니다.
 
-```bash
-python tools/reproduce_resnet.py --output outputs/resnet-run-01
-```
-
-[환경과 실행 안내](experiments/resnet/README.md) · [확인된 실행 결과](results/reproduction/resnet-20261109/summary.json). 나머지 사례는 현재 자료 열람을 지원합니다.
-
-## 참고
-
-[표현 설계](docs/representation-design.md) · [검증 방법](docs/validation-methodology.md) · [담당 범위](docs/contributions.md) · [업데이트 방식](docs/updating.md) · [자료 출처](docs/artifact-provenance.md)
+[팀 공유 자료](https://github.com/UVR-WJCHO/AI4Science_archive/tree/junseo/nas-artifacts/JunseoPark) · [자료 출처](docs/artifact-provenance.md)

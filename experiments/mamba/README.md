@@ -1,17 +1,11 @@
-# Mamba 실험 자료
+# Mamba
 
-Mamba-1 selective-scan 핵심부, 검증 조건 4개·비교 텐서 32개 · **INCONCLUSIVE**
+Mamba-1 selective-scan 핵심부, 검증 조건 4개·비교 텐서 32개를 대상으로 한 표현 자료입니다.
 
-[YAML](representation.yaml) → [복원 코드](generated_model.py) → [검증 코드](validator.py) → [기록된 결과](recorded/results.json)
+[YAML](representation.yaml) · [복원 코드](generated_model.py) · [생성 입력·설정](generation-input.json)
 
-진단용 수치 평가에서 최대 절대·상대 오차 0
+생성된 코드는 원본 그대로 보존합니다. 검증 구현과 상세 기록은 이 폴더에 함께 보관합니다.
 
-Parameter 객체 동일성 검사는 통과했지만, 사전 고정한 구조 특징 비교는 실패했다. softplus 기본 인자의 명시 여부와 미리 할당한 출력 버퍼에 복사하는 구현을 동등하게 취급할지는 미해결이다.
+이 폴더는 자료 열람용이며, 검증기 단독 실행에 필요한 연구 환경 전체를 포함하지 않습니다.
 
-[생성 입력과 모델 설정](generation-input.json)을 함께 볼 수 있습니다. 후보 코드는 원본 그대로입니다.
-
-## 재현 범위
-
-현재 폴더는 실제 실험 자료를 읽고 비교하는 스냅샷입니다. 검증기는 원래 작업 공간의 참조 모듈·fixture·정책 파일에 의존하므로 이 폴더에서 직접 실행하지 않습니다. 전체 평가를 독립 실행 가능한 묶음으로 만드는 작업은 후속 단계입니다. [실행 가능한 ResNet 예제](../resnet/README.md)는 별도로 제공합니다.
-
-[사례 해설](../../case-studies/mamba.md) · [실험 목록](../README.md)
+[전체 자료](../README.md) · [프로젝트 소개](../../README.md)
