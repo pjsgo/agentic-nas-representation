@@ -46,41 +46,6 @@
       "transformation": "allowlisted model settings and messages; transport omitted"
     },
     {
-      "file": "specs/representation_contract.md",
-      "source": "parallel_coverage/20261105/common/representation_contract.md",
-      "source_sha256": "d4b14dc3ced0909457a83ef18bc0bab85bc9db0e37ca1b880c65a77a64f997d4",
-      "sha256": "d4b14dc3ced0909457a83ef18bc0bab85bc9db0e37ca1b880c65a77a64f997d4",
-      "transformation": "none"
-    },
-    {
-      "file": "specs/schema_v0_3_candidate.md",
-      "source": "parallel_coverage/20261105/common/schema_v0_3_candidate.md",
-      "source_sha256": "5427e3ef14a4e98566e2b0d5210482832bcfc5661f31f0b8b020e43dcfe5c1d1",
-      "sha256": "5427e3ef14a4e98566e2b0d5210482832bcfc5661f31f0b8b020e43dcfe5c1d1",
-      "transformation": "none"
-    },
-    {
-      "file": "specs/base/representation_semantics_v0_2.md",
-      "source": "parallel_coverage/20261105/common/base/representation_semantics_v0_2.md",
-      "source_sha256": "17a888e329c268a456890c025b1b02d5388fd0a43ac6c5554b2bb38f333935f4",
-      "sha256": "bda1faa4c925663c8b512891782c24ccaf8554850a2901adaa51160872e53abe",
-      "transformation": "none; documentation link relocation"
-    },
-    {
-      "file": "specs/reconstruction_prompt.md",
-      "source": "parallel_coverage/20261105/common/reconstruction_prompt.md",
-      "source_sha256": "9b24ce29753c4181a248990293418d2cf8d1df69a309b90e7ccbf8712d914c5b",
-      "sha256": "9b24ce29753c4181a248990293418d2cf8d1df69a309b90e7ccbf8712d914c5b",
-      "transformation": "none"
-    },
-    {
-      "file": "specs/evaluation_protocol.md",
-      "source": "parallel_coverage/20261105/common/evaluation_protocol.md",
-      "source_sha256": "6603524059d706c32eb70a2741bb8aaf8e2ecd31b760fa8bfb5813691ca70fee",
-      "sha256": "6603524059d706c32eb70a2741bb8aaf8e2ecd31b760fa8bfb5813691ca70fee",
-      "transformation": "none"
-    },
-    {
       "file": "experiments/transformer/representation.yaml",
       "source": "parallel_coverage/20261105/transformer/representation.yaml",
       "source_sha256": "26c8182a77db4e9d6cd660a3381c246575c88241d24231dd0cd9244a48a8cd1c",
