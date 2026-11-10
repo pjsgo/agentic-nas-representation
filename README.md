@@ -18,4 +18,4 @@ AI Agent가 신경망 아키텍처를 탐색해 더 나은 시퀀스 모델을 �
 
 연구에서 다루는 계보 전체로 표현과 복원 범위를 넓히고, **계보의 변화 맥락과 Factorization을 함께 에이전트에 제공**할 계획입니다. 이후 EvoScientist를 활용해 구조 선택·편집, 코드 생성, 실험·평가를 반복하는 흐름으로 연결하고자 합니다. 팀 공유 자료에 아키텍처와 실험이 추가될 때 이 레포도 함께 갱신합니다.
 
-[팀 공유 자료](https://github.com/UVR-WJCHO/AI4Science_archive/tree/junseo/nas-artifacts/JunseoPark) · [자료 출처](docs/artifact-provenance.md)
+[자료 출처](docs/artifact-provenance.md)
