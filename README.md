@@ -1,21 +1,27 @@
-# Agentic NAS · Architecture Representation
+# Agentic NAS · Architecture Reconstruction
 
-## 연구 방향
+**7개 아키텍처의 핵심 블록·코어 복원 완료.**
 
-AI Agent가 신경망 아키텍처를 탐색해 더 나은 시퀀스 모델을 찾도록 하는 연구입니다. 팀에서는 아키텍처 계보(Genealogy)를 따라 모델 사이에 **무엇이 어떻게 변했는지와 그 변화의 배경을 구조화해 정리**했습니다. 이 맥락을 에이전트에 제공해 구조 선택과 편집에 활용하고자 합니다.
+신경망 구조의 연산·연결·반복·상태 전달을 YAML로 표현하고, 실행 가능한 PyTorch 코드로 복원해 참조 구현과 비교했습니다.
 
-## 맡은 부분 — Factorization
+## 복원 결과
 
-저는 신경망 구조를 연산과 연결 단위로 분해하고, 계산 흐름·반복·상태 전달·객체 공유를 YAML로 표현하는 **Factorization과 코드 복원·검증**을 맡고 있습니다. 구조화된 계보가 변화의 맥락을 제공한다면, Factorization은 그 맥락에서 다루는 모델 구조를 구체적으로 표현하는 역할을 합니다. 표현에서 LLM으로 코드를 복원하고, 원본과 비교해 계산과 구조가 보존되는지 확인합니다.
+| 아키텍처 | 복원 범위 | 검증 결과 | 표현 | 최종 구현 |
+|---|---|---|---|---|
+| **ResNet** | Identity-shortcut BasicBlock | 7개 입력 검증 통과 | [YAML](experiments/resnet/generator/input.yaml) | [코드](experiments/resnet/response_review/generated_model.py) |
+| **LSTM** | 단방향 LSTM core, T≥1 | T=1/3/5 출력·상태 및 파라미터 공유 확인 | [YAML](experiments/lstm/representation.yaml) | [코드](experiments/lstm/generated_model.py) |
+| **Seq2Seq** | 단일 layer teacher-forcing core | 3개 fixture의 계산·상태 전달 검증 통과 | [YAML](experiments/seq2seq/representation.yaml) | [코드](experiments/seq2seq/generated_model.py) |
+| **Transformer** | 단일 encoder block | 9개 fixture의 출력·구조 검증 통과 | [YAML](experiments/transformer/20261113-core-completion/representation.yaml) | [코드](experiments/transformer/20261113-core-completion/generated_model.py) |
+| **Linear Transformer** | ELU+1 recurrent attention core | 출력·S/Z 상태 전달 검증 통과 | [YAML](experiments/linear-transformer/20261113-core-completion/representation.yaml) | [코드](experiments/linear-transformer/20261113-core-completion/generated_model.py) |
+| **S4** | Rank-1 DPLR/NPLR recurrent·impulse core | 엄격·실용 검증 통과 | [YAML](experiments/s4/20261113-core-completion/representation.yaml) | [코드](experiments/s4/20261113-core-completion/repaired_model.py) |
+| **Mamba** | Selective-scan core | 4개 fixture의 출력·시점별 상태 검증 통과 | [YAML](experiments/mamba/representation.yaml) | [코드](experiments/mamba/generated_model.py) |
 
-## 현재 작업
+완료 범위는 표에 명시한 블록·코어와 평가 조건입니다. 전체 모델 학습 성능은 포함하지 않습니다.
 
-**7종 아키텍처의 지정된 블록·핵심 계산 단위에서 복원 검증을 완료했습니다.** 각 실험의 범위와 평가 기준에 따른 완료이며, S4는 생성 코드를 수정한 결과입니다. 전체 모델·학습 복원은 포함하지 않습니다. 이 레포에는 실제 YAML과 복원 코드를 아키텍처별로 정리하고 있습니다. 현재는 에이전트의 자율 탐색에 사용할 표현과 검증 기반을 마련하는 단계입니다.
+## 계보 복원으로 확장
 
-[아키텍처별 YAML·복원 코드](experiments/README.md) · [작업 요약](results/summary.md)
+검증된 7개 구현을 기반으로 아키텍처 계보의 연결과 복원 범위를 넓힙니다. 계보의 변화 맥락과 Factorization을 함께 활용해 구조 선택·편집과 실험으로 이어가는 것이 다음 목표입니다.
 
-## 앞으로의 방향
+[아키텍처별 안내](experiments/README.md) · [결과 요약](results/summary.md) · [자료 출처](docs/artifact-provenance.md)
 
-연구에서 다루는 계보 전체로 표현과 복원 범위를 넓히고, **계보의 변화 맥락과 Factorization을 함께 에이전트에 제공**할 계획입니다. 이후 EvoScientist를 활용해 구조 선택·편집, 코드 생성, 실험·평가를 반복하는 흐름으로 연결하고자 합니다. 팀 공유 자료에 아키텍처와 실험이 추가될 때 이 레포도 함께 갱신합니다.
-
-[자료 출처](docs/artifact-provenance.md)
+*결과 기준일: 2026-11-13*
