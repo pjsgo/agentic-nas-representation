@@ -1,0 +1,26 @@
+--- generated_original.py
++++ repaired_model.py
+@@ -352,20 +352,20 @@
+         seq_outputs = []
+         s = h0
+         for t in range(T):
+-            x_t = u[:, :, t]  # [B, 1]
++            x_t = u.select(2, t)  # [B, 1]
+             v_t, s = self._sequence_body(x_t, s, params)
+             seq_outputs.append(v_t)
+         sequence = torch.stack(seq_outputs, dim=2) if T > 0 else torch.empty(u.shape[0], 1, 0, dtype=torch.float64)
+         h_final = s
+         
+         # kernel_scan
+-        u_kernel = u[:, 0:1, :]  # [B, 1, T] -> slice axis 0, start 0, stop 1
++        u_kernel = u[0:1, :, :]  # [B, 1, T] -> slice axis 0, start 0, stop 1
+         s_kernel = torch.zeros_like(self.p5)  # [1, 1, 2, 2]
+         flag = torch.tensor([[1.0]], dtype=torch.float64)
+         
+         kernel_outputs = []
+         for t in range(T):
+-            x_t = u_kernel[:, :, t]  # [B, 1] -> but kernel_body expects [1, 1] based on interface id006
++            x_t = u_kernel.select(2, t)  # [B, 1] -> but kernel_body expects [1, 1] based on interface id006
+             # Wait, kernel_scan input u is *id004 which is [1, 1, T]. f0167 slices unit.u [B,1,T] to [1,1,T].
+             # So x_t is [1, 1].
+             v_t, s_kernel, flag = self._kernel_body(x_t, s_kernel, flag, params)

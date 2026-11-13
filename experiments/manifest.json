@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "export_date_kst": "2026-11-09",
-  "description": "Selected YAML, original generated code and generation inputs. Research validation records are maintained outside this portfolio.",
+  "export_date_kst": "2026-11-13",
+  "description": "Selected YAML, original generated code, explicitly labelled agent-repaired S4 code and generation inputs. Validation reports remain in the research workspace.",
   "files": [
     {
       "file": "experiments/resnet/generator/input.yaml",
@@ -149,6 +149,91 @@
       "source_sha256": "be48af596c03f861f12b017a0f7e1d3593ebcb3cdf48c0e15e2c1fcfaf92a820",
       "sha256": "be48af596c03f861f12b017a0f7e1d3593ebcb3cdf48c0e15e2c1fcfaf92a820",
       "transformation": "allowlisted model settings and messages; transport omitted"
+    },
+    {
+      "file": "experiments/transformer/20261113-core-completion/representation.yaml",
+      "source": "parallel_coverage/20261105/transformer/experiments/20261112_runtime_trace_fresh_v1/input.yaml",
+      "source_sha256": "f64bf0a50cb8cc4b848df60f546bd28b8c2fa02cf46f05bab4decbf393a80ad9",
+      "sha256": "f64bf0a50cb8cc4b848df60f546bd28b8c2fa02cf46f05bab4decbf393a80ad9",
+      "transformation": "none"
+    },
+    {
+      "file": "experiments/transformer/20261113-core-completion/generated_model.py",
+      "source": "parallel_coverage/20261105/transformer/experiments/20261112_runtime_trace_fresh_v1/generated_model.py",
+      "source_sha256": "a44e6708d7ffb98e936d33f766287eb8ad4dfc1d46a422e79ba732a3c4d1f544",
+      "sha256": "a44e6708d7ffb98e936d33f766287eb8ad4dfc1d46a422e79ba732a3c4d1f544",
+      "transformation": "none"
+    },
+    {
+      "file": "experiments/transformer/20261113-core-completion/generation-input.json",
+      "source": "parallel_coverage/20261105/transformer/experiments/20261112_runtime_trace_fresh_v1/requests/request.json",
+      "source_sha256": "bc74c0130bdcab8377f1001b1eed02ddcfd6db4596ab1f8b2f99611c43598bfd",
+      "sha256": "bc74c0130bdcab8377f1001b1eed02ddcfd6db4596ab1f8b2f99611c43598bfd",
+      "transformation": "allowlisted model settings and messages; transport omitted"
+    },
+    {
+      "file": "experiments/linear-transformer/20261113-core-completion/representation.yaml",
+      "source": "parallel_coverage/20261105/linear_transformer/experiments/20261113_final_json_v1/representation.yaml",
+      "source_sha256": "a858d126d46fb9656924278c1ba371765af6951e564e67b077ab976456f7eaf6",
+      "sha256": "a858d126d46fb9656924278c1ba371765af6951e564e67b077ab976456f7eaf6",
+      "transformation": "none"
+    },
+    {
+      "file": "experiments/linear-transformer/20261113-core-completion/generated_model.py",
+      "source": "parallel_coverage/20261105/linear_transformer/experiments/20261113_final_json_v1/generated_model.py",
+      "source_sha256": "9012b30665b296f78a937a22a9c1b84a68fe854cb8613bcc7f043ecbb7ec053f",
+      "sha256": "9012b30665b296f78a937a22a9c1b84a68fe854cb8613bcc7f043ecbb7ec053f",
+      "transformation": "none"
+    },
+    {
+      "file": "experiments/linear-transformer/20261113-core-completion/generation-input.json",
+      "source": "parallel_coverage/20261105/linear_transformer/experiments/20261113_final_json_v1/requests/request.json",
+      "source_sha256": "09e1b70563f4759cff3b9673136a358f717522cfede1514e2905f44c7202c927",
+      "sha256": "09e1b70563f4759cff3b9673136a358f717522cfede1514e2905f44c7202c927",
+      "transformation": "allowlisted model settings and messages; transport omitted"
+    },
+    {
+      "file": "experiments/s4/20261113-core-completion/representation.yaml",
+      "source": "parallel_coverage/20261105/s4/experiments/20261113_strict_fix_v1/representation.yaml",
+      "source_sha256": "268cc27918e4b55291e08e4a3f299e6f141e5f22d1bfd7b1ceae13a93da9c7e8",
+      "sha256": "268cc27918e4b55291e08e4a3f299e6f141e5f22d1bfd7b1ceae13a93da9c7e8",
+      "transformation": "none"
+    },
+    {
+      "file": "experiments/s4/20261113-core-completion/repaired_model.py",
+      "source": "parallel_coverage/20261105/s4/experiments/20261113_strict_fix_v1/repaired_model.py",
+      "source_sha256": "eb56e05540b36b9a566b508da84af51cbdd00cbdc0bc2cbf7532efcc3d628ca3",
+      "sha256": "eb56e05540b36b9a566b508da84af51cbdd00cbdc0bc2cbf7532efcc3d628ca3",
+      "transformation": "none"
+    },
+    {
+      "file": "experiments/s4/20261113-core-completion/generation-input.json",
+      "source": "parallel_coverage/20261105/s4/experiments/20261113_generate_required_v1/requests/request.json",
+      "source_sha256": "682c50a0d9a4dffed3c160afeaa66b3eda431f933ae2e6f9fd9fcc9498879377",
+      "sha256": "682c50a0d9a4dffed3c160afeaa66b3eda431f933ae2e6f9fd9fcc9498879377",
+      "transformation": "allowlisted model settings and messages; transport omitted"
+    },
+    {
+      "file": "experiments/s4/20261113-core-completion/generated_original.py",
+      "source": "parallel_coverage/20261105/s4/experiments/20261113_generate_required_v1/generated_model.py",
+      "source_sha256": "1ad87d4afe243aa8d333e106c37e87ebb90659508a1299fd0d42227c8fc4bab9",
+      "sha256": "1ad87d4afe243aa8d333e106c37e87ebb90659508a1299fd0d42227c8fc4bab9",
+      "transformation": "none"
+    },
+    {
+      "file": "experiments/s4/20261113-core-completion/repair.diff",
+      "sources": [
+        {
+          "research_source": "parallel_coverage/20261105/s4/experiments/20261113_generate_required_v1/generated_model.py",
+          "sha256": "1ad87d4afe243aa8d333e106c37e87ebb90659508a1299fd0d42227c8fc4bab9"
+        },
+        {
+          "research_source": "parallel_coverage/20261105/s4/experiments/20261113_strict_fix_v1/repaired_model.py",
+          "sha256": "eb56e05540b36b9a566b508da84af51cbdd00cbdc0bc2cbf7532efcc3d628ca3"
+        }
+      ],
+      "sha256": "56f8dd508ed4526624847a2ef21acee20b79e4a248be56312f5c5efe62201f54",
+      "transformation": "unified diff of preserved original and final repaired source"
     }
   ]
 }
