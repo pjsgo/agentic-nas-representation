@@ -6,13 +6,13 @@
 
 | 아키텍처 | 복원 범위 | 검증 결과 | 표현 | 최종 구현 |
 |---|---|---|---|---|
-| **ResNet** | Identity-shortcut BasicBlock | 7개 입력 검증 통과 | [YAML](resnet/generator/input.yaml) | [코드](resnet/response_review/generated_model.py) |
-| **LSTM** | 단방향 LSTM core, T≥1 | T=1/3/5 출력·상태 및 파라미터 공유 확인 | [YAML](lstm/representation.yaml) | [코드](lstm/generated_model.py) |
-| **Seq2Seq** | 단일 layer teacher-forcing core | 3개 fixture의 계산·상태 전달 검증 통과 | [YAML](seq2seq/representation.yaml) | [코드](seq2seq/generated_model.py) |
-| **Transformer** | 단일 encoder block | 9개 fixture의 출력·구조 검증 통과 | [YAML](transformer/20261113-core-completion/representation.yaml) | [코드](transformer/20261113-core-completion/generated_model.py) |
-| **Linear Transformer** | ELU+1 recurrent attention | 출력·S/Z 상태 전달 검증 통과 | [YAML](linear-transformer/20261113-core-completion/representation.yaml) | [코드](linear-transformer/20261113-core-completion/generated_model.py) |
-| **S4** | Rank-1 DPLR/NPLR recurrent·impulse core | 엄격·실용 검증 통과 | [YAML](s4/20261113-core-completion/representation.yaml) | [코드](s4/20261113-core-completion/repaired_model.py) |
-| **Mamba** | Selective-scan core | 4개 fixture의 출력·시점별 상태 검증 통과 | [YAML](mamba/representation.yaml) | [코드](mamba/generated_model.py) |
+| [ResNet](resnet/README.md#구조도) | Identity-shortcut BasicBlock | 7개 입력 검증 통과 | [YAML](resnet/generator/input.yaml) | [코드](resnet/response_review/generated_model.py) |
+| [LSTM](lstm/README.md#구조도) | 단방향 LSTM core, T≥1 | T=1/3/5 출력·상태 및 파라미터 공유 확인 | [YAML](lstm/representation.yaml) | [코드](lstm/generated_model.py) |
+| [Seq2Seq](seq2seq/README.md#구조도) | 단일 layer teacher-forcing core | 3개 fixture의 계산·상태 전달 검증 통과 | [YAML](seq2seq/representation.yaml) | [코드](seq2seq/generated_model.py) |
+| [Transformer](transformer/README.md#구조도) | 단일 encoder block | 9개 fixture의 출력·구조 검증 통과 | [YAML](transformer/20261113-core-completion/representation.yaml) | [코드](transformer/20261113-core-completion/generated_model.py) |
+| [Linear Transformer](linear-transformer/README.md#구조도) | ELU+1 recurrent attention | 출력·S/Z 상태 전달 검증 통과 | [YAML](linear-transformer/20261113-core-completion/representation.yaml) | [코드](linear-transformer/20261113-core-completion/generated_model.py) |
+| [S4](s4/README.md#구조도) | Rank-1 DPLR/NPLR recurrent·impulse core | 엄격·실용 검증 통과 | [YAML](s4/20261113-core-completion/representation.yaml) | [코드](s4/20261113-core-completion/repaired_model.py) |
+| [Mamba](mamba/README.md#구조도) | Selective-scan core | 4개 fixture의 출력·시점별 상태 검증 통과 | [YAML](mamba/representation.yaml) | [코드](mamba/generated_model.py) |
 
 완료 범위는 표에 명시한 블록·코어와 평가 조건입니다. 전체 모델 학습 성능은 포함하지 않습니다.
 
