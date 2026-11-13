@@ -10,7 +10,7 @@
 | **LSTM** | 단방향 LSTM core, T≥1 | T=1/3/5 출력·상태 및 파라미터 공유 확인 | [YAML](lstm/representation.yaml) | [코드](lstm/generated_model.py) |
 | **Seq2Seq** | 단일 layer teacher-forcing core | 3개 fixture의 계산·상태 전달 검증 통과 | [YAML](seq2seq/representation.yaml) | [코드](seq2seq/generated_model.py) |
 | **Transformer** | 단일 encoder block | 9개 fixture의 출력·구조 검증 통과 | [YAML](transformer/20261113-core-completion/representation.yaml) | [코드](transformer/20261113-core-completion/generated_model.py) |
-| **Linear Transformer** | ELU+1 recurrent attention core | 출력·S/Z 상태 전달 검증 통과 | [YAML](linear-transformer/20261113-core-completion/representation.yaml) | [코드](linear-transformer/20261113-core-completion/generated_model.py) |
+| **Linear Transformer** | ELU+1 recurrent attention | 출력·S/Z 상태 전달 검증 통과 | [YAML](linear-transformer/20261113-core-completion/representation.yaml) | [코드](linear-transformer/20261113-core-completion/generated_model.py) |
 | **S4** | Rank-1 DPLR/NPLR recurrent·impulse core | 엄격·실용 검증 통과 | [YAML](s4/20261113-core-completion/representation.yaml) | [코드](s4/20261113-core-completion/repaired_model.py) |
 | **Mamba** | Selective-scan core | 4개 fixture의 출력·시점별 상태 검증 통과 | [YAML](mamba/representation.yaml) | [코드](mamba/generated_model.py) |
 

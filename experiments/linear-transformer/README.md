@@ -1,6 +1,6 @@
 # Linear Transformer
 
-**복원 완료 — ELU+1 recurrent attention core.**
+**복원 완료 — ELU+1 recurrent attention.**
 
 출력·S/Z 상태 전달 검증 통과.
 
