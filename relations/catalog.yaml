@@ -71,7 +71,44 @@ membership:
   - tr_051
   - tr_073
   - tr_074
+  phase6:
+  - tr_001
+  - tr_002
+  - tr_012
+  - tr_015
+  - tr_016
+  - tr_017
+  - tr_023
+  - tr_024
+  - tr_025
+  - tr_027
+  - tr_052
+  - tr_072
 relations:
+- id: tr_001
+  file: tr_001.yaml
+  source: Simple RNN
+  target: RNN LM
+  type: A
+  inferred: false
+  mapping: partial
+  source_slug: simple-rnn
+  target_slug: rnn-lm
+  record_status: complete
+  core_mapping: complete_scoped
+  executable: false
+- id: tr_002
+  file: tr_002.yaml
+  source: Neural LM
+  target: RNN LM
+  type: P
+  inferred: true
+  mapping: partial
+  source_slug: neural-lm
+  target_slug: rnn-lm
+  record_status: complete
+  core_mapping: complete_scoped
+  executable: false
 - id: tr_003
   file: tr_003.yaml
   source: Simple RNN
@@ -110,8 +147,8 @@ relations:
   record_status: complete
 - id: tr_006
   file: tr_006.yaml
-  source: RNN Encoder–Decoder/GRU
-  target: Bahdanau
+  source: RNN Encoder–Decoder / GRU
+  target: Bahdanau Attention
   type: A
   inferred: false
   mapping: partial
@@ -123,7 +160,7 @@ relations:
 - id: tr_007
   file: tr_007.yaml
   source: Seq2Seq
-  target: Bahdanau
+  target: Bahdanau Attention
   type: P
   inferred: false
   mapping: partial
@@ -134,8 +171,8 @@ relations:
   executable: false
 - id: tr_008
   file: tr_008.yaml
-  source: Bahdanau
-  target: Luong
+  source: Bahdanau Attention
+  target: Luong Attention
   type: A
   inferred: false
   mapping: complete_scoped
@@ -180,6 +217,18 @@ relations:
   source_slug: e2e-memory-network
   target_slug: lstmn
   record_status: complete
+- id: tr_012
+  file: tr_012.yaml
+  source: Bahdanau Attention
+  target: Decomposable Attention
+  type: I
+  inferred: false
+  mapping: partial
+  source_slug: bahdanau-attention
+  target_slug: decomposable-attention
+  record_status: complete
+  core_mapping: complete_scoped
+  executable: false
 - id: tr_013
   file: tr_013.yaml
   source: LSTM
@@ -194,13 +243,49 @@ relations:
   record_status: complete
 - id: tr_014
   file: tr_014.yaml
-  source: Bahdanau
+  source: Bahdanau Attention
   target: GNMT
   type: C
   inferred: false
   mapping: complete_scoped
   source_slug: bahdanau-attention
   target_slug: gnmt
+  record_status: complete
+  core_mapping: complete_scoped
+  executable: false
+- id: tr_015
+  file: tr_015.yaml
+  source: WaveNet
+  target: ByteNet
+  type: I
+  inferred: false
+  mapping: partial
+  source_slug: wavenet
+  target_slug: bytenet
+  record_status: complete
+  core_mapping: complete_scoped
+  executable: false
+- id: tr_016
+  file: tr_016.yaml
+  source: ByteNet
+  target: ConvS2S
+  type: X
+  inferred: true
+  mapping: partial
+  source_slug: bytenet
+  target_slug: convs2s
+  record_status: complete
+  core_mapping: complete_scoped
+  executable: false
+- id: tr_017
+  file: tr_017.yaml
+  source: Bahdanau Attention
+  target: ConvS2S
+  type: C
+  inferred: false
+  mapping: partial
+  source_slug: bahdanau-attention
+  target_slug: convs2s
   record_status: complete
   core_mapping: complete_scoped
   executable: false
@@ -254,12 +339,48 @@ relations:
   record_status: complete
 - id: tr_022
   file: tr_022.yaml
-  source: Luong
+  source: Luong Attention
   target: Transformer
   type: C
   inferred: false
   mapping: complete_scoped
   source_slug: luong-attention
+  target_slug: transformer
+  record_status: complete
+  core_mapping: complete_scoped
+  executable: false
+- id: tr_023
+  file: tr_023.yaml
+  source: Decomposable Attention
+  target: Transformer
+  type: I
+  inferred: false
+  mapping: partial
+  source_slug: decomposable-attention
+  target_slug: transformer
+  record_status: complete
+  core_mapping: complete_scoped
+  executable: false
+- id: tr_024
+  file: tr_024.yaml
+  source: Structured Self-Attention
+  target: Transformer
+  type: I
+  inferred: true
+  mapping: partial
+  source_slug: structured-self-attention
+  target_slug: transformer
+  record_status: complete
+  core_mapping: complete_scoped
+  executable: false
+- id: tr_025
+  file: tr_025.yaml
+  source: ConvS2S
+  target: Transformer
+  type: X
+  inferred: false
+  mapping: partial
+  source_slug: convs2s
   target_slug: transformer
   record_status: complete
   core_mapping: complete_scoped
@@ -275,6 +396,18 @@ relations:
   target_slug: transformer
   record_status: complete
   core_mapping: partial
+  executable: false
+- id: tr_027
+  file: tr_027.yaml
+  source: QRNN
+  target: Transformer
+  type: X
+  inferred: true
+  mapping: partial
+  source_slug: qrnn
+  target_slug: transformer
+  record_status: complete
+  core_mapping: complete_scoped
   executable: false
 - id: tr_028
   file: tr_028.yaml
@@ -564,6 +697,18 @@ relations:
   source_slug: transformer
   target_slug: h3
   record_status: complete
+- id: tr_052
+  file: tr_052.yaml
+  source: WaveNet
+  target: Hyena
+  type: I
+  inferred: true
+  mapping: partial
+  source_slug: wavenet
+  target_slug: hyena
+  record_status: complete
+  core_mapping: complete_scoped
+  executable: false
 - id: tr_053
   file: tr_053.yaml
   source: S4
@@ -663,7 +808,7 @@ relations:
 - id: tr_061
   file: tr_061.yaml
   source: S4
-  target: Mamba-1
+  target: Mamba
   type: A
   inferred: false
   mapping: complete_scoped
@@ -687,7 +832,7 @@ relations:
 - id: tr_063
   file: tr_063.yaml
   source: Mamba
-  target: Mamba-2/SSD
+  target: Mamba-2 / SSD
   type: A
   inferred: false
   mapping: partial
@@ -792,6 +937,18 @@ relations:
   source_slug: lstmn
   target_slug: transformer
   record_status: complete
+- id: tr_072
+  file: tr_072.yaml
+  source: ConvS2S
+  target: Transformer
+  type: C
+  inferred: false
+  mapping: partial
+  source_slug: convs2s
+  target_slug: transformer
+  record_status: complete
+  core_mapping: complete_scoped
+  executable: false
 - id: tr_073
   file: tr_073.yaml
   source: LSTM
@@ -841,7 +998,7 @@ relations:
   target_slug: hyena
   record_status: complete
 counts:
-  records: 64
+  records: 76
   complete_scoped: 16
-  partial: 48
+  partial: 60
   public_executable: 0

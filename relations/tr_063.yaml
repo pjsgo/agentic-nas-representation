@@ -1,7 +1,7 @@
 format_version: local_transition_v1
 transition_id: tr_063
 source_architecture: Mamba
-target_architecture: Mamba-2/SSD
+target_architecture: Mamba-2 / SSD
 relation_type: A
 inferred: false
 motivation: selective SSM의 하드웨어 효율과 attention 연결

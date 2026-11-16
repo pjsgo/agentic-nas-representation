@@ -1,0 +1,63 @@
+representation_version: local_convs2s_block_v1
+operator_profile: self_contained_equations
+architecture: ConvS2S
+architecture_entry: Model
+scope:
+  included: [one_encoder_GLU_block, one_causal_decoder_GLU_block, input_and_encoder_output_projections, single_decoder_attention, source_padding_mask, residual_scaling]
+  excluded: [token_and_position_lookup, stacked_blocks, vocabulary_projection, softmax_readout, incremental_cache, beam_search, training, dropout, weight_norm_parameterization, backward_gradient_scaling]
+configuration:
+  D: positive integer embedding width; default 3
+  C: positive integer convolution width; default 4
+  K: positive integer kernel width; default 3
+interface:
+  constructor: Model(D=3,C=4,K=3), torch.nn.Module
+  forward: forward(source_embedding, target_embedding, source_padding_mask) -> dict
+  dtype: torch.float64
+  device: cpu
+  inputs:
+    source_embedding: '[B,S,D]; finite sum of token and absolute position embeddings supplied by caller'
+    target_embedding: '[B,T,D]; finite embeddings already shifted by caller; index t contains information for predicting next token'
+    source_padding_mask: '[B,S] bool; True excludes position; at least one False per row; positive B,S,T'
+  outputs:
+    encoder: '[B,S,D], projected encoder states, zero at masked positions'
+    values: '[B,S,D], (encoder+source_embedding)/sqrt(2); masked values may be nonzero but never attended'
+    decoder_glu: '[B,T,C]'
+    attention: '[B,T,S]'
+    context: '[B,T,D], weighted values times sqrt(valid source count)'
+    output: '[B,T,C], block output before vocabulary projection'
+  guards: No extra runtime guards required; caller satisfies shape/domain; all-masked source and target padding outside scope
+parameters:
+  enc_in_w: {shape: [C,D], initialization: zeros}
+  enc_in_b: {shape: [C], initialization: zeros}
+  enc_conv_w: {shape: [2*C,C,K], initialization: zeros}
+  enc_conv_b: {shape: [2*C], initialization: zeros}
+  enc_out_w: {shape: [D,C], initialization: zeros}
+  enc_out_b: {shape: [D], initialization: zeros}
+  dec_in_w: {shape: [C,D], initialization: zeros}
+  dec_in_b: {shape: [C], initialization: zeros}
+  dec_conv_w: {shape: [2*C,C,K], initialization: zeros}
+  dec_conv_b: {shape: [2*C], initialization: zeros}
+  attn_in_w: {shape: [D,C], initialization: zeros}
+  attn_in_b: {shape: [D], initialization: zeros}
+  attn_out_w: {shape: [C,D], initialization: zeros}
+  attn_out_b: {shape: [C], initialization: zeros}
+parameter_contract: All keys are distinct trainable float64 nn.Parameters in self.p (nn.ParameterDict); no sharing across encoder/decoder/projections; each is shared over positions and batch. Effective weights supplied after zero initialization, no weight normalization wrappers.
+buffers: {}
+state_contract: Stateless full-sequence forward; no cache, mutation, or detach; target causality relative to supplied target embeddings
+operators:
+  linear: 'linear(x,W,b)[...,o]=sum_i x[...,i]*W[o,i]+b[o]'
+  conv: 'cross_correlation(x,W,b,left)[b,t,o]=b[o]+sum_i sum_{r=0}^{K-1} W[o,i,r]*x[b,t+r-left,i]; x outside [0,length) is zero; stride=1,dilation=1,groups=1'
+  glu: 'For a[...,2*C], glu(a)=a[...,:C]*sigmoid(a[...,C:]); sigmoid(s)=1/(1+exp(-s)); no tanh'
+  encoder_block: 'e0=linear(source_embedding,enc_in_w,enc_in_b); em=where(source_padding_mask[:,:,None],0,e0); eg=glu(conv(em,enc_conv_w,enc_conv_b,left=floor((K-1)/2))); eh=(eg+e0)/sqrt(2). Symmetric odd-kernel or left floor/right ceil padding for even K.'
+  encoder_memory: 'encoder=where(source_padding_mask[:,:,None],0,linear(eh,enc_out_w,enc_out_b)); values=(encoder+source_embedding)/sqrt(2)'
+  decoder_block: 'd0=linear(target_embedding,dec_in_w,dec_in_b); decoder_glu=glu(conv(d0,dec_conv_w,dec_conv_b,left=K-1))'
+  attention: 'q=(linear(decoder_glu,attn_in_w,attn_in_b)+target_embedding)/sqrt(2); logits[b,t,s]=sum_d q[b,t,d]*encoder[b,s,d]; replace masked logits with -inf; attention=softmax(logits,axis=source S), subtract row maximum before exp; no 1/sqrt(D) scale'
+  context: 'n[b]=sum_s (not source_padding_mask[b,s]); context[b,t,d]=sqrt(n[b])*sum_s attention[b,t,s]*values[b,s,d]'
+  residual: 'attended=(linear(context,attn_out_w,attn_out_b)+decoder_glu)/sqrt(2); output=(attended+d0)/sqrt(2)'
+graph:
+- {id: convs2s_encoder_glu, op: encoder_block, inputs: [source_embedding,source_padding_mask,enc_in_w,enc_in_b,enc_conv_w,enc_conv_b], outputs: [eh]}
+- {id: convs2s_encoder_memory, op: encoder_memory, inputs: [eh,source_embedding,source_padding_mask,enc_out_w,enc_out_b], outputs: [encoder,values]}
+- {id: convs2s_causal_decoder_glu, op: decoder_block, inputs: [target_embedding,dec_in_w,dec_in_b,dec_conv_w,dec_conv_b], outputs: [d0,decoder_glu]}
+- {id: convs2s_encoder_attention, op: attention, inputs: [decoder_glu,target_embedding,encoder,source_padding_mask,attn_in_w,attn_in_b], outputs: [attention]}
+- {id: convs2s_length_scaled_context, op: context, inputs: [attention,values,source_padding_mask], outputs: [context]}
+- {id: convs2s_decoder_residual, op: residual, inputs: [context,decoder_glu,d0,attn_out_w,attn_out_b], outputs: [output]}

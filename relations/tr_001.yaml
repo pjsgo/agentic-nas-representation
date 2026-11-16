@@ -1,0 +1,195 @@
+format_version: local_transition_v1
+transition_id: tr_001
+source_architecture: Simple RNN
+target_architecture: RNN LM
+relation_type: A
+inferred: false
+record_status: complete
+relation_identity_status: confirmed_from_original_diagram
+mapping_status: partial
+core_mapping_status: complete_scoped
+part_mapping_complete: false
+evidence:
+- source: User-supplied beyond_transformer_slides.pdf (not redistributed)
+  pages:
+  - 38
+  page_numbering: one_based_PDF
+  label: A 001
+  direction: Simple RNN -> RNN LM
+  question_mark_present: false
+  verification: direct_view_of_original_embedded_JPEG_extracted_in_G_phase6
+  authority_boundary: 원본 도식 표기 확인; 논문으로 독립 확인한 역사적 직접 계승 증명과 다르다.
+mechanism_evidence:
+  original_explanatory_pages:
+  - 4
+  - 20
+  status: selected source equations reviewed; author runtime not executed
+  sources:
+  - ../architectures/simple-rnn/provenance.json
+  - ../architectures/rnn-lm/sources.yaml
+motivation: 순환 상태 계산을 언어 모델의 문맥 표현에 사용한다.
+conditions:
+- 입력 hidden-state recurrence의 역할 대응에 한정. tanh/bias를 sigmoid/no-bias로 변경해야 하며 파라미터·state
+  동등성이나 LM 출력 head의 직접 계승을 주장하지 않는다.
+- 기대 효과는 설명이며 실측 성능 결과나 실행 변환 인증이 아니다.
+expected_effects:
+- 순환 core 계승과 언어모델 전용 입출력 추가를 구별할 수 있다.
+tradeoffs:
+- 시간축 의존성이 남으며 서로 다른 cell 활성화나 파라미터를 동일시할 수 없다.
+changes:
+- before_units:
+  - cell/input_affine
+  - cell/recurrent_affine
+  - cell/hidden
+  - main/recurrent_scan
+  after_units:
+  - factors.rnn_lm_token_map
+  - factors.rnn_lm_recurrent
+  - factors.rnn_lm_carry
+  operation: descriptive_correspondence
+  mechanism: Simple RNN의 입력/순환 affine, hidden, scan 역할을 one-hot-equivalent token map,
+    sigmoid recurrent update, explicit carry에 대응한다. baseline은 bias를 가진 tanh이고 대상은
+    bias 없는 sigmoid다. LM readout은 추가 역할이며 이 관계 core의 대응에서 제외한다.
+  mapping_status: mapped_scoped
+  cardinality: semantic_many_to_many_not_tensor_parameter_or_state_identity
+  state_and_resource_contract: 입력 hidden-state recurrence의 역할 대응에 한정. tanh/bias를 sigmoid/no-bias로
+    변경해야 하며 파라미터·state 동등성이나 LM 출력 head의 직접 계승을 주장하지 않는다.
+preserve:
+- 이전 hidden state를 다음 시점 계산에 전달하는 순환 역할
+scope:
+  source_yaml: ../architectures/simple-rnn/representation.yaml
+  target_yaml: ../architectures/rnn-lm/representation.yaml
+  path_base: relation_file_directory
+  source_yaml_status: available
+  target_yaml_status: available
+  included:
+  - original_relation_identity
+  - descriptive_relationship
+  - available_core_component_correspondence
+  excluded:
+  - whole_model_conversion
+  - numerical_equivalence
+  - weight_or_state_migration
+  - training
+  - performance_validation
+  - innovation_and_limitations_synthesis
+  mapping_boundary: 입력 hidden-state recurrence의 역할 대응에 한정. tanh/bias를 sigmoid/no-bias로
+    변경해야 하며 파라미터·state 동등성이나 LM 출력 head의 직접 계승을 주장하지 않는다.
+  endpoint_scope:
+    source:
+      declared_scope: Elman tanh recurrent core, full emitted sequence and supplied
+        initial/final hidden state
+      excluded:
+      - training/gradients
+      - tokenization/embedding lookup
+      - beam search
+      - full translation system
+      - original initializer fidelity
+      variant: null
+      state_contract: State is explicit in function arguments and scan carry. Parameters
+        shared over time; different prefixes are distinct resources.
+      mapping_status: mapped_scoped
+    target:
+      declared_scope:
+        included:
+        - one_hot_input_equivalent_lookup
+        - sigmoid_recurrence
+        - explicit_initial_state
+        - hidden_to_vocabulary
+        - full_vocabulary_softmax
+        - returned_final_state
+        excluded:
+        - training
+        - bptt
+        - dynamic_test_adaptation
+        - class_based_output
+        - toolkit_fast_exp_and_clipping
+        - compression_layer
+        - direct_maxent_features
+        - corpus_processing
+        - padding
+        - automatic_sentence_reset
+        - sampling
+        - ngram_interpolation
+      excluded: []
+      variant: mikolov_2010_equations1_to5_flat_vocabulary_static_forward
+      state_contract:
+        initial: s[-1,a,h] = h0[a,h]
+        transition: s[t] is fully computed from s[t-1] before the next timestep. Never
+          update components in-place during the matrix product.
+        emitted: hidden[t] = s[t]
+        final: final_state = independent copy of s[T-1]
+        continuation: Caller may pass final_state to a subsequent call; no internal
+          carry persists.
+        boundaries: No special token IDs or reset masks. Caller splits sequences and
+          supplies h0 to reset. All positions valid; no padding.
+        input_mutation: false
+        parameter_mutation: false
+        random: false
+      mapping_status: mapped_scoped
+  core_mapping_definition: complete_scoped requires actual declared components on
+    both sides within the stated relation core, not merely an existing YAML file.
+  component_coverage:
+    source:
+      mapped_units:
+      - cell/input_affine
+      - cell/recurrent_affine
+      - cell/hidden
+      - main/recurrent_scan
+      unmapped_declared_units: []
+      unmapped_reason: 선택 관계 core 밖의 연산/컨테이너; 자동 대응을 추가하지 않는다.
+    target:
+      mapped_units:
+      - factors.rnn_lm_token_map
+      - factors.rnn_lm_recurrent
+      - factors.rnn_lm_carry
+      unmapped_declared_units:
+      - factors.rnn_lm_readout
+      - factors.rnn_lm_softmax
+      unmapped_reason: 선택 관계 core 밖의 연산/컨테이너; 자동 대응을 추가하지 않는다.
+pending_components:
+- side: source
+  part_ids: null
+  status: outside_declared_scope
+  concepts:
+  - training/gradients
+  - tokenization/embedding lookup
+  - beam search
+  - full translation system
+  - original initializer fidelity
+  reason: 복원 scope 밖의 계산과 관계 core 밖의 부품은 대응하지 않음
+- side: target
+  part_ids: null
+  status: outside_declared_scope
+  concepts:
+  - training
+  - bptt
+  - dynamic_test_adaptation
+  - class_based_output
+  - toolkit_fast_exp_and_clipping
+  - compression_layer
+  - direct_maxent_features
+  - corpus_processing
+  - padding
+  - automatic_sentence_reset
+  - sampling
+  - ngram_interpolation
+  reason: 복원 scope 밖의 계산과 관계 core 밖의 부품은 대응하지 않음
+source_records:
+- side: source
+  metadata_path: ../architectures/simple-rnn/provenance.json
+- side: target
+  metadata_path: ../architectures/rnn-lm/provenance.json
+application:
+  executable: false
+  command: null
+  patch_or_script: null
+validation:
+  status: STATIC_IDENTITY_READY_SCOPE_AND_PART_REFERENCES_CHECKED
+  numerical_tests: NOT_RUN_BY_DESIGN
+  integrity_checks: SKIPPED
+  claim_boundary: No transformation or architecture success certification
+unresolved:
+- 입력 hidden-state recurrence의 역할 대응에 한정. tanh/bias를 sigmoid/no-bias로 변경해야 하며 파라미터·state
+  동등성이나 LM 출력 head의 직접 계승을 주장하지 않는다.
+- 전체 모델, training, numerical equivalence, 실행 변환 및 weight/state 이식은 검증하지 않았다.

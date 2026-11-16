@@ -1,0 +1,63 @@
+architecture: wavenet
+implementation_basis: PAPER_FORMULAS_WITH_DECLARED_LOCAL_CONVENTIONS
+paper:
+  title: 'WaveNet: A Generative Model for Raw Audio'
+  version: arXiv 1609.03499v2, 19 September 2016
+  url: https://arxiv.org/pdf/1609.03499v2
+  inspected:
+  - section 2.1 causal dilation
+  - section 2.3 equation 2
+  - section 2.4 Figure 4
+author_page:
+  url: https://deepmind.google/blog/wavenet-a-generative-model-for-raw-audio/
+  role: Author organization and paper provenance; not implementation source
+official_implementation:
+  status: NOT_CONFIRMED
+  search: Original arXiv paper, DeepMind original article and research page, original-author
+    repository searches inspected; no verifiable original implementation identified.
+  limitation: This is not proof that no code exists. No official code executed, pinned
+    or used as oracle. Third-party implementations and later Deep Voice/Parallel WaveNet
+    variants are not silently substituted.
+genealogy:
+  source: User-supplied beyond_transformer_slides.pdf (not redistributed)
+  page: 40
+  image: ../evidence/genealogy_page40.jpg
+  extraction: Original embedded JPEG object 219 extracted with standard library; visually
+    inspected.
+  node: WaveNet 2016
+  namespace: wavenet is assigned catalog slug, not an original node identifier
+  relations_for_G:
+  - id: tr_015
+    from: WaveNet
+    to: ByteNet
+    type: I
+    inferred: false
+  - id: tr_052
+    from: WaveNet
+    to: Hyena
+    type: I
+    inferred: true
+source_mapping:
+  wavenet_dilated_filter: Section 2.1 time-preserving dilated causal convolution;
+    Eq 2 filter branch
+  wavenet_dilated_gate: Section 2.1 and Eq 2 independent gate branch
+  wavenet_gate: Section 2.3 Eq 2 tanh(filter) times sigmoid(gate)
+  wavenet_residual: Section 2.4 Figure 4 1x1 projection and identity residual
+  wavenet_skip: Section 2.4 Figure 4 parameterized skip from gated activation
+  wavenet_skip_sum: Section 2.4 Figure 4 sum before output head
+local_conventions:
+- Internal supplied features; x[t] is visible. No raw-audio prediction indexing or
+  initial shift is claimed.
+- Width 2 selected; bias-free equation-level scope. Cross-correlation tap convention
+  explicitly fixed.
+- Independent residual and skip projections, caller-specified dilation tuple, no residual
+  rescaling.
+- Zero construction initialization and float64 fixtures are local evaluation contracts,
+  not original training defaults.
+validation_boundary:
+  reference: Separate scalar Python sums, math.tanh and logistic; torch only input/output
+    conversion
+  realization: Manual translation of YAML equations into PyTorch pad/conv1d/tanh/sigmoid;
+    not a generic YAML interpreter
+  official_runtime_parity: NOT_RUN
+  full_model: NOT_CLAIMED

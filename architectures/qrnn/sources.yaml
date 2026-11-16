@@ -1,0 +1,65 @@
+target: qrnn
+original_node: QRNN (2017)
+original_evidence:
+  pdf: User-supplied beyond_transformer_slides.pdf (not redistributed)
+  pages:
+  - 38
+  - 40
+  relation_hint_only:
+  - tr_027
+  relation_certification_owner: G
+paper:
+  title: Quasi-Recurrent Neural Networks
+  version: arXiv 1611.01576v2 (2016-11-21), ICLR 2017
+  url: https://arxiv.org/html/1611.01576v2
+  reviewed: Section 2 equations 1-5; Section 2.1 regularization
+code:
+  repository: https://github.com/salesforce/pytorch-qrnn
+  revision: 1634991a8270060d48128a0af5ffd1f75db3ae08
+  provenance: Salesforce Research author-organization implementation; not a claim
+    of original 2016 code revision
+  files:
+  - path: torchqrnn/qrnn.py
+    lines: 32-111
+    symbols:
+    - QRNNLayer
+  - path: torchqrnn/forget_mult.py
+    lines: 74-91
+    symbols:
+    - CPUForgetMult
+  executed: false
+  reason_not_executed: Upstream imports CUDA compilation dependencies; read-only source
+    used to derive a standalone scalar reference
+selection:
+  variant: QRNNLayer output_gate=True, zoneout=0, window in [1,2]
+  gate_convention: Source F weights the new candidate; paper f weights old cell. Define
+    update_gate=F_source=1-f_paper. With sigmoid, corresponding paper forget affine
+    parameters are the negatives of source F parameters; identical raw weights are
+    not equal computations.
+  parameterization: Source biased linear on concat(current,previous), packed Z/F/O.
+    W and b are effective linear weights.
+  adapters:
+  - Batch-first [B,T,I] instead of time-first
+  - External prev_x and final_x instead of mutable detached prevX cache
+  - Returned cell has shape [B,H] instead of [1,B,H]; final_output is exposed separately
+  - Extra intermediate gates and cell trajectory exposed for inspection
+  - CPU float64, deterministic zero parameter allocation followed by evaluator weight
+    injection; source random initialization not reproduced
+  - No automatic detach on history; backward behavior not certified
+parts:
+  qrnn_causal_window:
+    source: qrnn.py:54-70
+    meaning: current/previous feature concatenation and biased convolution-equivalent
+      affine
+  qrnn_gate_functions:
+    source: qrnn.py:71-80,103
+    meaning: packed tanh candidate and sigmoid update/output gates
+  qrnn_fo_pooling:
+    source: forget_mult.py:78-91; qrnn.py:99-103
+    meaning: channelwise affine cell recurrence followed by output gating
+  qrnn_external_state:
+    source: qrnn.py:107-111
+    meaning: explicit cell and input-history adapter; not hidden cache or output-feedback
+      recurrence
+scope_limit: One fo-pooling layer; no task model, training, zoneout, padding, GPU,
+  performance or backward claim

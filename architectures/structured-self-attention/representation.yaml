@@ -1,0 +1,71 @@
+representation_version: local_structured_self_attention_v1
+operator_profile: self_contained_equations_v1
+architecture: structured-self-attention
+architecture_entry: reconstructed.py:pool
+interface:
+  signature: 'pool(hidden, ws1, ws2, mask) -> dict'
+  class_contract: No class or constructor; export this pure function in reconstructed.py
+  inputs:
+    hidden: 'finite CPU float64[B,T,D] supplied contextual states'
+    ws1: 'finite CPU float64[A,D]'
+    ws2: 'finite CPU float64[R,A]'
+    mask: 'CPU bool[B,T]; True means valid'
+  constraints:
+  - B,T,D,A,R positive; at least one valid token per batch item
+  - Computed intermediates must be finite except internal masked logits
+  - Empty or all-masked sequences raise ValueError; arbitrary boolean padding patterns supported
+  outputs:
+    features: float64[B,T,A], zero on padding
+    scores: float64[B,R,T], zero on padding
+    attention: float64[B,R,T], zero on padding; sum over T is one for each batch and hop
+    output: float64[B,R,D], one weighted sum per hop, no flatten or hop averaging
+factors:
+  ssa_mask_input:
+    operator: masked_fill
+    attributes: 'h0=where(mask[...,None],hidden,0).'
+  ssa_projection:
+    operator: bias_free_linear_tanh
+    attributes: 'features[b,t,a]=tanh(sum_d h0[b,t,d]*ws1[a,d]). No bias; tanh elementwise. Shared ws1 across all tokens, hops and batch items.'
+  ssa_hop_scores:
+    operator: bias_free_linear_transpose
+    attributes: 'raw[b,r,t]=sum_a features[b,t,a]*ws2[r,a]. scores=where(mask[:,None,:],raw,0). Rows of ws2 distinguish hops. No scaling and no activation after this projection.'
+  ssa_attention:
+    operator: masked_softmax
+    attributes: >-
+      For each b,r let z=max_{t valid} raw[b,r,t].
+      attention[b,r,t]=exp(raw[b,r,t]-z)/sum_{s valid} exp(raw[b,r,s]-z) if mask[b,t] else 0.
+      Normalize over token axis 2, not hop axis. No dropout or epsilon.
+  ssa_pool:
+    operator: weighted_sum
+    attributes: 'output[b,r,d]=sum_t attention[b,r,t]*h0[b,t,d]. Values are the original supplied hidden states, not features.'
+dataflow:
+- [hidden, ssa_mask_input.hidden]
+- [mask, ssa_mask_input.mask]
+- [ssa_mask_input.h0, ssa_projection.input]
+- [ws1, ssa_projection.weight]
+- [ssa_projection.features, ssa_hop_scores.input]
+- [ws2, ssa_hop_scores.weight]
+- [mask, ssa_hop_scores.mask]
+- [ssa_hop_scores.raw, ssa_attention.input]
+- [mask, ssa_attention.mask]
+- [ssa_attention.attention, ssa_pool.weights]
+- [ssa_mask_input.h0, ssa_pool.values]
+- [ssa_projection.features, features]
+- [ssa_hop_scores.scores, scores]
+- [ssa_attention.attention, attention]
+- [ssa_pool.output, output]
+parameters:
+  ws1: {shape: [A,D], initialization: caller_supplied}
+  ws2: {shape: [R,A], initialization: caller_supplied}
+state:
+  carry: none
+  sharing: Two distinct caller tensors reused across batch and token axes; ws1 shared across hops; ws2 rows are distinct hop parameters
+  input_mutation: false
+  rng_consumption: false
+  persistence: none
+scope:
+  included: [bias_free_tanh_projection, multiple_hop_scores, masked_token_softmax, attention_matrix, matrix_sentence_embedding]
+  excluded: [BiLSTM_encoder, embeddings, diversity_penalty, classifier, training_dropout, gradients, initialization_distribution, full_sentence_model]
+semantics_status:
+  common_schema_certification: NOT_CLAIMED
+  basis: Paper equation profile; bias and finite mask sentinel in official implementation are deliberately not reproduced

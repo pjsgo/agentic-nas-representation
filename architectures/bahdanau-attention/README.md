@@ -30,5 +30,7 @@ CPU float64, YAML에 선언된 크기, dtype, 파라미터, 외부 상태 계약
 - [RNN Encoder–Decoder / GRU → Bahdanau Attention](../../relations/tr_006.yaml) — A, tr_006
 - [Seq2Seq → Bahdanau Attention](../../relations/tr_007.yaml) — P, tr_007
 - [Bahdanau Attention → Luong Attention](../../relations/tr_008.yaml) — A, tr_008
+- [Bahdanau Attention → Decomposable Attention](../../relations/tr_012.yaml) — I, tr_012
 - [Bahdanau Attention → GNMT](../../relations/tr_014.yaml) — C, tr_014
+- [Bahdanau Attention → ConvS2S](../../relations/tr_017.yaml) — C, tr_017
 - [Bahdanau Attention → Transformer](../../relations/tr_021.yaml) — I, tr_021

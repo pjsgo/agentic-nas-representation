@@ -1,0 +1,63 @@
+{
+  "format_version": 3,
+  "architecture": "convs2s",
+  "scope": {
+    "included": [
+      "one_encoder_GLU_block",
+      "one_causal_decoder_GLU_block",
+      "input_and_encoder_output_projections",
+      "single_decoder_attention",
+      "source_padding_mask",
+      "residual_scaling"
+    ],
+    "excluded": [
+      "token_and_position_lookup",
+      "stacked_blocks",
+      "vocabulary_projection",
+      "softmax_readout",
+      "incremental_cache",
+      "beam_search",
+      "training",
+      "dropout",
+      "weight_norm_parameterization",
+      "backward_gradient_scaling"
+    ]
+  },
+  "candidate_origin": "AGENT_REPAIRED_LLM_OUTPUT",
+  "candidate_modified_after_generation": true,
+  "reconstruction": "PASS_WITHIN_DECLARED_SCOPE",
+  "generation": {
+    "attempts": 1,
+    "original_result": "FAIL",
+    "final_result": "PASS_WITHIN_DECLARED_SCOPE",
+    "repair_note": "float32 valid-count 제곱근 계산을 float64 입력 dtype에 맞춰 수정",
+    "sender": "producer, saved separately authorized attempt; no I resend",
+    "original_response_and_code": "Preserved in research workspace, not redistributed"
+  },
+  "candidate": {
+    "file": "reconstructed.py",
+    "research_source": "parallel_coverage/20261105/transformer/experiments/20261116_genealogy_phase6_r1/convs2s/repaired_model.py",
+    "computational_changes_by_integration": "None"
+  },
+  "representation": {
+    "file": "representation.yaml",
+    "publication_changes": "Entry filename and relative reading-rules path only"
+  },
+  "evaluation": {
+    "kind": "reused_saved_independent_reference_results",
+    "final_result": "PASS_WITHIN_DECLARED_SCOPE",
+    "cases": 3,
+    "tolerance": {
+      "atol": 2e-12,
+      "rtol": 2e-12
+    },
+    "research_result": "parallel_coverage/20261105/transformer/experiments/20261116_genealogy_phase6_r1/convs2s/repaired_result.json",
+    "numerical_rerun": false,
+    "official_runtime_parity": "NOT_VERIFIED",
+    "review_date": "2026-11-17"
+  },
+  "limits": [
+    "Selected scope only; no full-model, training, performance or universal-schema certification",
+    "Accepted unmodified code is not equivalent to strict response-format compliance or uniform first-attempt success"
+  ]
+}

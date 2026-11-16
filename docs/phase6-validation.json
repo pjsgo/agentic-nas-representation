@@ -1,0 +1,30 @@
+{
+  "status": "PASS",
+  "nodes": 53,
+  "relations": 76,
+  "resolved_part_references": 764,
+  "accepted_origins": {
+    "UNMODIFIED": 26,
+    "REPAIRED": 27
+  },
+  "relation_mapping_counts": {
+    "partial": 60,
+    "complete_scoped": 16
+  },
+  "personal_shared_consistent": true,
+  "new_numerical_runs": 0,
+  "saved_phase6_cases_reused": 24,
+  "saved_position_checks_reused": 25,
+  "integrity_admission": "SKIPPED",
+  "errors": [],
+  "validation_date": "2026-11-17",
+  "scope": "53 selected computation scopes, not 53 full models",
+  "numerical_basis": "Reuse 24 saved new-target cases and 25 saved position-supplement checks; prior 45 evidence preserved",
+  "tr_072": {
+    "mapping": "partial",
+    "core_mapping": "complete_scoped",
+    "origin": "I-authored position sidecars, excluded from external-generation counts"
+  },
+  "external_generation_this_publication": 0,
+  "innovation_and_limitations_synthesis": "DEFERRED"
+}

@@ -1,7 +1,7 @@
 format_version: local_transition_v1
 transition_id: tr_008
-source_architecture: Bahdanau
-target_architecture: Luong
+source_architecture: Bahdanau Attention
+target_architecture: Luong Attention
 relation_type: A
 inferred: false
 motivation: attention scoring과 적용 위치를 간결하게 설계

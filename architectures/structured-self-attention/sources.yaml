@@ -1,0 +1,67 @@
+architecture: structured-self-attention
+variant: Lin et al. ICLR 2017 paper equations 6-7; pooling core on supplied hidden
+  states
+assignment:
+  file: parallel_coverage/20261105/integration/20261116_genealogy_phase6_integration/assignments.yaml
+  owner: R2
+  target_id_is_original_node_id: false
+original_genealogy:
+  pdf: User-supplied beyond_transformer_slides.pdf (not redistributed)
+  assigned_pages:
+  - 38
+  - 39
+  inspected_image: parallel_coverage/20261105/linear_transformer/experiments/20261116_genealogy_phase5_retnet_rwkv/slide_38_0.png
+  observation: Visually confirmed Structured Self-Attention 2017 node and I? 024 line;
+    no relationship certainty upgrade
+  limitation: Reused existing PDF embedded-image extraction; no new PDF rendering
+    succeeded in this environment
+paper:
+  title: A Structured Self-attentive Sentence Embedding
+  version: ICLR 2017 conference paper
+  url: https://openreview.net/pdf?id=BJC_jUqxe
+  inspected_text: https://arxiv.org/html/1703.03130
+  equations:
+  - 6
+  - 7
+  excluded_equation: '8: diversity penalty, not computed'
+official_code:
+  repository: https://github.com/hantek/SelfAttentiveSentEmbed
+  commit: d3f8b798d195fea59efd129c778ee65d15d20b93
+  status: AUTHOR_RELEASE_VERIFIED_README
+  files:
+  - path: util_layers.py
+    inspected: DenseLayer3DInput lines 215-243; Softmax3D lines 246-280; ApplyAttention
+      lines 283-290
+  - path: semlp_rate_l2_dpout.py
+    inspected: lines 143-156 attention construction
+  execution: NOT_EXECUTED
+mapping:
+  ssa_mask_input: Explicit batch padding adaptation; original Softmax3D takes a valid-token
+    mask
+  ssa_projection: Paper eq6 W_s1 and tanh; DenseLayer3DInput with transposed weight
+    convention
+  ssa_hop_scores: Paper eq6 W_s2; semlp l_ws2
+  ssa_attention: Paper eq6 token-axis softmax; Softmax3D
+  ssa_pool: Paper eq7; ApplyAttention
+paper_code_differences:
+- Author code DenseLayer3DInput has trainable bias by default; paper explicitly specifies
+  no bias. Selected scope follows paper, not arbitrary trained author checkpoint behavior.
+- Author Softmax3D replaces masked logits with -1e36. Selected exact valid-token softmax
+  uses -inf and rejects all-masked inputs; no universal equality claim for finite-sentinel
+  extreme logits.
+- Author annotations internally use B,T,R; returned attention here is B,R,T, matching
+  paper matrix orientation.
+- Dropout, BiLSTM, downstream MLP and penalty are outside this scope.
+adaptations:
+- CPU float64, arbitrary positive supplied feature width D, rather than computing
+  a 2u-wide BiLSTM output
+- Padded hidden entries zeroed for deterministic diagnostic tensors; only valid values
+  contribute
+- Parameters supplied by caller; no training or initialization-distribution claim
+validation:
+  independent_reference: Scalar contractions, math.tanh, valid-index math.exp/math.fsum;
+    no candidate helper imports
+  upstream_runtime: NOT_EXECUTED
+  limitation: Small equation-level checks, not full encoder or training reproduction
+relation_hints_for_G:
+- tr_024

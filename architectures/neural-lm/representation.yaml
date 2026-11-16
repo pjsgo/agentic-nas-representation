@@ -1,0 +1,77 @@
+representation_version: local_equational_graph_v1
+operator_profile: inline_equations_below
+reading_rules: ../../specs/representation/reading-rules-v1.md
+architecture: neural-lm
+architecture_entry: reconstructed.py:neural_lm
+variant: bengio_2003_equation1_with_direct_path
+scope:
+  included: [shared_token_lookup, ordered_context_concatenation, biased_tanh_hidden, direct_feature_to_vocabulary, biased_hidden_to_vocabulary, full_vocabulary_softmax]
+  excluded: [training, gradients, corpus_processing, context_window_construction, padding, unknown_word_policy, sampling, ngram_interpolation, distributed_execution]
+interface:
+  function: 'neural_lm(tokens, C, H, d, U, W, b) -> dict'
+  class_contract: 'No class or constructor required. Export this top-level function; caller supplies all weights. No global state or random initialization.'
+  dimensions: 'B=batch, K=context count=n-1, E=embedding width, D=hidden width, V=vocabulary; all positive integers. Q=K*E.'
+  tensors: 'tokens int64 CPU [B,K], values in [0,V). All other inputs finite float64 CPU tensors; finite intermediate arithmetic assumed.'
+  inputs:
+    tokens: '[B,K], position j is word w_(t-1-j), most recent first; caller builds complete context'
+    C: '[V,E], shared token embedding rows'
+    H: '[D,Q], hidden projection, source column-vector convention'
+    d: '[D], hidden bias'
+    U: '[V,D], hidden-to-vocabulary projection'
+    W: '[V,Q], direct feature-to-vocabulary projection; required, zero matrix selects no-direct variant'
+    b: '[V], vocabulary bias'
+  outputs:
+    features: '[B,Q], feature index q=j*E+e'
+    hidden: '[B,D]'
+    logits: '[B,V], unnormalized next-word logits'
+    probabilities: '[B,V], softmax over vocabulary only'
+  invalid_inputs: 'Raise ValueError for non-tensors, wrong dtype/device/rank/shape, nonfinite floating inputs, empty dimensions, or out-of-range token IDs.'
+parameters:
+  ownership: 'Functional supplied parameters, no internal registration. C,H,d,U,W,b are distinct roles with no implicit tying. Caller does not alias distinct roles.'
+  sharing: 'One C across all context slots and batches. H,d,U,W,b shared across batch examples; each H/W context column block remains position-specific.'
+  count: 'V*E + D*K*E + D + V*D + V*K*E + V supplied scalar entries, including W even when zero.'
+state: {persistent: none, recurrent: none, input_mutation: false, parameter_mutation: false, random: false}
+factors:
+  neural_lm_lookup:
+    operator: gather_rows
+    equation: 'embedding[a,j,e] = C[tokens[a,j],e]'
+  neural_lm_context:
+    operator: ordered_concatenation
+    equation: 'features[a,j*E+e] = embedding[a,j,e] for j=0..K-1, e=0..E-1'
+    attributes: 'No context reversal, sum, average or position embedding.'
+  neural_lm_hidden:
+    operator: affine_tanh
+    equation: 'hidden[a,h] = tanh(d[h] + sum_q H[h,q]*features[a,q])'
+  neural_lm_direct:
+    operator: linear
+    equation: 'direct[a,v] = sum_q W[v,q]*features[a,q]'
+  neural_lm_readout:
+    operator: affine_add
+    equation: 'logits[a,v] = b[v] + direct[a,v] + sum_h U[v,h]*hidden[a,h]'
+  neural_lm_softmax:
+    operator: stable_softmax
+    equations:
+      - 'm[a] = max_v logits[a,v]'
+      - 'probabilities[a,v] = exp(logits[a,v]-m[a]) / sum_u exp(logits[a,u]-m[a])'
+    attributes: 'All vocabulary entries valid, no mask or class partition.'
+contains:
+  neural_lm_core: [neural_lm_lookup, neural_lm_context, neural_lm_hidden, neural_lm_direct, neural_lm_readout, neural_lm_softmax]
+dataflow:
+  - [tokens, neural_lm_lookup.tokens]
+  - [C, neural_lm_lookup.C]
+  - [neural_lm_lookup.embedding, neural_lm_context.embedding]
+  - [neural_lm_context.features, neural_lm_hidden.features]
+  - [H, neural_lm_hidden.H]
+  - [d, neural_lm_hidden.d]
+  - [neural_lm_context.features, neural_lm_direct.features]
+  - [W, neural_lm_direct.W]
+  - [neural_lm_hidden.hidden, neural_lm_readout.hidden]
+  - [U, neural_lm_readout.U]
+  - [b, neural_lm_readout.b]
+  - [neural_lm_direct.direct, neural_lm_readout.direct]
+  - [neural_lm_readout.logits, neural_lm_softmax.logits]
+  - [neural_lm_context.features, features]
+  - [neural_lm_hidden.hidden, hidden]
+  - [neural_lm_readout.logits, logits]
+  - [neural_lm_softmax.probabilities, probabilities]
+specification_note: 'Scoped mathematical forward graph, not trained-model or common-schema certification.'

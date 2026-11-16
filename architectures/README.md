@@ -1,13 +1,16 @@
-# 아키텍처 자료
+# 아키텍처 목록
 
-45개 아키텍처를 이름순으로 정리했습니다. 각 폴더에서 계산 구조, 복원 범위, 입출력 계약, 코드와 출처를 확인할 수 있습니다. 생성 원본 채택 22개와 수정본 채택 23개의 이력은 각 provenance에 구분해 기록합니다.
+53개 아키텍처를 이름순으로 정리했습니다. 각 행은 명시한 계산 범위의 복원이며, 전체 모델 재현을 뜻하지 않습니다. 생성 원본 채택은 26개, 수정본 채택은 27개입니다. 이 수치는 공통 기준의 최초 시도 성공률이 아닙니다. 개별 검증 근거와 수정 이력은 각 아키텍처 자료에 기록합니다.
 
 | 아키텍처 | 대상 범위 | 복원 YAML | 구현 |
 |---|---|---|---|
 | [ALiBi](alibi/README.md) | 고정 head slope와 causal 거리 bias attention core | [YAML](alibi/representation.yaml) | [코드](alibi/reconstructed.py) |
 | [Bahdanau Attention](bahdanau-attention/README.md) | 제공된 encoder memory에 대한 additive attention, 조건부 GRU | [YAML](bahdanau-attention/representation.yaml) | [코드](bahdanau-attention/reconstructed.py) |
 | [BigBird](bigbird/README.md) | 외부 random graph를 받는 local/global/random block attention core | [YAML](bigbird/representation.yaml) | [코드](bigbird/reconstructed.py) |
+| [ByteNet](bytenet/README.md) | ReLU bottleneck residual feature stack, causal 또는 centered convolution | [YAML](bytenet/representation.yaml) | [코드](bytenet/reconstructed.py) |
 | [Compressive Transformer](compressive-transformer/README.md) | 평균 풀링 압축, 두 단계 FIFO memory attention | [YAML](compressive-transformer/representation.yaml) | [코드](compressive-transformer/reconstructed.py) |
+| [ConvS2S](convs2s/README.md) | 단일 encoder/decoder GLU 블록, attention과 residual, 사전 합산 입력 임베딩 | [YAML](convs2s/representation.yaml) | [코드](convs2s/reconstructed.py) |
+| [Decomposable Attention](decomposable-attention/README.md) | 공유 F/G, 양방향 정렬과 masked sum, 분류기 제외 | [YAML](decomposable-attention/representation.yaml) | [코드](decomposable-attention/reconstructed.py) |
 | [E2E Memory Network](e2e-memory-network/README.md) | Memory와 query embedding, soft addressing, multi-hop read, tied 답변 투영 | [YAML](e2e-memory-network/representation.yaml) | [코드](e2e-memory-network/reconstructed.py) |
 | [FlashAttention](flashattention/README.md) | CPU 타일 전방 계산과 online softmax 누적, causal mask | [YAML](flashattention/representation.yaml) | [코드](flashattention/reconstructed.py) |
 | [FNet](fnet/README.md) | 단일 encoder block, 2축 Fourier mixing, post-norm residual과 FFN | [YAML](fnet/representation.yaml) | [코드](fnet/reconstructed.py) |
@@ -28,8 +31,10 @@
 | [Mamba](mamba/README.md) | Mamba-1 selective-scan core, channels=3,state_size=2, four CPU float32 fixtures | [YAML](mamba/representation.yaml) | [코드](mamba/reconstructed.py) |
 | [Mamba-2 / SSD](mamba2-ssd/README.md) | scalar-identity multihead SSD chunk core | [YAML](mamba2-ssd/representation.yaml) | [코드](mamba2-ssd/reconstructed.py) |
 | [Memory Network](memory-network/README.md) | 제공된 count feature, fact 저장, 두 argmax support, 답변 ranking | [YAML](memory-network/representation.yaml) | [코드](memory-network/reconstructed.py) |
+| [Neural LM](neural-lm/README.md) | 고정 문맥 lookup, tanh hidden, direct 경로와 vocabulary readout | [YAML](neural-lm/representation.yaml) | [코드](neural-lm/reconstructed.py) |
 | [Performer](performer/README.md) | 고정 random features의 정규화 attention core | [YAML](performer/representation.yaml) | [코드](performer/reconstructed.py) |
 | [Pre-LN](pre-ln/README.md) | Pre-LN encoder block, attention과 FFN residual, key padding mask | [YAML](pre-ln/representation.yaml) | [코드](pre-ln/reconstructed.py) |
+| [QRNN](qrnn/README.md) | 단일 causal gate 계층, fo-pooling, 외부 cell과 입력 이력 | [YAML](qrnn/representation.yaml) | [코드](qrnn/reconstructed.py) |
 | [Reformer](reformer/README.md) | 제공된 회전의 LSH attention, chunk와 이전 chunk 참조, multi-round 결합 | [YAML](reformer/representation.yaml) | [코드](reformer/reconstructed.py) |
 | [Relative Position](relative-position/README.md) | 부호 있는 거리 clipping과 상대 key/value를 포함한 projected self-attention core | [YAML](relative-position/representation.yaml) | [코드](relative-position/reconstructed.py) |
 | [ResNet](resnet/README.md) | Identity shortcut BasicBlock, channels=64, CPU float32 eval | [YAML](resnet/representation.yaml) | [코드](resnet/reconstructed.py) |
@@ -37,6 +42,7 @@
 | [RETRO](retro/README.md) | 제공된 검색 표현의 chunked cross-attention, joint softmax와 residual core | [YAML](retro/representation.yaml) | [코드](retro/reconstructed.py) |
 | [RMSNorm](rmsnorm/README.md) | 마지막 축 RMS 정규화, 제곱근 밖 epsilon, scale-only | [YAML](rmsnorm/representation.yaml) | [코드](rmsnorm/reconstructed.py) |
 | [RNN Encoder–Decoder / GRU](gru-encoder-decoder/README.md) | Cho 2014 encoder, 고정 context, 조건부 GRU decoder | [YAML](gru-encoder-decoder/representation.yaml) | [코드](gru-encoder-decoder/reconstructed.py) |
+| [RNN LM](rnn-lm/README.md) | 2010 sigmoid recurrent core와 flat vocabulary softmax, 명시적 초기 상태 | [YAML](rnn-lm/representation.yaml) | [코드](rnn-lm/reconstructed.py) |
 | [RoPE](rope/README.md) | 명시 위치의 인접 feature 쌍 회전과 attention core | [YAML](rope/representation.yaml) | [코드](rope/reconstructed.py) |
 | [RWKV](rwkv/README.md) | RWKV v4 time-mixing core, 안정화 WKV, 명시적 상태 이어 계산 | [YAML](rwkv/representation.yaml) | [코드](rwkv/reconstructed.py) |
 | [S4](s4/README.md) | Original rank-1 DPLR/NPLR recurrent/impulse-kernel core, Nfull=4,H=channels=1, CPU eval | [YAML](s4/representation.yaml) | [코드](s4/reconstructed.py) |
@@ -44,10 +50,12 @@
 | [Simple RNN](simple-rnn/README.md) | Elman tanh 순환 core | [YAML](simple-rnn/representation.yaml) | [코드](simple-rnn/reconstructed.py) |
 | [Sparse MoE](sparse-moe/README.md) | 결정적 추론, top-k routing, gate 정규화, ReLU expert 결합 | [YAML](sparse-moe/representation.yaml) | [코드](sparse-moe/reconstructed.py) |
 | [Sparse Transformer](sparse-transformer/README.md) | local/strided causal attention core | [YAML](sparse-transformer/representation.yaml) | [코드](sparse-transformer/reconstructed.py) |
+| [Structured Self-Attention](structured-self-attention/README.md) | bias 없는 다중 hop attention과 행렬 sentence embedding, encoder 제외 | [YAML](structured-self-attention/representation.yaml) | [코드](structured-self-attention/reconstructed.py) |
 | [Switch Transformer](switch-transformer/README.md) | Top-1 routing, 용량 제한과 overflow drop, padding mask, ReLU expert | [YAML](switch-transformer/representation.yaml) | [코드](switch-transformer/reconstructed.py) |
 | [Synthesizer](synthesizer/README.md) | 토큰 조건부 logits, multihead value 집계, mask와 출력 투영 | [YAML](synthesizer/representation.yaml) | [코드](synthesizer/reconstructed.py) |
 | [Transformer](transformer/README.md) | Single encoder block, nine CPU float32 eval fixtures | [YAML](transformer/representation.yaml) | [코드](transformer/reconstructed.py) |
 | [Transformer-XL](transformer-xl/README.md) | segment recurrence, 상대 위치 attention sublayer | [YAML](transformer-xl/representation.yaml) | [코드](transformer-xl/reconstructed.py) |
 | [TTT](ttt/README.md) | 단일 head TTT-Linear 내부 학습기, chunk 내 causal 갱신과 경계 상태 이어 계산 | [YAML](ttt/representation.yaml) | [코드](ttt/reconstructed.py) |
+| [WaveNet](wavenet/README.md) | 조건 없는 dilated gated residual/skip feature stack, audio 입출력 제외 | [YAML](wavenet/representation.yaml) | [코드](wavenet/reconstructed.py) |
 
-[전체 관계도](../docs/genealogy-map.md), [관계 목록](../relations/README.md), [복원 범위와 검증](../docs/reconstruction-status.md)
+[프로젝트 소개](../README.md)

@@ -1,11 +1,13 @@
 # 아키텍처 계보 관계
 
-45개 노드, 64개 설명 관계. 기록 완료와 실행 가능 여부는 별도입니다.
+53개 노드, 76개 설명 관계. 전체 대응 완료 16개, 부분 대응 60개입니다. 선택 core 대응과 전체 대응은 별도입니다.
 
 [전체 관계도](../docs/genealogy-map.md), [복원 범위와 검증](../docs/reconstruction-status.md), [남은 범위](remaining-scope.yaml)
 
 | ID | 출발 → 도착 | 유형 | 전체 대응 | core 대응 |
 |---|---|---|---|---|
+| [tr_001](tr_001.yaml) | Simple RNN → RNN LM | A | partial | complete_scoped |
+| [tr_002](tr_002.yaml) | Neural LM → RNN LM | P? | partial | complete_scoped |
 | [tr_003](tr_003.yaml) | Simple RNN → LSTM | A | partial | partial |
 | [tr_004](tr_004.yaml) | LSTM → Seq2Seq | C | complete_scoped | complete_scoped |
 | [tr_005](tr_005.yaml) | RNN Encoder–Decoder / GRU → Seq2Seq | X? | partial | complete_scoped |
@@ -15,14 +17,22 @@
 | [tr_009](tr_009.yaml) | Memory Network → E2E Memory Network | A | partial | complete_scoped |
 | [tr_010](tr_010.yaml) | LSTM → LSTMN | A | partial | complete_scoped |
 | [tr_011](tr_011.yaml) | E2E Memory Network → LSTMN | I | partial | complete_scoped |
+| [tr_012](tr_012.yaml) | Bahdanau Attention → Decomposable Attention | I | partial | complete_scoped |
 | [tr_013](tr_013.yaml) | LSTM → GNMT | A | partial | complete_scoped |
 | [tr_014](tr_014.yaml) | Bahdanau Attention → GNMT | C | complete_scoped | complete_scoped |
+| [tr_015](tr_015.yaml) | WaveNet → ByteNet | I | partial | complete_scoped |
+| [tr_016](tr_016.yaml) | ByteNet → ConvS2S | X? | partial | complete_scoped |
+| [tr_017](tr_017.yaml) | Bahdanau Attention → ConvS2S | C | partial | complete_scoped |
 | [tr_018](tr_018.yaml) | ResNet → GNMT | C | partial | complete_scoped |
 | [tr_019](tr_019.yaml) | ResNet → Transformer | C | complete_scoped | complete_scoped |
 | [tr_020](tr_020.yaml) | LayerNorm → Transformer | C | complete_scoped | complete_scoped |
 | [tr_021](tr_021.yaml) | Bahdanau Attention → Transformer | I | partial | complete_scoped |
 | [tr_022](tr_022.yaml) | Luong Attention → Transformer | C | complete_scoped | complete_scoped |
+| [tr_023](tr_023.yaml) | Decomposable Attention → Transformer | I | partial | complete_scoped |
+| [tr_024](tr_024.yaml) | Structured Self-Attention → Transformer | I? | partial | complete_scoped |
+| [tr_025](tr_025.yaml) | ConvS2S → Transformer | X | partial | complete_scoped |
 | [tr_026](tr_026.yaml) | Seq2Seq → Transformer | A | partial | partial |
+| [tr_027](tr_027.yaml) | QRNN → Transformer | X? | partial | complete_scoped |
 | [tr_028](tr_028.yaml) | Transformer → Relative Position | A | partial | complete_scoped |
 | [tr_029](tr_029.yaml) | Transformer → Transformer-XL | A | complete_scoped | complete_scoped |
 | [tr_030](tr_030.yaml) | Relative Position → Transformer-XL | C | partial | complete_scoped |
@@ -47,6 +57,7 @@
 | [tr_049](tr_049.yaml) | LSSL → S4 | A | complete_scoped | complete_scoped |
 | [tr_050](tr_050.yaml) | S4 → H3 | C | complete_scoped | complete_scoped |
 | [tr_051](tr_051.yaml) | Transformer → H3 | X | partial | complete_scoped |
+| [tr_052](tr_052.yaml) | WaveNet → Hyena | I? | partial | complete_scoped |
 | [tr_053](tr_053.yaml) | S4 → Hyena | X? | partial | complete_scoped |
 | [tr_054](tr_054.yaml) | Transformer → FlashAttention | A | partial | partial |
 | [tr_055](tr_055.yaml) | Transformer → RETRO | C | partial | complete_scoped |
@@ -66,6 +77,7 @@
 | [tr_069](tr_069.yaml) | GNMT → Transformer | P | partial | partial |
 | [tr_070](tr_070.yaml) | E2E Memory Network → Transformer | I | partial | complete_scoped |
 | [tr_071](tr_071.yaml) | LSTMN → Transformer | I | partial | complete_scoped |
+| [tr_072](tr_072.yaml) | ConvS2S → Transformer | C | partial | complete_scoped |
 | [tr_073](tr_073.yaml) | LSTM → RNN Encoder–Decoder / GRU | I | partial | complete_scoped |
 | [tr_074](tr_074.yaml) | Linear Transformer → H3 | I | partial | complete_scoped |
 | [tr_075](tr_075.yaml) | H3 → Hyena | I | partial | complete_scoped |

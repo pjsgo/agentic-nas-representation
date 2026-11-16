@@ -1,0 +1,76 @@
+target: convs2s
+original_node: ConvS2S (2017)
+original_evidence:
+  pdf: User-supplied beyond_transformer_slides.pdf (not redistributed)
+  pages:
+  - 38
+  - 40
+  relation_hints_only:
+  - tr_016
+  - tr_017
+  - tr_025
+  - tr_072
+  relation_certification_owner: G
+paper:
+  title: Convolutional Sequence to Sequence Learning
+  version: ICML 2017, PMLR 70, pages 1243-1252
+  url: https://proceedings.mlr.press/v70/gehring17a.html
+  reviewed: Sections 3.1-3.4, GLU, convolutional residual, attention equations 1-2
+    and scaling
+code:
+  repository: https://github.com/facebookresearch/fairseq
+  version: v0.12.2
+  provenance: Official repository linked by paper; later PyTorch release, not original
+    2017 runtime
+  files:
+  - path: fairseq/models/fconv.py
+    url: https://github.com/facebookresearch/fairseq/blob/v0.12.2/fairseq/models/fconv.py
+  - path: fairseq/modules/linearized_convolution.py
+    url: https://github.com/facebookresearch/fairseq/blob/v0.12.2/fairseq/modules/linearized_convolution.py
+  executed: false
+selection:
+  variant: One encoder and decoder convolution with equal input/output C channels,
+    residual distance 1, one decoder attention layer, dropout disabled, full-sequence
+    path
+  input_boundary: Caller supplies token-plus-position embeddings, including decoder
+    shift. Learned lookups and position indices not reconstructed.
+  included_projections: Encoder fc1/fc2; decoder fc1; attention in_projection/out_projection
+  excluded_projections: Decoder vocabulary fc2/fc3
+  effective_weights: Replace weight-normalized source tensors by supplied effective
+    weights. ConvTBC source layout [K,C,2C] maps to [2C,C,K]. No claim about weight_norm
+    g/v, initializers or backward gradients.
+  precision_adapter: CPU float64. Omit source float32 mask roundtrip (fconv.py:345-348),
+    which would quantize valid float64 scores; mask applied directly at float64. Not
+    bitwise upstream runtime parity.
+  scaling: Use official implementation sqrt(0.5) on residual sums, query summary and
+    encoder values; context multiplied by sqrt(nonpadding source count). No sqrt(D)
+    attention scaling.
+  initialization_adapter: Explicit zero allocation then evaluator supplied weights,
+    not source random initialization
+  masks: Source positions masked before encoder convolution and after encoder projection,
+    and in attention. All-masked rows excluded. No target padding contract.
+parts:
+  convs2s_encoder_glu:
+    source: fconv.py:248-285
+    meaning: projected masked convolution
+    GLU: null
+    residual divided by sqrt(2): null
+  convs2s_encoder_memory:
+    source: fconv.py:291-301
+    meaning: projected masked keys and embedding-enriched values
+  convs2s_causal_decoder_glu:
+    source: fconv.py:517-537; linearized_convolution.py:59-64
+    meaning: left-only receptive field from full-sequence causal convolution and GLU
+  convs2s_encoder_attention:
+    source: fconv.py:335-354
+    meaning: projected decoder-plus-embedding dot product
+    padding and source-axis softmax: null
+  convs2s_length_scaled_context:
+    source: fconv.py:357-367
+    meaning: value aggregation with sqrt(valid length) scaling
+  convs2s_decoder_residual:
+    source: fconv.py:370,556-558
+    meaning: attention inner and decoder outer residual sums with sqrt(0.5)
+scope_limit: Preembedded one-block pair; no full translation model, task metrics,
+  training, incremental generation, beam search, gradients or original checkpoint
+  fidelity

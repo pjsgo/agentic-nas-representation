@@ -1,0 +1,93 @@
+representation_version: local_equational_graph_v1
+operator_profile: inline_equations_below
+reading_rules: ../../specs/representation/reading-rules-v1.md
+architecture: bytenet
+architecture_entry: reconstructed.py:ByteNetStack
+scope:
+  variant: 'ReLU bottleneck residual feature stack; causal decoder-style or centered encoder-style selected at construction'
+  included: [per_position_layernorm, relu_preactivation, pointwise_bottleneck, dilated_convolution, residual_expansion]
+  excluded: [multiplicative_unit_LM_variant, embedding, encoder_decoder_connection, dynamic_unfolding, initial_token_shift, output_head, softmax, decoding, training, gradients, streaming_cache]
+interface:
+  constructor: 'ByteNetStack(channels: int, bottleneck: int, dilations: tuple[int,...], causal: bool); torch.nn.Module'
+  forward: 'forward(x) -> dict[str, Tensor]'
+  inputs: {x: 'CPU float64 [B,C,T], axes batch/channel/time; supplied internal features with all positions valid'}
+  constraints: '1<=B<=2; 1<=D=bottleneck<=4; C=channels=2*D; 1<=T<=16; 1<=L=len(dilations)<=4; integer dilations 1..8; finite inputs/parameters abs<=2. causal is bool. Empty sequences/invalid-input diagnostics excluded.'
+  returns:
+    states: 'float64 [L+1,B,C,T], x then all block outputs'
+    normalized1: 'float64 [L,B,C,T]'
+    reduced: 'float64 [L,B,D,T]'
+    normalized2: 'float64 [L,B,D,T]'
+    dilated: 'float64 [L,B,D,T]'
+    normalized3: 'float64 [L,B,D,T]'
+    expanded: 'float64 [L,B,C,T]'
+    output: 'float64 [B,C,T], states[L]'
+parameters:
+  W_in: {shape: [L,D,C,1], initialization: zeros}
+  W_dil: {shape: [L,D,D,3], initialization: zeros}
+  W_out: {shape: [L,C,D,1], initialization: zeros}
+  gamma1: {shape: [L,C], initialization: ones}
+  beta1: {shape: [L,C], initialization: zeros}
+  gamma2: {shape: [L,D], initialization: ones}
+  beta2: {shape: [L,D], initialization: zeros}
+  gamma3: {shape: [L,D], initialization: ones}
+  beta3: {shape: [L,D], initialization: zeros}
+  contract: 'Exactly these nine independent nn.Parameter objects, CPU float64 requires_grad=true. No convolution bias. No storage alias or cross-layer sharing; layer slices reused across time/batch. Caller loads state_dict before evaluation.'
+state:
+  state_dict: [W_in,W_dil,W_out,gamma1,beta1,gamma2,beta2,gamma3,beta3]
+  buffers: []
+  updates: 'h0=x per call. No mutation, running statistics, cache, persistent carry or detach. All normalization statistics are computed anew at each layer, batch and time position.'
+notation:
+  indices: 'l=0..L-1, b=0..B-1, t=0..T-1; d=dilations[l]'
+  norm: 'For v[b,c,t] of width Q, mu[b,t]=sum_c v[b,c,t]/Q, var[b,t]=sum_c (v[b,c,t]-mu[b,t])^2/Q. LN_j(v)[b,c,t]=gammaj[l,c]*(v[b,c,t]-mu[b,t])/sqrt(var[b,t]+0.00001)+betaj[l,c]. Population variance, channel axis only; no batch/time reduction. Epsilon 1e-5 is an explicit local convention.'
+  relu: 'relu(v)=max(v,0) elementwise, out of place.'
+  pointwise: 'Cross-correlation [out,in,kernel], width 1 means sum across input channels at each b,t, no bias.'
+  padding: 'The width-3 convolution samples q=t+(k-2)*d for causal=true and q=t+(k-1)*d for causal=false, k=0,1,2. Values outside 0<=q<T are zero. Thus pad=(2*d,0) for causal, (d,d) for centered. stride=1, groups=1. Padding occurs after LN2 and ReLU; do not normalize zero-padding as if it were an input position.'
+factors:
+  bytenet_norm1:
+    operator: channel_layernorm
+    equation: 'n1[l]=LN_1(h[l]) with width C.'
+  bytenet_reduce:
+    operator: relu_pointwise_convolution
+    equation: 'a[l,b,o,t]=sum_c W_in[l,o,c,0]*relu(n1[l,b,c,t]); output width D.'
+  bytenet_norm2:
+    operator: channel_layernorm
+    equation: 'n2[l]=LN_2(a[l]) with width D.'
+  bytenet_dilated:
+    operator: relu_dilated_cross_correlation
+    equation: 'v[l,b,o,t]=sum_i sum_{k=0..2} W_dil[l,o,i,k]*relu(n2[l,b,i,q]); q defined by padding, missing values are zero. Causal/centered mode applies only to this convolution.'
+  bytenet_norm3:
+    operator: channel_layernorm
+    equation: 'n3[l]=LN_3(v[l]) with width D.'
+  bytenet_expand:
+    operator: relu_pointwise_convolution
+    equation: 'r[l,b,c,t]=sum_i W_out[l,c,i,0]*relu(n3[l,b,i,t]); output width C.'
+  bytenet_residual:
+    operator: additive_identity_residual
+    equation: 'h[l+1]=h[l]+r[l]. No post-add activation or scaling. Return h,n1,a,n2,v,n3,r as states,normalized1,reduced,normalized2,dilated,normalized3,expanded and h[L] as output.'
+contains:
+  bytenet_relu_stack: [bytenet_norm1,bytenet_reduce,bytenet_norm2,bytenet_dilated,bytenet_norm3,bytenet_expand,bytenet_residual]
+scan:
+  axis: 'l=0..L-1 increasing; no time scan'
+  initial: 'h[0]=x'
+  carry: 'h[l+1] feeds next layer with its own independent parameters'
+dataflow:
+  - [x, bytenet_norm1.initial_h]
+  - [gamma1, bytenet_norm1.scale]
+  - [beta1, bytenet_norm1.shift]
+  - [bytenet_norm1.n1, bytenet_reduce.n1]
+  - [W_in, bytenet_reduce.weight]
+  - [bytenet_reduce.a, bytenet_norm2.a]
+  - [gamma2, bytenet_norm2.scale]
+  - [beta2, bytenet_norm2.shift]
+  - [bytenet_norm2.n2, bytenet_dilated.n2]
+  - [W_dil, bytenet_dilated.weight]
+  - [bytenet_dilated.v, bytenet_norm3.v]
+  - [gamma3, bytenet_norm3.scale]
+  - [beta3, bytenet_norm3.shift]
+  - [bytenet_norm3.n3, bytenet_expand.n3]
+  - [W_out, bytenet_expand.weight]
+  - [bytenet_expand.r, bytenet_residual.r]
+  - [x, bytenet_residual.initial_h]
+  - [bytenet_residual.h_next, bytenet_norm1.next_layer_h]
+  - [bytenet_residual.h_next, bytenet_residual.next_layer_h]
+specification_note: 'Selected bias-free ReLU block with explicit affine LN epsilon and initialization conventions, not a claim about unpublished original defaults. Input is an internal feature sequence: current-position visibility is allowed; raw-token autoregressive shift belongs outside this boundary.'

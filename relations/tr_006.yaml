@@ -1,7 +1,7 @@
 format_version: local_transition_v1
 transition_id: tr_006
-source_architecture: RNN Encoder–Decoder/GRU
-target_architecture: Bahdanau
+source_architecture: RNN Encoder–Decoder / GRU
+target_architecture: Bahdanau Attention
 relation_type: A
 inferred: false
 motivation: 고정 context로 입력 세부 정보를 모두 압축하는 병목

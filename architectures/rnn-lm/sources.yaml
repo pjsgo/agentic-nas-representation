@@ -1,0 +1,67 @@
+architecture: rnn-lm
+review_date: '2026-11-16'
+assignment: ../../../../integration/20261116_genealogy_phase6_integration/assignments.yaml
+original_genealogy:
+  pdf: User-supplied beyond_transformer_slides.pdf (not redistributed)
+  inspected_pages:
+  - 38
+  evidence: Visually read original embedded diagram page38_image203.jpg extracted
+    by G; no extraction rerun.
+  image_directory: 'Research workspace: parallel_coverage/20261105/integration/20261116_genealogy_phase6_relations/evidence'
+  diagram_label: RNN LM
+  diagram_year: 2010
+  catalog_slug: rnn-lm
+  original_node_id: null
+  relation_hint: tr_002, P? marker; preserve G audit and do not equate this with Simple
+    RNN node.
+primary_paper:
+  title: Recurrent neural network based language model
+  authors: Mikolov, Karafiat, Burget, Cernocky, Khudanpur
+  version: INTERSPEECH 2010, pp1045-1048, DOI 10.21437/Interspeech.2010-343
+  url: https://www.isca-archive.org/interspeech_2010/mikolov10_interspeech.pdf
+  inspected: Section 2 and equations (1)-(5), printed p1046 / PDF page2; Figure1 on
+    page1.
+author_implementation:
+  status: AUTHOR_ARCHIVE_INSPECTED_LATER_VARIANT
+  landing: https://www.fit.vut.cz/person/imikolov/public/rnnlm/
+  archive: https://www.fit.vut.cz/person/imikolov/public/rnnlm/rnnlm-0.1h.tgz
+  version: 0.1h, version label in rnnlmlib.h; no repository commit advertised for
+    archive
+  commit: null
+  local_evidence:
+  - evidence/fetch_result.json
+  - evidence/rnnlm-0.1h.tgz
+  - evidence/rnnlmlib.cpp
+  - evidence/rnnlmlib.h
+  inspected: CRnnLM::computeNet, rnnlmlib.cpp lines678-763; class_size default100
+    in header line159; layer2_size=vocab_size+class_size line299.
+  runtime_executed: false
+  differences: 0.1h uses class and within-class output normalization, FAST_EXP and
+    +/-50 clipping. It is not the flat-softmax equation-only forward selected here.
+  not_claimed: No whole-toolkit reconstruction, build, binary execution or numerical
+    parity.
+source_mapping:
+  rnn_lm_token_map: Equations (1)-(2), one-hot word concatenated with previous hidden
+    state. A[v,j]=u[j,v].
+  rnn_lm_recurrent: Equations (2),(4); R[k,j]=u[j,V+k], sigmoid. Explicit sums have
+    no added biases.
+  rnn_lm_readout: Equation (3); O[j,k]=v[k,j], applied to current updated hidden state.
+  rnn_lm_softmax: Equation (5), flat full-vocabulary normalization; not later class-based
+    toolkit.
+  rnn_lm_carry: Section2 context propagation; supplied h0 exposes source small-value
+    initialization and streaming continuation.
+local_adaptations:
+- Independent batches, float64 CPU and diagnostics for unit comparison.
+- Token lookup replaces dense one-hot multiplication exactly; no separate embedding/projection
+  factorization.
+- Initial state supplied explicitly; no implicit sentence reset or OOV sentinel.
+- Stable sigmoid and subtract-max softmax, without toolkit clipping/approximate exponential.
+- Invalid-input guards and copied final-state output are local interface requirements.
+source_runtime_parity: NOT_RUN
+excluded:
+- class_based_toolkit
+- dynamic_adaptation
+- training
+- corpus_pipeline
+- speech_recognition
+- perplexity_reproduction

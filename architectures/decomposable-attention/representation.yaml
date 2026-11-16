@@ -1,0 +1,105 @@
+representation_version: local_decomposable_attention_v1
+operator_profile: self_contained_equations_v1
+architecture: decomposable-attention
+architecture_entry: reconstructed.py:decompose
+interface:
+  signature: 'decompose(a, b, mask_a, mask_b, params) -> dict'
+  class_contract: No class or constructor; export this pure function in reconstructed.py
+  inputs:
+    a: 'CPU float64[B,M,D], finite supplied embedded/projected sequence'
+    b: 'CPU float64[B,N,D], finite supplied embedded/projected sequence'
+    mask_a: 'CPU bool[B,M]; True is a valid token'
+    mask_b: 'CPU bool[B,N]; True is a valid token'
+    params: 'dict with exactly fw1[F,D], fb1[F], fw2[F,F], fb2[F], gw1[G,2*D], gb1[G], gw2[G,G], gb2[G]; finite CPU float64 tensors'
+  constraints:
+  - B,M,N,D,F,G positive; at least one valid token in each sequence of every batch item
+  - All inputs and computed intermediates finite, except internal masked logits may be -inf
+  - Arbitrary boolean padding patterns supported; empty and all-masked sequences raise ValueError
+  outputs:
+    scores: float64[B,M,N], unscaled dot products, zero at invalid token pairs
+    attention_ab: float64[B,M,N], normalized over valid b tokens for valid a queries; invalid rows and columns zero
+    attention_ba: float64[B,N,M], normalized over valid a tokens for valid b queries; invalid rows and columns zero
+    aligned_b: float64[B,M,D], b aligned to a; invalid a rows zero
+    aligned_a: float64[B,N,D], a aligned to b; invalid b rows zero
+    compare_a: float64[B,M,G], invalid rows zero
+    compare_b: float64[B,N,G], invalid rows zero
+    aggregate_a: float64[B,G]
+    aggregate_b: float64[B,G]
+    output: float64[B,2*G], concatenation aggregate_a then aggregate_b
+factors:
+  da_embed_mask:
+    operator: masked_fill
+    attributes: 'a0=where(mask_a[...,None],a,0); b0=where(mask_b[...,None],b,0). No token insertion or embedding projection.'
+  da_shared_F:
+    operator: two_affine_relu_layers
+    attributes: 'F(x)=relu(relu(x @ fw1.T + fb1) @ fw2.T + fb2). Apply the identical four tensors to a0 and b0, at every batch and token. relu(z)=max(z,0) elementwise.'
+  da_scores:
+    operator: dot_product
+    attributes: 'e[q,i,j]=sum_f F(a0)[q,i,f]*F(b0)[q,j,f]. No sqrt scaling. Returned scores=where(mask_a[q,i] and mask_b[q,j],e,0).'
+  da_align:
+    operator: bidirectional_masked_softmax_and_weighted_sum
+    attributes: >-
+      For each valid a query i, attention_ab[q,i,j]=exp(e[q,i,j]-z)/sum_{k valid b} exp(e[q,i,k]-z) for valid b key j, else zero; z=max_{k valid b} e[q,i,k].
+      Invalid a query rows are zero. For each valid b query j, attention_ba[q,j,i]=exp(e[q,i,j]-w)/sum_{k valid a} exp(e[q,k,j]-w) for valid a key i, else zero; w=max_{k valid a} e[q,k,j]. Invalid b query rows are zero.
+      aligned_b=attention_ab @ b0; aligned_a=attention_ba @ a0. Softmax uses opposite sequence axis, never feature or batch axis.
+  da_shared_G:
+    operator: concatenation_and_two_affine_relu_layers
+    attributes: >-
+      G(x)=relu(relu(x @ gw1.T + gb1) @ gw2.T + gb2).
+      compare_a=where(mask_a[...,None],G(concat(a0,aligned_b,dim=2)),0).
+      compare_b=where(mask_b[...,None],G(concat(b0,aligned_a,dim=2)),0).
+      Identical G parameters across both sides and all tokens; distinct from F. Concatenation places original token before alignment.
+  da_aggregate:
+    operator: sum_and_concatenate
+    attributes: 'aggregate_a=sum(compare_a,dim=1); aggregate_b=sum(compare_b,dim=1); output=concat(aggregate_a,aggregate_b,dim=1). Sum, not mean. No classifier H or label normalization.'
+dataflow:
+- [a, da_embed_mask.a]
+- [b, da_embed_mask.b]
+- [mask_a, da_embed_mask.mask_a]
+- [mask_b, da_embed_mask.mask_b]
+- [da_embed_mask.a0_b0, da_shared_F.inputs]
+- [params.fw1_fb1_fw2_fb2, da_shared_F.parameters]
+- [da_shared_F.fa_fb, da_scores.inputs]
+- [mask_a, da_scores.mask_a]
+- [mask_b, da_scores.mask_b]
+- [da_scores.e, da_align.e]
+- [mask_a, da_align.mask_a]
+- [mask_b, da_align.mask_b]
+- [da_embed_mask.a0_b0, da_align.values]
+- [da_align.aligned_a_aligned_b, da_shared_G.alignments]
+- [da_embed_mask.a0_b0, da_shared_G.tokens]
+- [params.gw1_gb1_gw2_gb2, da_shared_G.parameters]
+- [mask_a, da_shared_G.mask_a]
+- [mask_b, da_shared_G.mask_b]
+- [da_shared_G.compare_a_compare_b, da_aggregate.inputs]
+- [da_aggregate.output, output]
+- [da_scores.scores, scores]
+- [da_align.attention_ab, attention_ab]
+- [da_align.attention_ba, attention_ba]
+- [da_align.aligned_b, aligned_b]
+- [da_align.aligned_a, aligned_a]
+- [da_shared_G.compare_a, compare_a]
+- [da_shared_G.compare_b, compare_b]
+- [da_aggregate.aggregate_a, aggregate_a]
+- [da_aggregate.aggregate_b, aggregate_b]
+parameters:
+  fw1: {shape: [F,D], initialization: caller_supplied}
+  fb1: {shape: [F], initialization: caller_supplied}
+  fw2: {shape: [F,F], initialization: caller_supplied}
+  fb2: {shape: [F], initialization: caller_supplied}
+  gw1: {shape: [G,2*D], initialization: caller_supplied}
+  gb1: {shape: [G], initialization: caller_supplied}
+  gw2: {shape: [G,G], initialization: caller_supplied}
+  gb2: {shape: [G], initialization: caller_supplied}
+state:
+  carry: none
+  sharing: Eight distinct caller tensors; each is reused across both sequences, all tokens and batch items
+  input_mutation: false
+  rng_consumption: false
+  persistence: none
+scope:
+  included: [two_layer_shared_F, unscaled_cross_scores, bidirectional_alignment, padding_masks, two_layer_shared_G, masked_sum_aggregation]
+  excluded: [intra_sentence_attention, classifier_H, label_probabilities, NULL_token_creation, embeddings, input_projection, training_dropout, loss, gradients, full_NLI_model]
+semantics_status:
+  common_schema_certification: NOT_CLAIMED
+  basis: Local equation profile under genealogy reading rules; grouped edge endpoints are descriptive bundles expanded by equations, not v0.3 ports

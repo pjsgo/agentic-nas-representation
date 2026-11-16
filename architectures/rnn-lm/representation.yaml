@@ -1,0 +1,81 @@
+representation_version: local_equational_graph_v1
+operator_profile: inline_equations_below
+reading_rules: ../../specs/representation/reading-rules-v1.md
+architecture: rnn-lm
+architecture_entry: reconstructed.py:rnn_lm
+variant: mikolov_2010_equations1_to5_flat_vocabulary_static_forward
+scope:
+  included: [one_hot_input_equivalent_lookup, sigmoid_recurrence, explicit_initial_state, hidden_to_vocabulary, full_vocabulary_softmax, returned_final_state]
+  excluded: [training, bptt, dynamic_test_adaptation, class_based_output, toolkit_fast_exp_and_clipping, compression_layer, direct_maxent_features, corpus_processing, padding, automatic_sentence_reset, sampling, ngram_interpolation]
+interface:
+  function: 'rnn_lm(tokens, h0, A, R, O) -> dict'
+  class_contract: 'No class or constructor required. Export this top-level function with all weights and initial state supplied. No global state or random initialization.'
+  dimensions: 'T=time, B=batch, V=vocabulary, D=hidden width; all positive integers.'
+  tensors: 'tokens int64 CPU [T,B], values in [0,V). h0,A,R,O finite float64 CPU; finite intermediate arithmetic assumed.'
+  inputs:
+    tokens: '[T,B], current observed word at each t; output predicts the next word'
+    h0: '[B,D], caller-supplied state before first token, e.g. all 0.1 for source initialization'
+    A: '[V,D], rows of one-hot input-to-hidden map, not a separate embedding followed by another projection'
+    R: '[D,D], row-vector previous-state to new-state map'
+    O: '[D,V], row-vector hidden-to-vocabulary map'
+  outputs:
+    hidden: '[T,B,D], post-update state for each observed token'
+    logits: '[T,B,V]'
+    probabilities: '[T,B,V], full vocabulary distribution per time and batch'
+    final_state: '[B,D], equals hidden[T-1], independent copy (no storage alias)'
+  invalid_inputs: 'Raise ValueError for non-tensors, wrong dtype/device/rank/shape, nonfinite floating inputs, empty dimensions including T=0, or out-of-range token IDs.'
+parameters:
+  ownership: 'Functional supplied A,R,O; distinct roles without implicit tying or internal registration. Caller does not alias distinct roles.'
+  sharing: 'Same A,R,O at every timestep and batch element; h0 is runtime state, not a parameter.'
+  count: 'V*D + D*D + D*V supplied scalar entries; no hidden or output biases.'
+state:
+  initial: 's[-1,a,h] = h0[a,h]'
+  transition: 's[t] is fully computed from s[t-1] before the next timestep. Never update components in-place during the matrix product.'
+  emitted: 'hidden[t] = s[t]'
+  final: 'final_state = independent copy of s[T-1]'
+  continuation: 'Caller may pass final_state to a subsequent call; no internal carry persists.'
+  boundaries: 'No special token IDs or reset masks. Caller splits sequences and supplies h0 to reset. All positions valid; no padding.'
+  input_mutation: false
+  parameter_mutation: false
+  random: false
+factors:
+  rnn_lm_token_map:
+    operator: one_hot_linear_equivalent_gather
+    equation: 'input_term[t,a,h] = A[tokens[t,a],h] = sum_v one_hot(tokens[t,a],V)[v]*A[v,h]'
+  rnn_lm_recurrent:
+    operator: sigmoid_state_update
+    equations:
+      - 'pre[t,a,h] = input_term[t,a,h] + sum_j s[t-1,a,j]*R[j,h]'
+      - 's[t,a,h] = 1/(1+exp(-pre[t,a,h]))'
+    attributes: 'Logistic sigmoid, no tanh, bias, clipping, gates or extra embedding matrix. Numerically stable sigmoid implementation permitted.'
+  rnn_lm_readout:
+    operator: linear
+    equation: 'logits[t,a,v] = sum_h s[t,a,h]*O[h,v]'
+  rnn_lm_softmax:
+    operator: stable_softmax
+    equations:
+      - 'm[t,a] = max_v logits[t,a,v]'
+      - 'probabilities[t,a,v] = exp(logits[t,a,v]-m[t,a]) / sum_u exp(logits[t,a,u]-m[t,a])'
+    attributes: 'No class softmax or hierarchical normalization.'
+  rnn_lm_carry:
+    operator: scan
+    attributes: 'Traverse t=0..T-1. Initial carry h0. Body token_map -> recurrent -> readout -> softmax. Emit s/logits/probabilities, carry s to next t; clone last s for final_state.'
+contains:
+  rnn_lm_core: [rnn_lm_carry]
+  rnn_lm_carry: [rnn_lm_token_map, rnn_lm_recurrent, rnn_lm_readout, rnn_lm_softmax]
+dataflow:
+  - [tokens, rnn_lm_token_map.tokens]
+  - [A, rnn_lm_token_map.A]
+  - [h0, rnn_lm_carry.initial_state]
+  - [rnn_lm_carry.previous_state, rnn_lm_recurrent.previous_state]
+  - [rnn_lm_token_map.input_term, rnn_lm_recurrent.input_term]
+  - [R, rnn_lm_recurrent.R]
+  - [rnn_lm_recurrent.s, rnn_lm_carry.next_state]
+  - [rnn_lm_recurrent.s, rnn_lm_readout.s]
+  - [O, rnn_lm_readout.O]
+  - [rnn_lm_readout.logits, rnn_lm_softmax.logits]
+  - [rnn_lm_carry.emitted_s, hidden]
+  - [rnn_lm_carry.emitted_logits, logits]
+  - [rnn_lm_carry.emitted_probabilities, probabilities]
+  - [rnn_lm_carry.final_state_copy, final_state]
+specification_note: 'Paper-equation static forward core. Does not claim parity with later class-based toolkit, a trained model or generic Simple RNN implementation.'

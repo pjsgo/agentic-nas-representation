@@ -86,7 +86,11 @@ YAML 버전은 등록 상태를 명시하는 0.4-candidate.1입니다. 단일 �
 - [LayerNorm → Transformer](../../relations/tr_020.yaml) — C, tr_020
 - [Bahdanau Attention → Transformer](../../relations/tr_021.yaml) — I, tr_021
 - [Luong Attention → Transformer](../../relations/tr_022.yaml) — C, tr_022
+- [Decomposable Attention → Transformer](../../relations/tr_023.yaml) — I, tr_023
+- [Structured Self-Attention → Transformer](../../relations/tr_024.yaml) — I?, tr_024
+- [ConvS2S → Transformer](../../relations/tr_025.yaml) — X, tr_025
 - [Seq2Seq → Transformer](../../relations/tr_026.yaml) — A, tr_026
+- [QRNN → Transformer](../../relations/tr_027.yaml) — X?, tr_027
 - [Transformer → Relative Position](../../relations/tr_028.yaml) — A, tr_028
 - [Transformer → Transformer-XL](../../relations/tr_029.yaml) — A, tr_029
 - [Transformer → Sparse Transformer](../../relations/tr_032.yaml) — A, tr_032
@@ -110,4 +114,5 @@ YAML 버전은 등록 상태를 명시하는 0.4-candidate.1입니다. 단일 �
 - [GNMT → Transformer](../../relations/tr_069.yaml) — P, tr_069
 - [E2E Memory Network → Transformer](../../relations/tr_070.yaml) — I, tr_070
 - [LSTMN → Transformer](../../relations/tr_071.yaml) — I, tr_071
+- [ConvS2S → Transformer](../../relations/tr_072.yaml) — C, tr_072
 - [Transformer → Hyena](../../relations/tr_076.yaml) — A, tr_076

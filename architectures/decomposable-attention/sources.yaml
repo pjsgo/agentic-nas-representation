@@ -1,0 +1,68 @@
+architecture: decomposable-attention
+variant: EMNLP 2016 vanilla attend/compare/aggregate sums, classifier boundary excluded
+assignment:
+  file: parallel_coverage/20261105/integration/20261116_genealogy_phase6_integration/assignments.yaml
+  owner: R2
+  target_id_is_original_node_id: false
+original_genealogy:
+  pdf: User-supplied beyond_transformer_slides.pdf (not redistributed)
+  assigned_pages:
+  - 38
+  - 39
+  inspected_image: parallel_coverage/20261105/linear_transformer/experiments/20261116_genealogy_phase5_retnet_rwkv/slide_38_0.png
+  observation: Visually confirmed Decomposable Attention 2016 node; relationship IDs
+    are assignment hints for G to audit
+  limitation: Reused existing PDF embedded-image extraction; page39 not separately
+    re-rendered
+paper:
+  title: A Decomposable Attention Model for Natural Language Inference
+  version: EMNLP 2016 published version, pages 2249-2255
+  url: https://aclanthology.org/D16-1244.pdf
+  inspected: Sections 3.1-3.3 equations 1-4; Section 5.1 padding and two-layer ReLU
+    networks
+  computational_authority: PRIMARY
+original_author_implementation:
+  status: NOT_LOCATED
+  evidence: Paper reports TensorFlow implementation; paper contains no code link.
+    Targeted author/Google repository searches did not establish a public original-author
+    implementation.
+  limitation: Do not call the Harvard Torch reimplementation official original-author
+    code or claim runtime parity.
+supplementary_implementation:
+  repository: https://github.com/harvardnlp/decomp-attn
+  commit: 3a92ee960f8ecece4ddf153e58606aa06cc94349
+  attribution: Yoon Kim, stated in README; third-party reproduction
+  files:
+  - path: models.lua
+    inspected: make_sent_encoder; two affine/ReLU F and G layers, bidirectional soft
+      alignment, concatenate then sum, separate classifier
+  - path: README.md
+    inspected: Attribution and synchronous-versus-asynchronous training distinction
+  execution: NOT_EXECUTED
+mapping:
+  da_embed_mask: Paper section 5.1 padding exclusion; explicit supplied-input boundary
+  da_shared_F: Paper eq1 shared F; section 5.1 two-layer ReLU network
+  da_scores: Paper eq1 unscaled inner product
+  da_align: Paper eq2 bidirectional normalized alignment
+  da_shared_G: Paper eq3 shared G with token-first concatenation
+  da_aggregate: Paper eq4 sum aggregation only; eq5 classifier excluded
+adaptations:
+- Input embeddings/projection and any paper NULL token are caller responsibility;
+  no NULL insertion claimed
+- F and G may have different small widths for shape-sensitive validation; original
+  reported hidden width 200 not imposed
+- Mask both key normalization and query/compare contributions; padded diagnostics
+  explicitly zero
+- Exact valid-token softmax uses stable max subtraction; empty/all-masked inputs explicitly
+  rejected
+- Eval-style deterministic forward, caller parameters, CPU float64; no dropout or
+  initializer reproduction
+validation:
+  independent_reference: Scalar two-layer networks and explicit valid-token sums,
+    with no realization imports
+  upstream_runtime: NOT_EXECUTED
+  limitation: Paper-grounded scoped restoration; original-author implementation provenance
+    gap remains
+relation_hints_for_G:
+- tr_012
+- tr_023

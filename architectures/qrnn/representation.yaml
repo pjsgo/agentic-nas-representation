@@ -1,0 +1,52 @@
+representation_version: local_qrnn_fo_v1
+operator_profile: self_contained_equations
+architecture: QRNN
+architecture_entry: Model
+scope:
+  included: [single_causal_gate_layer, fo_pooling_source_gate_convention, external_cell_and_input_history]
+  excluded: [f_pooling, ifo_pooling, stacked_layers, embeddings, readout, zoneout, dropout, training, CUDA_kernel, padding_mask]
+configuration:
+  I: positive integer input channels
+  H: positive integer cell channels
+  window: integer 1 or 2; default 2
+interface:
+  constructor: Model(I=3,H=4,window=2), torch.nn.Module
+  forward: forward(x, c0=None, prev_x=None) -> dict
+  dtype: torch.float64
+  device: cpu
+  domain: finite inputs; positive B,T; all positions are real tokens; no padding mask
+  inputs:
+    x: '[B,T,I]'
+    c0: 'None or [B,H]; None means zeros'
+    prev_x: 'None or [B,I]; None means zeros; must be None for window=1'
+  outputs:
+    z: '[B,T,H]'
+    update_gate: '[B,T,H]'
+    output_gate: '[B,T,H]'
+    cells: '[B,T,H]'
+    output: '[B,T,H]'
+    final_cell: '[B,H], cells[:,-1,:]'
+    final_output: '[B,H], output[:,-1,:]'
+    final_x: '[B,I], x[:,-1,:]'
+  guards: No additional runtime guards required; caller must satisfy domain and shapes
+parameters:
+  W: {shape: [3*H, window*I], initialization: zeros, requires_grad: true}
+  b: {shape: [3*H], initialization: zeros, requires_grad: true}
+parameter_contract: Direct nn.Parameter attributes W and b; distinct objects; shared over batch/time; no recurrent weights; evaluator supplies effective values after construction
+buffers: {}
+state_contract:
+  hidden_cache: none
+  initial: c0 or zero; history prev_x or zero
+  recurrence: cell only, output is not used as next cell
+  continuation: pass final_cell and (for window=2) final_x into next call
+  mutation: inputs and parameters unchanged; no detach; returned final_x may alias input
+operators:
+  window_affine: 'For t=0..T-1: v=x[:,t] if window=1, otherwise concat(x[:,t], prev_x if t=0 else x[:,t-1]) along feature axis; a[b,t,j]=sum_i W[j,i]*v[b,i]+b[j]. Current input precedes previous input.'
+  gates: 'z=tanh(a[:,:,:H]); update_gate=sigmoid(a[:,:,H:2*H]); output_gate=sigmoid(a[:,:,2*H:3*H]); sigmoid(s)=1/(1+exp(-s))'
+  pooling: 'old=c0 or zeros[B,H]; for t in increasing order: new=update_gate[:,t]*z[:,t]+(1-update_gate[:,t])*old; cells[:,t]=new; output[:,t]=output_gate[:,t]*new; old=new. All products elementwise; no tanh on cell output.'
+  returns: 'final_cell=cells[:,-1]; final_output=output[:,-1]; final_x=x[:,-1]'
+graph:
+- {id: qrnn_causal_window, op: window_affine, inputs: [x,prev_x,W,b,window], outputs: [a]}
+- {id: qrnn_gate_functions, op: gates, inputs: [a,H], outputs: [z,update_gate,output_gate]}
+- {id: qrnn_fo_pooling, op: pooling, inputs: [z,update_gate,output_gate,c0], outputs: [cells,output]}
+- {id: qrnn_external_state, op: returns, inputs: [cells,output,x], outputs: [final_cell,final_output,final_x]}

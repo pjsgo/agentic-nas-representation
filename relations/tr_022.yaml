@@ -1,6 +1,6 @@
 format_version: local_transition_v1
 transition_id: tr_022
-source_architecture: Luong
+source_architecture: Luong Attention
 target_architecture: Transformer
 relation_type: C
 inferred: false

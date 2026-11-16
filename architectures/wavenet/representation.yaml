@@ -1,0 +1,79 @@
+representation_version: local_equational_graph_v1
+operator_profile: inline_equations_below
+reading_rules: ../../specs/representation/reading-rules-v1.md
+architecture: wavenet
+architecture_entry: reconstructed.py:WaveNetStack
+scope:
+  variant: Unconditioned bias-free dilated gated residual and skip feature stack
+  included: [causal_dilation, tanh_sigmoid_gate, residual_projection, skip_projection, skip_sum]
+  excluded: [initial_audio_convolution, mu_law, quantization, output_head, softmax, conditioning, audio_sampling, streaming_cache, training, gradients]
+interface:
+  constructor: 'WaveNetStack(channels: int, hidden_channels: int, skip_channels: int, dilations: tuple[int,...]); torch.nn.Module'
+  forward: 'forward(x) -> dict[str, Tensor]'
+  inputs: {x: 'CPU float64 [B,C,T], axes batch/channel/time; supplied hidden features, not raw audio'}
+  constraints: '1<=B<=2; 1<=C,H,S<=8; 1<=T<=16; 1<=L=len(dilations)<=4; each dilation integer 1..8; finite inputs and parameter magnitudes <=2; all positions valid. No implicit sequence shift. Empty sequences and invalid-input diagnostics excluded.'
+  symbols: 'C=channels, H=hidden_channels, S=skip_channels, L=len(dilations)'
+  returns:
+    states: 'float64 [L+1,B,C,T], x followed by each residual state'
+    filter_pre: 'float64 [L,B,H,T]'
+    gate_pre: 'float64 [L,B,H,T]'
+    gated: 'float64 [L,B,H,T]'
+    skips: 'float64 [L,B,S,T]'
+    skip_sum: 'float64 [B,S,T]'
+    output: 'float64 [B,C,T], states[L]'
+parameters:
+  Wf: {shape: [L,H,C,2], initialization: zeros}
+  Wg: {shape: [L,H,C,2], initialization: zeros}
+  Wr: {shape: [L,C,H,1], initialization: zeros}
+  Ws: {shape: [L,S,H,1], initialization: zeros}
+  contract: 'Exactly these four nn.Parameter objects, CPU float64 requires_grad=true; fixture loads state_dict. No biases. Distinct objects with no storage sharing; different layer slices have independent entries. Each slice reused at every batch/time position.'
+state:
+  state_dict: [Wf,Wg,Wr,Ws]
+  buffers: []
+  updates: 'No input or parameter mutation. h0=x is a per-call intermediate; hl+1 replaces hl only after both residual and skip branches read the gated activation. No persistent/recurrent state or cache, no detach.'
+notation:
+  indices: 'l=0..L-1, b=0..B-1, t=0..T-1; all sums span the full named input channel dimension.'
+  convolution: 'Cross-correlation orientation [out,in,kernel]. At layer l with d=dilations[l], width-2 left-zero-padded convolution samples h at t-d (kernel index 0) and t (kernel index 1). Missing t<0 values are zero. stride=1, groups=1; output length T. No reversal of weights, circular wrap, future samples or scaling.'
+  pointwise: 'Width-1 convolution is a channel matrix product at each b,t; no bias.'
+factors:
+  wavenet_dilated_filter:
+    operator: causal_dilated_cross_correlation
+    equation: 'f[l,b,o,t]=sum_i (Wf[l,o,i,0]*h[l,b,i,t-d] + Wf[l,o,i,1]*h[l,b,i,t]); out-of-range h is zero.'
+  wavenet_dilated_gate:
+    operator: causal_dilated_cross_correlation
+    equation: 'g[l,b,o,t]=sum_i (Wg[l,o,i,0]*h[l,b,i,t-d] + Wg[l,o,i,1]*h[l,b,i,t]); same boundary rule, distinct weights.'
+  wavenet_gate:
+    operator: tanh_times_sigmoid
+    equation: 'z[l,b,o,t]=tanh(f[l,b,o,t])/(1+exp(-g[l,b,o,t])). Both nonlinearities act elementwise; no ReLU or GLU substitution.'
+  wavenet_residual:
+    operator: pointwise_projection_plus_identity
+    equation: 'h[l+1,b,c,t]=h[l,b,c,t]+sum_o Wr[l,c,o,0]*z[l,b,o,t]; no residual scaling or post-add activation.'
+  wavenet_skip:
+    operator: pointwise_projection
+    equation: 's[l,b,j,t]=sum_o Ws[l,j,o,0]*z[l,b,o,t]; skip reads z, not h[l+1].'
+  wavenet_skip_sum:
+    operator: sum_over_layers
+    equation: 'skip_sum[b,j,t]=sum_l s[l,b,j,t]; no average or activation. Return h, f, g, z, s as states, filter_pre, gate_pre, gated, skips respectively and h[L] as output.'
+contains:
+  wavenet_stack: [wavenet_dilated_filter,wavenet_dilated_gate,wavenet_gate,wavenet_residual,wavenet_skip,wavenet_skip_sum]
+scan:
+  axis: 'l=0..L-1 in increasing order, independent layer parameters'
+  initial: 'h[0]=x'
+  carry: 'h[l+1] is the next layer input; no time scan'
+dataflow:
+  - [x, wavenet_dilated_filter.initial_h]
+  - [x, wavenet_dilated_gate.initial_h]
+  - [Wf, wavenet_dilated_filter.weight]
+  - [Wg, wavenet_dilated_gate.weight]
+  - [wavenet_dilated_filter.f, wavenet_gate.f]
+  - [wavenet_dilated_gate.g, wavenet_gate.g]
+  - [wavenet_gate.z, wavenet_residual.z]
+  - [wavenet_gate.z, wavenet_skip.z]
+  - [Wr, wavenet_residual.weight]
+  - [Ws, wavenet_skip.weight]
+  - [x, wavenet_residual.initial_h]
+  - [wavenet_residual.h_next, wavenet_residual.next_layer_h]
+  - [wavenet_residual.h_next, wavenet_dilated_filter.next_layer_h]
+  - [wavenet_residual.h_next, wavenet_dilated_gate.next_layer_h]
+  - [wavenet_skip.s, wavenet_skip_sum.s]
+specification_note: 'Explicit local feature boundary and zero initialization; no claim of original training initialization or complete waveform model. Constructor dilation tuple specifies the selected stack; no implicit doubling.'

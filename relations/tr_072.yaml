@@ -1,0 +1,132 @@
+format_version: local_transition_v1
+transition_id: tr_072
+source_architecture: ConvS2S
+target_architecture: Transformer
+relation_type: C
+inferred: false
+record_status: complete
+relation_identity_status: confirmed_from_original_diagram
+mapping_status: partial
+core_mapping_status: complete_scoped
+part_mapping_complete: false
+evidence:
+- source: User-supplied beyond_transformer_slides.pdf (not redistributed)
+  pages:
+  - 38
+  label: C 072
+  direction: ConvS2S -> Transformer
+mechanism_evidence:
+  original_explanatory_pages:
+  - 26
+  - 19
+  sources: ../supplements/tr_072/sources.yaml
+motivation: 순환이 없는 구조에서 위치 정보를 표현한다.
+conditions:
+- Explicit caller position IDs and selected position variants only; original model/block
+  YAML remains unchanged.
+- A descriptive part correspondence, not numerical equivalence or an executable model
+  conversion.
+expected_effects:
+- positional representation 부품 관계와 token-mixer 대안 관계 tr_025를 분리한다.
+tradeoffs:
+- Learned lookup and sinusoidal encoding have different parameterizations; automatic
+  position numbering, upstream padding conventions, learned Transformer variant and
+  full models remain outside scope.
+changes:
+- before_units:
+  - graph.position_lookup
+  - graph.position_add
+  after_units:
+  - graph.position_sinusoidal
+  - graph.position_add
+  operation: descriptive_correspondence
+  mechanism: Learned absolute position lookup plus token addition corresponds by role
+    to sinusoidal absolute position construction plus scaled-token addition. Values/weights
+    are not interchangeable.
+  mapping_status: partial
+  cardinality: semantic_many_to_many_not_tensor_parameter_or_state_identity
+  state_and_resource_contract: Stateless CPU eval, explicit positions and caller-supplied
+    learned table. Original blocks unchanged.
+preserve:
+- 토큰 위치 정보를 표현에 제공하는 역할
+scope:
+  source_yaml: ../supplements/tr_072/convs2s.yaml
+  target_yaml: ../supplements/tr_072/transformer.yaml
+  path_base: relation_file_directory
+  included:
+  - original_relation_identity
+  - actual_position_component_correspondence
+  - local_equation_validation
+  - existing_block_input_connection_checks
+  excluded:
+  - whole_model_conversion
+  - cross_model_numerical_equivalence
+  - weight_or_state_migration
+  - training
+  - performance_validation
+  - automatic_position_numbering
+  - official_runtime_parity
+  mapping_boundary: Additive sidecar position components; baseline model YAML scope
+    is not retroactively expanded.
+  core_mapping_definition: Actual declared position construction and addition components
+    exist on both sides and pass local numerical checks. Overall mapping remains partial.
+  endpoint_scope:
+    source:
+      included:
+      - explicit_position_table_lookup
+      - token_position_addition
+      excluded:
+      - automatic_position_numbering
+      - token_lookup
+      - training
+      - incremental_cache
+      - full_model
+    target:
+      included:
+      - token_vector_scaling
+      - sinusoidal_absolute_position
+      - token_position_addition
+      excluded:
+      - token_lookup
+      - learned_position_variant
+      - automatic_position_numbering
+      - dropout_training
+      - full_model
+  component_coverage:
+    source:
+      mapped_units:
+      - graph.position_lookup
+      - graph.position_add
+      unmapped_declared_units: []
+    target:
+      mapped_units:
+      - graph.position_sinusoidal
+      - graph.position_add
+      unmapped_declared_units:
+      - graph.token_scale
+      unmapped_reason: Transformer-specific token scaling has no ConvS2S counterpart;
+        implemented and tested, not a transferred component.
+pending_components: []
+source_records: []
+application:
+  executable: false
+  command: null
+  patch_or_script: null
+validation:
+  status: PASS_WITHIN_DECLARED_SUPPLEMENT_SCOPE
+  numerical_tests: 25_CHECKS_PASS
+  evidence: ../supplements/tr_072/evaluation.yaml
+  integrity_checks: SKIPPED
+  claim_boundary: I-authored sidecar equations and new connections only; no architecture
+    generation success added
+unresolved:
+- No executable model conversion or weight/state transfer
+- Automatic token-to-position indexing and official padding conventions not reconstructed
+- No full-model or training certification; relation overall remains partial
+ready_evidence: []
+supplement:
+  owner: I
+  implementation_origin: I_AUTHORED_LOCAL_SUPPLEMENT_NOT_EXTERNAL_GENERATION
+  external_api_calls: 0
+  sources: ../supplements/tr_072/sources.yaml
+  implementation: ../supplements/tr_072/position.py

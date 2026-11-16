@@ -1,0 +1,74 @@
+architecture: bytenet
+implementation_basis: PAPER_FORMULAS_WITH_DECLARED_LOCAL_CONVENTIONS
+paper:
+  title: Neural Machine Translation in Linear Time
+  version: arXiv 1610.10099v2, 15 March 2017; genealogy node is ByteNet 2016
+  url: https://arxiv.org/pdf/1610.10099v2
+  html: https://arxiv.org/html/1610.10099v2
+  local_html: ../evidence/bytenet_v2.html
+  inspected:
+  - sections 3.3-3.6
+  - Figure 3 left
+  - section 6 translation ReLU variant
+author_page:
+  url: https://research.google/pubs/neural-machine-translation-in-linear-time/
+  role: Author organization and paper provenance; not implementation source
+normalization_basis:
+  paper: Layer Normalization
+  url: https://arxiv.org/abs/1607.06450
+  role: ByteNet section 3.6 cites Ba et al.; channel-only statistics per position
+    avoid future-token leakage. Epsilon and affine initialization fixed locally, not
+    recovered official defaults.
+official_implementation:
+  status: NOT_CONFIRMED
+  search: Original arXiv paper/HTML, Google Research author page and original-author
+    repository searches inspected; no original executable release verified.
+  limitation: No official runtime oracle. Microsoft protein-sequence-models is a later
+    adaptation; unrelated BitNet/ByteNet-named repositories are not evidence for this
+    model.
+genealogy:
+  source: User-supplied beyond_transformer_slides.pdf (not redistributed)
+  page: 40
+  image: ../evidence/genealogy_page40.jpg
+  extraction: Original embedded JPEG object 219, visually inspected.
+  node: ByteNet 2016
+  namespace: bytenet is assigned catalog slug, not an original node identifier
+  relations_for_G:
+  - id: tr_015
+    from: WaveNet
+    to: ByteNet
+    type: I
+    inferred: false
+  - id: tr_016
+    from: ByteNet
+    to: ConvS2S
+    type: X
+    inferred: true
+source_mapping:
+  bytenet_norm1: Figure 3 left bottom LayerNorm at 2d width, section 3.6
+  bytenet_reduce: Figure 3 left first ReLU then 1x1 convolution reducing 2d to d
+  bytenet_norm2: Figure 3 left middle LayerNorm at d width
+  bytenet_dilated: Figure 3 left middle ReLU then masked 1xk; sections 3.3-3.5 distinguish
+    centered encoder and causal decoder; section 6 width k=3
+  bytenet_norm3: Figure 3 left top LayerNorm at d width
+  bytenet_expand: Figure 3 left top ReLU then 1x1 convolution restoring 2d
+  bytenet_residual: Figure 3 left identity addition without post-add activation
+local_conventions:
+- Chosen ReLU translation block, not multiplicative-unit language-model block; same
+  block shape supports centered and causal feature calculations.
+- No encoder-to-decoder conditioning/stack connection, token embeddings or dynamic
+  unfolding implemented. Two mode settings are separate feature stacks, not an end-to-end
+  translator.
+- Per-position affine LayerNorm uses population variance and epsilon 1e-5; original
+  epsilon/affine initialization unavailable.
+- Bias-free convolutions, zero convolution initialization and ones/zeros LN affine
+  initialization are declared local choices.
+- Current feature position is visible in causal mode; initial token shift belongs
+  outside the input boundary.
+validation_boundary:
+  reference: Independent scalar channel normalization and indexed convolutions, no
+    candidate or YAML imports
+  realization: Manual YAML equation translation using PyTorch layer_norm and conv1d;
+    not a generic YAML interpreter
+  official_runtime_parity: NOT_RUN
+  full_model: NOT_CLAIMED

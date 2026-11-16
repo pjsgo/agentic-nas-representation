@@ -1,0 +1,63 @@
+{
+  "format_version": 3,
+  "architecture": "wavenet",
+  "scope": {
+    "variant": "Unconditioned bias-free dilated gated residual and skip feature stack",
+    "included": [
+      "causal_dilation",
+      "tanh_sigmoid_gate",
+      "residual_projection",
+      "skip_projection",
+      "skip_sum"
+    ],
+    "excluded": [
+      "initial_audio_convolution",
+      "mu_law",
+      "quantization",
+      "output_head",
+      "softmax",
+      "conditioning",
+      "audio_sampling",
+      "streaming_cache",
+      "training",
+      "gradients"
+    ]
+  },
+  "candidate_origin": "AGENT_REPAIRED_LLM_OUTPUT",
+  "candidate_modified_after_generation": true,
+  "reconstruction": "PASS_WITHIN_DECLARED_SCOPE",
+  "generation": {
+    "attempts": 1,
+    "original_result": "FAIL",
+    "final_result": "PASS_WITHIN_DECLARED_SCOPE",
+    "repair_note": "2차원 weight에 적용한 잘못된 einsum 첨자 수정",
+    "sender": "producer, saved separately authorized attempt; no I resend",
+    "original_response_and_code": "Preserved in research workspace, not redistributed"
+  },
+  "candidate": {
+    "file": "reconstructed.py",
+    "research_source": "parallel_coverage/20261105/seq2seq/experiments/20261116_genealogy_phase6_r3/wavenet/repaired.py",
+    "computational_changes_by_integration": "None"
+  },
+  "representation": {
+    "file": "representation.yaml",
+    "publication_changes": "Entry filename and relative reading-rules path only"
+  },
+  "evaluation": {
+    "kind": "reused_saved_independent_reference_results",
+    "final_result": "PASS_WITHIN_DECLARED_SCOPE",
+    "cases": 3,
+    "tolerance": {
+      "atol": 1e-11,
+      "rtol": 1e-10
+    },
+    "research_result": "parallel_coverage/20261105/seq2seq/experiments/20261116_genealogy_phase6_r3/wavenet/repaired_result.json",
+    "numerical_rerun": false,
+    "official_runtime_parity": "NOT_VERIFIED",
+    "review_date": "2026-11-17"
+  },
+  "limits": [
+    "Selected scope only; no full-model, training, performance or universal-schema certification",
+    "Accepted unmodified code is not equivalent to strict response-format compliance or uniform first-attempt success"
+  ]
+}

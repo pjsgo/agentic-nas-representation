@@ -1,13 +1,5 @@
 scope: Known exclusions of the scoped reconstruction baseline
-deferred_relations:
-- id: tr_052
-  source: WaveNet
-  target: Hyena
-  type: I
-  inferred: true
-  evidence: /mnt/data/beyond_transformer_slides.pdf
-  page: 40
-  reason: WaveNet은 현재 아키텍처 목록에 없는 미복원 끝점이다.
+deferred_relations: []
 source_gaps:
 - node: Memory Network
   status: OFFICIAL_SELECTED_HARD_SUPPORT_IMPLEMENTATION_NOT_CONFIRMED
@@ -19,6 +11,21 @@ source_gaps:
 - node: RETRO
   status: AUTHOR_SIMPLIFIED_LISTING_ONLY
   impact: 논문 Listing 1을 공식 코드 근거로 사용. 전체 실행 저장소와 생략된 position 함수는 미확인.
+- node: WaveNet
+  status: ORIGINAL_EXECUTABLE_AUTHOR_IMPLEMENTATION_NOT_CONFIRMED
+  impact: Paper equations and declared local scope only
+- node: ByteNet
+  status: ORIGINAL_EXECUTABLE_AUTHOR_IMPLEMENTATION_NOT_CONFIRMED
+  impact: Paper equations and declared local scope only
+- node: Neural LM
+  status: ORIGINAL_EXECUTABLE_AUTHOR_IMPLEMENTATION_NOT_CONFIRMED
+  impact: Paper equations and declared local scope only
+- node: Decomposable Attention
+  status: ORIGINAL_TENSORFLOW_UNAVAILABLE_THIRDPARTY_SOURCE
+  impact: Selected core, no official runtime parity
+- node: RNN LM
+  status: SELECTED_2010_FLAT_SOFTMAX_EQUATIONS
+  impact: Later author class-output variant not executed
 closed_existing_node_omissions:
 - tr_005
 - tr_013
@@ -27,9 +34,15 @@ closed_existing_node_omissions:
 - tr_051
 - tr_073
 - tr_074
-remaining_full_model_mapping: 48 partial, 16 complete_scoped; all 64 descriptive
+remaining_full_model_mapping: 60 partial, 16 complete_scoped; all 76 descriptive
 historical_execution:
 - tr_037
 - tr_061
 automatic_transform_support: Not implemented
 common_schema_certification: Not claimed
+closed_phase6_relations:
+- 'tr_052: WaveNet source components now restored'
+- 'tr_072: I-authored position sidecars, mapping partial and core complete_scoped'
+position_supplement_limits:
+- explicit positions only; automatic index and upstream padding conventions excluded
+- not external-generated architecture code; no whole-model conversion

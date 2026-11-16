@@ -1,6 +1,6 @@
 format_version: local_transition_v1
 transition_id: tr_014
-source_architecture: Bahdanau
+source_architecture: Bahdanau Attention
 target_architecture: GNMT
 relation_type: C
 inferred: false

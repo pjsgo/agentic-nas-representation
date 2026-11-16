@@ -1,0 +1,53 @@
+architecture: neural-lm
+review_date: '2026-11-16'
+assignment: ../../../../integration/20261116_genealogy_phase6_integration/assignments.yaml
+original_genealogy:
+  pdf: User-supplied beyond_transformer_slides.pdf (not redistributed)
+  inspected_pages:
+  - 34
+  - 38
+  evidence: Read original embedded images extracted by G, page34_image181.jpg and
+    page38_image203.jpg, without rerunning extraction.
+  image_directory: 'Research workspace: parallel_coverage/20261105/integration/20261116_genealogy_phase6_relations/evidence'
+  source_id: neural_probabilistic_lm
+  diagram_label: Neural LM
+  diagram_year: 2003
+  catalog_slug: neural-lm
+  relation_hint: tr_002, P? marker in original; relation audit remains G responsibility.
+primary_paper:
+  title: A Neural Probabilistic Language Model
+  authors: Bengio, Ducharme, Vincent, Jauvin
+  version: JMLR 3, 1137-1155, February 2003; not the NIPS 2000 predecessor
+  url: https://jmlr.org/papers/volume3/bengio03a/bengio03a.pdf
+  landing: https://jmlr.org/papers/v3/bengio03a.html
+  inspected: Section 2, Figure 1, equation (1), printed pages 1141-1143 / PDF pages
+    5-7
+author_implementation:
+  status: NOT_CONFIRMED
+  evidence: Publisher landing page and paper inspected; primary-source implementation
+    search did not identify a version-pinned author release. No proof of absence claimed.
+  commit: null
+  runtime_executed: false
+  consequence: Independent reference derives from published equations, not official
+    executable parity.
+source_mapping:
+  neural_lm_lookup: Section 2 shared vocabulary matrix C, p1141 and Figure 1.
+  neural_lm_context: Equation (1) accompanying x definition p1143; explicitly most-recent-first.
+    Figure 1 displays opposite visual order; ordering here follows the written x definition
+    and matching H/W columns.
+  neural_lm_hidden: Equation (1), tanh(d+Hx).
+  neural_lm_direct: Equation (1), Wx; W zero option explicitly described.
+  neural_lm_readout: Equation (1), output bias and hidden projection.
+  neural_lm_softmax: Section 2 normalized vocabulary output, p1142.
+local_adaptations:
+- Batch dimension and deterministic float64 CPU unit interface.
+- Functional supplied parameters rather than random initialization or training.
+- Stable subtract-max softmax; diagnostic features/hidden/logits returned.
+- Explicit invalid-input guards are local interface requirements.
+source_runtime_parity: NOT_RUN
+excluded:
+- training
+- learned_weights
+- corpus_pipeline
+- interpolation
+- performance_and_perplexity_reproduction

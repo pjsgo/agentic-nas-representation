@@ -1,7 +1,7 @@
 format_version: local_transition_v1
 transition_id: tr_061
 source_architecture: S4
-target_architecture: Mamba-1
+target_architecture: Mamba
 relation_type: A
 inferred: false
 motivation: Replace time-invariant state-space coefficients with token-dependent selection

@@ -3,94 +3,15 @@
   "path_base": "project_root (parent of architectures directory)",
   "architectures": [
     {
-      "architecture": "resnet",
-      "title": "ResNet",
-      "scope": "Identity shortcut BasicBlock, channels=64, CPU float32 eval",
-      "representation": "architectures/resnet/representation.yaml",
-      "reconstructed_code": "architectures/resnet/reconstructed.py",
-      "candidate_origin": "UNMODIFIED_LLM_OUTPUT",
-      "materials": "architectures/resnet/README.md",
-      "provenance": "architectures/resnet/provenance.json"
-    },
-    {
-      "architecture": "lstm",
-      "title": "LSTM",
-      "scope": "Single-layer unidirectional core, T>=1; tested T=1,3,5, B=2,I=4,H=5",
-      "representation": "architectures/lstm/representation.yaml",
-      "reconstructed_code": "architectures/lstm/reconstructed.py",
-      "candidate_origin": "UNMODIFIED_LLM_OUTPUT",
-      "materials": "architectures/lstm/README.md",
-      "provenance": "architectures/lstm/provenance.json"
-    },
-    {
-      "architecture": "seq2seq",
-      "title": "Seq2Seq",
-      "scope": "Pre-embedded one-layer LSTM encoder/decoder, 100% teacher forcing, three CPU float32 fixtures",
-      "representation": "architectures/seq2seq/representation.yaml",
-      "reconstructed_code": "architectures/seq2seq/reconstructed.py",
-      "candidate_origin": "UNMODIFIED_LLM_OUTPUT",
-      "materials": "architectures/seq2seq/README.md",
-      "provenance": "architectures/seq2seq/provenance.json"
-    },
-    {
-      "architecture": "transformer",
-      "title": "Transformer",
-      "scope": "Single encoder block, nine CPU float32 eval fixtures",
-      "representation": "architectures/transformer/representation.yaml",
-      "reconstructed_code": "architectures/transformer/reconstructed.py",
-      "candidate_origin": "UNMODIFIED_LLM_OUTPUT",
-      "materials": "architectures/transformer/README.md",
-      "provenance": "architectures/transformer/provenance.json"
-    },
-    {
-      "architecture": "linear-transformer",
-      "title": "Linear Transformer",
-      "scope": "ELU+1 recurrent linear-attention core; external q/k/v and in-place S/Z state, four CPU float32 fixtures",
-      "representation": "architectures/linear-transformer/representation.yaml",
-      "reconstructed_code": "architectures/linear-transformer/reconstructed.py",
-      "candidate_origin": "UNMODIFIED_LLM_OUTPUT",
-      "materials": "architectures/linear-transformer/README.md",
-      "provenance": "architectures/linear-transformer/provenance.json"
-    },
-    {
-      "architecture": "s4",
-      "title": "S4",
-      "scope": "Original rank-1 DPLR/NPLR recurrent/impulse-kernel core, Nfull=4,H=channels=1, CPU eval",
-      "representation": "architectures/s4/representation.yaml",
-      "reconstructed_code": "architectures/s4/reconstructed.py",
-      "candidate_origin": "AGENT_REPAIRED_LLM_OUTPUT",
-      "materials": "architectures/s4/README.md",
-      "provenance": "architectures/s4/provenance.json"
-    },
-    {
-      "architecture": "mamba",
-      "title": "Mamba",
-      "scope": "Mamba-1 selective-scan core, channels=3,state_size=2, four CPU float32 fixtures",
-      "representation": "architectures/mamba/representation.yaml",
-      "reconstructed_code": "architectures/mamba/reconstructed.py",
-      "candidate_origin": "UNMODIFIED_LLM_OUTPUT",
-      "materials": "architectures/mamba/README.md",
-      "provenance": "architectures/mamba/provenance.json"
-    },
-    {
-      "architecture": "simple-rnn",
-      "title": "Simple RNN",
-      "scope": "Elman tanh 순환 core",
-      "representation": "architectures/simple-rnn/representation.yaml",
-      "reconstructed_code": "architectures/simple-rnn/reconstructed.py",
+      "architecture": "alibi",
+      "title": "ALiBi",
+      "scope": "고정 head slope와 causal 거리 bias attention core",
+      "representation": "architectures/alibi/representation.yaml",
+      "reconstructed_code": "architectures/alibi/reconstructed.py",
       "candidate_origin": "UNMODIFIED_EXTERNAL_LLM_CODE",
-      "materials": "architectures/simple-rnn/README.md",
-      "provenance": "architectures/simple-rnn/provenance.json"
-    },
-    {
-      "architecture": "gru-encoder-decoder",
-      "title": "RNN Encoder–Decoder / GRU",
-      "scope": "Cho 2014 encoder, 고정 context, 조건부 GRU decoder",
-      "representation": "architectures/gru-encoder-decoder/representation.yaml",
-      "reconstructed_code": "architectures/gru-encoder-decoder/reconstructed.py",
-      "candidate_origin": "UNMODIFIED_EXTERNAL_LLM_CODE",
-      "materials": "architectures/gru-encoder-decoder/README.md",
-      "provenance": "architectures/gru-encoder-decoder/provenance.json"
+      "materials": "architectures/alibi/README.md",
+      "provenance": "architectures/alibi/provenance.json",
+      "scope_summary": "고정 head slope와 causal 거리 bias attention core"
     },
     {
       "architecture": "bahdanau-attention",
@@ -100,127 +21,8 @@
       "reconstructed_code": "architectures/bahdanau-attention/reconstructed.py",
       "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
       "materials": "architectures/bahdanau-attention/README.md",
-      "provenance": "architectures/bahdanau-attention/provenance.json"
-    },
-    {
-      "architecture": "luong-attention",
-      "title": "Luong Attention",
-      "scope": "global/general attention, LSTM, input feeding",
-      "representation": "architectures/luong-attention/representation.yaml",
-      "reconstructed_code": "architectures/luong-attention/reconstructed.py",
-      "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
-      "materials": "architectures/luong-attention/README.md",
-      "provenance": "architectures/luong-attention/provenance.json"
-    },
-    {
-      "architecture": "gnmt",
-      "title": "GNMT",
-      "scope": "3층 encoder–decoder, 양방향 하단 encoder, residual, attention",
-      "representation": "architectures/gnmt/representation.yaml",
-      "reconstructed_code": "architectures/gnmt/reconstructed.py",
-      "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
-      "materials": "architectures/gnmt/README.md",
-      "provenance": "architectures/gnmt/provenance.json"
-    },
-    {
-      "architecture": "layernorm",
-      "title": "LayerNorm",
-      "scope": "마지막 축의 population 통계, affine 정규화",
-      "representation": "architectures/layernorm/representation.yaml",
-      "reconstructed_code": "architectures/layernorm/reconstructed.py",
-      "candidate_origin": "UNMODIFIED_EXTERNAL_LLM_CODE",
-      "materials": "architectures/layernorm/README.md",
-      "provenance": "architectures/layernorm/provenance.json"
-    },
-    {
-      "architecture": "transformer-xl",
-      "title": "Transformer-XL",
-      "scope": "segment recurrence, 상대 위치 attention sublayer",
-      "representation": "architectures/transformer-xl/representation.yaml",
-      "reconstructed_code": "architectures/transformer-xl/reconstructed.py",
-      "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
-      "materials": "architectures/transformer-xl/README.md",
-      "provenance": "architectures/transformer-xl/provenance.json"
-    },
-    {
-      "architecture": "compressive-transformer",
-      "title": "Compressive Transformer",
-      "scope": "평균 풀링 압축, 두 단계 FIFO memory attention",
-      "representation": "architectures/compressive-transformer/representation.yaml",
-      "reconstructed_code": "architectures/compressive-transformer/reconstructed.py",
-      "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
-      "materials": "architectures/compressive-transformer/README.md",
-      "provenance": "architectures/compressive-transformer/provenance.json"
-    },
-    {
-      "architecture": "sparse-transformer",
-      "title": "Sparse Transformer",
-      "scope": "local/strided causal attention core",
-      "representation": "architectures/sparse-transformer/representation.yaml",
-      "reconstructed_code": "architectures/sparse-transformer/reconstructed.py",
-      "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
-      "materials": "architectures/sparse-transformer/README.md",
-      "provenance": "architectures/sparse-transformer/provenance.json"
-    },
-    {
-      "architecture": "linformer",
-      "title": "Linformer",
-      "scope": "sequence 축 low-rank projection attention core",
-      "representation": "architectures/linformer/representation.yaml",
-      "reconstructed_code": "architectures/linformer/reconstructed.py",
-      "candidate_origin": "UNMODIFIED_EXTERNAL_LLM_CODE",
-      "materials": "architectures/linformer/README.md",
-      "provenance": "architectures/linformer/provenance.json"
-    },
-    {
-      "architecture": "performer",
-      "title": "Performer",
-      "scope": "고정 random features의 정규화 attention core",
-      "representation": "architectures/performer/representation.yaml",
-      "reconstructed_code": "architectures/performer/reconstructed.py",
-      "candidate_origin": "UNMODIFIED_EXTERNAL_LLM_CODE",
-      "materials": "architectures/performer/README.md",
-      "provenance": "architectures/performer/provenance.json"
-    },
-    {
-      "architecture": "lssl",
-      "title": "LSSL",
-      "scope": "고정 HiPPO-LegS, bilinear discretization, dense recurrence",
-      "representation": "architectures/lssl/representation.yaml",
-      "reconstructed_code": "architectures/lssl/reconstructed.py",
-      "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
-      "materials": "architectures/lssl/README.md",
-      "provenance": "architectures/lssl/provenance.json"
-    },
-    {
-      "architecture": "mamba2-ssd",
-      "title": "Mamba-2 / SSD",
-      "scope": "scalar-identity multihead SSD chunk core",
-      "representation": "architectures/mamba2-ssd/representation.yaml",
-      "reconstructed_code": "architectures/mamba2-ssd/reconstructed.py",
-      "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
-      "materials": "architectures/mamba2-ssd/README.md",
-      "provenance": "architectures/mamba2-ssd/provenance.json"
-    },
-    {
-      "architecture": "h3",
-      "title": "H3",
-      "scope": "scalar-head shift, diagonal SSM gated block",
-      "representation": "architectures/h3/representation.yaml",
-      "reconstructed_code": "architectures/h3/reconstructed.py",
-      "candidate_origin": "UNMODIFIED_EXTERNAL_LLM_CODE",
-      "materials": "architectures/h3/README.md",
-      "provenance": "architectures/h3/provenance.json"
-    },
-    {
-      "architecture": "longformer",
-      "title": "Longformer",
-      "scope": "여섯 투영을 포함한 양방향 window/global attention core",
-      "representation": "architectures/longformer/representation.yaml",
-      "reconstructed_code": "architectures/longformer/reconstructed.py",
-      "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
-      "materials": "architectures/longformer/README.md",
-      "provenance": "architectures/longformer/provenance.json"
+      "provenance": "architectures/bahdanau-attention/provenance.json",
+      "scope_summary": "제공된 encoder memory에 대한 additive attention, 조건부 GRU"
     },
     {
       "architecture": "bigbird",
@@ -230,177 +32,49 @@
       "reconstructed_code": "architectures/bigbird/reconstructed.py",
       "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
       "materials": "architectures/bigbird/README.md",
-      "provenance": "architectures/bigbird/provenance.json"
+      "provenance": "architectures/bigbird/provenance.json",
+      "scope_summary": "외부 random graph를 받는 local/global/random block attention core"
     },
     {
-      "architecture": "flashattention",
-      "title": "FlashAttention",
-      "scope": "CPU 타일 전방 계산과 online softmax 누적, causal mask",
-      "representation": "architectures/flashattention/representation.yaml",
-      "reconstructed_code": "architectures/flashattention/reconstructed.py",
+      "architecture": "bytenet",
+      "title": "ByteNet",
+      "scope": "ReLU bottleneck residual feature stack, causal 또는 centered convolution",
+      "representation": "architectures/bytenet/representation.yaml",
+      "reconstructed_code": "architectures/bytenet/reconstructed.py",
+      "candidate_origin": "AGENT_REPAIRED_LLM_OUTPUT",
+      "materials": "architectures/bytenet/README.md",
+      "provenance": "architectures/bytenet/provenance.json"
+    },
+    {
+      "architecture": "compressive-transformer",
+      "title": "Compressive Transformer",
+      "scope": "평균 풀링 압축, 두 단계 FIFO memory attention",
+      "representation": "architectures/compressive-transformer/representation.yaml",
+      "reconstructed_code": "architectures/compressive-transformer/reconstructed.py",
       "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
-      "materials": "architectures/flashattention/README.md",
-      "provenance": "architectures/flashattention/provenance.json"
+      "materials": "architectures/compressive-transformer/README.md",
+      "provenance": "architectures/compressive-transformer/provenance.json",
+      "scope_summary": "평균 풀링 압축, 두 단계 FIFO memory attention"
     },
     {
-      "architecture": "gqa",
-      "title": "GQA",
-      "scope": "외부 QKV의 query-to-KV 그룹 대응, causal prefix와 G-head cache",
-      "representation": "architectures/gqa/representation.yaml",
-      "reconstructed_code": "architectures/gqa/reconstructed.py",
-      "candidate_origin": "UNMODIFIED_EXTERNAL_LLM_CODE",
-      "materials": "architectures/gqa/README.md",
-      "provenance": "architectures/gqa/provenance.json"
+      "architecture": "convs2s",
+      "title": "ConvS2S",
+      "scope": "단일 encoder/decoder GLU 블록, attention과 residual, 사전 합산 입력 임베딩",
+      "representation": "architectures/convs2s/representation.yaml",
+      "reconstructed_code": "architectures/convs2s/reconstructed.py",
+      "candidate_origin": "AGENT_REPAIRED_LLM_OUTPUT",
+      "materials": "architectures/convs2s/README.md",
+      "provenance": "architectures/convs2s/provenance.json"
     },
     {
-      "architecture": "relative-position",
-      "title": "Relative Position",
-      "scope": "부호 있는 거리 clipping과 상대 key/value를 포함한 projected self-attention core",
-      "representation": "architectures/relative-position/representation.yaml",
-      "reconstructed_code": "architectures/relative-position/reconstructed.py",
-      "candidate_origin": "UNMODIFIED_EXTERNAL_LLM_CODE",
-      "materials": "architectures/relative-position/README.md",
-      "provenance": "architectures/relative-position/provenance.json"
-    },
-    {
-      "architecture": "rope",
-      "title": "RoPE",
-      "scope": "명시 위치의 인접 feature 쌍 회전과 attention core",
-      "representation": "architectures/rope/representation.yaml",
-      "reconstructed_code": "architectures/rope/reconstructed.py",
-      "candidate_origin": "UNMODIFIED_EXTERNAL_LLM_CODE",
-      "materials": "architectures/rope/README.md",
-      "provenance": "architectures/rope/provenance.json"
-    },
-    {
-      "architecture": "alibi",
-      "title": "ALiBi",
-      "scope": "고정 head slope와 causal 거리 bias attention core",
-      "representation": "architectures/alibi/representation.yaml",
-      "reconstructed_code": "architectures/alibi/reconstructed.py",
-      "candidate_origin": "UNMODIFIED_EXTERNAL_LLM_CODE",
-      "materials": "architectures/alibi/README.md",
-      "provenance": "architectures/alibi/provenance.json"
-    },
-    {
-      "architecture": "rmsnorm",
-      "title": "RMSNorm",
-      "scope": "full_last_axis_rms; outside_sqrt_epsilon; scale_only",
-      "representation": "architectures/rmsnorm/representation.yaml",
-      "reconstructed_code": "architectures/rmsnorm/reconstructed.py",
-      "candidate_origin": "UNMODIFIED_EXTERNAL_LLM_CODE",
-      "materials": "architectures/rmsnorm/README.md",
-      "provenance": "architectures/rmsnorm/provenance.json"
-    },
-    {
-      "architecture": "pre-ln",
-      "title": "Pre-LN",
-      "scope": "single_encoder_block; pre_attention_layernorm; multihead_self_attention; attention_residual; pre_ffn_layernorm; relu_ffn; ffn_residual; key_padding_mask",
-      "representation": "architectures/pre-ln/representation.yaml",
-      "reconstructed_code": "architectures/pre-ln/reconstructed.py",
-      "candidate_origin": "UNMODIFIED_EXTERNAL_LLM_CODE",
-      "materials": "architectures/pre-ln/README.md",
-      "provenance": "architectures/pre-ln/provenance.json"
-    },
-    {
-      "architecture": "sparse-moe",
-      "title": "Sparse MoE",
-      "scope": "deterministic_inference; top_k; selected_gate_normalization; sparse_dispatch; one_hidden_relu_experts; weighted_combine",
-      "representation": "architectures/sparse-moe/representation.yaml",
-      "reconstructed_code": "architectures/sparse-moe/reconstructed.py",
-      "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
-      "materials": "architectures/sparse-moe/README.md",
-      "provenance": "architectures/sparse-moe/provenance.json"
-    },
-    {
-      "architecture": "switch-transformer",
-      "title": "Switch Transformer",
-      "scope": "deterministic_argmax_eval; one_routing_group; full_softmax_selected_gate; explicit_capacity_rounding; ordered_dispatch; padding_mask; overflow_drop; bias_free_relu_experts",
-      "representation": "architectures/switch-transformer/representation.yaml",
-      "reconstructed_code": "architectures/switch-transformer/reconstructed.py",
-      "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
-      "materials": "architectures/switch-transformer/README.md",
-      "provenance": "architectures/switch-transformer/provenance.json"
-    },
-    {
-      "architecture": "reformer",
-      "title": "Reformer",
-      "scope": "shared_qk; supplied_random_rotations; angular_hash; round_bucket_offsets; bucket_position_sort; chunk_attention; previous_chunk_lookup; finite_self_penalty; optional_causal_penalty; inverse_sort; multi_round_partition_weighted_merge",
-      "representation": "architectures/reformer/representation.yaml",
-      "reconstructed_code": "architectures/reformer/reconstructed.py",
-      "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
-      "materials": "architectures/reformer/README.md",
-      "provenance": "architectures/reformer/provenance.json"
-    },
-    {
-      "architecture": "synthesizer",
-      "title": "Synthesizer",
-      "scope": "token_conditioned_logits_network; relu; multihead_values; fixed_max_length_prefix; boolean_mask; key_softmax; value_aggregation; output_projection",
-      "representation": "architectures/synthesizer/representation.yaml",
-      "reconstructed_code": "architectures/synthesizer/reconstructed.py",
-      "candidate_origin": "UNMODIFIED_EXTERNAL_LLM_CODE",
-      "materials": "architectures/synthesizer/README.md",
-      "provenance": "architectures/synthesizer/provenance.json"
-    },
-    {
-      "architecture": "fnet",
-      "title": "FNet",
-      "scope": "single_encoder_block; two_axis_fourier_mixing; post_norm_residuals; biased_ffn; tanh_gelu; deterministic_inference",
-      "representation": "architectures/fnet/representation.yaml",
-      "reconstructed_code": "architectures/fnet/reconstructed.py",
-      "candidate_origin": "UNMODIFIED_EXTERNAL_LLM_CODE",
-      "materials": "architectures/fnet/README.md",
-      "provenance": "architectures/fnet/provenance.json"
-    },
-    {
-      "architecture": "hippo",
-      "title": "HiPPO",
-      "scope": "scaled_Legendre_operator_construction; time_varying_bilinear_discretization; coefficient_state_scan",
-      "representation": "architectures/hippo/representation.yaml",
-      "reconstructed_code": "architectures/hippo/reconstructed.py",
-      "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
-      "materials": "architectures/hippo/README.md",
-      "provenance": "architectures/hippo/provenance.json"
-    },
-    {
-      "architecture": "hyena",
-      "title": "Hyena",
-      "scope": "input_projection; causal_depthwise_short_filter; position_generated_long_filter; shared_frequency_sine_MLP; exponential_modulation; input_gating; causal_FFT_convolution; diagonal_skip; output_projection",
-      "representation": "architectures/hyena/representation.yaml",
-      "reconstructed_code": "architectures/hyena/reconstructed.py",
-      "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
-      "materials": "architectures/hyena/README.md",
-      "provenance": "architectures/hyena/provenance.json"
-    },
-    {
-      "architecture": "retnet",
-      "title": "RetNet",
-      "scope": "multi_scale_fixed_head_decay; independent_projections; real_position_rotation; key_scaling; causal_retention; parallel_sum; recurrent_matrix_state; state_continuation",
-      "representation": "architectures/retnet/representation.yaml",
-      "reconstructed_code": "architectures/retnet/reconstructed.py",
-      "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
-      "materials": "architectures/retnet/README.md",
-      "provenance": "architectures/retnet/provenance.json"
-    },
-    {
-      "architecture": "rwkv",
-      "title": "RWKV",
-      "scope": "RWKV_v4_time_mixing; token_shift; independent_interpolations; per_channel_decay; current_token_bonus; stabilized_scalar_WKV; sigmoid_receptance; output_projection; explicit_state_continuation",
-      "representation": "architectures/rwkv/representation.yaml",
-      "reconstructed_code": "architectures/rwkv/reconstructed.py",
-      "candidate_origin": "UNMODIFIED_EXTERNAL_LLM_CODE",
-      "materials": "architectures/rwkv/README.md",
-      "provenance": "architectures/rwkv/provenance.json"
-    },
-    {
-      "architecture": "memory-network",
-      "title": "Memory Network",
-      "scope": "supplied_count_features; append_fact_storage; two_argmax_supports; role_specific_embeddings; answer_ranking",
-      "representation": "architectures/memory-network/representation.yaml",
-      "reconstructed_code": "architectures/memory-network/reconstructed.py",
-      "candidate_origin": "UNMODIFIED_EXTERNAL_LLM_CODE",
-      "materials": "architectures/memory-network/README.md",
-      "provenance": "architectures/memory-network/provenance.json"
+      "architecture": "decomposable-attention",
+      "title": "Decomposable Attention",
+      "scope": "공유 F/G, 양방향 정렬과 masked sum, 분류기 제외",
+      "representation": "architectures/decomposable-attention/representation.yaml",
+      "reconstructed_code": "architectures/decomposable-attention/reconstructed.py",
+      "candidate_origin": "AGENT_REPAIRED_LLM_OUTPUT",
+      "materials": "architectures/decomposable-attention/README.md",
+      "provenance": "architectures/decomposable-attention/provenance.json"
     },
     {
       "architecture": "e2e-memory-network",
@@ -410,27 +84,85 @@
       "reconstructed_code": "architectures/e2e-memory-network/reconstructed.py",
       "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
       "materials": "architectures/e2e-memory-network/README.md",
-      "provenance": "architectures/e2e-memory-network/provenance.json"
+      "provenance": "architectures/e2e-memory-network/provenance.json",
+      "scope_summary": "Memory와 query embedding, soft addressing, multi-hop read, tied 답변 투영"
     },
     {
-      "architecture": "lstmn",
-      "title": "LSTMN",
-      "scope": "hidden_tape; cell_tape; previous_read_feedback; causal_additive_attention; weighted_hidden_and_cell_read; gates_from_read_hidden; cell_update_from_read_cell; append_states",
-      "representation": "architectures/lstmn/representation.yaml",
-      "reconstructed_code": "architectures/lstmn/reconstructed.py",
+      "architecture": "flashattention",
+      "title": "FlashAttention",
+      "scope": "CPU 타일 전방 계산과 online softmax 누적, causal mask",
+      "representation": "architectures/flashattention/representation.yaml",
+      "reconstructed_code": "architectures/flashattention/reconstructed.py",
       "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
-      "materials": "architectures/lstmn/README.md",
-      "provenance": "architectures/lstmn/provenance.json"
+      "materials": "architectures/flashattention/README.md",
+      "provenance": "architectures/flashattention/provenance.json",
+      "scope_summary": "CPU 타일 전방 계산과 online softmax 누적, causal mask"
     },
     {
-      "architecture": "retro",
-      "title": "RETRO",
-      "scope": "chunk_shift; neighbour_time_joint_softmax; query_key_value_projections; supplied_position_logits; retrieval_value_aggregation; residual_wrapper",
-      "representation": "architectures/retro/representation.yaml",
-      "reconstructed_code": "architectures/retro/reconstructed.py",
+      "architecture": "fnet",
+      "title": "FNet",
+      "scope": "single_encoder_block; two_axis_fourier_mixing; post_norm_residuals; biased_ffn; tanh_gelu; deterministic_inference",
+      "representation": "architectures/fnet/representation.yaml",
+      "reconstructed_code": "architectures/fnet/reconstructed.py",
+      "candidate_origin": "UNMODIFIED_EXTERNAL_LLM_CODE",
+      "materials": "architectures/fnet/README.md",
+      "provenance": "architectures/fnet/provenance.json",
+      "scope_summary": "단일 encoder block, 2축 Fourier mixing, post-norm residual과 FFN"
+    },
+    {
+      "architecture": "gnmt",
+      "title": "GNMT",
+      "scope": "3층 encoder–decoder, 양방향 하단 encoder, residual, attention",
+      "representation": "architectures/gnmt/representation.yaml",
+      "reconstructed_code": "architectures/gnmt/reconstructed.py",
       "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
-      "materials": "architectures/retro/README.md",
-      "provenance": "architectures/retro/provenance.json"
+      "materials": "architectures/gnmt/README.md",
+      "provenance": "architectures/gnmt/provenance.json",
+      "scope_summary": "3층 encoder–decoder, 양방향 하단 encoder, residual, attention"
+    },
+    {
+      "architecture": "gqa",
+      "title": "GQA",
+      "scope": "외부 QKV의 query-to-KV 그룹 대응, causal prefix와 G-head cache",
+      "representation": "architectures/gqa/representation.yaml",
+      "reconstructed_code": "architectures/gqa/reconstructed.py",
+      "candidate_origin": "UNMODIFIED_EXTERNAL_LLM_CODE",
+      "materials": "architectures/gqa/README.md",
+      "provenance": "architectures/gqa/provenance.json",
+      "scope_summary": "외부 QKV의 query-to-KV 그룹 대응, causal prefix와 G-head cache"
+    },
+    {
+      "architecture": "h3",
+      "title": "H3",
+      "scope": "scalar-head shift, diagonal SSM gated block",
+      "representation": "architectures/h3/representation.yaml",
+      "reconstructed_code": "architectures/h3/reconstructed.py",
+      "candidate_origin": "UNMODIFIED_EXTERNAL_LLM_CODE",
+      "materials": "architectures/h3/README.md",
+      "provenance": "architectures/h3/provenance.json",
+      "scope_summary": "scalar-head shift, diagonal SSM gated block"
+    },
+    {
+      "architecture": "hippo",
+      "title": "HiPPO",
+      "scope": "scaled_Legendre_operator_construction; time_varying_bilinear_discretization; coefficient_state_scan",
+      "representation": "architectures/hippo/representation.yaml",
+      "reconstructed_code": "architectures/hippo/reconstructed.py",
+      "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
+      "materials": "architectures/hippo/README.md",
+      "provenance": "architectures/hippo/provenance.json",
+      "scope_summary": "HiPPO-LegS 연산자, 시간 가변 bilinear 이산화, 계수 상태 scan"
+    },
+    {
+      "architecture": "hyena",
+      "title": "Hyena",
+      "scope": "input_projection; causal_depthwise_short_filter; position_generated_long_filter; shared_frequency_sine_MLP; exponential_modulation; input_gating; causal_FFT_convolution; diagonal_skip; output_projection",
+      "representation": "architectures/hyena/representation.yaml",
+      "reconstructed_code": "architectures/hyena/reconstructed.py",
+      "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
+      "materials": "architectures/hyena/README.md",
+      "provenance": "architectures/hyena/provenance.json",
+      "scope_summary": "입력 gating, short filter와 implicit long filter, causal FFT convolution core"
     },
     {
       "architecture": "jamba",
@@ -440,7 +172,389 @@
       "reconstructed_code": "architectures/jamba/reconstructed.py",
       "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
       "materials": "architectures/jamba/README.md",
-      "provenance": "architectures/jamba/provenance.json"
+      "provenance": "architectures/jamba/provenance.json",
+      "scope_summary": "축소 8층 주기, GQA와 Mamba mixer, dense 및 top-2 SwiGLU expert, 상태 이어 계산"
+    },
+    {
+      "architecture": "layernorm",
+      "title": "LayerNorm",
+      "scope": "마지막 축의 population 통계, affine 정규화",
+      "representation": "architectures/layernorm/representation.yaml",
+      "reconstructed_code": "architectures/layernorm/reconstructed.py",
+      "candidate_origin": "UNMODIFIED_EXTERNAL_LLM_CODE",
+      "materials": "architectures/layernorm/README.md",
+      "provenance": "architectures/layernorm/provenance.json",
+      "scope_summary": "마지막 축의 population 통계, affine 정규화"
+    },
+    {
+      "architecture": "linear-transformer",
+      "title": "Linear Transformer",
+      "scope": "ELU+1 recurrent linear-attention core; external q/k/v and in-place S/Z state, four CPU float32 fixtures",
+      "representation": "architectures/linear-transformer/representation.yaml",
+      "reconstructed_code": "architectures/linear-transformer/reconstructed.py",
+      "candidate_origin": "UNMODIFIED_LLM_OUTPUT",
+      "materials": "architectures/linear-transformer/README.md",
+      "provenance": "architectures/linear-transformer/provenance.json",
+      "scope_summary": "ELU+1 recurrent linear-attention core; external q/k/v and in-place S/Z state, four CPU float32 fixtures"
+    },
+    {
+      "architecture": "linformer",
+      "title": "Linformer",
+      "scope": "sequence 축 low-rank projection attention core",
+      "representation": "architectures/linformer/representation.yaml",
+      "reconstructed_code": "architectures/linformer/reconstructed.py",
+      "candidate_origin": "UNMODIFIED_EXTERNAL_LLM_CODE",
+      "materials": "architectures/linformer/README.md",
+      "provenance": "architectures/linformer/provenance.json",
+      "scope_summary": "sequence 축 low-rank projection attention core"
+    },
+    {
+      "architecture": "longformer",
+      "title": "Longformer",
+      "scope": "여섯 투영을 포함한 양방향 window/global attention core",
+      "representation": "architectures/longformer/representation.yaml",
+      "reconstructed_code": "architectures/longformer/reconstructed.py",
+      "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
+      "materials": "architectures/longformer/README.md",
+      "provenance": "architectures/longformer/provenance.json",
+      "scope_summary": "여섯 투영을 포함한 양방향 window/global attention core"
+    },
+    {
+      "architecture": "lssl",
+      "title": "LSSL",
+      "scope": "고정 HiPPO-LegS, bilinear discretization, dense recurrence",
+      "representation": "architectures/lssl/representation.yaml",
+      "reconstructed_code": "architectures/lssl/reconstructed.py",
+      "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
+      "materials": "architectures/lssl/README.md",
+      "provenance": "architectures/lssl/provenance.json",
+      "scope_summary": "고정 HiPPO-LegS, bilinear discretization, dense recurrence"
+    },
+    {
+      "architecture": "lstm",
+      "title": "LSTM",
+      "scope": "Single-layer unidirectional core, T>=1; tested T=1,3,5, B=2,I=4,H=5",
+      "representation": "architectures/lstm/representation.yaml",
+      "reconstructed_code": "architectures/lstm/reconstructed.py",
+      "candidate_origin": "UNMODIFIED_LLM_OUTPUT",
+      "materials": "architectures/lstm/README.md",
+      "provenance": "architectures/lstm/provenance.json",
+      "scope_summary": "Single-layer unidirectional core, T>=1; tested T=1,3,5, B=2,I=4,H=5"
+    },
+    {
+      "architecture": "lstmn",
+      "title": "LSTMN",
+      "scope": "hidden_tape; cell_tape; previous_read_feedback; causal_additive_attention; weighted_hidden_and_cell_read; gates_from_read_hidden; cell_update_from_read_cell; append_states",
+      "representation": "architectures/lstmn/representation.yaml",
+      "reconstructed_code": "architectures/lstmn/reconstructed.py",
+      "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
+      "materials": "architectures/lstmn/README.md",
+      "provenance": "architectures/lstmn/provenance.json",
+      "scope_summary": "Hidden/cell tape, causal additive attention, read 기반 gate와 상태 갱신"
+    },
+    {
+      "architecture": "luong-attention",
+      "title": "Luong Attention",
+      "scope": "global/general attention, LSTM, input feeding",
+      "representation": "architectures/luong-attention/representation.yaml",
+      "reconstructed_code": "architectures/luong-attention/reconstructed.py",
+      "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
+      "materials": "architectures/luong-attention/README.md",
+      "provenance": "architectures/luong-attention/provenance.json",
+      "scope_summary": "global/general attention, LSTM, input feeding"
+    },
+    {
+      "architecture": "mamba",
+      "title": "Mamba",
+      "scope": "Mamba-1 selective-scan core, channels=3,state_size=2, four CPU float32 fixtures",
+      "representation": "architectures/mamba/representation.yaml",
+      "reconstructed_code": "architectures/mamba/reconstructed.py",
+      "candidate_origin": "UNMODIFIED_LLM_OUTPUT",
+      "materials": "architectures/mamba/README.md",
+      "provenance": "architectures/mamba/provenance.json",
+      "scope_summary": "Mamba-1 selective-scan core, channels=3,state_size=2, four CPU float32 fixtures"
+    },
+    {
+      "architecture": "mamba2-ssd",
+      "title": "Mamba-2 / SSD",
+      "scope": "scalar-identity multihead SSD chunk core",
+      "representation": "architectures/mamba2-ssd/representation.yaml",
+      "reconstructed_code": "architectures/mamba2-ssd/reconstructed.py",
+      "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
+      "materials": "architectures/mamba2-ssd/README.md",
+      "provenance": "architectures/mamba2-ssd/provenance.json",
+      "scope_summary": "scalar-identity multihead SSD chunk core"
+    },
+    {
+      "architecture": "memory-network",
+      "title": "Memory Network",
+      "scope": "supplied_count_features; append_fact_storage; two_argmax_supports; role_specific_embeddings; answer_ranking",
+      "representation": "architectures/memory-network/representation.yaml",
+      "reconstructed_code": "architectures/memory-network/reconstructed.py",
+      "candidate_origin": "UNMODIFIED_EXTERNAL_LLM_CODE",
+      "materials": "architectures/memory-network/README.md",
+      "provenance": "architectures/memory-network/provenance.json",
+      "scope_summary": "제공된 count feature, fact 저장, 두 argmax support, 답변 ranking"
+    },
+    {
+      "architecture": "neural-lm",
+      "title": "Neural LM",
+      "scope": "고정 문맥 lookup, tanh hidden, direct 경로와 vocabulary readout",
+      "representation": "architectures/neural-lm/representation.yaml",
+      "reconstructed_code": "architectures/neural-lm/reconstructed.py",
+      "candidate_origin": "UNMODIFIED_LLM_OUTPUT",
+      "materials": "architectures/neural-lm/README.md",
+      "provenance": "architectures/neural-lm/provenance.json"
+    },
+    {
+      "architecture": "performer",
+      "title": "Performer",
+      "scope": "고정 random features의 정규화 attention core",
+      "representation": "architectures/performer/representation.yaml",
+      "reconstructed_code": "architectures/performer/reconstructed.py",
+      "candidate_origin": "UNMODIFIED_EXTERNAL_LLM_CODE",
+      "materials": "architectures/performer/README.md",
+      "provenance": "architectures/performer/provenance.json",
+      "scope_summary": "고정 random features의 정규화 attention core"
+    },
+    {
+      "architecture": "pre-ln",
+      "title": "Pre-LN",
+      "scope": "single_encoder_block; pre_attention_layernorm; multihead_self_attention; attention_residual; pre_ffn_layernorm; relu_ffn; ffn_residual; key_padding_mask",
+      "representation": "architectures/pre-ln/representation.yaml",
+      "reconstructed_code": "architectures/pre-ln/reconstructed.py",
+      "candidate_origin": "UNMODIFIED_EXTERNAL_LLM_CODE",
+      "materials": "architectures/pre-ln/README.md",
+      "provenance": "architectures/pre-ln/provenance.json",
+      "scope_summary": "Pre-LN encoder block, attention과 FFN residual, key padding mask"
+    },
+    {
+      "architecture": "qrnn",
+      "title": "QRNN",
+      "scope": "단일 causal gate 계층, fo-pooling, 외부 cell과 입력 이력",
+      "representation": "architectures/qrnn/representation.yaml",
+      "reconstructed_code": "architectures/qrnn/reconstructed.py",
+      "candidate_origin": "UNMODIFIED_LLM_OUTPUT",
+      "materials": "architectures/qrnn/README.md",
+      "provenance": "architectures/qrnn/provenance.json"
+    },
+    {
+      "architecture": "reformer",
+      "title": "Reformer",
+      "scope": "shared_qk; supplied_random_rotations; angular_hash; round_bucket_offsets; bucket_position_sort; chunk_attention; previous_chunk_lookup; finite_self_penalty; optional_causal_penalty; inverse_sort; multi_round_partition_weighted_merge",
+      "representation": "architectures/reformer/representation.yaml",
+      "reconstructed_code": "architectures/reformer/reconstructed.py",
+      "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
+      "materials": "architectures/reformer/README.md",
+      "provenance": "architectures/reformer/provenance.json",
+      "scope_summary": "제공된 회전의 LSH attention, chunk와 이전 chunk 참조, multi-round 결합"
+    },
+    {
+      "architecture": "relative-position",
+      "title": "Relative Position",
+      "scope": "부호 있는 거리 clipping과 상대 key/value를 포함한 projected self-attention core",
+      "representation": "architectures/relative-position/representation.yaml",
+      "reconstructed_code": "architectures/relative-position/reconstructed.py",
+      "candidate_origin": "UNMODIFIED_EXTERNAL_LLM_CODE",
+      "materials": "architectures/relative-position/README.md",
+      "provenance": "architectures/relative-position/provenance.json",
+      "scope_summary": "부호 있는 거리 clipping과 상대 key/value를 포함한 projected self-attention core"
+    },
+    {
+      "architecture": "resnet",
+      "title": "ResNet",
+      "scope": "Identity shortcut BasicBlock, channels=64, CPU float32 eval",
+      "representation": "architectures/resnet/representation.yaml",
+      "reconstructed_code": "architectures/resnet/reconstructed.py",
+      "candidate_origin": "UNMODIFIED_LLM_OUTPUT",
+      "materials": "architectures/resnet/README.md",
+      "provenance": "architectures/resnet/provenance.json",
+      "scope_summary": "Identity shortcut BasicBlock, channels=64, CPU float32 eval"
+    },
+    {
+      "architecture": "retnet",
+      "title": "RetNet",
+      "scope": "multi_scale_fixed_head_decay; independent_projections; real_position_rotation; key_scaling; causal_retention; parallel_sum; recurrent_matrix_state; state_continuation",
+      "representation": "architectures/retnet/representation.yaml",
+      "reconstructed_code": "architectures/retnet/reconstructed.py",
+      "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
+      "materials": "architectures/retnet/README.md",
+      "provenance": "architectures/retnet/provenance.json",
+      "scope_summary": "Multi-scale causal retention, 병렬 합산과 순환 행렬 상태, 상태 이어 계산"
+    },
+    {
+      "architecture": "retro",
+      "title": "RETRO",
+      "scope": "chunk_shift; neighbour_time_joint_softmax; query_key_value_projections; supplied_position_logits; retrieval_value_aggregation; residual_wrapper",
+      "representation": "architectures/retro/representation.yaml",
+      "reconstructed_code": "architectures/retro/reconstructed.py",
+      "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
+      "materials": "architectures/retro/README.md",
+      "provenance": "architectures/retro/provenance.json",
+      "scope_summary": "제공된 검색 표현의 chunked cross-attention, joint softmax와 residual core"
+    },
+    {
+      "architecture": "rmsnorm",
+      "title": "RMSNorm",
+      "scope": "full_last_axis_rms; outside_sqrt_epsilon; scale_only",
+      "representation": "architectures/rmsnorm/representation.yaml",
+      "reconstructed_code": "architectures/rmsnorm/reconstructed.py",
+      "candidate_origin": "UNMODIFIED_EXTERNAL_LLM_CODE",
+      "materials": "architectures/rmsnorm/README.md",
+      "provenance": "architectures/rmsnorm/provenance.json",
+      "scope_summary": "마지막 축 RMS 정규화, 제곱근 밖 epsilon, scale-only"
+    },
+    {
+      "architecture": "gru-encoder-decoder",
+      "title": "RNN Encoder–Decoder / GRU",
+      "scope": "Cho 2014 encoder, 고정 context, 조건부 GRU decoder",
+      "representation": "architectures/gru-encoder-decoder/representation.yaml",
+      "reconstructed_code": "architectures/gru-encoder-decoder/reconstructed.py",
+      "candidate_origin": "UNMODIFIED_EXTERNAL_LLM_CODE",
+      "materials": "architectures/gru-encoder-decoder/README.md",
+      "provenance": "architectures/gru-encoder-decoder/provenance.json",
+      "scope_summary": "Cho 2014 encoder, 고정 context, 조건부 GRU decoder"
+    },
+    {
+      "architecture": "rnn-lm",
+      "title": "RNN LM",
+      "scope": "2010 sigmoid recurrent core와 flat vocabulary softmax, 명시적 초기 상태",
+      "representation": "architectures/rnn-lm/representation.yaml",
+      "reconstructed_code": "architectures/rnn-lm/reconstructed.py",
+      "candidate_origin": "UNMODIFIED_LLM_OUTPUT",
+      "materials": "architectures/rnn-lm/README.md",
+      "provenance": "architectures/rnn-lm/provenance.json"
+    },
+    {
+      "architecture": "rope",
+      "title": "RoPE",
+      "scope": "명시 위치의 인접 feature 쌍 회전과 attention core",
+      "representation": "architectures/rope/representation.yaml",
+      "reconstructed_code": "architectures/rope/reconstructed.py",
+      "candidate_origin": "UNMODIFIED_EXTERNAL_LLM_CODE",
+      "materials": "architectures/rope/README.md",
+      "provenance": "architectures/rope/provenance.json",
+      "scope_summary": "명시 위치의 인접 feature 쌍 회전과 attention core"
+    },
+    {
+      "architecture": "rwkv",
+      "title": "RWKV",
+      "scope": "RWKV_v4_time_mixing; token_shift; independent_interpolations; per_channel_decay; current_token_bonus; stabilized_scalar_WKV; sigmoid_receptance; output_projection; explicit_state_continuation",
+      "representation": "architectures/rwkv/representation.yaml",
+      "reconstructed_code": "architectures/rwkv/reconstructed.py",
+      "candidate_origin": "UNMODIFIED_EXTERNAL_LLM_CODE",
+      "materials": "architectures/rwkv/README.md",
+      "provenance": "architectures/rwkv/provenance.json",
+      "scope_summary": "RWKV v4 time-mixing core, 안정화 WKV, 명시적 상태 이어 계산"
+    },
+    {
+      "architecture": "s4",
+      "title": "S4",
+      "scope": "Original rank-1 DPLR/NPLR recurrent/impulse-kernel core, Nfull=4,H=channels=1, CPU eval",
+      "representation": "architectures/s4/representation.yaml",
+      "reconstructed_code": "architectures/s4/reconstructed.py",
+      "candidate_origin": "AGENT_REPAIRED_LLM_OUTPUT",
+      "materials": "architectures/s4/README.md",
+      "provenance": "architectures/s4/provenance.json",
+      "scope_summary": "Original rank-1 DPLR/NPLR recurrent/impulse-kernel core, Nfull=4,H=channels=1, CPU eval"
+    },
+    {
+      "architecture": "seq2seq",
+      "title": "Seq2Seq",
+      "scope": "Pre-embedded one-layer LSTM encoder/decoder, 100% teacher forcing, three CPU float32 fixtures",
+      "representation": "architectures/seq2seq/representation.yaml",
+      "reconstructed_code": "architectures/seq2seq/reconstructed.py",
+      "candidate_origin": "UNMODIFIED_LLM_OUTPUT",
+      "materials": "architectures/seq2seq/README.md",
+      "provenance": "architectures/seq2seq/provenance.json",
+      "scope_summary": "Pre-embedded one-layer LSTM encoder/decoder, 100% teacher forcing, three CPU float32 fixtures"
+    },
+    {
+      "architecture": "simple-rnn",
+      "title": "Simple RNN",
+      "scope": "Elman tanh 순환 core",
+      "representation": "architectures/simple-rnn/representation.yaml",
+      "reconstructed_code": "architectures/simple-rnn/reconstructed.py",
+      "candidate_origin": "UNMODIFIED_EXTERNAL_LLM_CODE",
+      "materials": "architectures/simple-rnn/README.md",
+      "provenance": "architectures/simple-rnn/provenance.json",
+      "scope_summary": "Elman tanh 순환 core"
+    },
+    {
+      "architecture": "sparse-moe",
+      "title": "Sparse MoE",
+      "scope": "deterministic_inference; top_k; selected_gate_normalization; sparse_dispatch; one_hidden_relu_experts; weighted_combine",
+      "representation": "architectures/sparse-moe/representation.yaml",
+      "reconstructed_code": "architectures/sparse-moe/reconstructed.py",
+      "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
+      "materials": "architectures/sparse-moe/README.md",
+      "provenance": "architectures/sparse-moe/provenance.json",
+      "scope_summary": "결정적 추론, top-k routing, gate 정규화, ReLU expert 결합"
+    },
+    {
+      "architecture": "sparse-transformer",
+      "title": "Sparse Transformer",
+      "scope": "local/strided causal attention core",
+      "representation": "architectures/sparse-transformer/representation.yaml",
+      "reconstructed_code": "architectures/sparse-transformer/reconstructed.py",
+      "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
+      "materials": "architectures/sparse-transformer/README.md",
+      "provenance": "architectures/sparse-transformer/provenance.json",
+      "scope_summary": "local/strided causal attention core"
+    },
+    {
+      "architecture": "structured-self-attention",
+      "title": "Structured Self-Attention",
+      "scope": "bias 없는 다중 hop attention과 행렬 sentence embedding, encoder 제외",
+      "representation": "architectures/structured-self-attention/representation.yaml",
+      "reconstructed_code": "architectures/structured-self-attention/reconstructed.py",
+      "candidate_origin": "UNMODIFIED_LLM_OUTPUT",
+      "materials": "architectures/structured-self-attention/README.md",
+      "provenance": "architectures/structured-self-attention/provenance.json"
+    },
+    {
+      "architecture": "switch-transformer",
+      "title": "Switch Transformer",
+      "scope": "deterministic_argmax_eval; one_routing_group; full_softmax_selected_gate; explicit_capacity_rounding; ordered_dispatch; padding_mask; overflow_drop; bias_free_relu_experts",
+      "representation": "architectures/switch-transformer/representation.yaml",
+      "reconstructed_code": "architectures/switch-transformer/reconstructed.py",
+      "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
+      "materials": "architectures/switch-transformer/README.md",
+      "provenance": "architectures/switch-transformer/provenance.json",
+      "scope_summary": "Top-1 routing, 용량 제한과 overflow drop, padding mask, ReLU expert"
+    },
+    {
+      "architecture": "synthesizer",
+      "title": "Synthesizer",
+      "scope": "token_conditioned_logits_network; relu; multihead_values; fixed_max_length_prefix; boolean_mask; key_softmax; value_aggregation; output_projection",
+      "representation": "architectures/synthesizer/representation.yaml",
+      "reconstructed_code": "architectures/synthesizer/reconstructed.py",
+      "candidate_origin": "UNMODIFIED_EXTERNAL_LLM_CODE",
+      "materials": "architectures/synthesizer/README.md",
+      "provenance": "architectures/synthesizer/provenance.json",
+      "scope_summary": "토큰 조건부 logits, multihead value 집계, mask와 출력 투영"
+    },
+    {
+      "architecture": "transformer",
+      "title": "Transformer",
+      "scope": "Single encoder block, nine CPU float32 eval fixtures",
+      "representation": "architectures/transformer/representation.yaml",
+      "reconstructed_code": "architectures/transformer/reconstructed.py",
+      "candidate_origin": "UNMODIFIED_LLM_OUTPUT",
+      "materials": "architectures/transformer/README.md",
+      "provenance": "architectures/transformer/provenance.json",
+      "scope_summary": "Single encoder block, nine CPU float32 eval fixtures"
+    },
+    {
+      "architecture": "transformer-xl",
+      "title": "Transformer-XL",
+      "scope": "segment recurrence, 상대 위치 attention sublayer",
+      "representation": "architectures/transformer-xl/representation.yaml",
+      "reconstructed_code": "architectures/transformer-xl/reconstructed.py",
+      "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
+      "materials": "architectures/transformer-xl/README.md",
+      "provenance": "architectures/transformer-xl/provenance.json",
+      "scope_summary": "segment recurrence, 상대 위치 attention sublayer"
     },
     {
       "architecture": "ttt",
@@ -450,7 +564,18 @@
       "reconstructed_code": "architectures/ttt/reconstructed.py",
       "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
       "materials": "architectures/ttt/README.md",
-      "provenance": "architectures/ttt/provenance.json"
+      "provenance": "architectures/ttt/provenance.json",
+      "scope_summary": "단일 head TTT-Linear 내부 학습기, chunk 내 causal 갱신과 경계 상태 이어 계산"
+    },
+    {
+      "architecture": "wavenet",
+      "title": "WaveNet",
+      "scope": "조건 없는 dilated gated residual/skip feature stack, audio 입출력 제외",
+      "representation": "architectures/wavenet/representation.yaml",
+      "reconstructed_code": "architectures/wavenet/reconstructed.py",
+      "candidate_origin": "AGENT_REPAIRED_LLM_OUTPUT",
+      "materials": "architectures/wavenet/README.md",
+      "provenance": "architectures/wavenet/provenance.json"
     }
   ]
 }

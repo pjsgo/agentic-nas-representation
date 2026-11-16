@@ -12,6 +12,7 @@
 
 유형과 대응 범위는 [관계 안내](../../docs/genealogy-guide.md)를 참고합니다. `?`는 추론 관계입니다.
 
+- [WaveNet → Hyena](../../relations/tr_052.yaml) — I?, tr_052
 - [S4 → Hyena](../../relations/tr_053.yaml) — X?, tr_053
 - [H3 → Hyena](../../relations/tr_075.yaml) — I, tr_075
 - [Transformer → Hyena](../../relations/tr_076.yaml) — A, tr_076
