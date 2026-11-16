@@ -1,14 +1,14 @@
 # S4
 
-**복원 범위: original rank-1 DPLR/NPLR recurrent·impulse-kernel core, Nfull=4, H=channels=1.** 해당 범위에서 검증을 마친 YAML과 복원 코드입니다.
+**복원 범위: original rank-1 DPLR/NPLR recurrent, impulse-kernel core, Nfull=4, H=channels=1.** 해당 범위에서 검증을 마친 YAML과 복원 코드입니다.
 
-[YAML](representation.yaml) · [복원 코드](reconstructed.py) · [출처·확인 범위](provenance.json)
+[YAML](representation.yaml) / [복원 코드](reconstructed.py) / [출처, 확인 범위](provenance.json)
 
 ## 구조도
 ```mermaid
 flowchart LR
-    params["외부 Parameter"] --> prep["계수 준비·이산화"]
-    prep --> seq["Sequence 상태 반복·readout"]
+    params["외부 Parameter"] --> prep["계수 준비, 이산화"]
+    prep --> seq["Sequence 상태 반복, readout"]
     u["입력 u"] --> seq
     h0["초기 h0"] --> seq
     seq --> add["Add"]
@@ -24,18 +24,18 @@ flowchart LR
 
 ## YAML이 표현하는 내용
 
-`representation_version: 0.3-candidate.1` · 진입점 `unit`.
+`representation_version: 0.3-candidate.1`, 진입점 `unit`.
 
-raw Parameter 준비·이산화 → sequence scan / impulse-kernel scan → direct feedthrough D 합산.
+raw Parameter 준비, 이산화 → sequence scan / impulse-kernel scan → direct feedthrough D 합산.
 
 | YAML에서 볼 곳 | 복원 코드에서의 구현 |
 |---|---|
 | `prepare`, `f0000`… | `_prepare()`의 계수 계산 |
 | `sequence_scan`, `sequence_body` | `_sequence_body()`와 시간축 `select(2,t)` |
 | `f0167`, `kernel_scan`, `kernel_body` | batch 첫 항목 slice 및 `_kernel_body()`의 impulse recurrence |
-| `f0170`…`f0172` | D·u direct feedthrough와 최종 y |
+| `f0170`…`f0172` | D, u direct feedthrough와 최종 y |
 
-YAML은 연산·연결·속성·공유·상태를 기술합니다. 학습된 가중치나 실행 fixture를 저장하는 파일은 아닙니다. [공통 읽기 안내](../../docs/representation-guide.md)를 함께 참고하세요.
+YAML은 연산과 연결, 속성, 공유, 상태를 기술합니다. 학습된 가중치나 실행 fixture를 저장하는 파일은 아닙니다. [공통 읽기 안내](../../docs/representation-guide.md)를 함께 참고하세요.
 
 ## 입력과 출력
 
@@ -63,22 +63,22 @@ p0…p6의 역할은 inv_dt, A_real, A_imag, B, C, P, D 순서입니다. 생성 
 | `p5` | `[1, 1, 2, 2]` |
 | `p6` | `[1, 1]` |
 
-코드의 import·생성·forward 이름은 위 계약을 따릅니다. 원본과 수치 비교하려면 입력, 초기 상태, Parameter/Buffer 값, dtype과 eval 조건을 동일하게 맞춰야 합니다. 저장된 검증 환경은 CPU·PyTorch 2.2.1입니다.
+코드의 import, 생성, forward 이름은 위 계약을 따릅니다. 원본과 수치 비교하려면 입력, 초기 상태, Parameter/Buffer 값, dtype과 eval 조건을 동일하게 맞춰야 합니다. 저장된 검증 환경은 CPU, PyTorch 2.2.1입니다.
 
 ## 확인한 결과와 범위
 
-기존 엄격 검사에서 그래프·수치 PASS, 실용 검사 90회 PASS, primitive 중간값 152개와 매 시점 carry 비교 PASS입니다.
+기존 엄격 검사에서 그래프, 수치 PASS, 실용 검사 90회 PASS, primitive 중간값 152개와 매 시점 carry 비교 PASS입니다.
 
 원문 생성 코드에서 slice 축 1곳과 scan select 표현 2곳을 수정한 최종본입니다. 전체 FFT/cache 경로, S4D, 일반 rank, 학습은 포함하지 않습니다.
 
-이 폴더는 최신 사용 자료이며 상세 실험 로그·검사기·fixture 묶음은 포함하지 않습니다. 검증 근거의 연구 작업 공간 기록은 provenance.json에 있습니다.
+이 폴더는 최신 사용 자료이며 상세 실험 로그, 검사기, fixture 묶음은 포함하지 않습니다. 검증 근거의 연구 작업 공간 기록은 provenance.json에 있습니다.
 
 [전체 모델 목록](../../README.md)
 
 ## 관련 관계
 
-- [LSSL → S4](../../relations/tr_049.yaml) — A · tr_049
-- [S4 → H3](../../relations/tr_050.yaml) — C · tr_050
-- [S4 → Mamba-1](../../relations/tr_061.yaml) — A · tr_061
+- [LSSL → S4](../../relations/tr_049.yaml) — A (tr_049)
+- [S4 → H3](../../relations/tr_050.yaml) — C (tr_050)
+- [S4 → Mamba-1](../../relations/tr_061.yaml) — A (tr_061)
 
 [관계용 별도 표현과 계약](genealogy/README.md)

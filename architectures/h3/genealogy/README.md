@@ -1,7 +1,7 @@
 # 관계 부품 대응용 표현
 
-이 YAML은 관계 기록의 부품 ID를 보존하는 별도 표현입니다. 상위 폴더의 기본 복원 YAML과 ID·입출력 계약을 혼용하지 않습니다.
+이 YAML은 관계 기록의 부품 ID를 보존하는 별도 표현입니다. 상위 폴더의 기본 복원 YAML과 ID, 입출력 계약을 혼용하지 않습니다.
 
-[관계용 YAML](representation.yaml) · [로컬 실현 코드](realization.py)
+[관계용 YAML](representation.yaml) / [로컬 실현 코드](realization.py)
 
 실현 코드는 기존 연구용 구현이며, 외부 LLM 생성 코드가 아닙니다. 선언된 파라미터를 준비해 전달해야 합니다.

@@ -1,13 +1,13 @@
 # LSTM
 
-**복원 범위: 입력 크기 4·은닉 크기 5의 단방향 LSTM recurrent core, T≥1.** 해당 범위에서 검증을 마친 YAML과 복원 코드입니다.
+**복원 범위: 입력 크기 4, 은닉 크기 5의 단방향 LSTM recurrent core, T≥1.** 해당 범위에서 검증을 마친 YAML과 복원 코드입니다.
 
-[YAML](representation.yaml) · [복원 코드](reconstructed.py) · [출처·확인 범위](provenance.json)
+[YAML](representation.yaml) / [복원 코드](reconstructed.py) / [출처, 확인 범위](provenance.json)
 
 ## 구조도
 ```mermaid
 flowchart LR
-    x["현재 입력 x_t"] --> affine["입력·이전 h의 affine 합산"]
+    x["현재 입력 x_t"] --> affine["입력, 이전 h의 affine 합산"]
     h["이전 h"] --> affine
     affine --> gates["i / f / g / o gates"]
     gates --> cell["c_next = f * c + i * g"]
@@ -23,18 +23,18 @@ flowchart LR
 
 ## YAML이 표현하는 내용
 
-`representation_version: 0.3-candidate.1` · 진입점 `root`.
+`representation_version: 0.3-candidate.1`, 진입점 `root`.
 
-입력·이전 h의 affine → i/f/g/o gate → c 갱신 → h 갱신 → 시간축 stack.
+입력, 이전 h의 affine → i/f/g/o gate → c 갱신 → h 갱신 → 시간축 stack.
 
 | YAML에서 볼 곳 | 복원 코드에서의 구현 |
 |---|---|
 | `root`, `iterate.scan` | `forward`의 시간축 반복 |
 | `affine_a`, `affine_b`, `partition` | 두 `F.linear`와 `[5,5,5,5]` gate 분할 |
-| `gate_a`…`gate_d`, `retain`, `write`, `update`, `expose` | sigmoid/tanh와 cell·hidden 갱신 |
+| `gate_a`…`gate_d`, `retain`, `write`, `update`, `expose` | sigmoid/tanh와 cell, hidden 갱신 |
 | `parameters.p0`…`p3`, scan carry | 모든 시점에서 동일 Parameter와 이전 h/c 사용 |
 
-YAML은 연산·연결·속성·공유·상태를 기술합니다. 학습된 가중치나 실행 fixture를 저장하는 파일은 아닙니다. [공통 읽기 안내](../../docs/representation-guide.md)를 함께 참고하세요.
+YAML은 연산과 연결, 속성, 공유, 상태를 기술합니다. 학습된 가중치나 실행 fixture를 저장하는 파일은 아닙니다. [공통 읽기 안내](../../docs/representation-guide.md)를 함께 참고하세요.
 
 ## 입력과 출력
 
@@ -60,19 +60,19 @@ p0=[20,4] 입력 weight, p1=[20,5] recurrent weight, p2/p3=[20] bias를 외부�
 | `p2` | `[20]` |
 | `p3` | `[20]` |
 
-코드의 import·생성·forward 이름은 위 계약을 따릅니다. 원본과 수치 비교하려면 입력, 초기 상태, Parameter/Buffer 값, dtype과 eval 조건을 동일하게 맞춰야 합니다. 저장된 검증 환경은 CPU·PyTorch 2.2.1입니다.
+코드의 import, 생성, forward 이름은 위 계약을 따릅니다. 원본과 수치 비교하려면 입력, 초기 상태, Parameter/Buffer 값, dtype과 eval 조건을 동일하게 맞춰야 합니다. 저장된 검증 환경은 CPU, PyTorch 2.2.1입니다.
 
 ## 확인한 결과와 범위
 
-T=1,3,5의 출력·매 시점 h/c·gate·Parameter 공유·확장 dataflow를 비교했으며 최대 오차 0입니다.
+T=1,3,5의 출력, 매 시점 h/c, gate, Parameter 공유, 확장 dataflow를 비교했으며 최대 오차 0입니다.
 
-완료 범위는 T≥1입니다. YAML에는 빈 scan 규칙이 남아 있지만 현재 코드는 T=0을 지원하지 않습니다. 다층·양방향·projection·dropout은 포함하지 않습니다.
+완료 범위는 T≥1입니다. YAML에는 빈 scan 규칙이 남아 있지만 현재 코드는 T=0을 지원하지 않습니다. 다층, 양방향, projection, dropout은 포함하지 않습니다.
 
-이 폴더는 최신 사용 자료이며 상세 실험 로그·검사기·fixture 묶음은 포함하지 않습니다. 검증 근거의 연구 작업 공간 기록은 provenance.json에 있습니다.
+이 폴더는 최신 사용 자료이며 상세 실험 로그, 검사기, fixture 묶음은 포함하지 않습니다. 검증 근거의 연구 작업 공간 기록은 provenance.json에 있습니다.
 
 [전체 모델 목록](../../README.md)
 
 ## 관련 관계
 
-- [Simple RNN → LSTM](../../relations/tr_003.yaml) — A · tr_003
-- [LSTM → Seq2Seq](../../relations/tr_004.yaml) — C · tr_004
+- [Simple RNN → LSTM](../../relations/tr_003.yaml) — A (tr_003)
+- [LSTM → Seq2Seq](../../relations/tr_004.yaml) — C (tr_004)

@@ -1,6 +1,6 @@
 # 관계 YAML 읽기
 
-[관계 목록](../relations/README.md)에서 연결을 선택한 뒤, 출발·도착 아키텍처와 변경 이유를 읽습니다. `scope.source_yaml`과 `scope.target_yaml`을 열면 실제 부품 대응을 확인할 수 있습니다.
+[관계 목록](../relations/README.md)에서 연결을 선택한 뒤, 출발 및 도착 아키텍처와 변경 이유를 읽습니다. `scope.source_yaml`과 `scope.target_yaml`을 열면 실제 부품 대응을 확인할 수 있습니다.
 
 - `changes`와 `preserve`: 무엇을 바꾸고 무엇을 유지하는지
 - `conditions`, `expected_effects`, `tradeoffs`: 적용 조건, 기대 효과, 비용
@@ -11,4 +11,4 @@
 
 아키텍처의 `genealogy/`는 관계에서 사용하는 부품 ID를 보존한 별도 표현입니다. 관계 파일 자체는 최상위 `relations/`에서 관리합니다.
 
-[관계 필드·유형·부품 참조 규칙](../specs/relations/local-transition-v1.md) · [복원 YAML 읽기](representation-guide.md)
+[관계 필드, 유형, 부품 참조 규칙](../specs/relations/local-transition-v1.md) / [복원 YAML 읽기](representation-guide.md)

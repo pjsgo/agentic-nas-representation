@@ -2,7 +2,7 @@
 
 **복원 범위: 임베딩된 입력을 받는 단층 LSTM encoder/decoder, teacher forcing 100%.** 해당 범위에서 검증을 마친 YAML과 복원 코드입니다.
 
-[YAML](representation.yaml) · [복원 코드](reconstructed.py) · [출처·확인 범위](provenance.json)
+[YAML](representation.yaml) / [복원 코드](reconstructed.py) / [출처, 확인 범위](provenance.json)
 
 ## 구조도
 ```mermaid
@@ -12,15 +12,15 @@ flowchart LR
     enc --> bridge["마지막 h/c 전달"] --> dec["Decoder LSTM 반복"]
     target["이전 target embeddings"] --> dec
     dec --> projection["Vocabulary projection"] --> logits["Logits"]
-    enc --> es["Encoder sequence·최종 h/c"]
-    dec --> ds["Decoder sequence·최종 h/c"]
+    enc --> es["Encoder sequence, 최종 h/c"]
+    dec --> ds["Decoder sequence, 최종 h/c"]
 ```
 
 Decoder 입력은 teacher forcing으로 공급합니다. Encoder의 마지막 h/c가 decoder 초기 상태로 연결됩니다. 주요 계산을 묶어 보여주는 요약도이며, 세부 연산과 연결은 위 YAML과 코드를 기준으로 확인합니다.
 
 ## YAML이 표현하는 내용
 
-`representation_version: 0.3-candidate.1` · 진입점 `unit`.
+`representation_version: 0.3-candidate.1`, 진입점 `unit`.
 
 source encoder scan → 마지막 h/c 전달 → target decoder scan → vocabulary projection.
 
@@ -31,7 +31,7 @@ source encoder scan → 마지막 h/c 전달 → target decoder scan → vocabul
 | `read_b`, `step_b`, `invoke_b` | 정답의 이전 target embedding을 사용하는 decoder 반복 |
 | `readout`, `parameters` | vocabulary projection과 10개 Parameter |
 
-YAML은 연산·연결·속성·공유·상태를 기술합니다. 학습된 가중치나 실행 fixture를 저장하는 파일은 아닙니다. [공통 읽기 안내](../../docs/representation-guide.md)를 함께 참고하세요.
+YAML은 연산과 연결, 속성, 공유, 상태를 기술합니다. 학습된 가중치나 실행 fixture를 저장하는 파일은 아닙니다. [공통 읽기 안내](../../docs/representation-guide.md)를 함께 참고하세요.
 
 ## 입력과 출력
 
@@ -68,7 +68,7 @@ a_wi/a_bi/a_wh/a_bh는 encoder, b_wi/b_bi/b_wh/b_bh는 decoder, out_w/out_b는 p
 | `out_w` | `[7, 4]` |
 | `out_b` | `[7]` |
 
-코드의 import·생성·forward 이름은 위 계약을 따릅니다. 원본과 수치 비교하려면 입력, 초기 상태, Parameter/Buffer 값, dtype과 eval 조건을 동일하게 맞춰야 합니다. 저장된 검증 환경은 CPU·PyTorch 2.2.1입니다.
+코드의 import, 생성, forward 이름은 위 계약을 따릅니다. 원본과 수치 비교하려면 입력, 초기 상태, Parameter/Buffer 값, dtype과 eval 조건을 동일하게 맞춰야 합니다. 저장된 검증 환경은 CPU, PyTorch 2.2.1입니다.
 
 ## 확인한 결과와 범위
 
@@ -76,12 +76,12 @@ a_wi/a_bi/a_wh/a_bh는 encoder, b_wi/b_bi/b_wh/b_bh는 decoder, out_w/out_b는 p
 
 토큰 embedding과 자유 생성은 포함하지 않습니다. 후속 구조 비교에서는 검증된 zero-allocation 차이를 정규화했으며 원래 raw DAG 검사의 PASS를 뜻하지 않습니다.
 
-이 폴더는 최신 사용 자료이며 상세 실험 로그·검사기·fixture 묶음은 포함하지 않습니다. 검증 근거의 연구 작업 공간 기록은 provenance.json에 있습니다.
+이 폴더는 최신 사용 자료이며 상세 실험 로그, 검사기, fixture 묶음은 포함하지 않습니다. 검증 근거의 연구 작업 공간 기록은 provenance.json에 있습니다.
 
 [전체 모델 목록](../../README.md)
 
 ## 관련 관계
 
-- [LSTM → Seq2Seq](../../relations/tr_004.yaml) — C · tr_004
-- [Seq2Seq → Bahdanau](../../relations/tr_007.yaml) — P · tr_007
-- [Seq2Seq → Transformer](../../relations/tr_026.yaml) — A · tr_026
+- [LSTM → Seq2Seq](../../relations/tr_004.yaml) — C (tr_004)
+- [Seq2Seq → Bahdanau](../../relations/tr_007.yaml) — P (tr_007)
+- [Seq2Seq → Transformer](../../relations/tr_026.yaml) — A (tr_026)
