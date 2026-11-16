@@ -1,0 +1,98 @@
+representation_version: local_switch_expert_ffn_core_v1
+operator_profile: self_contained_equations_v1
+architecture: switch-transformer
+architecture_entry: reconstructed.py:switch_ffn
+interface:
+  signature: 'switch_ffn(x, router, wi, wo, nonpadding, capacity_factor, min_capacity) -> dict'
+  inputs:
+    x: CPU torch.float64[T,D], finite; single routing group in token order
+    router: CPU torch.float64[D,E], finite, no bias
+    wi: CPU torch.float64[E,D,H], finite
+    wo: CPU torch.float64[E,H,O], finite
+    nonpadding: CPU torch.bool[T], true means valid token; padding x may be nonzero
+    capacity_factor: Python finite positive float
+    min_capacity: Python int >= 1
+  constraints: ["T,D,E,H,O positive", intermediates finite, selected softmax probabilities representably positive]
+  outputs:
+    capacity: Python int C
+    logits: CPU torch.float64[T,E]
+    probabilities: CPU torch.float64[T,E]
+    indices: CPU torch.int64[T], including padding diagnostic selections
+    selected_gate: CPU torch.float64[T], raw selected probability including padding
+    positions: CPU torch.int64[T], exclusive valid-token rank within chosen expert; -1 for padding, retained for overflow
+    accepted: CPU torch.bool[T]
+    dispatch: CPU torch.float64[T,E,C], binary
+    combine: CPU torch.float64[T,E,C]
+    expert_inputs: CPU torch.float64[E,C,D]
+    expert_outputs: CPU torch.float64[E,C,O]
+    output: CPU torch.float64[T,O]
+factors:
+  switch_router:
+    operator: full_softmax_top1
+    attributes: >-
+      logits[t,e]=sum_d x[t,d]*router[d,e]. For every t including padding,
+      probabilities[t,e]=exp(logits[t,e]-max_j logits[t,j])/sum_j exp(logits[t,j]-max_j logits[t,j]).
+      indices[t]=argmax_e logits[t,e], ties use lower e.
+      selected_gate[t]=probabilities[t,indices[t]]. Do not renormalize selected gate to 1.
+  switch_capacity_dispatch:
+    operator: ordered_bounded_dispatch
+    attributes: >-
+      C=max(min_capacity,min(T,floor(T*capacity_factor/E))); T includes padding rows.
+      For valid token t, positions[t]=count of valid u<t whose indices[u]=indices[t].
+      Padding has positions[t]=-1 and never consumes a slot. Overflow tokens do count in subsequent ranks.
+      accepted[t]=nonpadding[t] and positions[t]<C.
+      dispatch[t,e,c]=1 exactly when accepted[t] and e=indices[t] and c=positions[t], otherwise 0.
+      combine[t,e,c]=dispatch[t,e,c]*selected_gate[t]. No rerouting and no highest-confidence reordering.
+      C is per expert for this one group, reset every call. Unused capacity slots remain zero.
+  switch_experts:
+    operator: dispatched_relu_ffn
+    attributes: >-
+      expert_inputs[e,c,d]=sum_t dispatch[t,e,c]*x[t,d].
+      hidden[e,c,h]=max(0,sum_d expert_inputs[e,c,d]*wi[e,d,h]).
+      expert_outputs[e,c,o]=sum_h hidden[e,c,h]*wo[e,h,o]. No biases, width scaling or dropout.
+      Empty capacity slots have zero input and zero output. Distinct experts have independent weights shared across their slots.
+  switch_combine:
+    operator: selected_gate_combine
+    attributes: >-
+      output[t,o]=sum_{e,c} combine[t,e,c]*expert_outputs[e,c,o].
+      Padding and overflow output is zero. This is the expert branch only; residual passthrough belongs to the excluded outer Transformer.
+dataflow:
+  - [x, switch_router.x]
+  - [router, switch_router.router]
+  - [switch_router.indices, switch_capacity_dispatch.indices]
+  - [switch_router.selected_gate, switch_capacity_dispatch.selected_gate]
+  - [x, switch_capacity_dispatch.shape]
+  - [router, switch_capacity_dispatch.expert_count]
+  - [nonpadding, switch_capacity_dispatch.nonpadding]
+  - [capacity_factor, switch_capacity_dispatch.capacity_factor]
+  - [min_capacity, switch_capacity_dispatch.min_capacity]
+  - [x, switch_experts.x]
+  - [wi, switch_experts.wi]
+  - [wo, switch_experts.wo]
+  - [switch_capacity_dispatch.dispatch, switch_experts.dispatch]
+  - [switch_capacity_dispatch.combine, switch_combine.combine]
+  - [switch_experts.expert_outputs, switch_combine.expert_outputs]
+  - [switch_capacity_dispatch.capacity, capacity]
+  - [switch_router.logits, logits]
+  - [switch_router.probabilities, probabilities]
+  - [switch_router.indices, indices]
+  - [switch_router.selected_gate, selected_gate]
+  - [switch_capacity_dispatch.positions, positions]
+  - [switch_capacity_dispatch.accepted, accepted]
+  - [switch_capacity_dispatch.dispatch, dispatch]
+  - [switch_capacity_dispatch.combine, combine]
+  - [switch_experts.expert_inputs, expert_inputs]
+  - [switch_experts.expert_outputs, expert_outputs]
+  - [switch_combine.output, output]
+parameters:
+  router: {shape: [D,E], initialization: caller_supplied, sharing: all_tokens}
+  wi: {shape: [E,D,H], initialization: caller_supplied, sharing: same_expert_across_slots_only}
+  wo: {shape: [E,H,O], initialization: caller_supplied, sharing: same_expert_across_slots_only}
+state: {persistent_buffers: false, recurrent: false, input_mutation: false, rng_consumption: false, capacity_counters: reset_per_call}
+scope:
+  included: [deterministic_argmax_eval, one_routing_group, full_softmax_selected_gate, explicit_capacity_rounding, ordered_dispatch, padding_mask, overflow_drop, bias_free_relu_experts]
+  excluded: [full_Transformer, residual, attention, normalization, training, gradients, load_balancing_loss, z_loss, jitter, sampling, dropout, token_embeddings_in_router, distributed_communication, mixed_precision, initialization_distribution]
+semantics_status:
+  common_schema_certification: not_claimed
+  basis: Local equations following existing genealogy format and reading-rules-v1
+  common_spec_proposal: Optional future typed top-1 and capacity-dispatch operators; no shared edits required for this local format

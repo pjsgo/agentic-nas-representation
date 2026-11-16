@@ -1,0 +1,73 @@
+representation_version: local_equational_graph_v1
+operator_profile: inline_equations_below
+reading_rules: specs/representation/reading-rules-v1.md
+architecture: synthesizer
+architecture_entry: reconstructed.py:dense_synthesizer
+variant: dense_minus_official_shared_pi
+scope:
+  included: [token_conditioned_logits_network, relu, multihead_values, fixed_max_length_prefix, boolean_mask, key_softmax, value_aggregation, output_projection]
+  excluded: [random_synthesizer, factorized_dense, factorized_random, mixtures, query_key_dot_product, transformer_stack, residual, normalization, ffn, embeddings, dropout, training, gradients, initialization, incremental_cache, cross_attention, relative_position_bias, extra_logit, grouped_query_heads, unit_scaling]
+interface:
+  function: 'dense_synthesizer(x, w1, w2, wv, wo, allowed) -> dict'
+  tensors: 'All floating arguments are finite float64 CPU tensors; allowed is bool CPU. B,N,M,D,L are positive integers; H>=2; 1<=N<=L.'
+  inputs:
+    x: '[B,N,M], unprojected token representations'
+    w1: '[M,H,D], first logits projection, independent weights per head'
+    w2: '[D,L], second logits projection, one matrix shared by all heads'
+    wv: '[M,H,D], value projection'
+    wo: '[H,D,M], head merge and output projection'
+    allowed: '[B,N,N], True permits key j for query i, shared across heads; at least one True per row'
+  outputs:
+    output: 'float64 CPU [B,N,M]'
+    logits: 'float64 CPU [B,H,N,N], before mask'
+    probabilities: 'float64 CPU [B,H,N,N], forbidden entries exactly zero'
+  invalid_inputs: 'Raise ValueError for wrong shapes, dtype/device, nonfinite floating inputs, N>L, empty dimensions, H<2 or all-masked rows.'
+parameters:
+  registration: 'Functional interface; caller owns and supplies four untied tensors, with no internal Parameters or buffers.'
+  sharing: 'All weights shared over batch and sequence. w1/wv/wo carry head axes; w2 is shared over heads. No sharing between the four tensors is required or performed.'
+  count: '3*M*H*D + D*L scalar entries; no biases, no key matrix, no learned mask.'
+  injection: 'Weights are effective supplied values. fold_scaling_into_initializer=true and unit_scaling_convention=false: no runtime sqrt(D) scaling anywhere. Initialization is excluded.'
+  length: 'L=w2.shape[1] is fixed by parameter shape, not by current N; use columns 0 through N-1 without interpolation, extrapolation, wrapping or reinitialization.'
+state: {persistent: none, cache: none, random: false, input_mutation: false, parameter_mutation: false}
+notation:
+  indices: 'b=batch, i=query position, j=value position, m=model channel, h=head, d=hidden/value channel, ell=maximum-length column. Indices start at zero.'
+factors:
+  syn_logits:
+    operator: tokenwise_two_layer_relu
+    equations:
+      - 'hidden[b,h,i,d]=max(0,sum_m x[b,i,m]*w1[m,h,d])'
+      - 'full_logits[b,h,i,ell]=sum_d hidden[b,h,i,d]*w2[d,ell] for 0<=ell<L'
+      - 'logits[b,h,i,j]=full_logits[b,h,i,j] for 0<=j<N'
+    attributes: 'No bias. No activation after second projection. Each logit row uses only its own input token. No query-key product.'
+  syn_values:
+    operator: linear_value_projection
+    equation: 'values[b,h,j,d]=sum_m x[b,j,m]*wv[m,h,d]'
+    attributes: 'No bias or activation. Official shared_kv supplies this value tensor, but the key alias is unused in dense_minus.'
+  syn_normalize:
+    operator: mask_then_stable_key_softmax
+    equation: 'masked[b,h,i,j]=logits[b,h,i,j] if allowed[b,i,j] else -inf; probabilities=exp(masked-max_j(masked))/sum_j(exp(masked-max_j(masked)))'
+    attributes: 'No scaling, extra logit, relative bias or dropout. Reject rows with no allowed key.'
+  syn_output:
+    operator: aggregate_values_and_project_heads
+    equations:
+      - 'context[b,h,i,d]=sum_j probabilities[b,h,i,j]*values[b,h,j,d]'
+      - 'output[b,i,m]=sum_h sum_d context[b,h,i,d]*wo[h,d,m]'
+    attributes: 'Equivalent to concatenating heads in (h,d) order and multiplying wo reshaped to [H*D,M]. No output bias, activation or residual.'
+contains:
+  syn_core: [syn_logits, syn_values, syn_normalize, syn_output]
+dataflow:
+  - [x, syn_logits.x]
+  - [w1, syn_logits.w1]
+  - [w2, syn_logits.w2]
+  - [x.shape.N, syn_logits.N]
+  - [x, syn_values.x]
+  - [wv, syn_values.wv]
+  - [syn_logits.logits, syn_normalize.logits]
+  - [allowed, syn_normalize.allowed]
+  - [syn_normalize.probabilities, syn_output.probabilities]
+  - [syn_values.values, syn_output.values]
+  - [wo, syn_output.wo]
+  - [syn_logits.logits, logits]
+  - [syn_normalize.probabilities, probabilities]
+  - [syn_output.output, output]
+specification_note: 'Local equation graph, not a universal schema certification. Boolean -inf masking is an explicit local contract replacing official finite large-negative visibility bias; float64 equation validation does not claim bitwise Mesh TensorFlow equivalence.'

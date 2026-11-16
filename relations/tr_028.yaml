@@ -1,0 +1,156 @@
+format_version: local_transition_v1
+transition_id: tr_028
+source_architecture: Transformer
+target_architecture: Relative Position
+relation_type: A
+inferred: false
+record_status: complete
+mapping_status: partial
+evidence:
+- source: User-supplied beyond_transformer_slides.pdf (not redistributed)
+  pages:
+  - 44
+  page_numbering: one_based_PDF
+  label: A 028
+  direction: Transformer -> Relative Position
+  question_mark_present: false
+  verification: direct_embedded_image_view
+  pdf_objects:
+    '44':
+      page: 242
+      image: 247
+  candidate_matches_original: true
+  correction_proposal: null
+scope:
+  source_yaml: ../architectures/transformer/representation.yaml
+  target_yaml: ../architectures/relative-position/representation.yaml
+  path_base: relation_file_directory
+  included:
+  - descriptive_relationship
+  - available_core_component_correspondence
+  excluded:
+  - whole_model_conversion
+  - numerical_execution
+  - training
+  - performance_reproduction
+  - code_transformer
+  - weight_migration
+  mapping_boundary: 기존 encoder attention 연산과 projected Shaw core 사이 대응. 투영과 전체 block
+    및 절대 위치 경로 제외.
+application:
+  executable: false
+  command: null
+  patch_or_script: null
+validation:
+  profile: direction_type_evidence_path_part_id_only
+  status: PUBLICATION_PATHS_AND_ACTUAL_COMPONENT_IDS_CHECKED
+  numerical_tests: NOT_RUN_BY_DESIGN
+  prior_architecture_results: reused_without_revalidation
+  claim_boundary: 관계 기록 및 부품 참조 확인은 연구용 실현기나 LLM 생성 코드 성공을 인증하지 않는다.
+  reference_check:
+    source:
+      path: /workspace/agentic-nas-representation/architectures/transformer/representation.yaml
+      references_checked: 5
+      unique_ids: 5
+    target:
+      path: /workspace/resnet_reconstruction/parallel_coverage/20261105/transformer/experiments/20261116_genealogy_phase3_relative_position/representation.yaml
+      references_checked: 6
+      unique_ids: 6
+specification_proposal:
+  required: false
+  reason: 설명 관계와 명시적 범위는 local_transition_v1로 표현 가능. 공통 연산 의미 변경 없음.
+source_records:
+- side: source
+  paper: https://arxiv.org/html/1706.03762v7
+  paper_version: 1706.03762v7
+  section: 3.2, 3.5
+  implementation:
+    repository: https://github.com/tensorflow/tensor2tensor
+    version: v1.15.7
+    url: https://github.com/tensorflow/tensor2tensor/blob/v1.15.7/tensor2tensor/layers/common_attention.py
+    file: tensor2tensor/layers/common_attention.py
+    functions:
+    - multihead_attention
+    - dot_product_attention
+    authority: original_authors_official_repository; later release, not exact 2017
+      snapshot
+    verification: source_text_read_only_no_import_or_execution
+- side: target
+  paper: https://arxiv.org/html/1803.02155v2
+  paper_version: 1803.02155v2
+  section: 3.1 equations 3-4; 3.2; 3.3
+  implementation:
+    repository: https://github.com/tensorflow/tensor2tensor
+    version: v1.15.7
+    url: https://github.com/tensorflow/tensor2tensor/blob/v1.15.7/tensor2tensor/layers/common_attention.py
+    file: tensor2tensor/layers/common_attention.py
+    functions:
+    - dot_product_attention_relative
+    - _generate_relative_positions_matrix
+    - _generate_relative_positions_embeddings
+    - _relative_attention_inner
+    - multihead_attention
+    authority: original_authors_official_repository; later release, not exact 2018
+      snapshot
+    verification: source_text_read_only_no_import_or_execution
+    scope_note: dot_product_attention_relative uses caller-scaled Q; multihead_attention
+      applies inverse sqrt depth before calling it. Current local YAML takes unscaled
+      Q and scales both score terms together.
+motivation: 입력에 더하는 절대 위치 대신 attention에서 두 위치의 방향과 거리를 직접 다룬다.
+conditions:
+- Shaw et al. 2018의 key 및 value 상대항을 모두 포함하는 self-attention 범위이다.
+- 같은 길이 QKV, 양의 radius, head와 batch가 공유하는 두 독립 테이블, 행마다 허용 key가 필요하다.
+expected_effects:
+- 거리 정보를 score와 출력 집계에 반영한다. 번역 품질 개선은 논문 보고이며 여기서 측정하지 않았다.
+tradeoffs:
+- 학습 테이블과 상대항 계산이 추가되고 clipping 밖의 거리는 구별하지 못한다.
+- 원래 attention과 출력 동등성이나 가중치 직접 호환을 보장하지 않는다.
+changes:
+- before_units:
+  - factors.score_a
+  after_units:
+  - factors.rp_content_score
+  - factors.rp_relative_key_score
+  operation: descriptive_correspondence
+  mechanism: content score에 query와 상대 key의 내적을 추가한다.
+  state_and_resource_contract: 대상 q는 미리 scale하지 않은 float64[B,H,N,D]. 출발 encoder float32
+    인터페이스와 다르다.
+  mapping_status: mapped_scoped
+- before_units: []
+  after_units:
+  - factors.rp_relative_index
+  - factors.rp_relative_lookup
+  operation: descriptive_correspondence
+  mechanism: j-i를 부호 있게 clip하여 독립 key/value 테이블을 조회한다.
+  state_and_resource_contract: caller 소유 두 [2*radius+1,D] 테이블. 내부 등록 파라미터와 지속 상태 없음.
+  mapping_status: target_only_source_out_of_scope
+- before_units:
+  - factors.scale_q
+  - factors.apply_mask
+  - factors.prob_a
+  after_units:
+  - factors.rp_scale_mask_softmax
+  operation: descriptive_correspondence
+  mechanism: content와 상대 key 항을 함께 한 번 scale하고 key축 softmax를 수행한다.
+  state_and_resource_contract: 출발 mask는 제외 표시, 대상 allowed=True는 허용 표시. 빈 허용 행은 범위
+    밖.
+  mapping_status: mapped_scoped
+- before_units:
+  - factors.mix_a
+  after_units:
+  - factors.rp_relative_value_aggregate
+  operation: descriptive_correspondence
+  mechanism: value 가중합에 상대 value를 포함한다.
+  state_and_resource_contract: 같은 확률로 content value와 상대 value를 집계한다.
+  mapping_status: mapped_scoped
+preserve:
+- content QK 내적, key축 정규화, head별 value 집계라는 골격
+- projection, residual, normalization, FFN의 보존은 전체 구조의 개념 대응이며 대상 core에는 없다.
+conceptual_correspondence:
+- source_concept: 입력 절대 위치 임베딩
+  target_concept: attention 내부 상대 위치
+  mapping_status: out_of_scope
+  reason: 기존 Transformer YAML은 입력 위치 부품을 복원하지 않았다. 가상의 삭제 부품 ID를 추가하지 않는다.
+unresolved:
+- 전체 encoder-decoder와 절대 위치 입력 경로는 현재 부품 매핑 범위 밖이다.
+core_mapping_status: complete_scoped

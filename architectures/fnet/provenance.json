@@ -1,0 +1,50 @@
+{
+  "architecture": "fnet",
+  "candidate_origin": "UNMODIFIED_EXTERNAL_LLM_CODE",
+  "scope": {
+    "included": [
+      "single_encoder_block",
+      "two_axis_fourier_mixing",
+      "post_norm_residuals",
+      "biased_ffn",
+      "tanh_gelu",
+      "deterministic_inference"
+    ],
+    "excluded": [
+      "embeddings",
+      "positional_embeddings",
+      "tokenizer",
+      "task_heads",
+      "stacked_model",
+      "training",
+      "gradients",
+      "initialization",
+      "stochastic_dropout",
+      "hybrid_attention",
+      "hardware_performance",
+      "official_float32_rounding"
+    ]
+  },
+  "source_metadata": "sources.yaml",
+  "source_metadata_edit": "Owned distribution copy only: moved invalid list-nested selection_note to root dependency_selection_note; prose and computational metadata unchanged. Producer remains read-only; owner fix recorded in status.",
+  "generation": {
+    "attempts": 1,
+    "model": "Qwen3.8-27B",
+    "sender": "producer_with_separate_user_override",
+    "original_result": "PASS_WITHIN_DECLARED_SCOPE",
+    "repaired_result": "NOT_NEEDED",
+    "final_result": "PASS_WITHIN_DECLARED_SCOPE",
+    "response_processing": "JSON format extraction; separate repaired source if present",
+    "raw_material_location": "Research workspace only"
+  },
+  "evaluation": {
+    "cases": 3,
+    "tolerance": {
+      "atol": 2e-11,
+      "rtol": 2e-11
+    },
+    "independent_reference": true,
+    "numerics_reused_without_rerun": true
+  },
+  "publication": false
+}

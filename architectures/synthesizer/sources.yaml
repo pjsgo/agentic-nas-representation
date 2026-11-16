@@ -1,0 +1,104 @@
+architecture: synthesizer
+selected_variant: Dense Synthesizer, official dense_minus branch
+review_date: '2026-11-16'
+paper:
+  title: 'Synthesizer: Rethinking Self-Attention for Transformer Models'
+  url: https://proceedings.mlr.press/v139/tay21a/tay21a.pdf
+  version: ICML 2021 published PMLR 139, pages 10183-10192
+  arxiv: https://arxiv.org/abs/2005.00743v3
+  arxiv_version: v3, 2021-05-24; version metadata inspected, equations read from published
+    PDF
+  locations: Section 3.1 equations 1-3 Dense; equations 4-7 Random and Factorized;
+    section 3.2 mixtures; page 2 official repository link.
+official_code:
+  repository: https://github.com/tensorflow/mesh
+  commit: e6798a2610a2c2f4c4cd236d8214422cb1ecc00a
+  tag: null
+  pin_evidence: git ls-remote HEAD on review date
+  official_basis: Paper page 2 explicitly releases implementation at tensorflow/mesh.
+    Third-party PyTorch implementations were not used.
+  inspection: Pinned raw files read through web tool. No official runtime executed;
+    direct urllib source download timed out and no source snapshot is claimed.
+  files:
+  - path: mesh_tensorflow/transformer/transformer_layers.py
+    url: https://github.com/tensorflow/mesh/blob/e6798a2610a2c2f4c4cd236d8214422cb1ecc00a/mesh_tensorflow/transformer/transformer_layers.py
+    symbols:
+    - Synthesizer.__init__
+    - Synthesizer.make_params
+    - Synthesizer.call
+    lines: 573-691
+    evidence: minus retains query as first tokenwise projection, uses shared_kv, calls
+      synthetic_attention and compute_output. q is not paired with a key in dense_minus.
+  - path: mesh_tensorflow/transformer/attention.py
+    url: https://github.com/tensorflow/mesh/blob/e6798a2610a2c2f4c4cd236d8214422cb1ecc00a/mesh_tensorflow/transformer/attention.py
+    symbols:
+    - synthetic_attention
+    - AttentionParams.init_weights
+    - AttentionParams.compute_q
+    - AttentionParams.compute_kv
+    - AttentionParams.compute_output
+    - visibility_mask_to_attention_bias
+    lines: 167-341, 422-552
+    evidence: dense_minus uses bias-free dense(ReLU(q)) into max_length, default 512,
+      slices the key columns, applies bias and key softmax, then aggregates values.
+      Default folded query scaling means no explicit query scale at runtime.
+  - path: mesh_tensorflow/layers.py
+    url: https://github.com/tensorflow/mesh/blob/e6798a2610a2c2f4c4cd236d8214422cb1ecc00a/mesh_tensorflow/layers.py
+    symbols:
+    - dense
+    - get_dense_kernel_weights
+    - unit_scaling_convention
+    - us_einsum
+    evidence: dense expert_dims defaults to []; kernel consists of expert_dims + reduced_dims
+      + new_dims. dense_minus passes only key_dim as reduced_dims and length as new_dims,
+      so pi is [D,L] shared across heads. Default unit scaling is false.
+reconciliation:
+- Paper writes head-indexed functions. This reconstruction selects the concrete official
+  shared-pi parameterization, not an invented independent W2 for every head.
+- w1 is official q kernel, wv is official kv kernel used only as values, wo is output
+  kernel, w2 is pi kernel. Flattened official head dimensions are exposed as explicit
+  H,D axes.
+- D is both hidden and value width; output width equals input M. H>=2 avoids the official
+  singleton-head dimension omission corner. num_memory_heads=0.
+- L is configurable as in synthetic_attention(max_length); toy cases use smaller L
+  without removing N<=L.
+- Explicit bool mask with -inf is a local equation contract in place of official finite
+  negative visibility bias. All-masked rows are rejected. Relative biases are excluded.
+- Float64 CPU equations use effective supplied weights with fold_scaling_into_initializer=true,
+  unit_scaling_convention=false. No initialization or official dtype parity claim.
+restoration_scope:
+  included:
+  - first_token_projection
+  - relu
+  - shared_length_projection
+  - length_prefix
+  - multihead_value_projection
+  - mask
+  - softmax
+  - weighted_values
+  - head_output_projection
+  excluded:
+  - Random
+  - Factorized_Dense
+  - Factorized_Random
+  - mixture_plus
+  - mixture_plus_alpha
+  - full_transformer
+  - training
+  - performance
+  - incremental_decoding
+  - dropout
+  - initialization
+  - arbitrary_additive_bias
+  - extra_softmax_logit
+reference:
+  method: Independent Python scalar loops and math.exp; torch used only to allocate
+    and package returned tensors.
+  shared_candidate_helpers: false
+  comparison_scope: logits, probabilities and final output in three small cases; no
+    exhaustive intermediate comparison
+limitations:
+- Official Mesh TensorFlow runtime not executed
+- No quality or speed comparison
+external_generation_evidence: status.yaml and original_result.json; generated code
+  passed scoped independent validation; official runtime remains unexecuted

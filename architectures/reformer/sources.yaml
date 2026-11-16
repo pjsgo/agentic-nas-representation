@@ -1,0 +1,75 @@
+architecture: reformer
+paper:
+  title: 'Reformer: The Efficient Transformer'
+  authors: [Nikita Kitaev, Lukasz Kaiser, Anselm Levskaya]
+  version: arXiv:2001.04451v2
+  version_date: '2020-02-18'
+  url: https://arxiv.org/abs/2001.04451v2
+  full_text: https://arxiv.org/html/2001.04451v2
+  local_evidence: evidence/paper.html
+  reviewed: ['Section 2 equations 1-6 and causal masking', 'Appendix A equations 11-16']
+  official_code_attribution: 'Paper links google/trax/tree/master/trax/models/reformer. The selected attention layer is in the same official repository.'
+code:
+  repository: https://github.com/google/trax
+  official: true
+  commit: 31022d6cd7dd525ed11a04d84cd3936228499173
+  commit_date: '2025-09-26T14:37:26Z'
+  tag: null
+  url: https://github.com/google/trax/blob/31022d6cd7dd525ed11a04d84cd3936228499173/trax/layers/research/efficient_attention.py
+  file: trax/layers/research/efficient_attention.py
+  local_evidence: evidence/efficient_attention.py
+  commit_resolution: evidence/upstream_commit.json
+  functions:
+    - length_normalized
+    - hash_vecs
+    - look_adjacent
+    - mask_self_attention
+    - attend
+    - LSHSelfAttention.hash_vectors
+    - LSHSelfAttention.forward_unbatched
+  selected_configuration:
+    mode: eval
+    masked: false
+    share_qk: true
+    n_chunks_before: 1
+    n_chunks_after: 0
+    n_buckets: explicit_even_integer
+    n_hashes: supplied_rotations_round_axis
+    causal: explicit_boolean
+    attention_dropout: 0
+    output_dropout: 0
+  runtime_execution: 'Not executed. Source reviewed statically; no Trax/JAX installation. Numerical comparison uses an independently written scalar reference.'
+version_decisions:
+  authority: 'Pinned official second implementation governs exact core calculations. Paper supplies provenance and comparison, not extra mask rules.'
+  normalization: 'Source divides keys by sqrt(mean(qk^2)+1e-6), then sqrt(D). Queries remain unchanged. Do not replace this with an exact unit norm or normalize queries.'
+  bucket_mask: 'The selected forward path does not test bucket equality. Sorted chunk neighbors may come from different buckets.'
+  duplicates: 'No duplicate-count correction exists in the selected forward path. Every occurrence remains in chunk softmax and round merge, including repeats across rounds or across a round boundary.'
+  paper_difference: 'Appendix A defines strict bucket sets and log N_ij duplicate correction. Neither is added to this later code profile. This reconstruction is not an exact implementation of paper equations 4 and 16.'
+  round_boundary: 'look_adjacent rolls over all R*T/C chunks after globally sorting offset buckets. Previous-chunk lookup can cross a round boundary and wraps last-to-first globally.'
+  self_and_causal: 'mask_self_attention subtracts 1e5 on equal original positions and 1e9 on future positions when causal. It does not replace self scores by a constant or use negative infinity.'
+  merge: 'forward_unbatched restores each occurrence to round-major original order, then weights round outputs by exp(logsumexp_r-logsumexp_over_rounds). No arithmetic averaging.'
+  numeric_port: 'Float64 CPU evaluation of selected formulas; upstream rotation generation casts float32. Fixed rotation input replaces RNG generation only, not hash or sorting. No bitwise JAX/runtime or RNG distribution equivalence claim.'
+restoration_boundary:
+  input: 'Already projected qk[T,D], v[T,Dv], rotations[D,R,K/2]'
+  output: 'Merged attention values [T,Dv] before output projection'
+  included: 'Angular hash, offset bucket/position sort, previous/current global chunks, key normalization, finite masks, occurrence softmax, inverse sort and multi-round merge'
+  excluded: 'Projection matrices, full Reformer model, reversible residual, FFN chunking, training/backward, optimized kernels, padding, incremental cache, RNG state, factorized hashes and automatic bucket sizing'
+  multi_round_feasibility: 'Included at R=2 and R=3 in small cases. No single-round-only fallback was necessary.'
+part_mapping:
+  reformer_hash_sort: 'hash_vecs; LSHSelfAttention.hash_vectors; forward_unbatched sort_key_val'
+  reformer_chunk_connections: 'attend reshape; look_adjacent'
+  reformer_score_mask: 'length_normalized; attend key scaling; mask_self_attention'
+  reformer_chunk_attention: 'attend logsumexp, exp and value multiplication'
+  reformer_restore_merge: 'forward_unbatched permute_via_gather/permute_via_sort and round probabilities'
+reference_independence:
+  candidate: 'Torch einsum, argsort, roll, gathered key/value tensors and weighted round outputs'
+  reference: 'Python scalar dot products and first-maximum hash, tuple sorting, direct circular index enumeration, final softmax over the full multiset of occurrences'
+  shared_computational_helpers: false
+  evaluation: 'Three fixtures compare output and discrete hash/sort/connectivity plus round normalizers and weights. No dense-attention equality assumption.'
+representation_basis:
+  example: seq2seq/experiments/20261116_genealogy_phase3_alibi/representation.yaml
+  specs: /workspace/agentic-nas-representation/specs/representation/reading-rules-v1.md
+  format: local_equational_graph_v1
+  common_schema_certification: NOT_CLAIMED
+  common_specs_changes: []
+  proposal: 'None needed for the existing local equational format. A future primitive schema would need explicit argmax, sorting, gather and circular chunk semantics; do not claim frozen v0.3 coverage.'

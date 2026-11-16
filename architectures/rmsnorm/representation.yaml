@@ -1,0 +1,42 @@
+representation_version: local_equational_graph_v1
+operator_profile: inline_equations_below
+reading_rules: specs/representation/reading-rules-v1.md
+architecture: rmsnorm
+architecture_entry: reconstructed.py:rmsnorm
+scope:
+  included: [full_last_axis_rms, outside_sqrt_epsilon, scale_only]
+  excluded: [partial_rmsnorm, offset_bias, mean_centering, mixed_precision, training, gradients, initialization, module_registration]
+interface:
+  function: 'rmsnorm(x, scale, eps=1e-8) -> dict'
+  inputs:
+    x: 'finite CPU float64 tensor [...,D], rank >= 1, all dimensions positive'
+    scale: 'finite CPU float64 tensor [D]'
+    eps: 'positive finite Python float, default 1e-8'
+  outputs:
+    output: 'CPU float64, same shape as x'
+    rms: 'CPU float64 [...,1], before epsilon'
+parameters:
+  scale: 'Learnable scale in source, caller supplies [D]; shared across all leading coordinates. No bias. No internal parameter creation or copies that detach input.'
+state: {persistent: none, running_statistics: none, random: false, input_mutation: false, parameter_mutation: false}
+factors:
+  rmsnorm_core:
+    operator: full_rms_scale
+    equations:
+      - 'rms[...,0] = sqrt(sum_d(x[...,d]*x[...,d])/D)'
+      - 'output[...,d] = scale[d] * (x[...,d]/(rms[...,0]+eps))'
+    attributes:
+      reduction_axis: last_only
+      mean_subtraction: false
+      epsilon_location: after_square_root
+      accumulation_dtype: float64
+      output_dtype: float64
+      bias: false
+      partial: false
+contains: {rmsnorm_unit: [rmsnorm_core]}
+dataflow:
+  - [x, rmsnorm_core.x]
+  - [scale, rmsnorm_core.scale]
+  - [eps, rmsnorm_core.eps]
+  - [rmsnorm_core.output, output]
+  - [rmsnorm_core.rms, rms]
+specification_note: Local equation graph, not universal schema certification. Bounded inputs only; overflow and underflow extremes excluded.

@@ -1,0 +1,99 @@
+representation_version: local_equational_graph_v1
+operator_profile: inline_equations_below
+reading_rules: specs/representation/reading-rules-v1.md
+architecture: pre-ln
+architecture_entry: reconstructed.py:pre_ln
+scope:
+  included: [single_encoder_block, pre_attention_layernorm, multihead_self_attention, attention_residual, pre_ffn_layernorm, relu_ffn, ffn_residual, key_padding_mask]
+  excluded: [stack, stack_final_normalization, embeddings, positional_encoding, decoder, cross_attention, incremental_cache, dropout_training, gradients, optimizer, initialization, module_registration, mixed_precision]
+  final_normalization: 'No extra normalization after block output. The second norm is BEFORE FFN. A full Pre-LN stack has an additional final LayerNorm outside this block, excluded here.'
+interface:
+  function: 'pre_ln(x, params, padding, heads, eps=1e-5) -> dict'
+  inputs:
+    x: 'finite CPU float64 [B,T,E]'
+    params: 'dict of CPU float64 tensors defined in parameters; all finite'
+    padding: 'CPU bool [B,T], True excludes a KEY for every query and head. Padded queries still produce output.'
+    heads: 'positive Python int H, E divisible by H, D=E/H'
+    eps: 'positive finite Python float, default 1e-5'
+  constraints: 'B,T,E,F,H positive; each batch has at least one nonpadding key; bounded finite inputs, no overflow cases'
+  outputs:
+    output: 'CPU float64 [B,T,E], second residual sum'
+    after_attention: 'CPU float64 [B,T,E], first residual sum'
+    probabilities: 'CPU float64 [B,H,T,T], query axis then key axis'
+parameters:
+  ownership: 'Caller supplies all 16 distinct tensors, no internal registration, initialization or mutation. Same parameters reused over all batches and positions. No tying between norm1/norm2 or q/k/v.'
+  shapes:
+    norm1_weight: '[E]'
+    norm1_bias: '[E]'
+    norm2_weight: '[E]'
+    norm2_bias: '[E]'
+    q_weight: '[E,E]'
+    q_bias: '[E]'
+    k_weight: '[E,E]'
+    k_bias: '[E]'
+    v_weight: '[E,E]'
+    v_bias: '[E]'
+    out_weight: '[E,E]'
+    out_bias: '[E]'
+    fc1_weight: '[F,E]'
+    fc1_bias: '[F]'
+    fc2_weight: '[E,F]'
+    fc2_bias: '[E]'
+state: {persistent: none, cache: none, running_statistics: none, random: false, input_mutation: false, parameter_mutation: false}
+semantics:
+  dtype: 'All arithmetic, reductions and softmax in float64; no float32 softmax conversion'
+  linear: 'linear(z,W,b)[...,o]=sum_i z[...,i]*W[o,i]+b[o]'
+  layernorm: 'LN(z,g,b)=(z-mean_e(z))/sqrt(mean_e((z-mean_e(z))^2)+eps)*g+b; last E axis only, population variance, keepdim statistics'
+  mode: 'Deterministic eval; attention, activation and residual dropout are identity'
+factors:
+  preln_attention_norm:
+    operator: layernorm
+    equation: 'u=LN(x,params.norm1_weight,params.norm1_bias)'
+  preln_attention:
+    operator: explicit_multihead_self_attention
+    equations:
+      - 'q0=linear(u,params.q_weight,params.q_bias); k0=linear(u,params.k_weight,params.k_bias); v0=linear(u,params.v_weight,params.v_bias)'
+      - 'q[b,h,t,d]=q0[b,t,h*D+d]; k[b,h,t,d]=k0[b,t,h*D+d]; v[b,h,t,d]=v0[b,t,h*D+d]'
+      - 'logit[b,h,i,j]=sum_d q[b,h,i,d]*k[b,h,j,d]/sqrt(D)'
+      - 'masked[b,h,i,j]=-inf if padding[b,j] else logit[b,h,i,j]'
+      - 'probabilities=exp(masked-max_j(masked))/sum_j exp(masked-max_j(masked)); excluded keys have exactly zero probability'
+      - 'merged[b,i,h*D+d]=sum_j probabilities[b,h,i,j]*v[b,h,j,d]'
+      - 'a=linear(merged,params.out_weight,params.out_bias)'
+    attributes: {causal: false, attention_bias_kv: false, add_zero_attn: false}
+  preln_attention_residual:
+    operator: add
+    equation: 'r=x+a; after_attention=r'
+  preln_ffn_norm:
+    operator: layernorm
+    equation: 'w=LN(r,params.norm2_weight,params.norm2_bias)'
+  preln_ffn:
+    operator: two_linear_relu
+    equation: 'f=linear(max(0,linear(w,params.fc1_weight,params.fc1_bias)),params.fc2_weight,params.fc2_bias)'
+  preln_ffn_residual:
+    operator: add
+    equation: 'output=r+f'
+contains:
+  preln_encoder_block: [preln_attention_norm, preln_attention, preln_attention_residual, preln_ffn_norm, preln_ffn, preln_ffn_residual]
+dataflow:
+  - [x, preln_attention_norm.x]
+  - [params.norm1_weight, preln_attention_norm.gamma]
+  - [params.norm1_bias, preln_attention_norm.beta]
+  - [eps, preln_attention_norm.eps]
+  - [preln_attention_norm.u, preln_attention.u]
+  - [params, preln_attention.params]
+  - [heads, preln_attention.heads]
+  - [padding, preln_attention.padding]
+  - [x, preln_attention_residual.x]
+  - [preln_attention.a, preln_attention_residual.a]
+  - [preln_attention_residual.r, preln_ffn_norm.r]
+  - [params.norm2_weight, preln_ffn_norm.gamma]
+  - [params.norm2_bias, preln_ffn_norm.beta]
+  - [eps, preln_ffn_norm.eps]
+  - [preln_ffn_norm.w, preln_ffn.w]
+  - [params, preln_ffn.params]
+  - [preln_attention_residual.r, preln_ffn_residual.r]
+  - [preln_ffn.f, preln_ffn_residual.f]
+  - [preln_ffn_residual.output, output]
+  - [preln_attention_residual.r, after_attention]
+  - [preln_attention.probabilities, probabilities]
+specification_note: 'Local scoped equation graph; no universal schema certification. Functional float64 adaptation of source placement, not bitwise fidelity to every backend.'

@@ -1,0 +1,43 @@
+architecture: sparse-moe
+paper:
+  title: 'Outrageously Large Neural Networks: The Sparsely-Gated Mixture-of-Experts Layer'
+  url: https://arxiv.org/html/1701.06538v1
+  version: arXiv v1, 2017-01-23
+  reviewed: Sections 2 and 2.1 equations 1-5; section 3.2 one-hidden-layer ReLU experts
+code:
+  repository: https://github.com/tensorflow/tensor2tensor
+  provenance: Official TensorFlow Tensor2Tensor research implementation; not claimed to be the exact original 2017 experiment checkout
+  commit: bafdc1b67730430d38d6ab802cbd51f9d053ba2e
+  tag: null
+  file: tensor2tensor/utils/expert_utils.py
+  url: https://github.com/tensorflow/tensor2tensor/blob/bafdc1b67730430d38d6ab802cbd51f9d053ba2e/tensor2tensor/utils/expert_utils.py
+  inspected_copy: source_expert_utils.py.txt
+  functions:
+    noisy_top_k_gating: lines 514-578, cites the paper; clean score and selected softmax
+    SparseDispatcher: lines 733-837, gather token minibatches and gate-weighted segment sum
+    ffn_expert_fn: lines 956-983, bias-free FFN with hidden ReLU and layer width scaling
+    local_moe: lines 994-1070, gating to dispatch to experts to combine
+scope:
+  restored: Deterministic noise-free top-k routing and one-hidden-layer bias-free ReLU experts
+  configuration: noisy_gating=false; one hidden size H; caller supplies all weights; no initialization claim
+  excluded: [noisy_training, W_noise, load_and_importance_losses, hierarchy, full_model, distributed_execution, gradients]
+source_differences:
+  - Source is float32; local mathematical fidelity comparison uses float64 throughout, not bitwise framework parity.
+  - FFN output width scaling (H/D)^(-0.5) is retained explicitly. It is a pinned code choice, not asserted as a universal MoE requirement.
+  - Lower expert index breaks tied logits in this local interface. No cross-framework tie-parity claim.
+  - Noise and W_noise are omitted entirely. The inspected noisy branch uses (softplus(x W_noise)+0.01)*train as standard deviation; it is not executed here.
+  - Dense diagnostic tensors for unselected expert pairs are filled with zero; official execution instead stores packed selected minibatches.
+reference:
+  implementation: reference.py
+  method: Independent Python scalar loops, math.exp and explicit FFN sums from inspected equations
+  independence: Does not import realization or share router, dispatch, softmax, FFN or combine helpers
+  official_runtime_executed: false
+relation_handoff:
+  successor: switch-transformer
+  preserved: [input_dependent_linear_router, distinct_expert_parameters, sparse_token_dispatch, one_hidden_relu_FFN, gate_weighted_output]
+  changed:
+    - Selected top-k softmax becomes full-expert softmax followed by top-1 without renormalization.
+    - Unlimited selected-token minibatches become ordered bounded slots with overflow dropping and padding exclusion.
+    - Pinned Tensor2Tensor FFN width scaling is absent from the Mesh Switch FFN selected here.
+  part_ids: [sparse_moe_router, sparse_moe_topk_gate, sparse_moe_experts, sparse_moe_combine]
+  mapping_claim: Scoped computational comparison only; relation session assigns historical relation type and identifiers

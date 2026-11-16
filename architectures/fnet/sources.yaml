@@ -1,0 +1,48 @@
+architecture: fnet
+paper:
+  title: 'FNet: Mixing Tokens with Fourier Transforms'
+  url: https://arxiv.org/html/2105.03824v4
+  version: arXiv 2105.03824v4, 2022-05-26
+  inspected: 'Sections 3.1 to 3.3, equations 1 to 3, architecture Figure 1'
+  findings: 'Two axis DFT followed by real extraction. Eq 1 is unnormalized; Eq 2 displays a normalized illustrative matrix. Selected official FFT path is unnormalized and governs this reconstruction.'
+official_code:
+  repository: https://github.com/google-research/google-research
+  commit: a6b34656576b4c154a1717ee34c5242be9eba863
+  official_basis: Paper directly links Google Research f_net repository
+  files:
+    - path: f_net/layers.py
+      url: https://github.com/google-research/google-research/blob/a6b34656576b4c154a1717ee34c5242be9eba863/f_net/layers.py
+      local_copy: official_layers.py
+      functions: [FourierTransform.__call__, EncoderBlock.__call__, FeedForwardLayer.__call__]
+      findings: 'vmap FFT over each sequence-hidden matrix, then .real. FourierTransform discards padding_mask. Encoder has two post-residual LayerNorm calls with epsilon 1e-12. FFN is dense, GELU, dense, dropout.'
+    - path: f_net/models.py
+      url: https://github.com/google-research/google-research/blob/a6b34656576b4c154a1717ee34c5242be9eba863/f_net/models.py
+      local_copy: official_models.py
+      functions: [EncoderModel._init_fourier_transform, EncoderModel._init_mixing_sublayer, EncoderModel.__call__]
+      findings: 'use_fft selects jnp.fft.fftn without normalization argument. Matrix alternative calls scipy.linalg.dft without scale. Official FFT config rejects non-power-of-two maximum lengths above 4096. Model builds attention masks but Fourier sublayer ignores them.'
+    - path: f_net/requirements.txt
+      local_copy: official_requirements.txt
+      findings: 'Lower bounds only, including flax>=0.3.0 and jax>=0.2.4; not a unique locked runtime.'
+dependency_semantics:
+  - url: https://github.com/google/flax/blob/v0.3.6/flax/linen/normalization.py
+    tag: v0.3.6
+    local_copy: flax_normalization.py
+    functions: [LayerNorm.__call__, _compute_stats, _normalize]
+    findings: 'Last-axis population moments max(0,E[x^2]-E[x]^2), affine scale and bias, epsilon inside rsqrt. Source casts statistics and output to float32. Our explicit local numerical profile promotes both to float64.'
+  - url: https://github.com/google/flax/blob/v0.3.6/flax/linen/activation.py
+    tag: v0.3.6
+    local_copy: flax_activation.py
+    functions: [gelu reexport from jax.nn]
+  - url: https://github.com/jax-ml/jax/blob/jax-v0.2.4/jax/_src/nn/functions.py
+    tag: jax-v0.2.4
+    local_copy: jax_functions.py
+    functions: [gelu]
+    findings: 'Default approximate=True, tanh approximation with 0.044715 and sqrt(2/pi).'
+dependency_selection_note: 'These official dependency tags establish the selected equation semantics; no claim they are a locked historical training environment. Attempted flax v0.3.0 linen URL returned 404, so inspected v0.3.6 explicitly.'
+reconstruction:
+  included: 'Full single deterministic encoder block at hidden-state boundary, not mixer-only'
+  excluded: 'Embeddings, heads, stack, training, initialization, dropout randomness, float32 rounding, gradients, performance'
+  adaptations: 'Functional external parameters in Dense input-output kernel orientation; float64/complex128 equation-level validation; N<=4096 scoped interface; optional [B,N] mask accepted and ignored, matching Fourier behavior rather than copying model attention-mask shape.'
+  source_oracle_executed: false
+  independent_reference: 'Explicit complex DFT matrices in NumPy, scalar math FFN and normalization; candidate uses torch FFT and vectorized operations. No candidate imports in reference.'
+  unresolved: 'Official runtime numerical equivalence and training performance are outside validated scope.'

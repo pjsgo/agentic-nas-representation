@@ -1,0 +1,67 @@
+architecture: alibi
+paper:
+  title: 'Train Short, Test Long: Attention with Linear Biases Enables Input Length
+    Extrapolation'
+  authors:
+  - Ofir Press
+  - Noah A. Smith
+  - Mike Lewis
+  url: https://arxiv.org/abs/2108.12409v2
+  read_url: https://arxiv.org/html/2108.12409v2
+  version: v2
+  version_date: '2022-04-22'
+  sections:
+  - '3'
+  - Figure 3
+  - footnotes 9 and 10
+  findings: Fixed positive per-head slopes multiply negative past distance; add bias
+    after QK scaling and before causal softmax; no learned positional embedding.
+  distinction: Paper describes the geometric schedule and trains power-of-two heads.
+    Non-power-of-two concatenation order is taken from official code.
+code:
+  repository: https://github.com/ofirpress/attention_with_linear_biases
+  commit: 4b92f28a005ead2567abe2359f633e73e08f3833
+  commit_resolution: git ls-remote HEAD, followed by reading raw files at this exact
+    commit
+  official_basis: Paper links this author repository.
+  execution: Source read only; full fairseq project not imported or run.
+  files:
+  - file: fairseq/models/transformer.py
+    url: https://github.com/ofirpress/attention_with_linear_biases/blob/4b92f28a005ead2567abe2359f633e73e08f3833/fairseq/models/transformer.py
+    functions:
+    - TransformerDecoder.__init__.get_slopes
+    - TransformerDecoder.buffered_future_mask
+    lines:
+    - 742-762
+    - 1011-1024
+    findings: Recursive slope generation; column bias slope times arange; causal mask
+      plus bias. Source comments explicitly explain translation-invariant softmax.
+  - file: fairseq/modules/multihead_attention.py
+    url: https://github.com/ofirpress/attention_with_linear_biases/blob/4b92f28a005ead2567abe2359f633e73e08f3833/fairseq/modules/multihead_attention.py
+    functions:
+    - MultiheadAttention.__init__
+    - MultiheadAttention.forward
+    lines:
+    - '56'
+    - '225'
+    - 333-342
+    - 361-368
+    findings: Scale query by head_dim^-0.5 before QK; add mask before softmax; multiply
+      probabilities with values.
+    limitation: Equation-level adaptation at projected QKV boundary; not a claim that
+      every fairseq forward dispatch or mask-shape path was executed.
+restoration:
+  included: Fixed slopes, signed relative bias, scaled QK, causal mask, key softmax
+    and weighted values.
+  excluded: Full model, projections, embeddings, training, dropout, padding, cache
+    management, length extrapolation quality and performance.
+  offsets: Query/key offsets expose a contiguous slice of the same causal sequence;
+    local interface adaptation, not an official decoder API claim.
+  state_adaptation: Official decoder stores slopes and bias as plain tensors. Local
+    core registers immutable slopes as a persistent buffer for explicit portable state;
+    no trainable parameters.
+  reference_independence: Recursive official slope construction and scalar column-bias
+    oracle versus closed-form exponent schedule and vectorized signed-distance candidate.
+    No shared slope or bias helper.
+  precision: Candidate float32; scalar reference computes in Python double precision
+    with torch float64 result containers.

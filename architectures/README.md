@@ -29,3 +29,27 @@
 | [BigBird](bigbird/README.md) | 외부 random graph를 받는 local/global/random block attention core | [YAML](bigbird/representation.yaml) | [코드](bigbird/reconstructed.py) |
 | [FlashAttention](flashattention/README.md) | CPU 타일 전방 계산과 online softmax 누적, causal mask | [YAML](flashattention/representation.yaml) | [코드](flashattention/reconstructed.py) |
 | [GQA](gqa/README.md) | 외부 QKV의 query-to-KV 그룹 대응, causal prefix와 G-head cache | [YAML](gqa/representation.yaml) | [코드](gqa/reconstructed.py) |
+
+<!-- phase3 -->
+
+3차 위치 표현 3개는 연구용 실현과 외부 LLM 생성 코드의 독립 참조 검사를 통과했습니다. 생성 원본 통과 3개, 수정 후 통과 0개이며 세부 이력은 각 provenance에 기록했습니다.
+
+| 노드 | 복원 범위 | 자료 |
+|---|---|---|
+| Relative Position | 부호 있는 거리 clipping과 상대 key/value를 포함한 projected self-attention core | [자료](relative-position/README.md) |
+| RoPE | 명시 위치의 인접 feature 쌍 회전과 attention core | [자료](rope/README.md) |
+| ALiBi | 고정 head slope와 causal 거리 bias attention core | [자료](alibi/README.md) |
+
+- [rmsnorm](rmsnorm/README.md): LLM 생성 원본을 계산 수정 없이 독립 참조와 비교하여 통과했습니다.
+
+- [pre-ln](pre-ln/README.md): LLM 생성 원본을 계산 수정 없이 독립 참조와 비교하여 통과했습니다.
+
+- [sparse-moe](sparse-moe/README.md): 생성 원본은 실패했으며 별도 수정본이 독립 참조 검사를 통과했습니다.
+
+- [switch-transformer](switch-transformer/README.md): 생성 원본은 실패했으며 별도 수정본이 독립 참조 검사를 통과했습니다.
+
+- [reformer](reformer/README.md): 생성 원본은 실패했으며 별도 수정본이 독립 참조 검사를 통과했습니다.
+
+- [synthesizer](synthesizer/README.md): LLM 생성 원본을 계산 수정 없이 독립 참조와 비교하여 통과했습니다.
+
+- [fnet](fnet/README.md): LLM 생성 원본을 계산 수정 없이 독립 참조와 비교하여 통과했습니다.

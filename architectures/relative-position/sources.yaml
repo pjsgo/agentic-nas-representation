@@ -1,0 +1,86 @@
+architecture: Relative Position
+source_review_date: '2026-11-16'
+paper:
+  title: Self-Attention with Relative Position Representations
+  authors:
+  - Peter Shaw
+  - Jakob Uszkoreit
+  - Ashish Vaswani
+  url: https://arxiv.org/abs/1803.02155v2
+  version: v2
+  version_date: '2018-04-12'
+  inspected: https://arxiv.org/html/1803.02155v2
+  locations:
+  - section 3.1 equations 3 and 4
+  - section 3.2 signed distance and clipping
+  - section 3.3 head sharing and equation 5
+  - section 4.1 experimental variants
+  - section 4.3 key/value ablations
+official_code:
+  repository: https://github.com/tensorflow/tensor2tensor
+  official_basis: Paper section 4.1 footnote identifies tensor2tensor as the implementation
+    library
+  tag: v1.15.7
+  url: https://github.com/tensorflow/tensor2tensor/blob/v1.15.7/tensor2tensor/layers/common_attention.py
+  file: tensor2tensor/layers/common_attention.py
+  functions:
+    _generate_relative_positions_matrix: key minus query, inclusive clip, shift by
+      radius; cache=False, equal lengths selected
+    _generate_relative_positions_embeddings: gather [2*radius+1,depth] table; no head
+      dimension
+    _relative_attention_inner: content matmul plus relative matmul, for both logits
+      and output
+    dot_product_attention_relative: distinct relative_positions_keys and relative_positions_values;
+      add bias before softmax; dropout disabled
+    multihead_attention: q multiplied by key_depth_per_head**-0.5 before relative
+      attention when vars_3d is false
+  version_limitation: Pinned later release implements the selected equations; not
+    claimed to be the exact 2018 training checkout
+scope_decisions:
+  variant: full_relative_key_and_value
+  head_sharing: Select section 3.3 sharing and official table layout. Section 4.1
+    base experiment used per-head tables, whereas big used per-layer tables; do not
+    claim all paper experiments shared heads.
+  boundary: Already-projected unscaled Q K V in; per-head attention output out. Same
+    D for keys and values.
+  scaling_adapter: Our public core scales combined scores internally; official caller
+    scales q before entering dot_product_attention_relative. Algebraically equivalent
+    for both score terms.
+  mask_adapter: Boolean allowed mask converted to -infinity after score scaling; official
+    implementation takes additive bias. Nonempty rows only; no arbitrary finite additive
+    bias in this scope.
+  parameter_adapter: Caller passes two distinct tables; original TensorFlow variable
+    registration and initialization excluded
+  excluded:
+  - full_transformer
+  - projections
+  - output_projection
+  - residual
+  - normalization
+  - ffn
+  - training
+  - dropout
+  - head_specific_tables
+  - recurrent_memory
+  - incremental_cache
+  - cross_attention
+  - hard_attention
+  - gumbel_noise
+  - throughput_claims
+reference:
+  method: Independent NumPy scalar loops using equations 3 and 4
+  candidate_method: PyTorch matmul and einsum using decomposed equation 5
+  independence: Separate index construction; no shared computational helper; reference
+    never imports candidate
+  source_execution: NOT_RUN
+  limitation: Numerical comparison validates a paper-equation oracle, not execution
+    parity against the full TensorFlow project
+yaml_source_mapping:
+  rp_relative_index: paper section 3.2; _generate_relative_positions_matrix
+  rp_relative_lookup: _generate_relative_positions_embeddings; two distinct scopes
+    in dot_product_attention_relative
+  rp_content_score: equation 5 first term; _relative_attention_inner xy_matmul
+  rp_relative_key_score: equation 5 second term; _relative_attention_inner x_tz_matmul
+  rp_scale_mask_softmax: equations 2 and 4; multihead_attention scaling; dot_product_attention_relative
+    bias and softmax
+  rp_relative_value_aggregate: equation 3; _relative_attention_inner transpose=False

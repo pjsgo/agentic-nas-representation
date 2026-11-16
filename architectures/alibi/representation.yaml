@@ -1,0 +1,154 @@
+representation_version: local_equational_graph_v1
+operator_profile: inline_equations_below
+reading_rules: ../../specs/representation/reading-rules-v1.md
+architecture: alibi
+architecture_entry: reconstructed.py:ALiBiCore
+scope:
+  included:
+  - fixed_head_slopes
+  - signed_relative_distance_bias
+  - scaled_dot_product
+  - causal_mask
+  - key_softmax
+  - value_mixing
+  - explicit_position_offsets
+  excluded:
+  - qkv_projections
+  - output_projection
+  - embeddings
+  - residual
+  - normalization
+  - ffn
+  - dropout
+  - training
+  - gradients
+  - full_decoder
+  - kv_cache_management
+  - padding_masks
+  - bidirectional_attention
+  - extrapolation_performance
+interface:
+  constructor: 'ALiBiCore(num_heads: int)'
+  forward: forward(q, k, v, q_offset=0, k_offset=0) -> dict
+  q: float32 CPU [B,H,T,D], already projected and split into heads, not scaled
+  k: float32 CPU [B,H,S,D]
+  v: float32 CPU [B,H,S,Dv]
+  constraints:
+  - B,H,T,S,D,Dv are positive integers; H equals num_heads
+  - q_offset and k_offset are nonnegative integers with k_offset <= q_offset and q_offset+T
+    <= k_offset+S
+  - Positions are consecutive; queries are a contiguous subset of the key sequence
+    from the same self-attention stream
+  - Every query includes its own key; no entirely masked row
+  - Inputs finite; abs values <= 2; offsets and lengths <= 4096; D <= 64
+  - Eval CPU float32 only; no input, buffer or parameter mutation
+  returns:
+    slopes: float32 [H]; clone of fixed buffer
+    bias: float32 [H,T,S]; signed canonical bias before mask, including unused future
+      entries
+    logits: float32 [B,H,T,S]; canonical scaled scores plus bias, then causal mask
+    weights: float32 [B,H,T,S]; softmax along S
+    output: float32 [B,H,T,Dv]; weighted values, heads remain separate
+parameters:
+  trainable: []
+  position_embedding: none
+  projection_parameters: none
+state:
+  buffers:
+    slopes: persistent registered buffer float32 [H], requires_grad=false; deterministic
+      constructor values; state_dict has exactly this key
+  recurrence: none
+  cache: none
+  mutations: none
+  checkpoint_contract: Only same-H canonical slopes may be loaded; arbitrary slope
+    replacement is outside the contract
+notation:
+  indices: b=batch, h=zero-based head, i=query index, j=key index, d=feature
+  positions: qi=q_offset+i; kj=k_offset+j
+  distance: qi-kj is nonnegative for allowed keys; past keys receive nonpositive bias
+  slope_order: Preserve concatenation order; never sort slopes
+factors:
+  alibi_slopes:
+    operator: fixed_geometric_sequence
+    equation: Let P be the largest power of two <= H. For 0<=h<P, m[h]=2^(-8*(h+1)/P).
+      For 0<=r<H-P, m[P+r]=2^(-8*(2*r+1)/(2*P)). For H=P the second sequence is empty.
+      Compute constants in real arithmetic then store float32.
+  alibi_distance:
+    operator: signed_position_difference
+    equation: delta[i,j]=(k_offset+j)-(q_offset+i)
+  alibi_bias:
+    operator: head_scaled_distance
+    equation: bias[h,i,j]=m[h]*delta[i,j]
+  alibi_scaled_qk:
+    operator: scaled_dot_product
+    equation: score[b,h,i,j]=sum_d(q[b,h,i,d]*k[b,h,j,d])/sqrt(D)
+  alibi_add_bias:
+    operator: broadcast_add
+    equation: z[b,h,i,j]=score[b,h,i,j]+bias[h,i,j]
+    rule: Scale QK only. Bias is added after scaling and is never divided by sqrt(D).
+  alibi_causal_mask:
+    operator: masked_fill
+    equation: logits[b,h,i,j]=z[b,h,i,j] if kj<=qi else -infinity
+  alibi_softmax:
+    operator: stable_key_softmax
+    equation: weights=exp(logits-row_max)/sum_j(exp(logits-row_max)); excluded keys
+      have zero weight
+  alibi_value_mix:
+    operator: weighted_sum
+    equation: output[b,h,i,a]=sum_j weights[b,h,i,j]*v[b,h,j,a]
+contains:
+  alibi_core:
+  - alibi_slopes
+  - alibi_distance
+  - alibi_bias
+  - alibi_scaled_qk
+  - alibi_add_bias
+  - alibi_causal_mask
+  - alibi_softmax
+  - alibi_value_mix
+dataflow:
+- - num_heads
+  - alibi_slopes
+- - q_offset
+  - alibi_distance
+- - k_offset
+  - alibi_distance
+- - q.shape
+  - alibi_distance
+- - k.shape
+  - alibi_distance
+- - alibi_slopes
+  - alibi_bias
+- - alibi_distance
+  - alibi_bias
+- - q
+  - alibi_scaled_qk
+- - k
+  - alibi_scaled_qk
+- - alibi_scaled_qk
+  - alibi_add_bias
+- - alibi_bias
+  - alibi_add_bias
+- - alibi_add_bias
+  - alibi_causal_mask
+- - alibi_distance
+  - alibi_causal_mask
+- - alibi_causal_mask
+  - alibi_softmax
+- - alibi_softmax
+  - alibi_value_mix
+- - v
+  - alibi_value_mix
+- - alibi_value_mix
+  - output
+equivalent_bias_convention:
+  key_column_form: m[h]*j, where j is local key index starting at zero
+  row_difference: key_column_form - canonical_bias = m[h]*(q_offset+i-k_offset)
+  equality: Finite unmasked scores differ by that row constant; weights and outputs
+    agree in real arithmetic, within tolerance in float32. Do not claim raw score
+    equality.
+  implementation_requirement: Return canonical bias and logits even if an equivalent
+    internal form is used
+specification_note: Self-contained local equations; no universal schema validation
+  claimed. Position offsets expose the same relative computation on a query slice,
+  not a decoder cache implementation.

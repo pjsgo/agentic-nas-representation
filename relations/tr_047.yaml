@@ -1,0 +1,152 @@
+format_version: local_transition_v1
+transition_id: tr_047
+source_architecture: Transformer
+target_architecture: ALiBi
+relation_type: A
+inferred: false
+record_status: complete
+mapping_status: partial
+evidence:
+- source: User-supplied beyond_transformer_slides.pdf (not redistributed)
+  pages:
+  - 44
+  page_numbering: one_based_PDF
+  label: A 047
+  direction: Transformer -> ALiBi
+  question_mark_present: false
+  verification: direct_embedded_image_view
+  pdf_objects:
+    '44':
+      page: 242
+      image: 247
+  candidate_matches_original: true
+  correction_proposal: null
+scope:
+  source_yaml: ../architectures/transformer/representation.yaml
+  target_yaml: ../architectures/alibi/representation.yaml
+  path_base: relation_file_directory
+  included:
+  - descriptive_relationship
+  - available_core_component_correspondence
+  excluded:
+  - whole_model_conversion
+  - numerical_execution
+  - training
+  - performance_reproduction
+  - code_transformer
+  - weight_migration
+  mapping_boundary: 기존 encoder attention에서 projected causal ALiBi core로 대응. 입력 임베딩
+    제거와 전체 decoder 및 cache는 개념 또는 범위 밖.
+  target_yaml_status: available
+application:
+  executable: false
+  command: null
+  patch_or_script: null
+validation:
+  profile: direction_type_evidence_path_part_id_only
+  status: PUBLICATION_PATHS_AND_ACTUAL_COMPONENT_IDS_CHECKED
+  numerical_tests: NOT_RUN_BY_DESIGN
+  prior_architecture_results: reused_without_revalidation
+  claim_boundary: 관계 기록 및 부품 참조 확인은 연구용 실현기나 LLM 생성 코드 성공을 인증하지 않는다.
+  reference_check:
+    source:
+      path: /workspace/agentic-nas-representation/architectures/transformer/representation.yaml
+      references_checked: 5
+      unique_ids: 5
+    target:
+      path: /workspace/resnet_reconstruction/parallel_coverage/20261105/seq2seq/experiments/20261116_genealogy_phase3_alibi/representation.yaml
+      references_checked: 8
+      unique_ids: 8
+specification_proposal:
+  required: false
+  reason: 설명 관계와 명시적 범위는 local_transition_v1로 표현 가능. 공통 연산 의미 변경 없음.
+source_records:
+- side: source
+  paper: https://arxiv.org/html/1706.03762v7
+  paper_version: 1706.03762v7
+  section: 3.2; 3.5
+  implementation:
+    repository: https://github.com/tensorflow/tensor2tensor
+    version: v1.15.7
+    url: https://github.com/tensorflow/tensor2tensor/blob/v1.15.7/tensor2tensor/layers/common_attention.py
+    file: tensor2tensor/layers/common_attention.py
+    functions:
+    - multihead_attention
+    - dot_product_attention
+    authority: original_authors_official_repository; later release, not exact 2017
+      snapshot
+    verification: source_text_read_only_no_import_or_execution
+- side: target
+  paper: https://arxiv.org/html/2108.12409v2
+  paper_version: 2108.12409v2
+  section: 3; implementation paragraph
+  implementation:
+    repository: https://github.com/ofirpress/attention_with_linear_biases
+    version: 4b92f28a005ead2567abe2359f633e73e08f3833
+    url: https://github.com/ofirpress/attention_with_linear_biases/blob/4b92f28a005ead2567abe2359f633e73e08f3833/fairseq/models/transformer.py
+    file: fairseq/models/transformer.py
+    functions:
+    - TransformerDecoder.__init__ (nested get_slopes)
+    - TransformerDecoder.extract_features_scriptable
+    - TransformerDecoder.buffered_future_mask
+    authority: original_authors_official_repository
+    verification: source_text_read_only_no_import_or_execution
+motivation: 입력 위치 임베딩 대신 거리에 선형적인 head별 bias를 score에 넣어 길이 외삽을 지향한다.
+conditions:
+- 원 논문의 causal attention 범위. bidirectional 변형은 별도 정의가 필요하다.
+- bias는 scaled QK에 더하고 softmax 전에 mask와 결합한다. 고정 slope이며 학습 파라미터가 아니다.
+- source의 임의 제외 mask를 target의 causal mask로 일반적으로 보존하지 않는다. padding 및 양방향 attention
+  제외.
+- H가 2의 거듭제곱이 아니면 공식 코드의 slope 이어붙이기 순서를 유지한다.
+expected_effects:
+- 가까운 key를 선호하는 서로 다른 head별 기울기를 부여한다. 길이 외삽 결과는 논문 보고이며 이 세션은 측정하지 않는다.
+tradeoffs:
+- 거리 선호가 고정되고 head별 bias 저장 또는 생성 비용이 든다.
+- ALiBi 추가만으로 모든 길이와 과제의 성능 개선을 보장하지 않는다.
+changes:
+- before_units:
+  - factors.scale_q
+  - factors.score_a
+  - factors.apply_mask
+  - factors.prob_a
+  after_units:
+  - factors.alibi_scaled_qk
+  - factors.alibi_add_bias
+  - factors.alibi_causal_mask
+  - factors.alibi_softmax
+  operation: descriptive_correspondence
+  mechanism: scaled score에 head별 음의 거리 bias를 더한 뒤 causal mask와 softmax를 적용한다.
+  state_and_resource_contract: 공식 코드는 key 위치에 slope를 곱한다. causal row의 -slope*(i-j)와
+    row 상수만 달라 softmax는 같지만 raw logits는 다르다.
+  mapping_status: mapped_scoped
+- before_units:
+  - factors.mix_a
+  after_units:
+  - factors.alibi_value_mix
+  operation: descriptive_correspondence
+  mechanism: value 경로는 위치 회전이나 상대 value 추가 없이 확률 가중합을 유지한다.
+  state_and_resource_contract: 대상 float32 projected QKV, [B,H,T,D]에서 [B,H,T,Dv]로 출력.
+    offset은 같은 self-attention stream의 연속 query slice이며 cache 관리는 제외.
+  mapping_status: mapped_scoped
+- before_units: []
+  after_units:
+  - factors.alibi_slopes
+  - factors.alibi_distance
+  - factors.alibi_bias
+  operation: descriptive_correspondence
+  mechanism: head별 고정 slope와 명시 offset의 부호 있는 거리로 bias를 구성한다.
+  state_and_resource_contract: 학습 파라미터 없음. 공식 코드의 plain tensor와 달리 local core는 slopes
+    하나를 persistent buffer로 등록한다. 변경 없이 같은 H의 canonical slope만 로드한다.
+  mapping_status: target_only_source_out_of_scope
+preserve:
+- QK content score와 softmax value 집계 골격
+- 전체 block의 투영, FFN, residual, normalization 유지 가능성은 개념 설명이다.
+conceptual_correspondence:
+- source_concept: 입력 절대 위치 임베딩
+  target_concept: 입력 위치 임베딩 제거 및 score bias
+  mapping_status: out_of_scope
+  reason: 기존 Transformer YAML에 위치 임베딩 부품이 없어 삭제 ID를 만들지 않는다.
+unresolved:
+- 입력 위치 임베딩 제거는 기존 source YAML 범위 밖이므로 개념 대응이다.
+- 전체 decoder, projection, padding, KV cache와 외삽 성능은 현재 부품 매핑 범위 밖이다.
+core_mapping_status: complete_scoped

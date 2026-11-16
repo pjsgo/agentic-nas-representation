@@ -1,0 +1,144 @@
+representation_version: local_equational_graph_v1
+operator_profile: inline_equations_below
+reading_rules: ../../specs/representation/reading-rules-v1.md
+architecture: relative-position
+architecture_entry: reconstructed.py:relative_position_attention
+scope:
+  included:
+  - projected_self_attention_core
+  - signed_clipped_distance
+  - relative_keys
+  - relative_values
+  - shared_tables
+  - scaled_scores
+  - boolean_mask
+  - key_softmax
+  - value_aggregation
+  excluded:
+  - qkv_projections
+  - output_projection
+  - head_merge
+  - transformer_stack
+  - residual
+  - normalization
+  - ffn
+  - absolute_embeddings
+  - dropout
+  - training
+  - gradients
+  - incremental_cache
+  - recurrent_memory
+  - cross_attention
+  - head_specific_tables
+  - optimized_kernel_performance
+interface:
+  function: relative_position_attention(q, k, v, relative_key, relative_value, allowed,
+    radius) -> dict
+  q_k_v: three float64 CPU tensors, each [B,H,N,D]; projected but q is NOT scaled
+  relative_key_value: two float64 CPU tensors, each [2*radius+1,D]
+  allowed: bool CPU tensor [B,N,N]; True means allowed key, broadcast over H
+  radius: positive Python integer
+  outputs:
+    output: float64 CPU [B,H,N,D]
+    logits: float64 CPU [B,H,N,N]; scaled scores BEFORE mask
+    probabilities: float64 CPU [B,H,N,N]; excluded entries exactly zero
+    indices: int64 CPU [N,N]
+  constraints:
+  - B,H,N,D are positive; q,k,v have identical shapes
+  - All floating inputs finite; tested bounded small inputs only
+  - Each allowed row has at least one True; all-masked rows are excluded
+parameters:
+  registration: Functional interface. Caller owns and passes relative_key and relative_value
+    explicitly; no internal Parameters or buffers.
+  roles: relative_key indexes wK; relative_value indexes wV; distinct untied tables
+  row_order: row 0 means -radius; row radius means zero; row 2*radius means +radius
+  sharing: The same two tables are reused for every batch and head; no head or batch
+    axis on tables. Layer sharing is outside this single-core scope.
+  injection: Caller supplies complete tables for every call; initialization not specified
+state:
+  persistent: none
+  cache: none
+  random: false
+  input_mutation: false
+  parameter_mutation: false
+notation:
+  indices: b=batch, h=head, i=query position, j=key/value position, d=feature; positions
+    are zero-based
+  tensor_axes: q/k/v and output use B,H,N,D; logits/probabilities use B,H,query_i,key_j
+factors:
+  rp_relative_index:
+    operator: signed_distance_clip_shift
+    equation: delta[i,j]=j-i; index[i,j]=max(-radius,min(radius,delta[i,j]))+radius
+    boundary: Inclusive clipping to [-radius,+radius]; distances beyond either endpoint
+      share its row
+  rp_relative_lookup:
+    operator: gather_shared_tables
+    equation: aK[i,j,d]=relative_key[index[i,j],d]; aV[i,j,d]=relative_value[index[i,j],d]
+    shapes: aK and aV each [N,N,D]
+  rp_content_score:
+    operator: dot_product
+    equation: content[b,h,i,j]=sum_d q[b,h,i,d]*k[b,h,j,d]
+  rp_relative_key_score:
+    operator: query_relative_key_dot_product
+    equation: relative[b,h,i,j]=sum_d q[b,h,i,d]*aK[i,j,d]
+  rp_scale_mask_softmax:
+    operator: scale_then_mask_then_softmax
+    equation: logits=(content+relative)/sqrt(D); masked[b,h,i,j]=logits[b,h,i,j] if
+      allowed[b,i,j] else -inf; probabilities=exp(masked-max_j(masked))/sum_j(exp(masked-max_j(masked)))
+    order: Scale BOTH score terms once, apply mask, normalize over key j. No dropout.
+  rp_relative_value_aggregate:
+    operator: weighted_content_and_relative_values
+    equation: output[b,h,i,d]=sum_j probabilities[b,h,i,j]*(v[b,h,j,d]+aV[i,j,d])
+    order: Relative value is added inside aggregation, without additional scaling
+      or softmax
+contains:
+  rp_core:
+  - rp_relative_index
+  - rp_relative_lookup
+  - rp_content_score
+  - rp_relative_key_score
+  - rp_scale_mask_softmax
+  - rp_relative_value_aggregate
+dataflow:
+- - radius
+  - rp_relative_index.radius
+- - q.shape.N
+  - rp_relative_index.N
+- - rp_relative_index.index
+  - rp_relative_lookup.index
+- - relative_key
+  - rp_relative_lookup.relative_key
+- - relative_value
+  - rp_relative_lookup.relative_value
+- - q
+  - rp_content_score.q
+- - k
+  - rp_content_score.k
+- - q
+  - rp_relative_key_score.q
+- - rp_relative_lookup.aK
+  - rp_relative_key_score.aK
+- - rp_content_score.content
+  - rp_scale_mask_softmax.content
+- - rp_relative_key_score.relative
+  - rp_scale_mask_softmax.relative
+- - q.shape.D
+  - rp_scale_mask_softmax.D
+- - allowed
+  - rp_scale_mask_softmax.allowed
+- - rp_scale_mask_softmax.probabilities
+  - rp_relative_value_aggregate.probabilities
+- - v
+  - rp_relative_value_aggregate.v
+- - rp_relative_lookup.aV
+  - rp_relative_value_aggregate.aV
+- - rp_relative_value_aggregate.output
+  - output
+- - rp_scale_mask_softmax.logits
+  - logits
+- - rp_scale_mask_softmax.probabilities
+  - probabilities
+- - rp_relative_index.index
+  - indices
+specification_note: Scoped local equation graph following reading rules v1; no universal
+  schema certification.

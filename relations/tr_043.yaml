@@ -1,0 +1,183 @@
+format_version: local_transition_v1
+transition_id: tr_043
+source_architecture: Sparse MoE
+target_architecture: Switch Transformer
+relation_type: C
+inferred: false
+record_status: complete
+mapping_status: partial
+core_mapping_status: complete_scoped
+evidence:
+- source: /mnt/data/beyond_transformer_slides.pdf
+  pages:
+  - 44
+  page_numbering: one_based_PDF
+  label: C 043
+  direction: Sparse MoE -> Switch Transformer
+  question_mark_present: false
+  verification: direct_embedded_image_view_from_original_pdf
+  pdf_objects:
+    '44':
+      page: 242
+      image: 247
+  candidate_matches_original: true
+  correction_proposal: null
+- source: https://arxiv.org/html/2101.03961v3
+  section: 2.1-2.3; Appendix F
+  verification: primary_source_read
+  role: 계산 의미 근거. ID와 유형의 권위는 슬라이드이다.
+scope:
+  source_yaml: ../architectures/sparse-moe/representation.yaml
+  target_yaml: ../architectures/switch-transformer/representation.yaml
+  source_yaml_status: available
+  target_yaml_status: available
+  path_base: relation_file_parent
+  included:
+  - descriptive_relationship
+  - available_core_component_correspondence
+  excluded:
+  - whole_model_conversion
+  - numerical_execution
+  - training
+  - performance_reproduction
+  - code_transformer
+  - weight_migration
+  mapping_boundary: expert FFN core의 부품 계승만 다룬다. Switch Transformer 전체가 복원되었다고 해석하지
+    않는다.
+  component_coverage:
+    source:
+      mapped_units:
+      - factors.sparse_moe_combine
+      - factors.sparse_moe_experts
+      - factors.sparse_moe_router
+      - factors.sparse_moe_topk_gate
+      unmapped_declared_units: []
+      unmapped_reason: 선택 core/block의 모든 factors가 설명 대응에 연결됨.
+    target:
+      mapped_units:
+      - factors.switch_capacity_dispatch
+      - factors.switch_combine
+      - factors.switch_experts
+      - factors.switch_router
+      unmapped_declared_units: []
+      unmapped_reason: 선택 core/block의 모든 factors가 설명 대응에 연결됨.
+  core_mapping_definition: complete_scoped는 선택 core/block의 설명 대응이 실제 ID에 연결되었다는 뜻이다.
+    전체 모델, 출력 동등성, 인터페이스 호환 또는 실행 변환 완성을 뜻하지 않는다.
+application:
+  executable: false
+  command: null
+  patch_or_script: null
+validation:
+  profile: direction_type_evidence_path_part_id_only
+  status: STATIC_AVAILABLE_CORE_REFERENCES_CHECKED
+  numerical_tests: NOT_RUN_BY_DESIGN
+  prior_architecture_results: reused_without_revalidation
+  claim_boundary: 관계 정적 검사는 실현기 또는 LLM 복원 성공 인증이 아니다.
+  reference_check:
+    source:
+      path: ../architectures/sparse-moe/representation.yaml
+      unique_ids: 4
+    target:
+      path: ../architectures/switch-transformer/representation.yaml
+      unique_ids: 4
+  semantic_review: CURRENT_YAML_CONTRACTS_AND_PRIMARY_SOURCE_MECHANISMS_REVIEWED;
+    no execution
+  architecture_result_authority: restoration producer status.yaml and phase4 integration
+    status.yaml; not certified here
+source_records:
+- side: source
+  paper: https://arxiv.org/html/1701.06538v1
+  paper_version: 1701.06538v1
+  section: 2; 2.1 equations 1-5; 3.2; 4
+  implementation:
+    repository: https://github.com/tensorflow/tensor2tensor
+    version: bafdc1b67730430d38d6ab802cbd51f9d053ba2e
+    file: tensor2tensor/utils/expert_utils.py
+    functions:
+    - noisy_top_k_gating
+    - SparseDispatcher
+    - ffn_expert_fn
+    - local_moe
+    url: https://github.com/tensorflow/tensor2tensor/blob/bafdc1b67730430d38d6ab802cbd51f9d053ba2e/tensor2tensor/utils/expert_utils.py
+    authority: official_research_implementation_later_snapshot
+    verification: source_text_read_only_no_import_or_execution
+    version_limitation: 확인한 버전이며 원 논문 실험 시점의 checkout이라고 주장하지 않는다.
+- side: target
+  paper: https://arxiv.org/html/2101.03961v3
+  paper_version: 2101.03961v3
+  section: 2.1-2.3; Appendix F
+  implementation:
+    repository: https://github.com/tensorflow/mesh
+    version: e6798a2610a2c2f4c4cd236d8214422cb1ecc00a
+    file: mesh_tensorflow/transformer/moe.py
+    functions:
+    - _switch_gating
+    - transformer_moe_layer_v1
+    url: https://github.com/tensorflow/mesh/blob/e6798a2610a2c2f4c4cd236d8214422cb1ecc00a/mesh_tensorflow/transformer/moe.py
+    authority: official_research_implementation_later_snapshot
+    verification: source_text_read_only_no_import_or_execution
+    version_limitation: 확인한 버전이며 원 논문 실험 시점의 checkout이라고 주장하지 않는다.
+motivation: expert 선택을 top-1로 단순화하여 routing과 expert 통신 부담을 줄인다.
+conditions:
+- source의 selected-top-k softmax와 target의 전체 expert softmax 후 top-1은 다르다. source k=1을
+  설정하는 것만으로 Switch가 되지 않는다.
+- capacity, token 순서, padding 및 overflow 처리 계약을 맞춰야 한다.
+expected_effects:
+- token당 선택 expert 수를 하나로 줄여 활성 expert 연산과 통신 부담을 낮춘다.
+tradeoffs:
+- expert 불균형과 capacity 초과 token 누락이 생기며 보조 load-balance loss 및 분산 실행 비용이 남는다.
+changes:
+- before_units:
+  - factors.sparse_moe_router
+  - factors.sparse_moe_topk_gate
+  after_units:
+  - factors.switch_router
+  operation: descriptive_correspondence
+  mechanism: 입력별 linear router는 유지하고 selected-top-k softmax를 full-expert softmax 후
+    top-1 선택으로 바꾼다. 선택 gate는 1로 재정규화하지 않는다.
+  state_and_resource_contract: 설명 대응이며 출력 동등성이나 가중치 이식을 뜻하지 않는다.
+  mapping_status: mapped_scoped
+- before_units: []
+  after_units:
+  - factors.switch_capacity_dispatch
+  operation: descriptive_correspondence
+  mechanism: expert마다 입력 순서의 valid token을 C개까지 받아들인다. padding은 slot을 소비하지 않으며 overflow는
+    재routing하지 않는다.
+  state_and_resource_contract: C=max(min_capacity,min(T,floor(T*capacity_factor/E))).
+    T에는 padding 행도 포함한다. counter는 호출마다 초기화한다.
+  mapping_status: mapped_scoped
+- before_units:
+  - factors.sparse_moe_experts
+  after_units:
+  - factors.switch_experts
+  operation: descriptive_correspondence
+  mechanism: 독립 expert의 bias-free ReLU FFN 개념을 유지하되 source의 (H/D)^(-0.5) width scaling은
+    제거한다.
+  state_and_resource_contract: 설명 대응이며 출력 동등성이나 가중치 이식을 뜻하지 않는다.
+  mapping_status: mapped_scoped
+- before_units:
+  - factors.sparse_moe_combine
+  after_units:
+  - factors.switch_combine
+  operation: descriptive_correspondence
+  mechanism: 선택된 expert 출력의 gate 가중합을 유지한다. target은 수용된 top-1만 합산하고 padding/overflow
+    branch 출력은 0이다.
+  state_and_resource_contract: 설명 대응이며 출력 동등성이나 가중치 이식을 뜻하지 않는다.
+  mapping_status: mapped_scoped
+preserve:
+- 입력 의존 router, 독립 expert 파라미터, sparse dispatch, expert FFN, gate 가중 출력
+conceptual_correspondence:
+- source_concept: Sparse MoE
+  target_concept: Switch Transformer
+  mapping_status: conceptual_partial
+  reason: expert FFN core의 부품 계승만 다룬다. Switch Transformer 전체가 복원되었다고 해석하지 않는다.
+unresolved:
+- noisy routing, load-balance loss, z-loss, mixed precision, 학습 및 분산 통신은 대상 core에서
+  제외된다.
+- expert FFN core는 전체 Switch Transformer가 아니다. outer residual을 core 출력에 임의로 추가하지 않는다.
+specification_proposal:
+  required: false
+  reason: 기존 local_transition_v1 설명 관계 형식으로 기록 가능. 공통 specs 수정 없음.
+provenance:
+  genealogy_database_received: false
+  origin: User supplied PDF directly inspected; original genealogy DB not imported.

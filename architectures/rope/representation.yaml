@@ -1,0 +1,135 @@
+representation_version: local_rope_core_v1
+operator_profile: self_contained_equations_v1
+architecture: rope
+architecture_entry: reconstructed.py:rope_attention
+interface:
+  signature: rope_attention(q, k, v, q_positions, k_positions) -> dict
+  q: CPU torch.float64[B,Q,H,D], already projected, finite
+  k: CPU torch.float64[B,K,H,D], already projected, finite
+  v: CPU torch.float64[B,K,H,V], already projected, finite
+  q_positions: CPU torch.int64[Q], shared across batches and heads
+  k_positions: CPU torch.int64[K], shared across batches and heads
+  constraints:
+  - B,Q,K,H,V positive; D positive and even
+  - Position indices are nonnegative integers at most 1000000, in one common coordinate
+    system
+  - Positions are explicit; no implicit arange, offset reset or length-based rebasing
+  - Q and K may differ; position arrays need not start at zero or be consecutive
+  outputs:
+    q_rot: CPU torch.float64[B,Q,H,D]
+    k_rot: CPU torch.float64[B,K,H,D]
+    scores: CPU torch.float64[B,H,Q,K], scaled logits before softmax
+    probabilities: CPU torch.float64[B,H,Q,K]
+    output: CPU torch.float64[B,Q,H,V]
+factors:
+  rope_frequencies:
+    operator: fixed_inverse_frequencies
+    attributes: For j=0..D/2-1, omega[j] = 10000 ** (-2*j/D). Base is fixed, not learned.
+  rope_query_angles:
+    operator: position_frequency_outer_product
+    attributes: aq[t,j] = q_positions[t] * omega[j], radians
+  rope_key_angles:
+    operator: position_frequency_outer_product
+    attributes: ak[u,j] = k_positions[u] * omega[j], radians
+  rope_query_rotation:
+    operator: adjacent_pair_rotation
+    attributes: 'For every b,t,h,j: q_rot[b,t,h,2*j] = q[b,t,h,2*j]*cos(aq[t,j]) -
+      q[b,t,h,2*j+1]*sin(aq[t,j]); q_rot[b,t,h,2*j+1] = q[b,t,h,2*j]*sin(aq[t,j])
+      + q[b,t,h,2*j+1]*cos(aq[t,j]). Read both original features before writing outputs.
+      Rotate all D features; no half-split permutation.'
+  rope_key_rotation:
+    operator: adjacent_pair_rotation
+    attributes: 'For every b,u,h,j: k_rot[b,u,h,2*j] = k[b,u,h,2*j]*cos(ak[u,j]) -
+      k[b,u,h,2*j+1]*sin(ak[u,j]); k_rot[b,u,h,2*j+1] = k[b,u,h,2*j]*sin(ak[u,j])
+      + k[b,u,h,2*j+1]*cos(ak[u,j]). Read both original features before writing outputs.
+      Rotate all D features; no half-split permutation.'
+  rope_scaled_scores:
+    operator: rotated_dot_product
+    attributes: scores[b,h,t,u] = sum_d(q_rot[b,t,h,d]*k_rot[b,u,h,d])/sqrt(D)
+  rope_probabilities:
+    operator: stable_softmax
+    attributes: For each b,h,t subtract max_u scores[b,h,t,u], exponentiate and divide
+      by sum_u of those exponentials. Normalize over all K keys. No mask, bias or
+      dropout.
+  rope_output:
+    operator: weighted_unrotated_values
+    attributes: output[b,t,h,e] = sum_u(probabilities[b,h,t,u]*v[b,u,h,e]); v is not
+      rotated
+dataflow:
+- - q_positions
+  - rope_query_angles.positions
+- - k_positions
+  - rope_key_angles.positions
+- - rope_frequencies
+  - rope_query_angles.omega
+- - rope_frequencies
+  - rope_key_angles.omega
+- - q
+  - rope_query_rotation.input
+- - rope_query_angles
+  - rope_query_rotation.angles
+- - k
+  - rope_key_rotation.input
+- - rope_key_angles
+  - rope_key_rotation.angles
+- - rope_query_rotation
+  - rope_scaled_scores.q
+- - rope_key_rotation
+  - rope_scaled_scores.k
+- - rope_scaled_scores
+  - rope_probabilities
+- - rope_probabilities
+  - rope_output.weights
+- - v
+  - rope_output.values
+- - rope_query_rotation
+  - q_rot
+- - rope_key_rotation
+  - k_rot
+- - rope_scaled_scores
+  - scores
+- - rope_probabilities
+  - probabilities
+- - rope_output
+  - output
+parameters: {}
+resources:
+  frequency_base: 10000
+  rotation_dimension: D
+  pairing: adjacent_even_odd_zero_based
+  frequency_sharing: Same fixed frequency vector for q and k, all batches and heads
+state:
+  persistent_buffers: false
+  kv_cache_management: excluded
+  recurrent: false
+  input_mutation: false
+  rng_consumption: false
+scope:
+  included:
+  - full_even_dimension_rotation
+  - explicit_positions
+  - unequal_query_key_lengths
+  - scaled_scores
+  - dense_softmax
+  - unrotated_value_sum
+  excluded:
+  - projections
+  - full_RoFormer
+  - embeddings
+  - residuals
+  - normalization
+  - FFN
+  - masks
+  - dropout
+  - KV_cache_management
+  - partial_rotation
+  - half_split
+  - scaling_variants
+  - fused_kernels
+  - training
+  - gradients
+  - long_context_quality
+semantics_status:
+  common_spec_extension_required: false
+  explanation: Local self-contained equations; no claim of common v0.3 schema certification.
+reading_rules: ../../specs/representation/reading-rules-v1.md

@@ -31,9 +31,38 @@
 | [H3 → Mamba](tr_062.yaml) | A (tr_062) | partial |
 | [Mamba → Mamba-2/SSD](tr_063.yaml) | A (tr_063) | partial |
 | [GNMT → Transformer](tr_069.yaml) | P (tr_069) | partial |
-| [Sparse Transformer → Longformer](tr_034.yaml) | I (tr_034) | partial |
-| [Sparse Transformer → BigBird](tr_035.yaml) | I (tr_035) | partial |
-| [Transformer → FlashAttention](tr_054.yaml) | A (tr_054) | partial |
-| [Transformer → GQA](tr_056.yaml) | A (tr_056) | partial |
 
 [표현 안내](../docs/genealogy-guide.md) / [기계 판독 목록](catalog.yaml)
+
+<!-- phase2 -->
+
+- [tr_034](tr_034.yaml): Sparse Transformer → Longformer, I, partial
+
+- [tr_035](tr_035.yaml): Sparse Transformer → BigBird, I, partial
+
+- [tr_054](tr_054.yaml): Transformer → FlashAttention, A, partial
+
+- [tr_056](tr_056.yaml): Transformer → GQA, A, partial
+
+<!-- phase3 -->
+
+3차 관계 기록은 모두 부분 매핑이며 실행 가능한 변환이 아닙니다.
+
+- [tr_028](tr_028.yaml): Transformer → Relative Position, A, inferred=false, partial
+- [tr_030](tr_030.yaml): Relative Position → Transformer-XL, C, inferred=false, partial
+- [tr_046](tr_046.yaml): Relative Position → RoPE, I, inferred=true, partial
+- [tr_047](tr_047.yaml): Transformer → ALiBi, A, inferred=false, partial
+
+- [tr_045](tr_045.yaml): Transformer → FNet, A, core 매핑 완료, 전체 partial, 실행 불가.
+
+- [tr_043](tr_043.yaml): Sparse MoE → Switch Transformer, C, core 매핑 완료, 전체 partial, 실행 불가.
+
+- [tr_040](tr_040.yaml): Transformer → Synthesizer, A, core 매핑 완료, 전체 partial, 실행 불가.
+
+- [tr_042](tr_042.yaml): Transformer → Pre-LN, C, core 매핑 완료, 전체 partial, 실행 불가.
+
+- [tr_044](tr_044.yaml): Transformer → Switch Transformer, A, core 매핑 완료, 전체 partial, 실행 불가.
+
+- [tr_041](tr_041.yaml): LayerNorm → RMSNorm, A, core 매핑 완료, 전체 partial, 실행 불가.
+
+- [tr_033](tr_033.yaml): Transformer → Reformer, A, core 매핑 완료, 전체 partial, 실행 불가.

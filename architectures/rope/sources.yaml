@@ -1,0 +1,81 @@
+architecture: rope
+checked_on: '2026-11-16'
+paper:
+  url: https://arxiv.org/abs/2104.09864v5
+  full_text: https://arxiv.org/html/2104.09864v5
+  title: 'RoFormer: Enhanced Transformer with Rotary Position Embedding'
+  version: v5
+  version_date: '2023-11-08'
+  evidence:
+  - 'Section 3.2, equations 13-16: adjacent two-coordinate rotation blocks, inverse
+    frequencies and relative dot product'
+  - 'Section 3.4.2, equation 34: efficient paired sine/cosine realization'
+  - 'Section 2.1, equation 2: scaled softmax attention and value aggregation'
+  indexing_note: Use equation 15 frequency definition with zero-based j, matching
+    official code; no reliance on inconsistent prose index conventions.
+official_project:
+  url: https://github.com/ZhuiyiTechnology/roformer
+  commit: dfc678ad506fc527ba17ead8db23cbe4d947a9b4
+  file: README.md
+  section: Implementation
+  function: null
+  evidence: Official pseudocode uses adjacent feature pairing, B,L,H,D layout, rotates
+    qw and kw, then computes attention scores. Links to bert4keras implementation.
+  dependency_note: README names bert4keras 0.10.4; selected inspected source is separately
+    pinned v0.11.1, not claimed to be that historical dependency snapshot.
+implementation:
+  repository: https://github.com/bojone/bert4keras
+  tag: v0.11.1
+  commit: b92cf03d7e537860951b6d923806cb801a047a8b
+  files:
+  - path: bert4keras/layers.py
+    url: https://github.com/bojone/bert4keras/blob/b92cf03d7e537860951b6d923806cb801a047a8b/bert4keras/layers.py
+    functions:
+    - name: SinusoidalPositionEmbedding.call
+      lines: 835-863
+      confirms: Base 10000, zero-based frequencies, explicit or arange position ids,
+        interleaved sine/cosine
+    - name: MultiHeadAttention.pay_attention_to
+      lines: 500-546
+      confirms: Adjacent even/odd qw and kw rotation, scaled logits, softmax, unchanged
+        vw aggregation
+  - path: bert4keras/models.py
+    url: https://github.com/bojone/bert4keras/blob/b92cf03d7e537860951b6d923806cb801a047a8b/bert4keras/models.py
+    functions:
+    - name: RoFormer.apply_main_layers
+      lines: 1115-1194
+      confirms: Uses MultiHeadAttention with rotary p_bias
+    - name: RoFormer.compute_position_bias
+      lines: 1196-1210
+      confirms: SinusoidalPositionEmbedding output_dim equals attention_key_size,
+        merge_mode zero
+  executed: false
+  convention: adjacent feature pairs, full even key dimension, base 10000, no value
+    rotation
+adaptation:
+  interface_boundary: Projected q,k,v are caller inputs. No trainable parameters inside
+    core.
+  layout: q B,Q,H,D; k B,K,H,D; v B,K,H,V; logits B,H,Q,K
+  explicit_positions: Independent q and k position vectors use same origin and frequencies;
+    lengths may differ. This is an equation-level generalization of the official same-length
+    rotary branch, not an executed official cross-attention API.
+  numeric_domain: CPU float64, bounded nonnegative integer positions. No mixed precision
+    claim.
+  included:
+  - inverse_frequencies
+  - angles
+  - adjacent_rotations
+  - rotated_scaled_scores
+  - softmax
+  - unrotated_value_sum
+  excluded:
+  - full_model
+  - projections
+  - KV_cache_management
+  - partial_rotation
+  - half_split
+  - scaling_variants
+  - fused_kernels
+  - training
+  - gradients
+  - long_context_performance

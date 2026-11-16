@@ -30,6 +30,19 @@ membership:
   - tr_035
   - tr_054
   - tr_056
+  phase3:
+  - tr_028
+  - tr_030
+  - tr_046
+  - tr_047
+  phase4:
+  - tr_045
+  - tr_043
+  - tr_040
+  - tr_042
+  - tr_044
+  - tr_041
+  - tr_033
 relations:
 - id: tr_003
   file: tr_003.yaml
@@ -274,3 +287,102 @@ relations:
   mapping: partial
   source_slug: transformer
   target_slug: gqa
+- id: tr_028
+  file: tr_028.yaml
+  source: Transformer
+  target: Relative Position
+  type: A
+  inferred: false
+  mapping: partial
+  source_slug: transformer
+  target_slug: relative-position
+- id: tr_030
+  file: tr_030.yaml
+  source: Relative Position
+  target: Transformer-XL
+  type: C
+  inferred: false
+  mapping: partial
+  source_slug: relative-position
+  target_slug: transformer-xl
+- id: tr_046
+  file: tr_046.yaml
+  source: Relative Position
+  target: RoPE
+  type: I
+  inferred: true
+  mapping: partial
+  source_slug: relative-position
+  target_slug: rope
+- id: tr_047
+  file: tr_047.yaml
+  source: Transformer
+  target: ALiBi
+  type: A
+  inferred: false
+  mapping: partial
+  source_slug: transformer
+  target_slug: alibi
+- id: tr_045
+  file: tr_045.yaml
+  source: Transformer
+  target: FNet
+  type: A
+  inferred: false
+  mapping: partial
+  source_slug: transformer
+  target_slug: fnet
+- id: tr_043
+  file: tr_043.yaml
+  source: Sparse MoE
+  target: Switch Transformer
+  type: C
+  inferred: false
+  mapping: partial
+  source_slug: sparse-moe
+  target_slug: switch-transformer
+- id: tr_040
+  file: tr_040.yaml
+  source: Transformer
+  target: Synthesizer
+  type: A
+  inferred: false
+  mapping: partial
+  source_slug: transformer
+  target_slug: synthesizer
+- id: tr_042
+  file: tr_042.yaml
+  source: Transformer
+  target: Pre-LN
+  type: C
+  inferred: false
+  mapping: partial
+  source_slug: transformer
+  target_slug: pre-ln
+- id: tr_044
+  file: tr_044.yaml
+  source: Transformer
+  target: Switch Transformer
+  type: A
+  inferred: false
+  mapping: partial
+  source_slug: transformer
+  target_slug: switch-transformer
+- id: tr_041
+  file: tr_041.yaml
+  source: LayerNorm
+  target: RMSNorm
+  type: A
+  inferred: false
+  mapping: partial
+  source_slug: layernorm
+  target_slug: rmsnorm
+- id: tr_033
+  file: tr_033.yaml
+  source: Transformer
+  target: Reformer
+  type: A
+  inferred: false
+  mapping: partial
+  source_slug: transformer
+  target_slug: reformer

@@ -1,0 +1,71 @@
+representation_version: local_sparse_moe_core_v1
+operator_profile: self_contained_equations_v1
+architecture: sparse-moe
+architecture_entry: reconstructed.py:sparse_moe
+interface:
+  signature: 'sparse_moe(x, router, wi, wo, k) -> dict'
+  inputs:
+    x: CPU torch.float64[T,D], finite token rows; no padding
+    router: CPU torch.float64[D,E], finite, bias absent
+    wi: CPU torch.float64[E,D,H], finite
+    wo: CPU torch.float64[E,H,O], finite
+    k: Python int, 1 <= k <= E
+  constraints: ["T,D,E,H,O positive", intermediates finite, selected softmax weights representably positive]
+  outputs:
+    logits: CPU torch.float64[T,E]
+    indices: CPU torch.int64[T,k], descending score then ascending expert index
+    gates: CPU torch.float64[T,E]
+    dispatch: CPU torch.bool[T,E]
+    expert_outputs: CPU torch.float64[T,E,O], zero for unselected pairs
+    output: CPU torch.float64[T,O]
+factors:
+  sparse_moe_router:
+    operator: linear_scores
+    attributes: 'logits[t,e] = sum_d x[t,d]*router[d,e]; no bias, noise or RNG'
+  sparse_moe_topk_gate:
+    operator: selected_softmax
+    attributes: >-
+      indices[t,:] are first k expert indices sorted by descending logits with lower expert index breaking ties.
+      dispatch[t,e] is true exactly for those indices. Let m[t] be maximum selected logit.
+      gates[t,e] = exp(logits[t,e]-m[t])/sum_{j selected} exp(logits[t,j]-m[t]) for selected e; otherwise exactly zero.
+      Normalize only over selected experts, including k=1 giving gate 1.
+  sparse_moe_experts:
+    operator: sparse_dispatch_relu_ffn
+    attributes: >-
+      For each expert e gather x rows in ascending t with dispatch[t,e]=true.
+      hidden[t,e,h] = max(0, sum_d x[t,d]*wi[e,d,h]) for selected pairs only.
+      expert_outputs[t,e,o] = sum_h hidden[t,e,h]*wo[e,h,o] * (H/D)^(-0.5) for selected pairs.
+      Unselected expert_outputs entries are zero and their FFN need not execute.
+      No biases. The output scaling follows the pinned one-hidden-layer FFN; H=D gives scale 1.
+  sparse_moe_combine:
+    operator: gate_weighted_sum
+    attributes: 'output[t,o] = sum_e gates[t,e]*expert_outputs[t,e,o]; no residual'
+dataflow:
+  - [x, sparse_moe_router.x]
+  - [router, sparse_moe_router.router]
+  - [sparse_moe_router.logits, sparse_moe_topk_gate.logits]
+  - [k, sparse_moe_topk_gate.k]
+  - [x, sparse_moe_experts.x]
+  - [wi, sparse_moe_experts.wi]
+  - [wo, sparse_moe_experts.wo]
+  - [sparse_moe_topk_gate.dispatch, sparse_moe_experts.dispatch]
+  - [sparse_moe_topk_gate.gates, sparse_moe_combine.gates]
+  - [sparse_moe_experts.expert_outputs, sparse_moe_combine.expert_outputs]
+  - [sparse_moe_router.logits, logits]
+  - [sparse_moe_topk_gate.indices, indices]
+  - [sparse_moe_topk_gate.gates, gates]
+  - [sparse_moe_topk_gate.dispatch, dispatch]
+  - [sparse_moe_experts.expert_outputs, expert_outputs]
+  - [sparse_moe_combine.output, output]
+parameters:
+  router: {shape: [D,E], initialization: caller_supplied, sharing: all_tokens}
+  wi: {shape: [E,D,H], initialization: caller_supplied, sharing: same_expert_across_tokens_only}
+  wo: {shape: [E,H,O], initialization: caller_supplied, sharing: same_expert_across_tokens_only}
+state: {persistent_buffers: false, recurrent: false, input_mutation: false, rng_consumption: false}
+scope:
+  included: [deterministic_inference, top_k, selected_gate_normalization, sparse_dispatch, one_hidden_relu_experts, weighted_combine]
+  excluded: [noise, W_noise, importance_loss, load_loss, training, gradients, initialization_distribution, hierarchy, padding, capacity_limit, full_language_model, distributed_execution]
+semantics_status:
+  common_schema_certification: not_claimed
+  basis: Local equations following existing genealogy format and reading-rules-v1
+  common_spec_proposal: Optional future typed top-k and sparse dispatch operators; no shared edits required for this local format

@@ -1,0 +1,45 @@
+architecture: switch-transformer
+paper:
+  title: 'Switch Transformers: Scaling to Trillion Parameter Models with Simple and Efficient Sparsity'
+  url: https://arxiv.org/html/2101.03961v3
+  version: arXiv v3, 2022-06-16
+  reviewed: Sections 2.1-2.2 equations 1-6, Figure 2 expert branch and Figure 3 capacity
+code:
+  repository: https://github.com/tensorflow/mesh
+  provenance: Official implementation explicitly linked by paper footnote 2
+  commit: e6798a2610a2c2f4c4cd236d8214422cb1ecc00a
+  tag: null
+  file: mesh_tensorflow/transformer/moe.py
+  url: https://github.com/tensorflow/mesh/blob/e6798a2610a2c2f4c4cd236d8214422cb1ecc00a/mesh_tensorflow/transformer/moe.py
+  inspected_copy: source_moe.py.txt
+  functions:
+    _switch_gating: lines 1303-1457; full softmax, top_1, importance mask, exclusive cumsum, capacity filter, dispatch/combine
+    transformer_moe_layer_v1: lines 202-567; capacity formula at 384-394, expert input einsum at 481, bias-free FFN at 507-524, output einsum at 551
+scope:
+  restored: Single routing group Switch expert FFN branch with deterministic argmax and ReLU
+  configuration: train=false, policy=argmax, activation=relu, explicit capacity factor and minimum, no token embedding router input
+  padding: Boolean nonpadding is the source importance==1 mask. Padding rows count toward static group size for capacity, but not toward expert ranks or accepted slots.
+  overflow: First C valid tokens per expert in input order survive. Later tokens have zero branch output. No reroute; residual is outside this node.
+  excluded: [full_Transformer, residual, attention, normalization, load_balancing_loss, router_z_loss, dropout, jitter, sampling, training, gradients, mixed_precision, distributed_communication]
+source_differences:
+  - Official router casts to float32. Local equations use float64 to check mathematics, not mixed-precision or bitwise fidelity.
+  - Padding positions are reported as -1 for diagnostics; official masked position tensor has zeros outside selected valid experts. Dispatch/combine semantics are preserved.
+  - Tie-breaking by lower expert index is explicit local determinism, not a cross-framework tie-parity claim.
+  - Caller-supplied weights replace variable creation and initializer testing.
+  - Capacity uses source floor then min(group_size) then max(min_capacity), including when min_capacity exceeds group size.
+reference:
+  implementation: reference.py
+  method: Independent scalar equations and sequential per-expert counters; computes only accepted token FFNs
+  independence: No imports from realization or Sparse MoE; no shared router, FFN, dispatch or combine helper
+  official_runtime_executed: false
+relation_handoff:
+  predecessor: sparse-moe
+  preserved: [input_dependent_linear_router, separate_expert_weights, sparse_dispatch, ReLU_FFN, weighted_combination]
+  changed: [full_expert_softmax_before_top1, selected_gate_not_renormalized, bounded_ordered_capacity_slots, padding_exclusion, overflow_zero_branch, no_Tensor2Tensor_FFN_width_scaling]
+  part_correspondence:
+    - {source: sparse_moe_router, target: switch_router, note: Linear scores retained; switch_router also contains full softmax and top-1}
+    - {source: sparse_moe_topk_gate, target: switch_router, note: Changed normalization domain and selection cardinality}
+    - {source: sparse_moe_experts, target: switch_experts, note: Same parameterized ReLU FFN idea; scaling differs}
+    - {source: sparse_moe_combine, target: switch_combine, note: Weighted combination retained with one accepted expert}
+  added_part: switch_capacity_dispatch
+  mapping_claim: Scoped computational comparison only; not a complete executable or historical relation certification

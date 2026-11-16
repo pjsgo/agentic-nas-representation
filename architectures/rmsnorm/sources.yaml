@@ -1,0 +1,52 @@
+architecture: RMSNorm
+source_review_date: '2026-11-16'
+paper:
+  title: Root Mean Square Layer Normalization
+  authors: [Biao Zhang, Rico Sennrich]
+  url: https://arxiv.org/abs/1910.07467v1
+  inspected: https://arxiv.org/html/1910.07467v1
+  version: v1
+  local_evidence: evidence/paper.html
+  locations: ['section 4 equation 4 full RMS and learned gain', 'section 4.1 equation 5 includes a general bias term', 'section 5 partial RMSNorm']
+official_code:
+  repository: https://github.com/bzhangGo/rmsnorm
+  official_basis: 'Paper abstract and NeurIPS proceedings page link the authors repository https://proceedings.neurips.cc/paper_files/paper/2019/hash/1e8a19426224ca89e83cef47f1e7f53b-Abstract.html'
+  commit: 2e726f1a3f106bb719056422f4f9b6aca03d3ce6
+  url: https://github.com/bzhangGo/rmsnorm/blob/2e726f1a3f106bb719056422f4f9b6aca03d3ce6/rmsnorm_torch.py
+  file: rmsnorm_torch.py
+  functions: ['RMSNorm.__init__', 'RMSNorm.forward']
+  local_evidence: evidence/rmsnorm_torch.py.txt
+  commit_record: evidence/commit.json
+  version_limitation: 'Inspected pinned repository version, not claimed to be the original 2019 experimental checkout'
+selected_contract:
+  variant: 'p=-1 full RMSNorm, bias=False, eps=1e-8, CPU float64'
+  mean_subtracted: false
+  reduction: 'last feature axis only, all D features'
+  epsilon: 'added to RMS after square root, not to mean square'
+  dtype: 'input, scale, accumulation and output float64; eps cast by scalar tensor arithmetic; no mixed precision'
+  scale: 'source nn.Parameter [D], initialized to ones; supplied by caller in local functional interface'
+  bias: 'absent under selected source default bias=False; optional offset branch and general paper bias excluded'
+  scope: 'normalization and affine gain core only; not preceding linear projection or activation'
+  exclusions: [partial_rmsnorm, optional_offset, initialization_fidelity, module_registration, gradients, training, overflow_extremes, mixed_precision]
+  implementation_difference: 'Author code uses L2 norm times D**(-0.5); YAML uses sqrt(mean(x*x)), same full RMS in real arithmetic. Small rounding differences measured.'
+  repository_variants: 'The repository also contains a Theano layers.py rln implementation with epsilon under sqrt. It is not the selected variant. Do not replace this contract with PyTorch built-in RMSNorm or ordinary LayerNorm defaults.'
+reference:
+  method: 'Independent scalar math.fsum and math.sqrt per trailing feature row'
+  candidate: 'torch square, mean, sqrt and broadcasting'
+  independence: 'No candidate/reference shared computational function'
+  source_execution: 'Pinned author RMSNorm imported from saved text and executed for the same three cases'
+  validation: result.json
+  cases: [nonzero_mean_vector, zero_and_tiny_rows, multiple_leading_axes]
+yaml_source_mapping:
+  rmsnorm_core: 'paper equation 4; RMSNorm.forward full branch, epsilon addition and scale-only return'
+  rmsnorm_unit: 'one normalization component for relation mapping; no artificial subparts'
+reuse:
+  baseline: /workspace/resnet_reconstruction/parallel_coverage/20261105/integration/20261116_genealogy_phase3_integration/distribution/personal/architectures/layernorm/representation.yaml
+  common_contracts: 'Trailing-feature affine scaling and external parameter ownership reused semantically; no existing architecture executed'
+  difference: 'Remove centering, use uncentered mean square, use outside-sqrt epsilon and remove beta in this selected variant'
+  relation_status: 'Component handoff only; no new relation record or historical influence claim authored'
+specifications:
+  format: local_equational_graph_v1
+  reading_rules: /workspace/agentic-nas-representation/specs/representation/reading-rules-v1.md
+  shared_changes_needed: []
+  certification: 'Local explicit equations only, no universal common-schema PASS claim'

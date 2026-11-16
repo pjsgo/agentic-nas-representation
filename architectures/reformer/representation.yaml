@@ -1,0 +1,101 @@
+representation_version: local_equational_graph_v1
+operator_profile: inline_equations_below
+reading_rules: specs/representation/reading-rules-v1.md
+architecture: reformer
+architecture_entry: reconstructed.py:ReformerLSHCore
+scope:
+  included: [shared_qk, supplied_random_rotations, angular_hash, round_bucket_offsets, bucket_position_sort, chunk_attention, previous_chunk_lookup, finite_self_penalty, optional_causal_penalty, inverse_sort, multi_round_partition_weighted_merge]
+  excluded: [projection_layers, output_projection, reversible_residual, ffn_chunking, embeddings, dropout, backward, training, optimized_kernels, padding_mask, incremental_cache, rng_generation_and_state, factorized_hash, automatic_bucket_count, paper_appendix_duplicate_correction, strict_same_bucket_mask]
+  version_rule: 'One pinned Trax second-implementation profile. Repeated key occurrences retain multiplicity; no log-duplicate correction and no bucket-equality mask. Do not substitute paper Appendix A union semantics.'
+interface:
+  constructor: 'ReformerLSHCore(num_buckets: int, chunk_len: int, causal: bool = False)'
+  forward: 'forward(qk, v, rotations) -> dict'
+  qk: 'float64 CPU [T,D]; already projected shared query/key representation; query is not normalized'
+  v: 'float64 CPU [T,Dv]; already projected values'
+  rotations: 'float64 CPU [D,R,K/2]; K=num_buckets, R=number of rounds; explicit fixed samples of the random projection, shared across tokens'
+  constraints:
+    - 'K even and >=2; C=chunk_len>=1; T is divisible by C and T>=2*C'
+    - '1<=R<=4; 1<=T<=128; 1<=D,Dv<=64; K<=64'
+    - 'All input values finite, absolute values <=4; all dimensions positive'
+    - 'Evaluation forward only; no implicit normalization of rotations or qk before hashing'
+    - 'No input mutation; no gradients or RNG fidelity claim; float64 is a controlled numerical port of the source formulas'
+    - 'Invalid-input diagnostics are outside the contract'
+  returns:
+    buckets: 'int64 [R,T]; includes r*K offsets, original token order'
+    permutation: 'int64 [R*T]; sorted row s maps to flattened original occurrence u=r*T+t'
+    key_indices: 'int64 [R*T,2*C]; original token IDs of key occurrences for each sorted query row, previous chunk then current chunk'
+    round_logsumexp: 'float64 [R,T]; per-round key-score logsumexp restored to original order'
+    round_weights: 'float64 [R,T]; softmax of round_logsumexp over R'
+    output: 'float64 [T,Dv]; original token order'
+parameters: {trainable: [], projection_parameters: none}
+state:
+  buffers: []
+  state_dict: empty
+  recurrence: none
+  cache: none
+  rng: 'none; rotations are call inputs, not stored or regenerated'
+  mutations: none
+notation:
+  indices: 't,j=original token positions; d=feature; r=round; a=projection column; s=sorted occurrence row; u=r*T+t'
+  sizes: 'K=num_buckets; C=chunk_len; M=R*T; N=M/C'
+  arithmetic: 'float64 except indices; argmax chooses the lowest index in a tie'
+factors:
+  reformer_hash_sort:
+    operator: angular_hash_and_lexicographic_sort
+    equation: >-
+      z[r,t,a]=sum_d qk[t,d]*rotations[d,r,a].
+      h[r,t]=argmax_a concat(z[r,t,:],-z[r,t,:])[a] in 0..K-1.
+      buckets[r,t]=h[r,t]+r*K.
+      sort_key[u]=T*buckets[r,t]+t, with u=r*T+t.
+      permutation=argsort(sort_key) ascending; keys are unique.
+      token[s]=permutation[s] mod T. Inverse[permutation[s]]=s.
+  reformer_chunk_connections:
+    operator: global_circular_previous_and_current_chunks
+    equation: >-
+      Sorted occurrences are reshaped to [N,C]. For sorted query s, c=floor(s/C).
+      Its 2*C key occurrence rows are ((c-1) mod N)*C+l for l=0..C-1,
+      followed by c*C+l for l=0..C-1. key_indices[s,a]=token[key_row(s,a)].
+      Adjacent lookup wraps over all R*T sorted occurrences, not separately within each round.
+      Keys from other buckets and, at boundaries, other rounds are retained.
+      Repeated original token IDs are separate occurrences, not a set.
+  reformer_score_mask:
+    operator: shared_qk_normalized_key_and_finite_penalties
+    equation: >-
+      key[j,d]=qk[j,d]/sqrt(mean_e(qk[j,e]^2)+1e-6)/sqrt(D).
+      For sorted row s with i=token[s] and j=key_indices[s,a],
+      score[s,a]=sum_d qk[i,d]*key[j,d].
+      If causal, subtract 1e9 when j>i; always subtract 1e5 when j==i.
+      Penalties are additive finite values, not replacements or negative infinity.
+      There is no external attention mask, no bucket-equality test, and no duplicate-count penalty.
+  reformer_chunk_attention:
+    operator: stable_occurrence_softmax_and_value_sum
+    equation: >-
+      L[s]=max_a(score[s,a])+log(sum_a exp(score[s,a]-max_a(score[s,a]))).
+      P[s,a]=exp(score[s,a]-L[s]); O[s,b]=sum_a P[s,a]*v[key_indices[s,a],b].
+      Self is strongly suppressed but is available when no other unpenalized causal key exists.
+  reformer_restore_merge:
+    operator: inverse_permutation_and_partition_weighted_round_merge
+    equation: >-
+      round_logsumexp[r,t]=L[Inverse[r*T+t]]; round_output[r,t,b]=O[Inverse[r*T+t],b].
+      A[t]=max_r round_logsumexp[r,t].
+      G[t]=A[t]+log(sum_r exp(round_logsumexp[r,t]-A[t])).
+      round_weights[r,t]=exp(round_logsumexp[r,t]-G[t]).
+      output[t,b]=sum_r round_weights[r,t]*round_output[r,t,b].
+      When R=1, round_weights=1 and output is the unsorted single-round output.
+      Combining rounds retains the multiplicity of each key across and within rounds.
+contains:
+  reformer_lsh_core: [reformer_hash_sort, reformer_chunk_connections, reformer_score_mask, reformer_chunk_attention, reformer_restore_merge]
+dataflow:
+  - [qk, reformer_hash_sort]
+  - [rotations, reformer_hash_sort]
+  - [reformer_hash_sort, reformer_chunk_connections]
+  - [qk, reformer_score_mask]
+  - [reformer_hash_sort, reformer_score_mask]
+  - [reformer_chunk_connections, reformer_score_mask]
+  - [reformer_score_mask, reformer_chunk_attention]
+  - [reformer_chunk_connections, reformer_chunk_attention]
+  - [v, reformer_chunk_attention]
+  - [reformer_hash_sort, reformer_restore_merge]
+  - [reformer_chunk_attention, reformer_restore_merge]
+  - [reformer_restore_merge, output]
+specification_note: 'Existing local equational format, not frozen v0.3 primitive-schema certification. These equations and interface are normative for this scoped reconstruction.'

@@ -1,0 +1,85 @@
+architecture: Pre-LN
+source_review_date: '2026-11-16'
+paper:
+  title: On Layer Normalization in the Transformer Architecture
+  url: https://arxiv.org/abs/2002.04745v2
+  inspected: https://arxiv.org/html/2002.04745v2
+  version: v2
+  version_date: '2020-06-29'
+  publication: https://proceedings.mlr.press/v119/xiong20b.html
+  local_evidence: evidence/paper.html
+  locations: ['Figure 1', 'section 3.1 attention and FFN equations', 'section 3.3 Table 1 Pre-LN ordering and final LayerNorm', 'introduction final normalization before prediction']
+official_paper_code:
+  status: NOT_FOUND
+  search_scope: 'Read arXiv v2 and PMLR paper landing page; searched exact title with official implementation, code and GitHub queries. No author experimental repository was established.'
+  limitation: 'This is an observed search result, not proof no author implementation exists. fairseq below is not labeled official code for Xiong et al.'
+  material_for_exact_author_parity: 'Author-maintained repository URL, exact experiment commit and encoder configuration, including normalization, dtype and dropout settings'
+alternative_code:
+  relationship: 'Upstream fairseq implementation of Pre-LN encoder placement; third-party implementation relative to the target paper'
+  repository: https://github.com/pytorch/fairseq
+  tag: v0.9.0
+  files:
+    - file: fairseq/modules/transformer_layer.py
+      url: https://github.com/pytorch/fairseq/blob/v0.9.0/fairseq/modules/transformer_layer.py
+      local_evidence: evidence/modules_transformer_layer.py.txt
+      functions: ['TransformerEncoderLayer.__init__', 'TransformerEncoderLayer.forward', 'TransformerEncoderLayer.maybe_layer_norm']
+      facts: 'encoder_normalize_before=True applies norm before attention and before FFN; each sublayer is followed by residual addition. Layer final_layer_norm is the pre-FFN norm, not the stack-final norm.'
+    - file: fairseq/modules/multihead_attention.py
+      url: https://github.com/pytorch/fairseq/blob/v0.9.0/fairseq/modules/multihead_attention.py
+      local_evidence: evidence/modules_multihead_attention.py.txt
+      functions: ['MultiheadAttention.__init__', 'MultiheadAttention.forward']
+      facts: 'Distinct q/k/v projections, head_dim**-0.5 scaling, head reshape, key padding exclusion, key-axis softmax, value mixing and output projection'
+    - file: fairseq/modules/layer_norm.py
+      url: https://github.com/pytorch/fairseq/blob/v0.9.0/fairseq/modules/layer_norm.py
+      local_evidence: evidence/modules_layer_norm.py.txt
+      functions: [LayerNorm]
+      facts: 'eps=1e-5 and elementwise_affine=True; CPU selects torch.nn.LayerNorm'
+    - file: fairseq/models/transformer.py
+      url: https://github.com/pytorch/fairseq/blob/v0.9.0/fairseq/models/transformer.py
+      local_evidence: evidence/models_transformer.py.txt
+      functions: ['TransformerEncoder.__init__', 'TransformerEncoder.forward']
+      facts: 'Separate layer_norm after encoder layer loop when encoder_normalize_before is true; outside selected block'
+    - file: fairseq/utils.py
+      url: https://github.com/pytorch/fairseq/blob/v0.9.0/fairseq/utils.py
+      local_evidence: evidence/utils.py.txt
+      functions: [softmax]
+      facts: 'Manual attention path promotes/casts softmax to float32. Our explicitly declared float64 arithmetic is an adaptation, not bitwise replication of this branch.'
+selected_contract:
+  scope: 'One eval encoder block with multihead self-attention and ReLU FFN; normalization then sublayer then residual in both branches'
+  config: 'encoder_normalize_before=True; self_attention=True; bias projections enabled; add_bias_kv=False; add_zero_attn=False; activation_fn=relu; eval dropout identity'
+  final_normalization: 'Excluded stack-final LayerNorm. Included norm2 is before FFN, despite fairseq naming it final_layer_norm.'
+  layout_adapter: 'Source [T,B,E] becomes functional [B,T,E]; head concatenation remains contiguous h*D+d feature order'
+  parameter_adapter: 'All affine and linear tensors passed in params, weight layout [out,in]; source object registration and initialization excluded'
+  mask_adapter: 'Only key_padding_mask selected, True excludes keys and leaves query outputs intact. No arbitrary pairwise or causal mask; all-masked sequences excluded.'
+  dtype_adapter: 'All float64 including softmax; unlike fairseq manual attention float32 softmax. Scaling combined logits instead of scaling q is algebraically equivalent with rounding differences.'
+  exclusions: [full_stack, stack_final_norm, embeddings, decoder, cross_attention, incremental_state, training, gradients, optimization, module_registration, initialization, performance_claims]
+  training_claim: 'Small deterministic forward checks do not establish gradient behavior, warm-up removal or improved training stability'
+reference:
+  method: 'Independent scalar Python math.fsum loops for affine transforms, population statistics, head attention, softmax and residuals'
+  candidate: 'Vectorized torch matmul, reductions and softmax; no opaque TransformerEncoderLayer or MultiheadAttention'
+  independence: 'No shared candidate/reference helpers. Post-LN control exists only inside scalar reference and reuses identical external parameters.'
+  source_execution: NOT_RUN
+  numerical_claim: 'Fidelity to explicit float64 scoped equations only, not the missing author training checkout or all fairseq execution paths'
+  validation: result.json
+yaml_source_mapping:
+  preln_attention_norm: 'paper Table 1 first step; forward maybe_layer_norm before self_attn'
+  preln_attention: 'paper attention equations; MultiheadAttention.forward projection, split, scaled score, padding, softmax, merge and out_proj'
+  preln_attention_residual: 'paper Table 1 third step; first residual+x'
+  preln_ffn_norm: 'paper Table 1 fourth step; maybe_layer_norm final_layer_norm before fc1'
+  preln_ffn: 'paper Table 1 fifth step; activation_fn(fc1(x)) then fc2 with eval dropout identity'
+  preln_ffn_residual: 'paper Table 1 sixth step; second residual+x with no post norm'
+reuse:
+  baseline_distribution: /workspace/resnet_reconstruction/parallel_coverage/20261105/integration/20261116_genealogy_phase3_integration/distribution/personal
+  transformer_yaml: architectures/transformer/representation.yaml
+  transformer_parts: [stage_a, stage_b, merge_a, merge_b, normalize_a, normalize_b]
+  layernorm_yaml: architectures/layernorm/representation.yaml
+  layernorm_part: ln.component
+  reused_contracts: 'External weights, feature population variance with affine parameters, head layout, scaled softmax, output projection and ReLU FFN. New pre-normalized composition is independently validated.'
+  changes: 'Move both norm calls inside their residual branches; preserve residual inputs. Source uses separate q/k/v instead of existing packed projection, made explicit in YAML.'
+  previous_numerical_tests: NOT_RERUN
+  relation_status: 'Stable component handoff only; no fabricated complete executable relation'
+specifications:
+  format: local_equational_graph_v1
+  reading_rules: /workspace/agentic-nas-representation/specs/representation/reading-rules-v1.md
+  shared_changes_needed: []
+  certification: 'Inline equations and declared dtype adaptation; no universal common-schema certification'

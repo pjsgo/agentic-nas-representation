@@ -1,0 +1,75 @@
+representation_version: local_equational_graph_v1
+operator_profile: inline_equations_below
+reading_rules: specs/representation/reading-rules-v1.md
+architecture: fnet
+architecture_entry: reconstructed.py:fnet_block
+scope:
+  included: [single_encoder_block, two_axis_fourier_mixing, post_norm_residuals, biased_ffn, tanh_gelu, deterministic_inference]
+  excluded: [embeddings, positional_embeddings, tokenizer, task_heads, stacked_model, training, gradients, initialization, stochastic_dropout, hybrid_attention, hardware_performance, official_float32_rounding]
+interface:
+  function: 'fnet_block(x, parameters, padding_mask=None) -> dict'
+  x: 'finite CPU torch.float64[B,N,D]; B,N,D positive; N<=4096; no power-of-two restriction in this scope'
+  parameters: 'dict of exactly the eight named CPU torch.float64 tensors below; finite, distinct untied tensors; F positive'
+  padding_mask: 'None or bool CPU [B,N], True denotes a real token. Accepted but ignored, including all-False masks.'
+  outputs:
+    mixed: 'float64 CPU [B,N,D], real Fourier result before residual'
+    output: 'float64 CPU [B,N,D], after second normalization'
+  length_contract: 'N is the supplied tensor length including padding. No crop, auto-padding, length inference, masking, zeroing or causal constraint. Padded embeddings participate unchanged. Changing N changes the Fourier basis. Batch axis is never transformed.'
+parameters:
+  registration: 'Functional supplied-tensor contract; no internally registered Parameters, buffers or initialization. Caller owns all eight tensors and may train them outside scope.'
+  mixer: 'No learned parameter, no DFT buffer, no spectral weight.'
+  tensors:
+    w1: {shape: [D,F], role: FFN input kernel in input-output orientation}
+    b1: {shape: [F], role: FFN input bias}
+    w2: {shape: [F,D], role: FFN output kernel in input-output orientation}
+    b2: {shape: [D], role: FFN output bias}
+    gamma1: {shape: [D], role: first normalization scale}
+    beta1: {shape: [D], role: first normalization bias}
+    gamma2: {shape: [D], role: second normalization scale}
+    beta2: {shape: [D], role: second normalization bias}
+  sharing: 'Each tensor is reused across all batch and sequence positions; first and second normalization are untied.'
+  scalar_count: '2*D*F+F+5*D'
+state: {persistent: none, cache: none, random: false, input_mutation: false, parameter_mutation: false, mask_mutation: false}
+notation:
+  indices: 'b=batch, n=input sequence, k=output sequence frequency, d=input hidden, l=output hidden frequency; zero based'
+  precision: 'float64 real arithmetic and complex128 Fourier arithmetic. This is a promoted equation-level profile, not bitwise reproduction of official float32 Flax defaults.'
+  normalization: 'LN(z,gamma,beta): mu=mean_d(z); var=max(0,mean_d(z*z)-mu*mu); return (z-mu)*(gamma/sqrt(var+1e-12))+beta. Reduce only last axis independently for every b,n. Population moments, epsilon inside sqrt. No running statistics.'
+factors:
+  fnet_fourier_mixer:
+    operator: unnormalized_two_axis_forward_dft_then_real
+    equation: 'H[b,n,l]=sum_{d=0}^{D-1} x[b,n,d]*exp(-2*pi*i*d*l/D); Z[b,k,l]=sum_{n=0}^{N-1} H[b,n,l]*exp(-2*pi*i*n*k/N); mixed[b,k,l]=Re(Z[b,k,l]); i*i=-1'
+    attributes: 'Keep H complex until both transforms finish. No 1/N, 1/D or square-root scaling. Forward sign is negative. Full spectra, no rfft truncation, inverse, fftshift or magnitude. FFT implementation may use norm=backward over axes (1,2) with the same mathematical meaning.'
+  fnet_mixing_residual_norm:
+    operator: residual_then_last_axis_affine_layernorm
+    equation: 'h=LN(x+mixed,gamma1,beta1)'
+  fnet_ffn:
+    operator: positionwise_biased_two_dense_tanh_gelu
+    equation: 'a[b,n,f]=sum_d h[b,n,d]*w1[d,f]+b1[f]; g=0.5*a*(1+tanh(sqrt(2/pi)*(a+0.044715*a^3))); ff[b,n,d]=sum_f g[b,n,f]*w2[f,d]+b2[d]'
+    attributes: 'Deterministic inference: official dropout after second dense is identity. No dropout after mixer, no activation after second dense.'
+  fnet_output_residual_norm:
+    operator: residual_then_last_axis_affine_layernorm
+    equation: 'output=LN(h+ff,gamma2,beta2)'
+contains:
+  fnet_encoder_block: [fnet_fourier_mixer, fnet_mixing_residual_norm, fnet_ffn, fnet_output_residual_norm]
+dataflow:
+  - [x, fnet_fourier_mixer.x]
+  - [x, fnet_mixing_residual_norm.x]
+  - [fnet_fourier_mixer.mixed, fnet_mixing_residual_norm.mixed]
+  - [gamma1, fnet_mixing_residual_norm.gamma1]
+  - [beta1, fnet_mixing_residual_norm.beta1]
+  - [fnet_mixing_residual_norm.h, fnet_ffn.h]
+  - [w1, fnet_ffn.w1]
+  - [b1, fnet_ffn.b1]
+  - [w2, fnet_ffn.w2]
+  - [b2, fnet_ffn.b2]
+  - [fnet_mixing_residual_norm.h, fnet_output_residual_norm.h]
+  - [fnet_ffn.ff, fnet_output_residual_norm.ff]
+  - [gamma2, fnet_output_residual_norm.gamma2]
+  - [beta2, fnet_output_residual_norm.beta2]
+  - [fnet_fourier_mixer.mixed, mixed]
+  - [fnet_output_residual_norm.output, output]
+semantics_status:
+  common_schema_certified: false
+  local_equations_sufficient_under_reading_rules_v1: true
+  common_spec_changes: []
+  optional_operator_proposal: 'For future common v0.3 execution, add forward_dft with explicit axes, sign, normalization, complex dtype and real extraction as a separate operation. Existing finite operator profile has real but no FFT. Inline equations here define a local profile only and do not extend shared specs.'

@@ -33,7 +33,7 @@
   },
   "candidate": {
     "file": "reconstructed.py",
-    "publication_code_changes": "Trailing whitespace cleanup only; computation unchanged"
+    "publication_code_changes": "None"
   },
   "evaluation": {
     "kind": "independent_reference_within_declared_scope",
@@ -50,6 +50,25 @@
   },
   "repair_required": true,
   "repair_reason": "Correct score/weight axis layout, invert forbidden-key mask, reshape noncontiguous output, and zero empty-key probabilities/context without NaN.",
+  "followup_requests": 0,
+  "format_processing": "Strict JSON extraction; computation unchanged at extraction",
+  "generation": {
+    "settings": {
+      "endpoint": "https://ai.uvrlab.org/v1/chat/completions",
+      "model": "Qwen3.8-27B",
+      "temperature": 0,
+      "max_tokens": 8192,
+      "stream": false,
+      "timeout_seconds": 240,
+      "retries": 0,
+      "redirects": false,
+      "fallback": null
+    },
+    "primary_attempts": 1,
+    "raw_material_location": "Research workspace only",
+    "observed_cross_session_requests": 2,
+    "protocol_deviation": "Independent integration and R1 sessions each sent one request. Chronologically first integration response is the primary result; second response is retained separately, not selected to replace failure. One-attempt-per-architecture policy was not met."
+  },
   "limitations": [
     "Small CPU fixtures, not all-input proof",
     "No full training, gradient or performance reproduction",

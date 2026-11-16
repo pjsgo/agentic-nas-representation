@@ -85,7 +85,7 @@
     {
       "architecture": "gru-encoder-decoder",
       "title": "RNN Encoder–Decoder / GRU",
-      "scope": "Cho 2014 encoder·고정 context·조건부 GRU decoder",
+      "scope": "Cho 2014 encoder, 고정 context, 조건부 GRU decoder",
       "representation": "architectures/gru-encoder-decoder/representation.yaml",
       "reconstructed_code": "architectures/gru-encoder-decoder/reconstructed.py",
       "candidate_origin": "UNMODIFIED_EXTERNAL_LLM_CODE",
@@ -95,7 +95,7 @@
     {
       "architecture": "bahdanau-attention",
       "title": "Bahdanau Attention",
-      "scope": "제공된 encoder memory에 대한 additive attention·조건부 GRU",
+      "scope": "제공된 encoder memory에 대한 additive attention, 조건부 GRU",
       "representation": "architectures/bahdanau-attention/representation.yaml",
       "reconstructed_code": "architectures/bahdanau-attention/reconstructed.py",
       "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
@@ -105,7 +105,7 @@
     {
       "architecture": "luong-attention",
       "title": "Luong Attention",
-      "scope": "global/general attention·LSTM·input feeding",
+      "scope": "global/general attention, LSTM, input feeding",
       "representation": "architectures/luong-attention/representation.yaml",
       "reconstructed_code": "architectures/luong-attention/reconstructed.py",
       "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
@@ -115,7 +115,7 @@
     {
       "architecture": "gnmt",
       "title": "GNMT",
-      "scope": "3층 encoder–decoder·양방향 하단 encoder·residual·attention",
+      "scope": "3층 encoder–decoder, 양방향 하단 encoder, residual, attention",
       "representation": "architectures/gnmt/representation.yaml",
       "reconstructed_code": "architectures/gnmt/reconstructed.py",
       "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
@@ -125,7 +125,7 @@
     {
       "architecture": "layernorm",
       "title": "LayerNorm",
-      "scope": "마지막 축의 population 통계·affine 정규화",
+      "scope": "마지막 축의 population 통계, affine 정규화",
       "representation": "architectures/layernorm/representation.yaml",
       "reconstructed_code": "architectures/layernorm/reconstructed.py",
       "candidate_origin": "UNMODIFIED_EXTERNAL_LLM_CODE",
@@ -135,7 +135,7 @@
     {
       "architecture": "transformer-xl",
       "title": "Transformer-XL",
-      "scope": "segment recurrence·상대 위치 attention sublayer",
+      "scope": "segment recurrence, 상대 위치 attention sublayer",
       "representation": "architectures/transformer-xl/representation.yaml",
       "reconstructed_code": "architectures/transformer-xl/reconstructed.py",
       "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
@@ -145,7 +145,7 @@
     {
       "architecture": "compressive-transformer",
       "title": "Compressive Transformer",
-      "scope": "평균 풀링 압축·두 단계 FIFO memory attention",
+      "scope": "평균 풀링 압축, 두 단계 FIFO memory attention",
       "representation": "architectures/compressive-transformer/representation.yaml",
       "reconstructed_code": "architectures/compressive-transformer/reconstructed.py",
       "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
@@ -185,7 +185,7 @@
     {
       "architecture": "lssl",
       "title": "LSSL",
-      "scope": "고정 HiPPO-LegS·bilinear discretization·dense recurrence",
+      "scope": "고정 HiPPO-LegS, bilinear discretization, dense recurrence",
       "representation": "architectures/lssl/representation.yaml",
       "reconstructed_code": "architectures/lssl/reconstructed.py",
       "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
@@ -205,7 +205,7 @@
     {
       "architecture": "h3",
       "title": "H3",
-      "scope": "scalar-head shift·diagonal SSM gated block",
+      "scope": "scalar-head shift, diagonal SSM gated block",
       "representation": "architectures/h3/representation.yaml",
       "reconstructed_code": "architectures/h3/reconstructed.py",
       "candidate_origin": "UNMODIFIED_EXTERNAL_LLM_CODE",
@@ -251,6 +251,106 @@
       "candidate_origin": "UNMODIFIED_EXTERNAL_LLM_CODE",
       "materials": "architectures/gqa/README.md",
       "provenance": "architectures/gqa/provenance.json"
+    },
+    {
+      "architecture": "relative-position",
+      "title": "Relative Position",
+      "scope": "부호 있는 거리 clipping과 상대 key/value를 포함한 projected self-attention core",
+      "representation": "architectures/relative-position/representation.yaml",
+      "reconstructed_code": "architectures/relative-position/reconstructed.py",
+      "candidate_origin": "UNMODIFIED_EXTERNAL_LLM_CODE",
+      "materials": "architectures/relative-position/README.md",
+      "provenance": "architectures/relative-position/provenance.json"
+    },
+    {
+      "architecture": "rope",
+      "title": "RoPE",
+      "scope": "명시 위치의 인접 feature 쌍 회전과 attention core",
+      "representation": "architectures/rope/representation.yaml",
+      "reconstructed_code": "architectures/rope/reconstructed.py",
+      "candidate_origin": "UNMODIFIED_EXTERNAL_LLM_CODE",
+      "materials": "architectures/rope/README.md",
+      "provenance": "architectures/rope/provenance.json"
+    },
+    {
+      "architecture": "alibi",
+      "title": "ALiBi",
+      "scope": "고정 head slope와 causal 거리 bias attention core",
+      "representation": "architectures/alibi/representation.yaml",
+      "reconstructed_code": "architectures/alibi/reconstructed.py",
+      "candidate_origin": "UNMODIFIED_EXTERNAL_LLM_CODE",
+      "materials": "architectures/alibi/README.md",
+      "provenance": "architectures/alibi/provenance.json"
+    },
+    {
+      "architecture": "rmsnorm",
+      "title": "rmsnorm",
+      "scope": "full_last_axis_rms; outside_sqrt_epsilon; scale_only",
+      "representation": "architectures/rmsnorm/representation.yaml",
+      "reconstructed_code": "architectures/rmsnorm/reconstructed.py",
+      "candidate_origin": "UNMODIFIED_EXTERNAL_LLM_CODE",
+      "materials": "architectures/rmsnorm/README.md",
+      "provenance": "architectures/rmsnorm/provenance.json"
+    },
+    {
+      "architecture": "pre-ln",
+      "title": "pre-ln",
+      "scope": "single_encoder_block; pre_attention_layernorm; multihead_self_attention; attention_residual; pre_ffn_layernorm; relu_ffn; ffn_residual; key_padding_mask",
+      "representation": "architectures/pre-ln/representation.yaml",
+      "reconstructed_code": "architectures/pre-ln/reconstructed.py",
+      "candidate_origin": "UNMODIFIED_EXTERNAL_LLM_CODE",
+      "materials": "architectures/pre-ln/README.md",
+      "provenance": "architectures/pre-ln/provenance.json"
+    },
+    {
+      "architecture": "sparse-moe",
+      "title": "sparse-moe",
+      "scope": "deterministic_inference; top_k; selected_gate_normalization; sparse_dispatch; one_hidden_relu_experts; weighted_combine",
+      "representation": "architectures/sparse-moe/representation.yaml",
+      "reconstructed_code": "architectures/sparse-moe/reconstructed.py",
+      "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
+      "materials": "architectures/sparse-moe/README.md",
+      "provenance": "architectures/sparse-moe/provenance.json"
+    },
+    {
+      "architecture": "switch-transformer",
+      "title": "switch-transformer",
+      "scope": "deterministic_argmax_eval; one_routing_group; full_softmax_selected_gate; explicit_capacity_rounding; ordered_dispatch; padding_mask; overflow_drop; bias_free_relu_experts",
+      "representation": "architectures/switch-transformer/representation.yaml",
+      "reconstructed_code": "architectures/switch-transformer/reconstructed.py",
+      "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
+      "materials": "architectures/switch-transformer/README.md",
+      "provenance": "architectures/switch-transformer/provenance.json"
+    },
+    {
+      "architecture": "reformer",
+      "title": "reformer",
+      "scope": "shared_qk; supplied_random_rotations; angular_hash; round_bucket_offsets; bucket_position_sort; chunk_attention; previous_chunk_lookup; finite_self_penalty; optional_causal_penalty; inverse_sort; multi_round_partition_weighted_merge",
+      "representation": "architectures/reformer/representation.yaml",
+      "reconstructed_code": "architectures/reformer/reconstructed.py",
+      "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
+      "materials": "architectures/reformer/README.md",
+      "provenance": "architectures/reformer/provenance.json"
+    },
+    {
+      "architecture": "synthesizer",
+      "title": "synthesizer",
+      "scope": "token_conditioned_logits_network; relu; multihead_values; fixed_max_length_prefix; boolean_mask; key_softmax; value_aggregation; output_projection",
+      "representation": "architectures/synthesizer/representation.yaml",
+      "reconstructed_code": "architectures/synthesizer/reconstructed.py",
+      "candidate_origin": "UNMODIFIED_EXTERNAL_LLM_CODE",
+      "materials": "architectures/synthesizer/README.md",
+      "provenance": "architectures/synthesizer/provenance.json"
+    },
+    {
+      "architecture": "fnet",
+      "title": "fnet",
+      "scope": "single_encoder_block; two_axis_fourier_mixing; post_norm_residuals; biased_ffn; tanh_gelu; deterministic_inference",
+      "representation": "architectures/fnet/representation.yaml",
+      "reconstructed_code": "architectures/fnet/reconstructed.py",
+      "candidate_origin": "UNMODIFIED_EXTERNAL_LLM_CODE",
+      "materials": "architectures/fnet/README.md",
+      "provenance": "architectures/fnet/provenance.json"
     }
   ]
 }
