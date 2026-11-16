@@ -15,6 +15,7 @@ docs/           읽는 순서·예시·자료 관리 안내
 
 ## 자료 읽기
 
+- [아키텍처 복원 방법](docs/reconstruction-method.md): 제공한 정보·확인 방법·결과의 의미
 - [복원 YAML 안내](docs/representation-guide.md): 모델 내부의 연산·연결·파라미터·입출력·상태
 - [관계 YAML 안내](docs/genealogy-guide.md): 모델 사이의 변경·보존·부품 대응과 근거
 - [해석 명세](specs/README.md): 표현·연산·관계의 규칙과 버전

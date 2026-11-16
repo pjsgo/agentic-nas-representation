@@ -9,4 +9,4 @@
 
 복원 YAML은 어떤 계산을 연결할지 정하고, 연산 명세는 그 계산의 정확한 의미를 정합니다. 예를 들어 `scan`의 반복 축과 상태 전달은 이름에서 추측하지 않고 선언된 규칙을 따릅니다.
 
-[표현 읽기 규칙](../specs/representation/reading-rules-v1.md) · [관계 읽기](genealogy-guide.md) · [아키텍처 목록](../architectures/README.md)
+[복원 방법과 판정 기준](reconstruction-method.md) · [표현 읽기 규칙](../specs/representation/reading-rules-v1.md) · [관계 읽기](genealogy-guide.md) · [아키텍처 목록](../architectures/README.md)
