@@ -25,27 +25,6 @@
       "transformation": "allowlisted model settings and messages; transport omitted"
     },
     {
-      "file": "experiments/resnet-gelu/generator/input.yaml",
-      "source": "runs/20261102T064629619253Z_controlled_post_add_gelu_v0_2/generator/input.yaml",
-      "source_sha256": "daa218caa5ac9f574b817cf5c744cf19ba5b76eb2dd328ba8a92b6d029d2fb31",
-      "sha256": "daa218caa5ac9f574b817cf5c744cf19ba5b76eb2dd328ba8a92b6d029d2fb31",
-      "transformation": "none"
-    },
-    {
-      "file": "experiments/resnet-gelu/response_review/generated_model.py",
-      "source": "runs/20261102T064629619253Z_controlled_post_add_gelu_v0_2/response_review/generated_model.py",
-      "source_sha256": "03af8d0762c76b240fb8976d9250441d0b756b81c5efbabfbeea14db45aa8737",
-      "sha256": "03af8d0762c76b240fb8976d9250441d0b756b81c5efbabfbeea14db45aa8737",
-      "transformation": "none"
-    },
-    {
-      "file": "experiments/resnet-gelu/generation-input.json",
-      "source": "runs/20261102T064629619253Z_controlled_post_add_gelu_v0_2/expected_request.json",
-      "source_sha256": "65aed5d1dcf7dd7aae2d88b411d2d8332b76a76f1ee718f68c9b0973497a5929",
-      "sha256": "ef67c71203b1edeb238caa5e5d934c18b8a36e0748a66a16808e121b61710eea",
-      "transformation": "allowlisted model settings and messages; transport omitted"
-    },
-    {
       "file": "experiments/transformer/representation.yaml",
       "source": "parallel_coverage/20261105/transformer/representation.yaml",
       "source_sha256": "26c8182a77db4e9d6cd660a3381c246575c88241d24231dd0cd9244a48a8cd1c",
