@@ -28,9 +28,10 @@
     "original_result": "PASS_WITHIN_DECLARED_SCOPE",
     "final_result": "PASS_WITHIN_DECLARED_SCOPE",
     "repair_note": "계산 수정 없음; 응답 JSON 형식 실패와 코드 계산 통과는 별개",
-    "sender": "producer, saved separately authorized attempt; no I resend",
+    "sender": "Original generation under separately recorded authorization; publication integration did not resend the request",
     "original_response_and_code": "Preserved in research workspace, not redistributed",
-    "metadata_clarification": "Producer result generation=NOT_ATTEMPTED is stale validator metadata; saved API ledger and candidate-path evidence establish the actual attempt. Original report preserved."
+    "metadata_clarification": "Producer result generation=NOT_ATTEMPTED is stale validator metadata; saved API ledger and candidate-path evidence establish the actual attempt. Original report preserved.",
+    "response_format_note": "Response JSON format failed; format compliance is separate from computational evaluation and later repairs. Original response and attempt ledger remain in the research workspace."
   },
   "candidate": {
     "file": "reconstructed.py",

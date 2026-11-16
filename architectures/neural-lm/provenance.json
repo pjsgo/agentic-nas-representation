@@ -30,7 +30,7 @@
     "original_result": "PASS_WITHIN_DECLARED_SCOPE",
     "final_result": "PASS_WITHIN_DECLARED_SCOPE",
     "repair_note": "계산 수정 없음; JSON 바깥 Markdown fence 제거만 수행",
-    "sender": "producer, saved separately authorized attempt; no I resend",
+    "sender": "Original generation under separately recorded authorization; publication integration did not resend the request",
     "original_response_and_code": "Preserved in research workspace, not redistributed"
   },
   "candidate": {

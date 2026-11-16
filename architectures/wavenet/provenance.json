@@ -31,7 +31,7 @@
     "original_result": "FAIL",
     "final_result": "PASS_WITHIN_DECLARED_SCOPE",
     "repair_note": "2차원 weight에 적용한 잘못된 einsum 첨자 수정",
-    "sender": "producer, saved separately authorized attempt; no I resend",
+    "sender": "Original generation under separately recorded authorization; publication integration did not resend the request",
     "original_response_and_code": "Preserved in research workspace, not redistributed"
   },
   "candidate": {

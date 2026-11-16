@@ -34,7 +34,7 @@
     "original_result": "FAIL",
     "final_result": "PASS_WITHIN_DECLARED_SCOPE",
     "repair_note": "float32 valid-count 제곱근 계산을 float64 입력 dtype에 맞춰 수정",
-    "sender": "producer, saved separately authorized attempt; no I resend",
+    "sender": "Original generation under separately recorded authorization; publication integration did not resend the request",
     "original_response_and_code": "Preserved in research workspace, not redistributed"
   },
   "candidate": {
