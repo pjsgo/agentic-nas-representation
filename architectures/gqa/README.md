@@ -9,3 +9,9 @@
 캐시는 G개의 KV head만 반환하며 새 저장 공간을 사용합니다. 원본의 사전 할당 제자리 캐시 API, projection, RoPE와 checkpoint 평균화는 포함하지 않습니다. 공식 Meta 구현은 GQA 논문 저자의 구현과 구분합니다.
 
 [아키텍처 목록](../README.md)
+
+## 관련 관계
+
+유형과 대응 범위는 [관계 안내](../../docs/genealogy-guide.md)를 참고합니다. `?`는 추론 관계입니다.
+
+- [Transformer → GQA](../../relations/tr_056.yaml) — A, tr_056

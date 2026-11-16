@@ -57,4 +57,7 @@ stride=1, downsample=None인 단일 블록입니다. 전체 ResNet과 학습 동
 
 ## 관련 관계
 
-- [ResNet → Transformer](../../relations/tr_019.yaml) — C (tr_019)
+유형과 대응 범위는 [관계 안내](../../docs/genealogy-guide.md)를 참고합니다. `?`는 추론 관계입니다.
+
+- [ResNet → GNMT](../../relations/tr_018.yaml) — C, tr_018
+- [ResNet → Transformer](../../relations/tr_019.yaml) — C, tr_019

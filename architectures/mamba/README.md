@@ -78,8 +78,10 @@ p_A_log=[3,2], p_D=[3]의 두 Parameter를 외부 값으로 주입합니다. B/C
 
 ## 관련 관계
 
-- [S4 → Mamba-1](../../relations/tr_061.yaml) — A (tr_061)
-- [H3 → Mamba](../../relations/tr_062.yaml) — A (tr_062)
-- [Mamba → Mamba-2/SSD](../../relations/tr_063.yaml) — A (tr_063)
+유형과 대응 범위는 [관계 안내](../../docs/genealogy-guide.md)를 참고합니다. `?`는 추론 관계입니다.
 
-[관계용 별도 표현과 계약](genealogy/README.md)
+- [S4 → Mamba](../../relations/tr_061.yaml) — A, tr_061
+- [H3 → Mamba](../../relations/tr_062.yaml) — A, tr_062
+- [Mamba → Mamba-2 / SSD](../../relations/tr_063.yaml) — A, tr_063
+- [Mamba → Jamba](../../relations/tr_064.yaml) — C, tr_064
+- [Mamba → TTT](../../relations/tr_067.yaml) — P, tr_067

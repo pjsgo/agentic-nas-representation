@@ -1,4 +1,4 @@
-scope: Known exclusions; not blockers for scoped phase5 baseline
+scope: Known exclusions of the scoped reconstruction baseline
 deferred_relations:
 - id: tr_052
   source: WaveNet
@@ -7,7 +7,7 @@ deferred_relations:
   inferred: true
   evidence: /mnt/data/beyond_transformer_slides.pdf
   page: 40
-  reason: WaveNet은 기존 35개와 이번 신규 10개에 속하지 않는 6차 미복원 끝점이다.
+  reason: WaveNet은 현재 아키텍처 목록에 없는 미복원 끝점이다.
 source_gaps:
 - node: Memory Network
   status: OFFICIAL_SELECTED_HARD_SUPPORT_IMPLEMENTATION_NOT_CONFIRMED
@@ -31,5 +31,5 @@ remaining_full_model_mapping: 48 partial, 16 complete_scoped; all 64 descriptive
 historical_execution:
 - tr_037
 - tr_061
-automatic_transform_support: Not implemented by this completion
+automatic_transform_support: Not implemented
 common_schema_certification: Not claimed

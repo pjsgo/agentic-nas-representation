@@ -77,8 +77,9 @@ p0…p6의 역할은 inv_dt, A_real, A_imag, B, C, P, D 순서입니다. 생성 
 
 ## 관련 관계
 
-- [LSSL → S4](../../relations/tr_049.yaml) — A (tr_049)
-- [S4 → H3](../../relations/tr_050.yaml) — C (tr_050)
-- [S4 → Mamba-1](../../relations/tr_061.yaml) — A (tr_061)
+유형과 대응 범위는 [관계 안내](../../docs/genealogy-guide.md)를 참고합니다. `?`는 추론 관계입니다.
 
-[관계용 별도 표현과 계약](genealogy/README.md)
+- [LSSL → S4](../../relations/tr_049.yaml) — A, tr_049
+- [S4 → H3](../../relations/tr_050.yaml) — C, tr_050
+- [S4 → Hyena](../../relations/tr_053.yaml) — X?, tr_053
+- [S4 → Mamba](../../relations/tr_061.yaml) — A, tr_061

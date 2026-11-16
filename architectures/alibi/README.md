@@ -9,3 +9,9 @@
 전체 모델 학습과 성능 재현은 제외합니다. 입력, 파라미터와 상태 계약 및 제외 범위는 YAML에 명시했습니다.
 
 [아키텍처 목록](../README.md)
+
+## 관련 관계
+
+유형과 대응 범위는 [관계 안내](../../docs/genealogy-guide.md)를 참고합니다. `?`는 추론 관계입니다.
+
+- [Transformer → ALiBi](../../relations/tr_047.yaml) — A, tr_047

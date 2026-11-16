@@ -9,3 +9,9 @@ CPU 타일 전방 계산과 online softmax 누적, causal mask. 생성 원본 �
 타일 점수와 누적 최대값, 정규화 합, 가중합의 재척도를 확인했습니다. GPU의 HBM/SRAM 배치, 커널 융합과 역전파 재계산은 복원 범위 밖입니다.
 
 [아키텍처 목록](../README.md)
+
+## 관련 관계
+
+유형과 대응 범위는 [관계 안내](../../docs/genealogy-guide.md)를 참고합니다. `?`는 추론 관계입니다.
+
+- [Transformer → FlashAttention](../../relations/tr_054.yaml) — A, tr_054

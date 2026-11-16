@@ -27,7 +27,10 @@ CPU float32, YAML에 선언된 고정 크기와 외부 상태 계약을 따릅�
 
 ## 관련 관계
 
-- [S4 → H3](../../relations/tr_050.yaml) — C (tr_050)
-- [H3 → Mamba](../../relations/tr_062.yaml) — A (tr_062)
+유형과 대응 범위는 [관계 안내](../../docs/genealogy-guide.md)를 참고합니다. `?`는 추론 관계입니다.
 
-[연산 해석 규칙](../../specs/operators/tensor-pytorch-2.2.1-v0.3-r1.txt)
+- [S4 → H3](../../relations/tr_050.yaml) — C, tr_050
+- [Transformer → H3](../../relations/tr_051.yaml) — X, tr_051
+- [H3 → Mamba](../../relations/tr_062.yaml) — A, tr_062
+- [Linear Transformer → H3](../../relations/tr_074.yaml) — I, tr_074
+- [H3 → Hyena](../../relations/tr_075.yaml) — I, tr_075

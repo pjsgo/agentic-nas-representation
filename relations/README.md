@@ -9,19 +9,19 @@
 | [tr_003](tr_003.yaml) | Simple RNN → LSTM | A | partial | partial | 불가 |
 | [tr_004](tr_004.yaml) | LSTM → Seq2Seq | C | complete_scoped | complete_scoped | 불가 |
 | [tr_005](tr_005.yaml) | RNN Encoder–Decoder / GRU → Seq2Seq | X? | partial | complete_scoped | 불가 |
-| [tr_006](tr_006.yaml) | RNN Encoder–Decoder/GRU → Bahdanau | A | partial | partial | 불가 |
-| [tr_007](tr_007.yaml) | Seq2Seq → Bahdanau | P | partial | partial | 불가 |
-| [tr_008](tr_008.yaml) | Bahdanau → Luong | A | complete_scoped | complete_scoped | 불가 |
+| [tr_006](tr_006.yaml) | RNN Encoder–Decoder / GRU → Bahdanau Attention | A | partial | partial | 불가 |
+| [tr_007](tr_007.yaml) | Seq2Seq → Bahdanau Attention | P | partial | partial | 불가 |
+| [tr_008](tr_008.yaml) | Bahdanau Attention → Luong Attention | A | complete_scoped | complete_scoped | 불가 |
 | [tr_009](tr_009.yaml) | Memory Network → E2E Memory Network | A | partial | complete_scoped | 불가 |
 | [tr_010](tr_010.yaml) | LSTM → LSTMN | A | partial | complete_scoped | 불가 |
 | [tr_011](tr_011.yaml) | E2E Memory Network → LSTMN | I | partial | complete_scoped | 불가 |
 | [tr_013](tr_013.yaml) | LSTM → GNMT | A | partial | complete_scoped | 불가 |
-| [tr_014](tr_014.yaml) | Bahdanau → GNMT | C | complete_scoped | complete_scoped | 불가 |
+| [tr_014](tr_014.yaml) | Bahdanau Attention → GNMT | C | complete_scoped | complete_scoped | 불가 |
 | [tr_018](tr_018.yaml) | ResNet → GNMT | C | partial | complete_scoped | 불가 |
 | [tr_019](tr_019.yaml) | ResNet → Transformer | C | complete_scoped | complete_scoped | 불가 |
 | [tr_020](tr_020.yaml) | LayerNorm → Transformer | C | complete_scoped | complete_scoped | 불가 |
 | [tr_021](tr_021.yaml) | Bahdanau Attention → Transformer | I | partial | complete_scoped | 불가 |
-| [tr_022](tr_022.yaml) | Luong → Transformer | C | complete_scoped | complete_scoped | 불가 |
+| [tr_022](tr_022.yaml) | Luong Attention → Transformer | C | complete_scoped | complete_scoped | 불가 |
 | [tr_026](tr_026.yaml) | Seq2Seq → Transformer | A | partial | partial | 불가 |
 | [tr_028](tr_028.yaml) | Transformer → Relative Position | A | partial | complete_scoped | 불가 |
 | [tr_029](tr_029.yaml) | Transformer → Transformer-XL | A | complete_scoped | complete_scoped | 불가 |
@@ -55,9 +55,9 @@
 | [tr_058](tr_058.yaml) | Transformer → RetNet | X | partial | complete_scoped | 불가 |
 | [tr_059](tr_059.yaml) | Transformer → RWKV | X | partial | complete_scoped | 불가 |
 | [tr_060](tr_060.yaml) | Linear Transformer → RetNet | I? | partial | complete_scoped | 불가 |
-| [tr_061](tr_061.yaml) | S4 → Mamba-1 | A | complete_scoped | complete_scoped | 불가 |
+| [tr_061](tr_061.yaml) | S4 → Mamba | A | complete_scoped | complete_scoped | 불가 |
 | [tr_062](tr_062.yaml) | H3 → Mamba | A | partial | partial | 불가 |
-| [tr_063](tr_063.yaml) | Mamba → Mamba-2/SSD | A | partial | partial | 불가 |
+| [tr_063](tr_063.yaml) | Mamba → Mamba-2 / SSD | A | partial | partial | 불가 |
 | [tr_064](tr_064.yaml) | Mamba → Jamba | C | partial | complete_scoped | 불가 |
 | [tr_065](tr_065.yaml) | Transformer → Jamba | A | partial | complete_scoped | 불가 |
 | [tr_066](tr_066.yaml) | Switch Transformer → Jamba | C? | partial | complete_scoped | 불가 |

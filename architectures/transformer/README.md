@@ -80,13 +80,34 @@ YAML 버전은 등록 상태를 명시하는 0.4-candidate.1입니다. 단일 �
 
 ## 관련 관계
 
-- [ResNet → Transformer](../../relations/tr_019.yaml) — C (tr_019)
-- [LayerNorm → Transformer](../../relations/tr_020.yaml) — C (tr_020)
-- [Luong → Transformer](../../relations/tr_022.yaml) — C (tr_022)
-- [Seq2Seq → Transformer](../../relations/tr_026.yaml) — A (tr_026)
-- [Transformer → Transformer-XL](../../relations/tr_029.yaml) — A (tr_029)
-- [Transformer → Sparse Transformer](../../relations/tr_032.yaml) — A (tr_032)
-- [Transformer → Linformer](../../relations/tr_036.yaml) — A (tr_036)
-- [Transformer → Linear Transformer](../../relations/tr_037.yaml) — A (tr_037)
-- [Transformer → Performer](../../relations/tr_038.yaml) — A (tr_038)
-- [GNMT → Transformer](../../relations/tr_069.yaml) — P (tr_069)
+유형과 대응 범위는 [관계 안내](../../docs/genealogy-guide.md)를 참고합니다. `?`는 추론 관계입니다.
+
+- [ResNet → Transformer](../../relations/tr_019.yaml) — C, tr_019
+- [LayerNorm → Transformer](../../relations/tr_020.yaml) — C, tr_020
+- [Bahdanau Attention → Transformer](../../relations/tr_021.yaml) — I, tr_021
+- [Luong Attention → Transformer](../../relations/tr_022.yaml) — C, tr_022
+- [Seq2Seq → Transformer](../../relations/tr_026.yaml) — A, tr_026
+- [Transformer → Relative Position](../../relations/tr_028.yaml) — A, tr_028
+- [Transformer → Transformer-XL](../../relations/tr_029.yaml) — A, tr_029
+- [Transformer → Sparse Transformer](../../relations/tr_032.yaml) — A, tr_032
+- [Transformer → Reformer](../../relations/tr_033.yaml) — A, tr_033
+- [Transformer → Linformer](../../relations/tr_036.yaml) — A, tr_036
+- [Transformer → Linear Transformer](../../relations/tr_037.yaml) — A, tr_037
+- [Transformer → Performer](../../relations/tr_038.yaml) — A, tr_038
+- [Transformer → Synthesizer](../../relations/tr_040.yaml) — A, tr_040
+- [Transformer → Pre-LN](../../relations/tr_042.yaml) — C, tr_042
+- [Transformer → Switch Transformer](../../relations/tr_044.yaml) — A, tr_044
+- [Transformer → FNet](../../relations/tr_045.yaml) — A, tr_045
+- [Transformer → ALiBi](../../relations/tr_047.yaml) — A, tr_047
+- [Transformer → H3](../../relations/tr_051.yaml) — X, tr_051
+- [Transformer → FlashAttention](../../relations/tr_054.yaml) — A, tr_054
+- [Transformer → RETRO](../../relations/tr_055.yaml) — C, tr_055
+- [Transformer → GQA](../../relations/tr_056.yaml) — A, tr_056
+- [Transformer → RetNet](../../relations/tr_058.yaml) — X, tr_058
+- [Transformer → RWKV](../../relations/tr_059.yaml) — X, tr_059
+- [Transformer → Jamba](../../relations/tr_065.yaml) — A, tr_065
+- [Transformer → TTT](../../relations/tr_068.yaml) — X, tr_068
+- [GNMT → Transformer](../../relations/tr_069.yaml) — P, tr_069
+- [E2E Memory Network → Transformer](../../relations/tr_070.yaml) — I, tr_070
+- [LSTMN → Transformer](../../relations/tr_071.yaml) — I, tr_071
+- [Transformer → Hyena](../../relations/tr_076.yaml) — A, tr_076

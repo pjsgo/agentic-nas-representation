@@ -21,16 +21,16 @@ HiPPO, Hyena, RetNet, RWKV, Memory Network, E2E Memory Network, LSTMN, RETRO, Ja
 
 ## 관계 근거와 보완 범위
 
-원본 슬라이드 38·43페이지에서 ID, 방향, 유형, 추론 표시를 직접 확인하여 tr_005, tr_013, tr_018, tr_021, tr_051, tr_073, tr_074를 추가했습니다. GRU/LSTM 상태 차이, residual 개념과 전체 모델 변환의 차이, attention/SSM 대안 비교의 경계를 명시했습니다. Hyena의 기존 제한된 페이지 관찰은 보존하고, G의 40페이지 관계 확인을 출처 메타데이터에 보충했습니다.
+원본 슬라이드 38, 43페이지에서 ID, 방향, 유형, 추론 표시를 직접 확인하여 tr_005, tr_013, tr_018, tr_021, tr_051, tr_073, tr_074를 추가했습니다. GRU/LSTM 상태 차이, residual 개념과 전체 모델 변환의 차이, attention/SSM 대안 비교의 경계를 명시했습니다. Hyena의 기존 제한된 페이지 관찰은 보존하고, G의 40페이지 관계 확인을 출처 메타데이터에 보충했습니다.
 
 ## 기저 밖에 남는 범위
 
 - WaveNet→Hyena tr_052는 WaveNet 미복원으로 보류합니다. 이 자료는 원본 계보 전체의 완전성 인증이 아닙니다.
 - Memory Network hard-support와 LSTMN은 논문 기반 참조이며 해당 공식 구현 확인 공백이 있습니다. RETRO는 저자의 단순화된 listing과 제공된 검색 표현을 사용하는 core입니다.
-- Jamba는 축소 8층 주기, TTT는 inner learner, RWKV는 v4 time mixing 등 선택 범위입니다. 전체 모델·학습·성능·공식 runtime 동등성을 주장하지 않습니다.
+- Jamba는 축소 8층 주기, TTT는 inner learner, RWKV는 v4 time mixing 등 선택 범위입니다. 전체 모델, 학습, 성능, 공식 runtime 동등성을 주장하지 않습니다.
 - tr_037과 tr_061의 과거 범위 제한 변경 실행 근거는 보존합니다. 이를 나머지 관계의 자동 변환 성공으로 확대하지 않습니다.
 - 기존 Longformer 중복 생성 요청과 수정 이력, H3의 별도 후속 생성 실험 등 과거 provenance는 그대로 유지합니다.
 
 ## 사용 판단
 
-범위가 명시된 복원·계보 연구 기저로 사용할 수 있습니다. 전체 모델 변환 엔진이나 원문 무수정 LLM 복원 성공 데이터셋으로 해석하지 않습니다.
+범위가 명시된 복원, 계보 연구 기저로 사용할 수 있습니다. 전체 모델 변환 엔진이나 원문 무수정 LLM 복원 성공 데이터셋으로 해석하지 않습니다.

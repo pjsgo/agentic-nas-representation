@@ -70,7 +70,10 @@ YAML은 연산과 연결, 속성, 공유, 상태를 기술합니다. 학습된 �
 
 ## 관련 관계
 
-- [Transformer → Linear Transformer](../../relations/tr_037.yaml) — A (tr_037)
-- [Linear Transformer → Performer](../../relations/tr_039.yaml) — I? (tr_039)
+유형과 대응 범위는 [관계 안내](../../docs/genealogy-guide.md)를 참고합니다. `?`는 추론 관계입니다.
 
-[관계용 별도 표현과 계약](genealogy/README.md)
+- [Transformer → Linear Transformer](../../relations/tr_037.yaml) — A, tr_037
+- [Linear Transformer → Performer](../../relations/tr_039.yaml) — I?, tr_039
+- [Linear Transformer → RWKV](../../relations/tr_057.yaml) — I?, tr_057
+- [Linear Transformer → RetNet](../../relations/tr_060.yaml) — I?, tr_060
+- [Linear Transformer → H3](../../relations/tr_074.yaml) — I, tr_074

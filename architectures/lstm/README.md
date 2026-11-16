@@ -74,5 +74,10 @@ T=1,3,5의 출력, 매 시점 h/c, gate, Parameter 공유, 확장 dataflow를 �
 
 ## 관련 관계
 
-- [Simple RNN → LSTM](../../relations/tr_003.yaml) — A (tr_003)
-- [LSTM → Seq2Seq](../../relations/tr_004.yaml) — C (tr_004)
+유형과 대응 범위는 [관계 안내](../../docs/genealogy-guide.md)를 참고합니다. `?`는 추론 관계입니다.
+
+- [Simple RNN → LSTM](../../relations/tr_003.yaml) — A, tr_003
+- [LSTM → Seq2Seq](../../relations/tr_004.yaml) — C, tr_004
+- [LSTM → LSTMN](../../relations/tr_010.yaml) — A, tr_010
+- [LSTM → GNMT](../../relations/tr_013.yaml) — A, tr_013
+- [LSTM → RNN Encoder–Decoder / GRU](../../relations/tr_073.yaml) — I, tr_073

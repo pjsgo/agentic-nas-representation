@@ -25,5 +25,8 @@ CPU float64, YAML에 선언된 크기, dtype, 파라미터, 외부 상태 계약
 
 ## 관련 관계
 
-- [Transformer → Transformer-XL](../../relations/tr_029.yaml) — A (tr_029)
-- [Transformer-XL → Compressive Transformer](../../relations/tr_031.yaml) — A (tr_031)
+유형과 대응 범위는 [관계 안내](../../docs/genealogy-guide.md)를 참고합니다. `?`는 추론 관계입니다.
+
+- [Transformer → Transformer-XL](../../relations/tr_029.yaml) — A, tr_029
+- [Relative Position → Transformer-XL](../../relations/tr_030.yaml) — C, tr_030
+- [Transformer-XL → Compressive Transformer](../../relations/tr_031.yaml) — A, tr_031

@@ -284,7 +284,7 @@
     },
     {
       "architecture": "rmsnorm",
-      "title": "rmsnorm",
+      "title": "RMSNorm",
       "scope": "full_last_axis_rms; outside_sqrt_epsilon; scale_only",
       "representation": "architectures/rmsnorm/representation.yaml",
       "reconstructed_code": "architectures/rmsnorm/reconstructed.py",
@@ -294,7 +294,7 @@
     },
     {
       "architecture": "pre-ln",
-      "title": "pre-ln",
+      "title": "Pre-LN",
       "scope": "single_encoder_block; pre_attention_layernorm; multihead_self_attention; attention_residual; pre_ffn_layernorm; relu_ffn; ffn_residual; key_padding_mask",
       "representation": "architectures/pre-ln/representation.yaml",
       "reconstructed_code": "architectures/pre-ln/reconstructed.py",
@@ -304,7 +304,7 @@
     },
     {
       "architecture": "sparse-moe",
-      "title": "sparse-moe",
+      "title": "Sparse MoE",
       "scope": "deterministic_inference; top_k; selected_gate_normalization; sparse_dispatch; one_hidden_relu_experts; weighted_combine",
       "representation": "architectures/sparse-moe/representation.yaml",
       "reconstructed_code": "architectures/sparse-moe/reconstructed.py",
@@ -314,7 +314,7 @@
     },
     {
       "architecture": "switch-transformer",
-      "title": "switch-transformer",
+      "title": "Switch Transformer",
       "scope": "deterministic_argmax_eval; one_routing_group; full_softmax_selected_gate; explicit_capacity_rounding; ordered_dispatch; padding_mask; overflow_drop; bias_free_relu_experts",
       "representation": "architectures/switch-transformer/representation.yaml",
       "reconstructed_code": "architectures/switch-transformer/reconstructed.py",
@@ -324,7 +324,7 @@
     },
     {
       "architecture": "reformer",
-      "title": "reformer",
+      "title": "Reformer",
       "scope": "shared_qk; supplied_random_rotations; angular_hash; round_bucket_offsets; bucket_position_sort; chunk_attention; previous_chunk_lookup; finite_self_penalty; optional_causal_penalty; inverse_sort; multi_round_partition_weighted_merge",
       "representation": "architectures/reformer/representation.yaml",
       "reconstructed_code": "architectures/reformer/reconstructed.py",
@@ -334,7 +334,7 @@
     },
     {
       "architecture": "synthesizer",
-      "title": "synthesizer",
+      "title": "Synthesizer",
       "scope": "token_conditioned_logits_network; relu; multihead_values; fixed_max_length_prefix; boolean_mask; key_softmax; value_aggregation; output_projection",
       "representation": "architectures/synthesizer/representation.yaml",
       "reconstructed_code": "architectures/synthesizer/reconstructed.py",
@@ -344,7 +344,7 @@
     },
     {
       "architecture": "fnet",
-      "title": "fnet",
+      "title": "FNet",
       "scope": "single_encoder_block; two_axis_fourier_mixing; post_norm_residuals; biased_ffn; tanh_gelu; deterministic_inference",
       "representation": "architectures/fnet/representation.yaml",
       "reconstructed_code": "architectures/fnet/reconstructed.py",
@@ -354,7 +354,7 @@
     },
     {
       "architecture": "hippo",
-      "title": "hippo",
+      "title": "HiPPO",
       "scope": "scaled_Legendre_operator_construction; time_varying_bilinear_discretization; coefficient_state_scan",
       "representation": "architectures/hippo/representation.yaml",
       "reconstructed_code": "architectures/hippo/reconstructed.py",
@@ -364,7 +364,7 @@
     },
     {
       "architecture": "hyena",
-      "title": "hyena",
+      "title": "Hyena",
       "scope": "input_projection; causal_depthwise_short_filter; position_generated_long_filter; shared_frequency_sine_MLP; exponential_modulation; input_gating; causal_FFT_convolution; diagonal_skip; output_projection",
       "representation": "architectures/hyena/representation.yaml",
       "reconstructed_code": "architectures/hyena/reconstructed.py",
@@ -374,7 +374,7 @@
     },
     {
       "architecture": "retnet",
-      "title": "retnet",
+      "title": "RetNet",
       "scope": "multi_scale_fixed_head_decay; independent_projections; real_position_rotation; key_scaling; causal_retention; parallel_sum; recurrent_matrix_state; state_continuation",
       "representation": "architectures/retnet/representation.yaml",
       "reconstructed_code": "architectures/retnet/reconstructed.py",
@@ -384,7 +384,7 @@
     },
     {
       "architecture": "rwkv",
-      "title": "rwkv",
+      "title": "RWKV",
       "scope": "RWKV_v4_time_mixing; token_shift; independent_interpolations; per_channel_decay; current_token_bonus; stabilized_scalar_WKV; sigmoid_receptance; output_projection; explicit_state_continuation",
       "representation": "architectures/rwkv/representation.yaml",
       "reconstructed_code": "architectures/rwkv/reconstructed.py",
@@ -394,7 +394,7 @@
     },
     {
       "architecture": "memory-network",
-      "title": "memory-network",
+      "title": "Memory Network",
       "scope": "supplied_count_features; append_fact_storage; two_argmax_supports; role_specific_embeddings; answer_ranking",
       "representation": "architectures/memory-network/representation.yaml",
       "reconstructed_code": "architectures/memory-network/reconstructed.py",
@@ -404,7 +404,7 @@
     },
     {
       "architecture": "e2e-memory-network",
-      "title": "e2e-memory-network",
+      "title": "E2E Memory Network",
       "scope": "input_memory_embedding; output_memory_embedding; query_embedding; soft_addressing; weighted_read; hop_query_update; tied_answer_projection",
       "representation": "architectures/e2e-memory-network/representation.yaml",
       "reconstructed_code": "architectures/e2e-memory-network/reconstructed.py",
@@ -414,7 +414,7 @@
     },
     {
       "architecture": "lstmn",
-      "title": "lstmn",
+      "title": "LSTMN",
       "scope": "hidden_tape; cell_tape; previous_read_feedback; causal_additive_attention; weighted_hidden_and_cell_read; gates_from_read_hidden; cell_update_from_read_cell; append_states",
       "representation": "architectures/lstmn/representation.yaml",
       "reconstructed_code": "architectures/lstmn/reconstructed.py",
@@ -424,7 +424,7 @@
     },
     {
       "architecture": "retro",
-      "title": "retro",
+      "title": "RETRO",
       "scope": "chunk_shift; neighbour_time_joint_softmax; query_key_value_projections; supplied_position_logits; retrieval_value_aggregation; residual_wrapper",
       "representation": "architectures/retro/representation.yaml",
       "reconstructed_code": "architectures/retro/reconstructed.py",
@@ -434,7 +434,7 @@
     },
     {
       "architecture": "jamba",
-      "title": "jamba",
+      "title": "Jamba",
       "scope": "one_original_eight_layer_cycle; pre_norm_residuals; causal_grouped_query_attention; full_mamba_mixer; normalized_dt_B_C; dense_swiglu; full_capacity_top2_swiglu_experts; explicit_continuation_state",
       "representation": "architectures/jamba/representation.yaml",
       "reconstructed_code": "architectures/jamba/reconstructed.py",
@@ -444,7 +444,7 @@
     },
     {
       "architecture": "ttt",
-      "title": "ttt",
+      "title": "TTT",
       "scope": "single_head_TTT_Linear_inner_learner; learned_view_projections; residual_LN_learner; input_dependent_learning_rate; frozen_chunk_gradients; causal_prefix_updates; learned_initial_state; learned_token_scaling; chunk_boundary_continuation",
       "representation": "architectures/ttt/representation.yaml",
       "reconstructed_code": "architectures/ttt/reconstructed.py",

@@ -25,7 +25,9 @@ CPU float64, YAML에 선언된 크기, dtype, 파라미터, 외부 상태 계약
 
 ## 관련 관계
 
-- [Bahdanau → GNMT](../../relations/tr_014.yaml) — C (tr_014)
-- [GNMT → Transformer](../../relations/tr_069.yaml) — P (tr_069)
+유형과 대응 범위는 [관계 안내](../../docs/genealogy-guide.md)를 참고합니다. `?`는 추론 관계입니다.
 
-[연산 해석 규칙](../../specs/operators/rnn-expression-v1.yaml)
+- [LSTM → GNMT](../../relations/tr_013.yaml) — A, tr_013
+- [Bahdanau Attention → GNMT](../../relations/tr_014.yaml) — C, tr_014
+- [ResNet → GNMT](../../relations/tr_018.yaml) — C, tr_018
+- [GNMT → Transformer](../../relations/tr_069.yaml) — P, tr_069

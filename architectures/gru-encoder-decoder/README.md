@@ -25,6 +25,8 @@ CPU float64, YAML에 선언된 크기, dtype, 파라미터, 외부 상태 계약
 
 ## 관련 관계
 
-- [RNN Encoder–Decoder/GRU → Bahdanau](../../relations/tr_006.yaml) — A (tr_006)
+유형과 대응 범위는 [관계 안내](../../docs/genealogy-guide.md)를 참고합니다. `?`는 추론 관계입니다.
 
-[연산 해석 규칙](../../specs/operators/rnn-expression-v1.yaml)
+- [RNN Encoder–Decoder / GRU → Seq2Seq](../../relations/tr_005.yaml) — X?, tr_005
+- [RNN Encoder–Decoder / GRU → Bahdanau Attention](../../relations/tr_006.yaml) — A, tr_006
+- [LSTM → RNN Encoder–Decoder / GRU](../../relations/tr_073.yaml) — I, tr_073

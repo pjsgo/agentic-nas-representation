@@ -82,6 +82,9 @@ a_wi/a_bi/a_wh/a_bh는 encoder, b_wi/b_bi/b_wh/b_bh는 decoder, out_w/out_b는 p
 
 ## 관련 관계
 
-- [LSTM → Seq2Seq](../../relations/tr_004.yaml) — C (tr_004)
-- [Seq2Seq → Bahdanau](../../relations/tr_007.yaml) — P (tr_007)
-- [Seq2Seq → Transformer](../../relations/tr_026.yaml) — A (tr_026)
+유형과 대응 범위는 [관계 안내](../../docs/genealogy-guide.md)를 참고합니다. `?`는 추론 관계입니다.
+
+- [LSTM → Seq2Seq](../../relations/tr_004.yaml) — C, tr_004
+- [RNN Encoder–Decoder / GRU → Seq2Seq](../../relations/tr_005.yaml) — X?, tr_005
+- [Seq2Seq → Bahdanau Attention](../../relations/tr_007.yaml) — P, tr_007
+- [Seq2Seq → Transformer](../../relations/tr_026.yaml) — A, tr_026

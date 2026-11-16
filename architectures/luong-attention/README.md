@@ -25,7 +25,7 @@ CPU float64, YAML에 선언된 크기, dtype, 파라미터, 외부 상태 계약
 
 ## 관련 관계
 
-- [Bahdanau → Luong](../../relations/tr_008.yaml) — A (tr_008)
-- [Luong → Transformer](../../relations/tr_022.yaml) — C (tr_022)
+유형과 대응 범위는 [관계 안내](../../docs/genealogy-guide.md)를 참고합니다. `?`는 추론 관계입니다.
 
-[연산 해석 규칙](../../specs/operators/rnn-expression-v1.yaml)
+- [Bahdanau Attention → Luong Attention](../../relations/tr_008.yaml) — A, tr_008
+- [Luong Attention → Transformer](../../relations/tr_022.yaml) — C, tr_022

@@ -25,6 +25,8 @@ CPU float64, YAML에 선언된 크기, dtype, 파라미터, 외부 상태 계약
 
 ## 관련 관계
 
-- [Transformer → Sparse Transformer](../../relations/tr_032.yaml) — A (tr_032)
+유형과 대응 범위는 [관계 안내](../../docs/genealogy-guide.md)를 참고합니다. `?`는 추론 관계입니다.
 
-[연산 해석 규칙](../../specs/operators/sparse-transformer-v1.json)
+- [Transformer → Sparse Transformer](../../relations/tr_032.yaml) — A, tr_032
+- [Sparse Transformer → Longformer](../../relations/tr_034.yaml) — I, tr_034
+- [Sparse Transformer → BigBird](../../relations/tr_035.yaml) — I, tr_035
