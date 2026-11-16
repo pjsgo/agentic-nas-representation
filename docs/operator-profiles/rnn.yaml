@@ -44,11 +44,11 @@ primitives:
       gates: linear(x,wi,bi)+linear(h,wh,bh)
       c_next: sigmoid(forget)*c+sigmoid(input)*tanh(proposal)
       h_next: sigmoid(output)*tanh(c_next)
-    reuse: ../../../lstm/generated_model.py
+    reuse: ../../experiments/lstm/generated_model.py
     function: RecurrentTensorRegion.forward with T=1
-    evidence: ../../../lstm/evaluations/t_ge_1_v1/report.md
-    no_revalidation: Existing positive-length LSTM is a reused dependency. Only new
-      compositions are compared.
+    research_evidence:
+      path: parallel_coverage/20261105/lstm/evaluations/t_ge_1_v1/report.md
+      availability: research workspace only; not a repository-relative file
   tensor_methods: sum(dim), squeeze(-1), and indexing use PyTorch semantics; Python
     arithmetic broadcasts with PyTorch rules.
 source_parameter_adapters:

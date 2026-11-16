@@ -8,7 +8,6 @@
     "출처·사용 계약",
     "관계 YAML·부품 대응"
   ],
-  "next_direction": "계보 전체로 표현을 확장하고 변화 맥락과 Factorization을 에이전트에 함께 제공하며, EvoScientist 기반 편집·실험 흐름으로 연결",
   "architectures": [
     {
       "architecture": "resnet",
@@ -24,7 +23,8 @@
         "research_source": "runs/20261102T054907186861Z_resnet_source_grounded_v0_2/result.md",
         "sha256": "8399a2a5488ab6492760a5d15eb406710c0479a7900a40de2f5233feb8befb0a"
       },
-      "title": "ResNet"
+      "title": "ResNet",
+      "provenance": "experiments/resnet/provenance.json"
     },
     {
       "architecture": "lstm",
@@ -40,7 +40,8 @@
         "research_source": "parallel_coverage/20261105/lstm/evaluations/t_ge_1_v1/report.md",
         "sha256": "658fe396522d55f1e813dfd5ca89c056192473f3327b0de602c95c5e7ddb639d"
       },
-      "title": "LSTM"
+      "title": "LSTM",
+      "provenance": "experiments/lstm/provenance.json"
     },
     {
       "architecture": "seq2seq",
@@ -56,7 +57,8 @@
         "research_source": "parallel_coverage/20261105/seq2seq/evaluations/20261109_structure_v1_1/result.md",
         "sha256": "bd8df7ce408e9b3269282318cf7682b753a931ef9ba8faa3ac7ef1e5593d3901"
       },
-      "title": "Seq2Seq"
+      "title": "Seq2Seq",
+      "provenance": "experiments/seq2seq/provenance.json"
     },
     {
       "architecture": "transformer",
@@ -72,7 +74,8 @@
         "research_source": "parallel_coverage/20261105/transformer/experiments/20261112_runtime_trace_fresh_v1/result.md",
         "sha256": "c40b84ad9cd164328b18494805dfbaad1c3760b2d95e113f2b6e51d316bd1a6e"
       },
-      "title": "Transformer"
+      "title": "Transformer",
+      "provenance": "experiments/transformer/provenance.json"
     },
     {
       "architecture": "linear-transformer",
@@ -88,7 +91,8 @@
         "research_source": "parallel_coverage/20261105/linear_transformer/experiments/20261113_current_candidate_recheck_v1/result.md",
         "sha256": "8c001d9807161e5eacc5860c6586864897854811eb913f929110960f45828f4d"
       },
-      "title": "Linear Transformer"
+      "title": "Linear Transformer",
+      "provenance": "experiments/linear-transformer/provenance.json"
     },
     {
       "architecture": "s4",
@@ -104,7 +108,8 @@
         "research_source": "parallel_coverage/20261105/s4/experiments/20261113_strict_fix_v1/result.md",
         "sha256": "e2a37161a3a44cf3a1be512ea919971b1b887be885e7c8507c8cfd0efa0cd9e1"
       },
-      "title": "S4"
+      "title": "S4",
+      "provenance": "experiments/s4/provenance.json"
     },
     {
       "architecture": "mamba",
@@ -120,7 +125,8 @@
         "research_source": "parallel_coverage/20261105/mamba/evaluations/20261110_practical_v1/result.md",
         "sha256": "4e06ea5be6004096ae87d1ad5588a7ae3a942ee85db6e2040f64bca66f306dc7"
       },
-      "title": "Mamba"
+      "title": "Mamba",
+      "provenance": "experiments/mamba/provenance.json"
     },
     {
       "architecture": "simple-rnn",
@@ -279,8 +285,6 @@
   ],
   "note": "Declared cores only; existing evidence reused, no common full-model or training certification. Generated and repaired code origins remain separate.",
   "team_context": "아키텍처 간 무엇이 어떻게 변했는지와 그 배경을 구조화해 정리",
-  "updated_at_kst": "2026-11-16",
-  "milestone": "PHASE1_SCOPED_RECONSTRUCTIONS",
   "completed_architecture_count": 21,
   "relations": {
     "catalog": "relations/catalog.yaml",

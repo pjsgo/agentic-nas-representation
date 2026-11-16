@@ -1,13 +1,10 @@
 # ResNet
 
-**복원 완료 — Identity-shortcut BasicBlock.**
+**복원 범위: 입력을 그대로 더하는 shortcut을 가진 채널 64의 BasicBlock.** 해당 범위에서 검증을 마친 YAML과 복원 코드입니다.
 
-7개 입력 검증 통과.
-
-[YAML](generator/input.yaml) · [최종 코드](response_review/generated_model.py)
+[YAML](generator/input.yaml) · [복원 코드](response_review/generated_model.py) · [출처·확인 범위](provenance.json)
 
 ## 구조도
-
 ```mermaid
 flowchart LR
     x["입력 x"] --> conv1["Conv1"] --> bn1["BN1"] --> relu1["ReLU"]
@@ -18,7 +15,45 @@ flowchart LR
 
 두 ReLU 호출은 같은 객체를 공유합니다. Add는 main 결과를 제자리 갱신합니다. 주요 계산을 묶어 보여주는 요약도이며, 세부 연산과 연결은 위 YAML과 코드를 기준으로 확인합니다.
 
-[평가 조건·출처](../../results/summary.json) · [전체 결과](../README.md)
+## YAML이 표현하는 내용
+
+`representation_version: 0.2` · 진입점 `block`.
+
+Conv → BN → ReLU → Conv → BN → 입력과 합산 → ReLU.
+
+| YAML에서 볼 곳 | 복원 코드에서의 구현 |
+|---|---|
+| `block`, `main` | `BasicBlock.forward`의 residual 경로 |
+| `conv1`, `bn1`, `conv2`, `bn2` | 두 Conv2d와 두 BatchNorm2d |
+| `relu`, `activation` / `resource` | 두 번 호출하지만 같은 ReLU 객체를 공유 |
+| `merge`의 `inplace`, `target` | main 결과에 `add_(x)` 수행 |
+
+YAML은 연산·연결·속성·공유·상태를 기술합니다. 학습된 가중치나 실행 fixture를 저장하는 파일은 아닙니다. [공통 읽기 안내](../../docs/representation-guide.md)를 함께 참고하세요.
+
+## 입력과 출력
+
+| 방향 | 포트 | Shape |
+|---|---|---|
+| 입력 | `x` | `[N,64,H,W]` |
+| 출력 | `y` | `[N,64,H,W]` |
+
+## 복원 코드 사용 조건
+
+`model = BasicBlock().eval()` → `y = model(x)`.
+
+Conv/BN Parameter와 BN running buffer를 비교 대상과 같은 값으로 주입한 뒤 평가합니다. 클래스는 PyTorch 기본 초기값을 만들지만 학습된 가중치는 제공하지 않습니다.
+
+코드의 import·생성·forward 이름은 위 계약을 따릅니다. 원본과 수치 비교하려면 입력, 초기 상태, Parameter/Buffer 값, dtype과 eval 조건을 동일하게 맞춰야 합니다. 저장된 검증 환경은 CPU·PyTorch 2.2.1입니다.
+
+## 확인한 결과와 범위
+
+고정 입력 7개에서 출력 최대 절대 오차 0. Conv/BN 속성, ReLU 객체 공유, in-place 합산과 입력 불변성을 확인했습니다.
+
+stride=1, downsample=None인 단일 블록입니다. 전체 ResNet과 학습 동등성은 포함하지 않습니다.
+
+이 폴더는 최신 사용 자료이며 상세 실험 로그·검사기·fixture 묶음은 포함하지 않습니다. 검증 근거의 연구 작업 공간 기록은 provenance.json에 있습니다.
+
+[전체 모델 목록](../../README.md)
 
 ## 관련 관계
 

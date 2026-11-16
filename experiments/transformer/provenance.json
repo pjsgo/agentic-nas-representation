@@ -1,0 +1,37 @@
+{
+  "format_version": 2,
+  "architecture": "transformer",
+  "scope": "Single encoder block, nine CPU float32 eval fixtures",
+  "reconstruction": "PASS_WITHIN_DECLARED_SCOPE",
+  "candidate_origin": "UNMODIFIED_LLM_OUTPUT",
+  "candidate_modified_after_generation": false,
+  "representation": {
+    "file": "20261113-core-completion/representation.yaml",
+    "research_source": "parallel_coverage/20261105/transformer/experiments/20261112_runtime_trace_fresh_v1/input.yaml"
+  },
+  "candidate": {
+    "file": "20261113-core-completion/generated_model.py",
+    "research_source": "parallel_coverage/20261105/transformer/experiments/20261112_runtime_trace_fresh_v1/generated_model.py"
+  },
+  "generation": {
+    "settings": {
+      "model": "Qwen3.8-27B",
+      "temperature": 0,
+      "max_tokens": 8192,
+      "stream": false
+    },
+    "research_source": "parallel_coverage/20261105/transformer/experiments/20261112_runtime_trace_fresh_v1/requests/request.json"
+  },
+  "evaluation": {
+    "kind": "summary_of_existing_records_not_a_new_evaluation",
+    "criterion": "fresh-generation runtime_trace_v1",
+    "verdict": "PASS",
+    "note": "새 응답 전에 동결한 runtime_trace_v1 PASS. 하네스는 이전 응답을 보고 개발됐고 새 코드도 이전 Treatment와 동일.",
+    "evidence": [
+      {
+        "research_source": "parallel_coverage/20261105/transformer/experiments/20261112_runtime_trace_fresh_v1/result.md"
+      }
+    ]
+  },
+  "limits": "해당 블록/core와 실행한 fixture 범위. 전체 모델·학습/gradient·GPU·공통 단일 엄격 기준의 7종 성공을 주장하지 않음."
+}

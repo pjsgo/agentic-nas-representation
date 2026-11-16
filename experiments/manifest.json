@@ -1,7 +1,7 @@
 {
   "version": 1,
   "export_date_kst": "2026-11-13",
-  "description": "Selected architecture and relation materials. Existing hashes are historical evidence only; new entries use source paths without integrity admission checks.",
+  "description": "Public architecture and relation source index. Full generation prompts and superseded implementations are kept in the research workspace.",
   "files": [
     {
       "file": "experiments/resnet/generator/input.yaml",
@@ -18,34 +18,6 @@
       "transformation": "none"
     },
     {
-      "file": "experiments/resnet/generation-input.json",
-      "source": "runs/20261102T054907186861Z_resnet_source_grounded_v0_2/expected_request.json",
-      "source_sha256": "0c68ac0f3058d80c0d5f7948431024f6d3217ec18153cd46107c14b8f8818057",
-      "sha256": "7ef0925792eae8da164aa3aa7b1f8db34c2e5fbcdcf6403c4a30c4af88701b3d",
-      "transformation": "allowlisted model settings and messages; transport omitted"
-    },
-    {
-      "file": "experiments/transformer/representation.yaml",
-      "source": "parallel_coverage/20261105/transformer/representation.yaml",
-      "source_sha256": "26c8182a77db4e9d6cd660a3381c246575c88241d24231dd0cd9244a48a8cd1c",
-      "sha256": "26c8182a77db4e9d6cd660a3381c246575c88241d24231dd0cd9244a48a8cd1c",
-      "transformation": "none"
-    },
-    {
-      "file": "experiments/transformer/generated_model.py",
-      "source": "parallel_coverage/20261105/transformer/generated_model.py",
-      "source_sha256": "27033c63fef8d8ce9f32030e939cebad7dae91ce4d805403cfaa0c727a16496a",
-      "sha256": "27033c63fef8d8ce9f32030e939cebad7dae91ce4d805403cfaa0c727a16496a",
-      "transformation": "none"
-    },
-    {
-      "file": "experiments/transformer/generation-input.json",
-      "source": "parallel_coverage/20261105/transformer/requests/request.json",
-      "source_sha256": "9858d87fd69a918c508d45ccce8cfc80088966e29c3f234e176c96ef0c78e28a",
-      "sha256": "9858d87fd69a918c508d45ccce8cfc80088966e29c3f234e176c96ef0c78e28a",
-      "transformation": "allowlisted model settings and messages; transport omitted"
-    },
-    {
       "file": "experiments/lstm/representation.yaml",
       "source": "parallel_coverage/20261105/lstm/representation.yaml",
       "source_sha256": "4bee155424742198b8e6019a70d44cb99e7edf16147a5c20606a63435f139537",
@@ -58,13 +30,6 @@
       "source_sha256": "26343b2a03881e58a57140f644a02bf071d0fe478b21e0ead817614009f61f89",
       "sha256": "26343b2a03881e58a57140f644a02bf071d0fe478b21e0ead817614009f61f89",
       "transformation": "none"
-    },
-    {
-      "file": "experiments/lstm/generation-input.json",
-      "source": "parallel_coverage/20261105/lstm/requests/request.json",
-      "source_sha256": "7f9db7f319cbb894bc68ab13d661df2ab03efe37285e0bfd18569e2072c71dd3",
-      "sha256": "7f9db7f319cbb894bc68ab13d661df2ab03efe37285e0bfd18569e2072c71dd3",
-      "transformation": "allowlisted model settings and messages; transport omitted"
     },
     {
       "file": "experiments/seq2seq/representation.yaml",
@@ -81,34 +46,6 @@
       "transformation": "none"
     },
     {
-      "file": "experiments/seq2seq/generation-input.json",
-      "source": "parallel_coverage/20261105/seq2seq/revisions/02_bentrevett/requests/request.json",
-      "source_sha256": "2fb2c940e497260ea147c1d85749247ccb9c8659ef35e028ec45adde9a245446",
-      "sha256": "2fb2c940e497260ea147c1d85749247ccb9c8659ef35e028ec45adde9a245446",
-      "transformation": "allowlisted model settings and messages; transport omitted"
-    },
-    {
-      "file": "experiments/linear-transformer/representation.yaml",
-      "source": "parallel_coverage/20261105/linear_transformer/representation.yaml",
-      "source_sha256": "128937ce513e4f554e3d1dca483472b8183bb1b4eb3705b62a20a25599f3ef38",
-      "sha256": "128937ce513e4f554e3d1dca483472b8183bb1b4eb3705b62a20a25599f3ef38",
-      "transformation": "none"
-    },
-    {
-      "file": "experiments/s4/representation.yaml",
-      "source": "parallel_coverage/20261105/s4/representation.yaml",
-      "source_sha256": "7ffaf1f4fdbf053d1775cc41d9ae04abd810d0fa9c1762d20cab1cf2cddda51c",
-      "sha256": "7ffaf1f4fdbf053d1775cc41d9ae04abd810d0fa9c1762d20cab1cf2cddda51c",
-      "transformation": "none"
-    },
-    {
-      "file": "experiments/s4/generation-input.json",
-      "source": "parallel_coverage/20261105/s4/requests/request.json",
-      "source_sha256": "0b7c23ed879f1b39587e9535a2220b8cf79f80f8117631484a966ee08b770e19",
-      "sha256": "0b7c23ed879f1b39587e9535a2220b8cf79f80f8117631484a966ee08b770e19",
-      "transformation": "allowlisted model settings and messages; transport omitted"
-    },
-    {
       "file": "experiments/mamba/representation.yaml",
       "source": "parallel_coverage/20261105/mamba/representation.yaml",
       "source_sha256": "f0189d89c93c9bb0b6c58a0377f7ce6b64443c2d3bddd34354aec6e80961101e",
@@ -121,13 +58,6 @@
       "source_sha256": "bbed5bbdd8312988e918067c94b7c66b7fafac9b2afe7069e3d017dc9785eab2",
       "sha256": "bbed5bbdd8312988e918067c94b7c66b7fafac9b2afe7069e3d017dc9785eab2",
       "transformation": "none"
-    },
-    {
-      "file": "experiments/mamba/generation-input.json",
-      "source": "parallel_coverage/20261105/mamba/requests/request.json",
-      "source_sha256": "be48af596c03f861f12b017a0f7e1d3593ebcb3cdf48c0e15e2c1fcfaf92a820",
-      "sha256": "be48af596c03f861f12b017a0f7e1d3593ebcb3cdf48c0e15e2c1fcfaf92a820",
-      "transformation": "allowlisted model settings and messages; transport omitted"
     },
     {
       "file": "experiments/transformer/20261113-core-completion/representation.yaml",
@@ -144,13 +74,6 @@
       "transformation": "none"
     },
     {
-      "file": "experiments/transformer/20261113-core-completion/generation-input.json",
-      "source": "parallel_coverage/20261105/transformer/experiments/20261112_runtime_trace_fresh_v1/requests/request.json",
-      "source_sha256": "bc74c0130bdcab8377f1001b1eed02ddcfd6db4596ab1f8b2f99611c43598bfd",
-      "sha256": "bc74c0130bdcab8377f1001b1eed02ddcfd6db4596ab1f8b2f99611c43598bfd",
-      "transformation": "allowlisted model settings and messages; transport omitted"
-    },
-    {
       "file": "experiments/linear-transformer/20261113-core-completion/representation.yaml",
       "source": "parallel_coverage/20261105/linear_transformer/experiments/20261113_final_json_v1/representation.yaml",
       "source_sha256": "a858d126d46fb9656924278c1ba371765af6951e564e67b077ab976456f7eaf6",
@@ -165,13 +88,6 @@
       "transformation": "none"
     },
     {
-      "file": "experiments/linear-transformer/20261113-core-completion/generation-input.json",
-      "source": "parallel_coverage/20261105/linear_transformer/experiments/20261113_final_json_v1/requests/request.json",
-      "source_sha256": "09e1b70563f4759cff3b9673136a358f717522cfede1514e2905f44c7202c927",
-      "sha256": "09e1b70563f4759cff3b9673136a358f717522cfede1514e2905f44c7202c927",
-      "transformation": "allowlisted model settings and messages; transport omitted"
-    },
-    {
       "file": "experiments/s4/20261113-core-completion/representation.yaml",
       "source": "parallel_coverage/20261105/s4/experiments/20261113_strict_fix_v1/representation.yaml",
       "source_sha256": "268cc27918e4b55291e08e4a3f299e6f141e5f22d1bfd7b1ceae13a93da9c7e8",
@@ -184,35 +100,6 @@
       "source_sha256": "eb56e05540b36b9a566b508da84af51cbdd00cbdc0bc2cbf7532efcc3d628ca3",
       "sha256": "eb56e05540b36b9a566b508da84af51cbdd00cbdc0bc2cbf7532efcc3d628ca3",
       "transformation": "none"
-    },
-    {
-      "file": "experiments/s4/20261113-core-completion/generation-input.json",
-      "source": "parallel_coverage/20261105/s4/experiments/20261113_generate_required_v1/requests/request.json",
-      "source_sha256": "682c50a0d9a4dffed3c160afeaa66b3eda431f933ae2e6f9fd9fcc9498879377",
-      "sha256": "682c50a0d9a4dffed3c160afeaa66b3eda431f933ae2e6f9fd9fcc9498879377",
-      "transformation": "allowlisted model settings and messages; transport omitted"
-    },
-    {
-      "file": "experiments/s4/20261113-core-completion/generated_original.py",
-      "source": "parallel_coverage/20261105/s4/experiments/20261113_generate_required_v1/generated_model.py",
-      "source_sha256": "1ad87d4afe243aa8d333e106c37e87ebb90659508a1299fd0d42227c8fc4bab9",
-      "sha256": "1ad87d4afe243aa8d333e106c37e87ebb90659508a1299fd0d42227c8fc4bab9",
-      "transformation": "none"
-    },
-    {
-      "file": "experiments/s4/20261113-core-completion/repair.diff",
-      "sources": [
-        {
-          "research_source": "parallel_coverage/20261105/s4/experiments/20261113_generate_required_v1/generated_model.py",
-          "sha256": "1ad87d4afe243aa8d333e106c37e87ebb90659508a1299fd0d42227c8fc4bab9"
-        },
-        {
-          "research_source": "parallel_coverage/20261105/s4/experiments/20261113_strict_fix_v1/repaired_model.py",
-          "sha256": "eb56e05540b36b9a566b508da84af51cbdd00cbdc0bc2cbf7532efcc3d628ca3"
-        }
-      ],
-      "sha256": "56f8dd508ed4526624847a2ef21acee20b79e4a248be56312f5c5efe62201f54",
-      "transformation": "unified diff of preserved original and final repaired source"
     },
     {
       "file": "experiments/simple-rnn/representation.yaml",
@@ -360,11 +247,6 @@
       "transformation": "curated publication metadata or explicitly scoped relation representation"
     },
     {
-      "file": "experiments/bahdanau-attention/generation.json",
-      "source_record": "experiments/bahdanau-attention/provenance.json",
-      "transformation": "curated publication metadata or explicitly scoped relation representation"
-    },
-    {
       "file": "experiments/bahdanau-attention/provenance.json",
       "source_record": "experiments/bahdanau-attention/provenance.json",
       "transformation": "curated publication metadata or explicitly scoped relation representation"
@@ -376,11 +258,6 @@
     },
     {
       "file": "experiments/compressive-transformer/README.md",
-      "source_record": "experiments/compressive-transformer/provenance.json",
-      "transformation": "curated publication metadata or explicitly scoped relation representation"
-    },
-    {
-      "file": "experiments/compressive-transformer/generation.json",
       "source_record": "experiments/compressive-transformer/provenance.json",
       "transformation": "curated publication metadata or explicitly scoped relation representation"
     },
@@ -400,11 +277,6 @@
       "transformation": "curated publication metadata or explicitly scoped relation representation"
     },
     {
-      "file": "experiments/gnmt/generation.json",
-      "source_record": "experiments/gnmt/provenance.json",
-      "transformation": "curated publication metadata or explicitly scoped relation representation"
-    },
-    {
       "file": "experiments/gnmt/provenance.json",
       "source_record": "experiments/gnmt/provenance.json",
       "transformation": "curated publication metadata or explicitly scoped relation representation"
@@ -416,11 +288,6 @@
     },
     {
       "file": "experiments/gru-encoder-decoder/README.md",
-      "source_record": "experiments/gru-encoder-decoder/provenance.json",
-      "transformation": "curated publication metadata or explicitly scoped relation representation"
-    },
-    {
-      "file": "experiments/gru-encoder-decoder/generation.json",
       "source_record": "experiments/gru-encoder-decoder/provenance.json",
       "transformation": "curated publication metadata or explicitly scoped relation representation"
     },
@@ -460,11 +327,6 @@
       "transformation": "curated publication metadata or explicitly scoped relation representation"
     },
     {
-      "file": "experiments/h3/generation.json",
-      "source_record": "experiments/h3/provenance.json",
-      "transformation": "curated publication metadata or explicitly scoped relation representation"
-    },
-    {
       "file": "experiments/h3/provenance.json",
       "source_record": "experiments/h3/provenance.json",
       "transformation": "curated publication metadata or explicitly scoped relation representation"
@@ -476,11 +338,6 @@
     },
     {
       "file": "experiments/layernorm/README.md",
-      "source_record": "experiments/layernorm/provenance.json",
-      "transformation": "curated publication metadata or explicitly scoped relation representation"
-    },
-    {
-      "file": "experiments/layernorm/generation.json",
       "source_record": "experiments/layernorm/provenance.json",
       "transformation": "curated publication metadata or explicitly scoped relation representation"
     },
@@ -520,11 +377,6 @@
       "transformation": "curated publication metadata or explicitly scoped relation representation"
     },
     {
-      "file": "experiments/linformer/generation.json",
-      "source_record": "experiments/linformer/provenance.json",
-      "transformation": "curated publication metadata or explicitly scoped relation representation"
-    },
-    {
       "file": "experiments/linformer/provenance.json",
       "source_record": "experiments/linformer/provenance.json",
       "transformation": "curated publication metadata or explicitly scoped relation representation"
@@ -540,11 +392,6 @@
       "transformation": "curated publication metadata or explicitly scoped relation representation"
     },
     {
-      "file": "experiments/lssl/generation.json",
-      "source_record": "experiments/lssl/provenance.json",
-      "transformation": "curated publication metadata or explicitly scoped relation representation"
-    },
-    {
       "file": "experiments/lssl/provenance.json",
       "source_record": "experiments/lssl/provenance.json",
       "transformation": "curated publication metadata or explicitly scoped relation representation"
@@ -556,11 +403,6 @@
     },
     {
       "file": "experiments/luong-attention/README.md",
-      "source_record": "experiments/luong-attention/provenance.json",
-      "transformation": "curated publication metadata or explicitly scoped relation representation"
-    },
-    {
-      "file": "experiments/luong-attention/generation.json",
       "source_record": "experiments/luong-attention/provenance.json",
       "transformation": "curated publication metadata or explicitly scoped relation representation"
     },
@@ -600,11 +442,6 @@
       "transformation": "curated publication metadata or explicitly scoped relation representation"
     },
     {
-      "file": "experiments/mamba2-ssd/generation.json",
-      "source_record": "experiments/mamba2-ssd/provenance.json",
-      "transformation": "curated publication metadata or explicitly scoped relation representation"
-    },
-    {
       "file": "experiments/mamba2-ssd/provenance.json",
       "source_record": "experiments/mamba2-ssd/provenance.json",
       "transformation": "curated publication metadata or explicitly scoped relation representation"
@@ -616,11 +453,6 @@
     },
     {
       "file": "experiments/performer/README.md",
-      "source_record": "experiments/performer/provenance.json",
-      "transformation": "curated publication metadata or explicitly scoped relation representation"
-    },
-    {
-      "file": "experiments/performer/generation.json",
       "source_record": "experiments/performer/provenance.json",
       "transformation": "curated publication metadata or explicitly scoped relation representation"
     },
@@ -655,11 +487,6 @@
       "transformation": "curated publication metadata or explicitly scoped relation representation"
     },
     {
-      "file": "experiments/simple-rnn/generation.json",
-      "source_record": "experiments/simple-rnn/provenance.json",
-      "transformation": "curated publication metadata or explicitly scoped relation representation"
-    },
-    {
       "file": "experiments/simple-rnn/provenance.json",
       "source_record": "experiments/simple-rnn/provenance.json",
       "transformation": "curated publication metadata or explicitly scoped relation representation"
@@ -675,11 +502,6 @@
       "transformation": "curated publication metadata or explicitly scoped relation representation"
     },
     {
-      "file": "experiments/sparse-transformer/generation.json",
-      "source_record": "experiments/sparse-transformer/provenance.json",
-      "transformation": "curated publication metadata or explicitly scoped relation representation"
-    },
-    {
       "file": "experiments/sparse-transformer/provenance.json",
       "source_record": "experiments/sparse-transformer/provenance.json",
       "transformation": "curated publication metadata or explicitly scoped relation representation"
@@ -691,11 +513,6 @@
     },
     {
       "file": "experiments/transformer-xl/README.md",
-      "source_record": "experiments/transformer-xl/provenance.json",
-      "transformation": "curated publication metadata or explicitly scoped relation representation"
-    },
-    {
-      "file": "experiments/transformer-xl/generation.json",
       "source_record": "experiments/transformer-xl/provenance.json",
       "transformation": "curated publication metadata or explicitly scoped relation representation"
     },
