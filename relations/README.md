@@ -2,7 +2,7 @@
 
 45개 노드, 64개 설명 관계. 기록 완료와 실행 가능 여부는 별도입니다.
 
-[전체 관계도](../docs/genealogy-map.md) · [5차 검증과 범위](../docs/phase5-readiness.md) · [남은 범위](remaining-scope.yaml)
+[전체 관계도](../docs/genealogy-map.md), [복원 범위와 검증](../docs/reconstruction-status.md), [남은 범위](remaining-scope.yaml)
 
 | ID | 출발 → 도착 | 유형 | 전체 대응 | core 대응 | 공개 변환 실행 |
 |---|---|---|---|---|---|

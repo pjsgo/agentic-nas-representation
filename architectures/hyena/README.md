@@ -4,6 +4,6 @@
 
 범위: input_projection; causal_depthwise_short_filter; position_generated_long_filter; shared_frequency_sine_MLP; exponential_modulation; input_gating; causal_FFT_convolution; diagonal_skip; output_projection
 
-[YAML](representation.yaml) · [최종 코드](reconstructed.py) · [출처와 한계](sources.yaml) · [평가 이력](provenance.json)
+[YAML](representation.yaml), [최종 코드](reconstructed.py), [출처와 한계](sources.yaml), [평가 이력](provenance.json)
 
-전체 모델·학습·성능 재현은 주장하지 않습니다. [5차 통합 범위와 검증](../../docs/phase5-readiness.md)을 함께 읽습니다.
+전체 모델·학습·성능 재현은 주장하지 않습니다. [복원 범위와 검증](../../docs/reconstruction-status.md)을 함께 읽습니다.

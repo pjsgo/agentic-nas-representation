@@ -4,6 +4,6 @@
 
 범위: scaled_Legendre_operator_construction; time_varying_bilinear_discretization; coefficient_state_scan
 
-[YAML](representation.yaml) · [최종 코드](reconstructed.py) · [출처와 한계](sources.yaml) · [평가 이력](provenance.json)
+[YAML](representation.yaml), [최종 코드](reconstructed.py), [출처와 한계](sources.yaml), [평가 이력](provenance.json)
 
-전체 모델·학습·성능 재현은 주장하지 않습니다. [5차 통합 범위와 검증](../../docs/phase5-readiness.md)을 함께 읽습니다.
+전체 모델·학습·성능 재현은 주장하지 않습니다. [복원 범위와 검증](../../docs/reconstruction-status.md)을 함께 읽습니다.
