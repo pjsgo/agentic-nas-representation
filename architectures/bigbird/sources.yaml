@@ -1,0 +1,87 @@
+architecture: BigBird
+paper:
+  title: 'Big Bird: Transformers for Longer Sequences'
+  url: https://arxiv.org/abs/2007.14062v2
+  full_text: https://arxiv.org/html/2007.14062v2
+  inspected:
+  - section_2
+  - figure_1
+  - ITC_global_token_definition
+  facts:
+  - local_global_random_attention_graph
+  - existing_global_tokens_for_ITC
+official_code:
+  repository: https://github.com/google-research/bigbird
+  commit: 5e7d375950f9b001e13f1bbafb814c2956ed80af
+  file: bigbird/core/attention.py
+  url: https://github.com/google-research/bigbird/blob/5e7d375950f9b001e13f1bbafb814c2956ed80af/bigbird/core/attention.py
+  license: Apache-2.0; original header preserved
+  functions:
+  - name: get_single_block_row_attention
+    lines: 27-82
+    facts: Permutation without replacement; excludes local/global blocks and second/penultimate
+      cross-link
+    yaml_parts:
+    - external_graph_contract
+  - name: bigbird_block_rand_mask_with_head
+    lines: 85-205
+    facts: Explicit random plans, per-head rows and removal of global query rows
+    yaml_parts:
+    - external_graph_contract
+    - bigbird_random_blocks
+  - name: bigbird_block_sparse_attention
+    lines: 404-634
+    facts: Global first/last query blocks, second/penultimate special cases, middle
+      three-block window and gathered random blocks, shared scaled softmax
+    yaml_parts:
+    - bigbird_local_blocks
+    - bigbird_global_blocks
+    - bigbird_connected_tokens
+    - bigbird_scaled_scores
+    - bigbird_probabilities
+    - bigbird_output
+  - name: MultiHeadedAttentionLayer.generate_rand_attn_list
+    lines: 733-759
+    facts: Automatic and legacy plans exist; explicitly not reproduced in this scope
+  execution:
+    graph_functions: Exact two NumPy function definitions extracted by AST in check.py;
+      TensorFlow module imports not executed
+    attention_function: Read as source; not executed
+variant_selection:
+  attention_type: block_sparse
+  global: Existing first and last blocks, bidirectional, ITC style
+  window: self and immediate previous/next blocks
+  random_plan: Explicit supported full-span single plan [N], [R], not generate_rand_attn_list
+    automatic defaults
+  inputs: Equal Q/K/V dimensions, divisible self-attention sequence, all masks effectively
+    one
+  padding_boundary: Omitted; no claim for source finite -10000 padding-mask behavior
+  layout_boundary: Source B,N,H,D is transposed to B,H,N,D in this contract
+  source_mask_helper_excluded: full_bigbird_mask uses fixed MAX_SEQ_LEN; not used
+    as oracle for these shorter sequences
+restoration:
+  included: Three-path block connectivity and joint scaled softmax aggregation
+  excluded: Random graph generation, automatic/legacy plans, padding, projections,
+    encoder, training, gradient equivalence, theory, speed
+  independent_reference: NumPy token-pair membership and dense attention authored
+    from source semantics, with no candidate imports
+  graph_origin: Official upstream NumPy generator; graph sampling is evaluation setup,
+    not a reconstructed component
+  official_numerical_attention_equivalence: NOT_RUN
+specification:
+  mode: Local self-contained equations permitted by current reading-rules-v1
+  common_spec_change: none
+  proposed_extension: none required for this restricted externally supplied graph
+    boundary
+  not_claimed: Frozen v0.3 profile compliance or a generic BigBird operator registered
+    in shared specs
+external_reconstruction:
+  model: Qwen3.8-27B
+  attempts: 1
+  original: llm/generated.py
+  original_result: FAIL
+  final: llm/repaired.py
+  final_result: PASS_AFTER_ONE_COMPUTATION_REPAIR
+  provenance: AGENT_REPAIRED_EXTERNAL_LLM_CODE
+  evidence: llm/evaluation.json
+  scope_unchanged: true

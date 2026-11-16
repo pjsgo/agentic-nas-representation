@@ -1,0 +1,46 @@
+paper:
+  source: https://arxiv.org/html/2205.14135v2
+  section: 2.2, 3.1 Algorithm 1, Appendix B
+  verification: primary_source_read
+official_implementation:
+  repository: https://github.com/Dao-AILab/flash-attention
+  version: 6d48e14a6c2f551db96f0badc658a6279a929df3
+  url: https://github.com/Dao-AILab/flash-attention/blob/6d48e14a6c2f551db96f0badc658a6279a929df3/flash_attn/flash_attn_triton.py
+  file: flash_attn/flash_attn_triton.py
+  functions:
+  - _fwd_kernel
+  - _flash_attn_forward
+  authority: original_authors_repository; v1.0.9 experimental Triton implementation,
+    not original CUDA launch snapshot
+  verification: source_text_read_only_no_import_or_execution
+inspection: Integration read paper and pinned raw official code through web, 2026-11-16;
+  no upstream execution
+scope:
+  included:
+  - tiled_forward_algorithm
+  - online_softmax_rescaling
+  - ragged_tiles
+  - causal_or_noncausal_self_attention
+  - logsumexp_output
+  excluded:
+  - GPU_kernel
+  - HBM_SRAM_placement
+  - fusion
+  - CUDA_Triton_execution
+  - backward_recomputation
+  - gradients
+  - dropout
+  - bias
+  - padding
+  - projections
+  - encoder
+  - training
+  - speed_or_memory_benchmark
+reference_independence: Separate dense NumPy equations; candidate uses PyTorch; no
+  shared computational helpers
+source_parts:
+  paper: Section 3.1 Algorithm 1, stable running maximum/sum/output recurrence
+  code: '_fwd_kernel lines 100-198: causal mask, tile score, rescale, accumulate,
+    logsumexp finalize'
+  difference: Paper max/sum recurrence in CPU float64; official logsumexp recurrence
+    and GPU placement not reproduced

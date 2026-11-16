@@ -1,0 +1,45 @@
+paper:
+  source: https://arxiv.org/html/2305.13245v3
+  section: 2.1, 2.2, Figure 2
+  verification: primary_source_read
+official_implementation:
+  repository: https://github.com/meta-llama/llama
+  version: 689c7f261b9c5514636ecc3c5fefefcbb3e6eed7
+  url: https://github.com/meta-llama/llama/blob/689c7f261b9c5514636ecc3c5fefefcbb3e6eed7/llama/model.py
+  file: llama/model.py
+  functions:
+  - Attention.__init__
+  - Attention.forward
+  - repeat_kv
+  authority: Meta official Llama implementation of GQA; not original GQA paper authors
+    code
+  verification: source_text_read_only_no_import_or_execution
+inspection: Integration read paper and pinned raw official code through web, 2026-11-16;
+  no upstream execution
+scope:
+  included:
+  - contiguous_query_to_KV_group_mapping
+  - reduced_G_head_cache
+  - causal_prefix_append
+  - independent_query_head_normalization
+  - grouped_weighted_sum
+  - MQA_and_MHA_boundary_cases
+  excluded:
+  - learned_projections
+  - output_projection
+  - head_merge
+  - RoPE
+  - original_inplace_preallocated_cache_API
+  - checkpoint_mean_pooling
+  - uptraining
+  - full_decoder
+  - gradients
+  - performance
+reference_independence: Separate dense NumPy equations; candidate uses PyTorch; no
+  shared computational helpers
+source_parts:
+  paper: 'Section 2.2: one KV head per query group, G=1 and G=H endpoints'
+  code: 'repeat_kv lines 144-153; Attention.forward lines 247-274: cache prefix, contiguous
+    sharing, scale and causal mask'
+  difference: Preprojected float64 inputs, functional append cache; Meta official
+    implementation is not GQA paper authors code

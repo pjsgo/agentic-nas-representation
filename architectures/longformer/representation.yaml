@@ -1,0 +1,220 @@
+representation_version: local_equational_graph_v1
+document_revision: 2
+revision_kind: clarification_of_tensor_axes_and_mask_polarity_no_architecture_change
+operator_profile: inline_equations_below
+reading_rules: ../../specs/representation/reading-rules-v1.md
+architecture: longformer
+architecture_entry: reconstructed.py:LongformerCore
+scope:
+  included:
+  - bidirectional_sliding_window
+  - ordinary_to_global
+  - global_to_all_valid
+  - distinct_six_projections
+  - padding
+  - duplicate_removal
+  - global_output_selection
+  excluded:
+  - encoder
+  - output_projection
+  - residual
+  - normalization
+  - ffn
+  - embeddings
+  - training
+  - dropout
+  - gradients
+  - dilation
+  - autoregressive_attention
+  - sliding_chunks_kernel
+  - speed
+  - long_sequence_performance
+interface:
+  constructor: 'LongformerCore(embed_dim: int, num_heads: int, radius: int)'
+  forward: forward(x, valid, global_mask) -> y
+  x: float32 CPU [B,N,E]
+  valid: bool CPU [B,N]
+  global_mask: bool CPU [B,N]
+  y: float32 CPU [B,N,E]
+  constraints:
+  - B,N,E,H,radius are positive integers and E is divisible by H
+  - global_mask is a subset of valid
+  - x and supplied parameters are finite with absolute value <= 2; E <= 8
+  - eval only, no dropout; arbitrary N allowed without kernel padding requirement
+  - entirely padded batch rows are allowed and return zero
+parameters:
+  names:
+  - query
+  - key
+  - value
+  - query_global
+  - key_global
+  - value_global
+  registration: six independent torch.nn.Linear(E,E,bias=True) children named exactly
+    as listed
+  weight: float32 CPU [E,E], orientation output_feature,input_feature
+  bias: float32 CPU [E]
+  injection: caller loads all twelve tensors via state_dict before forward; initialization
+    values not part of contract
+  identity: twelve distinct Parameter objects with requires_grad true; no tying
+state:
+  buffers: none
+  recurrent: false
+  input_mutation: false
+  parameter_mutation: false
+  persistent_forward_cache: false
+notation:
+  D: E/H
+  indices: b=batch, i=query token, j=key token, h=head, d=within-head feature
+  linear: linear_t(x)[b,i,a] = sum_e x[b,i,e]*t.weight[a,e] + t.bias[a]
+  heads: reshape last E axis into [H,D], preserving contiguous head-major order
+  softmax: exp(z-max(z))/sum(exp(z-max(z))), over allowed key positions only, float32
+tensor_realization_contract:
+  interpretation: The layouts below are a consistent dense realization of the existing
+    set equations. A gathered implementation is also allowed if it preserves the same
+    key index j, normalization, unique key membership and output values. No dense
+    allocation is required.
+  layouts:
+    projected_Q_K_V_Qg_Kg_Vg:
+    - B
+    - N
+    - H
+    - D
+    attention_scores_and_probabilities:
+    - B
+    - N
+    - H
+    - N
+    score_axis_meanings:
+    - batch_b
+    - query_i
+    - head_h
+    - key_j
+    allowed_key_mask:
+    - B
+    - N
+    - N
+    allowed_key_mask_axis_meanings:
+    - batch_b
+    - query_i
+    - key_j
+    broadcast_allowed_key_mask:
+    - B
+    - N
+    - 1
+    - N
+    context_before_head_merge:
+    - B
+    - N
+    - H
+    - D
+  mask_convention:
+    true_means: allowed_key
+    false_means: excluded_key
+    broadcasting: allowed[b,i,j] -> allowed[b,i,1,j]; broadcast only over head h
+    exclusion: masked_logits = logits.masked_fill(~allowed.unsqueeze(2), -inf)
+  normalization:
+    axis: key_j
+    dense_dimension: -1
+    forbidden_interpretation: never normalize over heads or query positions
+  empty_key_rows:
+    meaning: computational guard for unused or padded query rows; no new attention
+      edge
+    dense_steps:
+    - has_key = allowed.any(dim=-1, keepdim=True).unsqueeze(2) with shape [B,N,1,1]
+    - safe_logits = where(has_key, masked_logits, zeros_like(masked_logits))
+    - probabilities = softmax(safe_logits, dim=-1).masked_fill(~allowed.unsqueeze(2),
+      0)
+    result: an empty key set produces zero probabilities and zero context without
+      NaN
+    valid_query_guarantee: valid ordinary queries include themselves; global queries
+      have at least one valid key
+  head_merge: context[b,i,h,d] -> output[b,i,h*D+d]; reshape [B,N,H,D] to [B,N,E]
+factors:
+  lf_local_projection:
+    operator: affine_and_split_heads
+    equation: Q=heads(linear_query(x)); K=heads(linear_key(x)); V=heads(linear_value(x))
+  lf_global_projection:
+    operator: affine_and_split_heads
+    equation: Qg=heads(linear_query_global(x)); Kg=heads(linear_key_global(x)); Vg=heads(linear_value_global(x))
+  lf_local_window:
+    operator: key_index_set
+    equation: 'L[b,i] = {j: 0<=j<N and valid[b,j] and not global_mask[b,j] and abs(i-j)<=radius}'
+  lf_global_keys:
+    operator: key_index_set
+    equation: 'G[b] = {j: 0<=j<N and global_mask[b,j]}'
+  lf_ordinary_attention:
+    operator: scaled_dot_product_weighted_sum
+    equation: For valid non-global i, S=L[b,i] union G[b]; p[j]=softmax_j(sum_d Q[b,i,h,d]*K[b,j,h,d]/sqrt(D));
+      O[b,i,h,d]=sum_{j in S} p[j]*V[b,j,h,d]
+    duplicate_policy: every key appears once; local and global key sets are disjoint
+    projection_policy: ordinary queries use local Q,K,V even when j is global
+    normalization: one joint softmax over both sets, not two independently normalized
+      outputs
+    dense_realization:
+      allowed: allowed[b,i,j] = valid[b,j] and ((not global_mask[b,j] and abs(i-j)<=radius)
+        or global_mask[b,j])
+      scores: einsum("bihd,bjhd->bihj", Q, K) / sqrt(D)
+      probabilities: apply tensor_realization_contract mask convention and key-axis
+        normalization
+      context: O = einsum("bihj,bjhd->bihd", probabilities, V)
+  lf_global_attention:
+    operator: scaled_dot_product_weighted_sum
+    equation: 'For global i, A={j: valid[b,j]}; pg[j]=softmax_j(sum_d Qg[b,i,h,d]*Kg[b,j,h,d]/sqrt(D));
+      Og[b,i,h,d]=sum_{j in A} pg[j]*Vg[b,j,h,d]'
+    dense_realization:
+      allowed: allowed[b,i,j] = valid[b,j], expanded over query i to [B,N,N]
+      scores: einsum("bihd,bjhd->bihj", Qg, Kg) / sqrt(D)
+      probabilities: apply tensor_realization_contract mask convention and key-axis
+        normalization
+      context: Og = einsum("bihj,bjhd->bihd", probabilities, Vg)
+  lf_output_select:
+    operator: select_and_merge_heads
+    equation: y[b,i]=flatten_heads(Og[b,i]) if global_mask[b,i], else flatten_heads(O[b,i])
+      if valid[b,i], else zero[E]
+    selection: global result replaces ordinary result, never adds to it
+contains:
+  longformer_core:
+  - lf_local_projection
+  - lf_global_projection
+  - lf_local_window
+  - lf_global_keys
+  - lf_ordinary_attention
+  - lf_global_attention
+  - lf_output_select
+dataflow:
+- - x
+  - lf_local_projection
+- - x
+  - lf_global_projection
+- - valid
+  - lf_local_window
+- - global_mask
+  - lf_local_window
+- - global_mask
+  - lf_global_keys
+- - lf_local_projection
+  - lf_ordinary_attention
+- - lf_local_window
+  - lf_ordinary_attention
+- - lf_global_keys
+  - lf_ordinary_attention
+- - lf_global_projection
+  - lf_global_attention
+- - valid
+  - lf_global_attention
+- - global_mask
+  - lf_global_attention
+- - lf_ordinary_attention
+  - lf_output_select
+- - lf_global_attention
+  - lf_output_select
+- - valid
+  - lf_output_select
+- - global_mask
+  - lf_output_select
+- - lf_output_select
+  - y
+specification_note: Local equations use the existing reading-rules convention. No
+  claim of compatibility with the Sparse Transformer operator profile or a universal
+  machine schema. No shared specification change required.

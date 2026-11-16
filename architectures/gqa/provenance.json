@@ -1,0 +1,52 @@
+{
+  "format_version": 3,
+  "architecture": "gqa",
+  "candidate_origin": "UNMODIFIED_EXTERNAL_LLM_CODE",
+  "scope": [
+    "contiguous_query_to_KV_group_mapping",
+    "reduced_G_head_cache",
+    "causal_prefix_append",
+    "independent_query_head_normalization",
+    "grouped_weighted_sum",
+    "MQA_and_MHA_boundary_cases"
+  ],
+  "excluded": [
+    "learned_projections",
+    "output_projection",
+    "head_merge",
+    "RoPE",
+    "original_inplace_preallocated_cache_API",
+    "checkpoint_mean_pooling",
+    "uptraining",
+    "full_decoder",
+    "gradients",
+    "performance"
+  ],
+  "representation": {
+    "file": "representation.yaml",
+    "publication_changes": "Relative reading-rule path and published entry filename only; computations preserved"
+  },
+  "candidate": {
+    "file": "reconstructed.py",
+    "publication_code_changes": "Trailing whitespace cleanup only; computation unchanged"
+  },
+  "evaluation": {
+    "kind": "independent_reference_within_declared_scope",
+    "original_verdict": "PASS",
+    "final_verdict": "PASS_WITHIN_DECLARED_SCOPE",
+    "representative_cases": 3,
+    "max_abs_error": 2.220446049250313e-16,
+    "tolerance": {
+      "atol": 1e-10,
+      "rtol": 1e-10
+    },
+    "full_model_training_or_performance_claim": false
+  },
+  "repair_required": false,
+  "repair_reason": null,
+  "limitations": [
+    "Small CPU fixtures, not all-input proof",
+    "No full training, gradient or performance reproduction",
+    "Official source read; mathematical independent reference, not full upstream attention runtime"
+  ]
+}

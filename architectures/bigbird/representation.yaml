@@ -1,0 +1,112 @@
+representation_version: local_bigbird_core_v1
+operator_profile: self_contained_equations_v1
+reading_rules: ../../specs/representation/reading-rules-v1.md
+architecture: bigbird
+architecture_entry: reconstructed.py:attention
+variant: Google BigBird block_sparse, ITC style existing first and last blocks global
+interface:
+  signature: attention(q, k, v, random_blocks, block_size) -> y
+  q: CPU torch.float64[B,H,N,D]
+  k: CPU torch.float64[B,H,N,D]
+  v: CPU torch.float64[B,H,N,D]
+  random_blocks: CPU torch.int64[H,M-2,R], shared across batch, directed block indices
+  block_size: positive Python int S
+  output: CPU torch.float64[B,H,N,D]
+  constraints:
+  - B,H,D,S positive; N=M*S; M>=8; R>=1
+  - All q,k,v finite; no padding, causal mask or dropout
+  - Each random row has R distinct legal block indices; R cannot exceed legal set
+    size
+  output_layout_adapter: Official core returns B,N,H,D; this interface returns B,H,N,D
+external_graph_contract:
+  official_function: bigbird_block_rand_mask_with_head
+  plan_from_length: '[N]'
+  plan_num_rand_blocks: '[R]'
+  plan_choice: Explicit supported single full-span plan; not automatic get_rand_attn_plan
+    or legacy length-specific plan
+  legal_row: For query block i in 1..M-2, choose distinct j from 0..M-1 excluding
+    {0,M-1,i-1,i,i+1}; also exclude M-2 when i=1 and exclude 1 when i=M-2. Heads may
+    differ; rows are directed and must not be symmetrized.
+  generation_boundary: Caller supplies graph. Permutation sampling, RNG seed mapping
+    and automatic plans are not reconstructed.
+factors:
+  bigbird_local_blocks:
+    operator: explicit_index_set
+    attributes: 'L(i) = {j in [0,M): abs(i-j)<=1}'
+  bigbird_global_blocks:
+    operator: explicit_index_set
+    attributes: G(i) = [0,M) if i in {0,M-1}, otherwise {0,M-1}
+  bigbird_random_blocks:
+    operator: external_index_rows
+    attributes: R_h(i) = empty if i in {0,M-1}, otherwise random_blocks[h,i-1,:]
+  bigbird_connected_tokens:
+    operator: set_union_and_block_expand
+    attributes: 'A_h(i) = L(i) union G(i) union R_h(i), counting each block once.
+      T_h(t) = {S*j+u: j in A_h(floor(t/S)), u in 0..S-1}. Global and local overlaps
+      count once. Legal random rows never overlap local/global blocks.'
+  bigbird_scaled_scores:
+    operator: dot_and_scale
+    attributes: z[b,h,t,u] = sum_d(q[b,h,t,d]*k[b,h,u,d])/sqrt(D), u in T_h(t)
+  bigbird_probabilities:
+    operator: softmax_over_connected_keys
+    attributes: p[b,h,t,u] = exp(z[b,h,t,u]-max_{a in T_h(t)} z[b,h,t,a]) / sum_{a
+      in T_h(t)} exp(z[b,h,t,a]-max_{c in T_h(t)} z[b,h,t,c]). One joint normalization
+      across all three paths, not three separate softmaxes.
+  bigbird_output:
+    operator: weighted_sum
+    attributes: y[b,h,t,d] = sum_{u in T_h(t)} p[b,h,t,u]*v[b,h,u,d]
+dataflow:
+- - random_blocks
+  - bigbird_random_blocks
+- - bigbird_local_blocks
+  - bigbird_connected_tokens
+- - bigbird_global_blocks
+  - bigbird_connected_tokens
+- - bigbird_random_blocks
+  - bigbird_connected_tokens
+- - bigbird_connected_tokens
+  - bigbird_scaled_scores
+- - q
+  - bigbird_scaled_scores
+- - k
+  - bigbird_scaled_scores
+- - bigbird_scaled_scores
+  - bigbird_probabilities
+- - bigbird_probabilities
+  - bigbird_output
+- - v
+  - bigbird_output
+- - bigbird_output
+  - y
+parameters: {}
+resources:
+  random_blocks: caller_owned_read_only_input
+state:
+  recurrent: false
+  persistent_buffers: false
+  input_mutation: false
+  rng_consumption: false
+scope:
+  included:
+  - local_global_random_union
+  - global_query_rows
+  - block_expansion
+  - scaled_joint_softmax
+  - weighted_value_sum
+  excluded:
+  - random_graph_generation
+  - automatic_random_plan
+  - legacy_random_plan
+  - padding
+  - causal_attention
+  - QKV_projections
+  - output_projection
+  - encoder
+  - training
+  - gradients
+  - theoretical_proofs
+  - kernel_speed
+semantics_status:
+  common_spec_extension_required: false
+  explanation: Self-contained local equations and input contracts under reading-rules-v1;
+    no claim of frozen v0.3 operator-profile compliance.

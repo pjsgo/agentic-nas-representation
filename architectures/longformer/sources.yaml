@@ -1,0 +1,69 @@
+paper:
+  url: https://arxiv.org/html/2004.05150v2
+  version: arXiv 2004.05150v2, 2020-12-02
+  sections:
+  - 3.1 Sliding Window
+  - 3.1 Global Attention
+  - 3.1 Linear Projections for Global Attention
+  - 3.2 Implementation
+  inspected: true
+code:
+  repository: https://github.com/allenai/longformer
+  commit: caefee668e39cacdece7dd603a0bebf24df6d8ca
+  url: https://github.com/allenai/longformer/blob/caefee668e39cacdece7dd603a0bebf24df6d8ca/longformer/longformer.py
+  file: longformer/longformer.py
+  functions:
+  - LongformerConfig.__init__
+  - LongformerSelfAttention.__init__
+  - LongformerSelfAttention.forward
+  inspected: pinned raw source read through web tool; HEAD version resolved by git
+    ls-remote, no integrity gate
+  execution: not executed; independent dense equations reference used
+mapping:
+- parts:
+  - lf_local_projection
+  - lf_global_projection
+  source_lines: 60-66, 127-132, 207-213
+  correspondence: six separate affine projections including bias; head split and inverse
+    square root scaling
+- parts:
+  - lf_local_window
+  - lf_global_keys
+  source_lines: 90-119, 138-161, 165-173
+  correspondence: remove padding and global keys from window, append global keys once;
+    radius is attention_window on each side
+- parts:
+  - lf_ordinary_attention
+  source_lines: 165-194
+  correspondence: local Q queries local K/V at global positions too; one softmax over
+    appended global and local slots
+- parts:
+  - lf_global_attention
+  - lf_output_select
+  source_lines: 202-231
+  correspondence: separate global Q/K/V, mask invalid keys, overwrite global query
+    outputs
+implementation_boundary:
+  variant: sliding_chunks mathematical pattern, bidirectional, dilation=1, eval dropout=0
+  candidate: enumerate distinct key indices, compute only selected rows
+  reference: independent full dense pairwise masks and batched matrix products
+  padding_adapter: public valid/global_mask correspond to official transformed mask
+    negative/zero/positive; masked queries return zero
+  mask_difference: Structural exclusion replaces official finite -10000 padding/global-slot
+    masks. For declared float32 abs(x,parameters)<=2 and E<=8, logits magnitude is
+    at most 34^2*sqrt(8)<3270; masked entries underflow relative to any valid key.
+    Boundary out-of-range slots are omitted. Entire padded rows explicitly return
+    zero.
+  kernel_difference: no sliding_chunks layout, padding-to-window-multiple or TVM code;
+    arbitrary sequence lengths realize the same restricted attention equations
+  output_boundary: context_layer only; excludes surrounding Roberta output projection
+    and original output_attentions format
+  excludes:
+  - full_encoder
+  - training
+  - gradients
+  - dilation
+  - autoregressive_mode
+  - optimized_kernel
+  - throughput
+  - long_document_quality

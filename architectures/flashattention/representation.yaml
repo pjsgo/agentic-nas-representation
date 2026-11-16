@@ -1,0 +1,87 @@
+representation_version: local_equational_graph_v1
+operator_profile: inline_equations
+reading_rules: ../../specs/representation/reading-rules-v1.md
+architecture: flashattention
+architecture_entry: reconstructed.py:attention
+interface:
+  signature: attention(q, k, v, query_tile, key_tile, causal=False) -> (y, lse)
+  inputs: q,k,v CPU float64 [B,H,N,D], finite abs<=20; positive B,H,N,D; query_tile,key_tile
+    positive integers; causal bool
+  outputs: y CPU float64 [B,H,N,D]; lse CPU float64 [B,H,N]
+  tile_contract: Visit query and key slices in increasing index order, including ragged
+    final slices. Score/probability intermediates may cover at most query_tile by
+    key_tile tokens. Do not construct full attention and then slice it. Do not call
+    fused attention. Any loop nesting preserving per-query key order is allowed.
+parameters: {}
+state:
+  persistent: none
+  input_mutation: false
+  scratch: Per query row running maximum m, normalization l and unnormalized weighted
+    accumulator a; discarded at return.
+factors:
+  fa_tiles:
+    equation: For each query slice I of at most query_tile rows, visit key/value slices
+      J of at most key_tile rows; all batch/head axes independent.
+  fa_scores:
+    equation: s[i,j]=sum_d q[i,d]*k[j,d]/sqrt(D). When causal, j>i is disallowed;
+      i,j are absolute token positions.
+  fa_init:
+    equation: m[i]=-infinity; l[i]=0; a[i,d]=0.
+  fa_online_max:
+    equation: For each row with at least one allowed key in current J, m_new=max(m,max_allowed_j
+      s[i,j]); alpha=exp(m-m_new). For an all-masked tile row, preserve m,l,a unchanged
+      and skip the following update for that row.
+  fa_rescale:
+    equation: p[i,j]=exp(s[i,j]-m_new[i]) for allowed keys, else 0; l_new=alpha*l+sum_j
+      p; a_new=alpha*a+sum_j p[i,j]*v[j,:]. Use old m,l,a simultaneously; then assign
+      m=m_new,l=l_new,a=a_new.
+  fa_finalize:
+    equation: After all key tiles, y=a/l and lse=m+log(l). Every query has at least
+      its diagonal key, so l>0 at return.
+dataflow:
+- - q
+  - fa_tiles
+- - k
+  - fa_tiles
+- - v
+  - fa_tiles
+- - fa_tiles
+  - fa_scores
+- - fa_init
+  - fa_online_max
+- - fa_scores
+  - fa_online_max
+- - fa_online_max
+  - fa_rescale
+- - fa_rescale
+  - fa_online_max
+- - fa_rescale
+  - fa_finalize
+- - fa_finalize
+  - y
+- - fa_finalize
+  - lse
+scope:
+  included:
+  - tiled_forward_algorithm
+  - online_softmax_rescaling
+  - ragged_tiles
+  - causal_or_noncausal_self_attention
+  - logsumexp_output
+  excluded:
+  - GPU_kernel
+  - HBM_SRAM_placement
+  - fusion
+  - CUDA_Triton_execution
+  - backward_recomputation
+  - gradients
+  - dropout
+  - bias
+  - padding
+  - projections
+  - encoder
+  - training
+  - speed_or_memory_benchmark
+algorithm_boundary: CPU mathematical tiled forward reconstruction. Paper maximum/sum
+  recurrence is used; official Triton uses a logsumexp accumulator variant. No claim
+  of matching hardware scheduling or float16 rounding.

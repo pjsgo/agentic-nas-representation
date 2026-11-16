@@ -25,6 +25,11 @@ membership:
   - tr_062
   - tr_063
   - tr_069
+  phase2:
+  - tr_034
+  - tr_035
+  - tr_054
+  - tr_056
 relations:
 - id: tr_003
   file: tr_003.yaml
@@ -233,3 +238,39 @@ relations:
   mapping: partial
   source_slug: gnmt
   target_slug: transformer
+- id: tr_034
+  file: tr_034.yaml
+  source: Sparse Transformer
+  target: Longformer
+  type: I
+  inferred: false
+  mapping: partial
+  source_slug: sparse-transformer
+  target_slug: longformer
+- id: tr_035
+  file: tr_035.yaml
+  source: Sparse Transformer
+  target: BigBird
+  type: I
+  inferred: false
+  mapping: partial
+  source_slug: sparse-transformer
+  target_slug: bigbird
+- id: tr_054
+  file: tr_054.yaml
+  source: Transformer
+  target: FlashAttention
+  type: A
+  inferred: false
+  mapping: partial
+  source_slug: transformer
+  target_slug: flashattention
+- id: tr_056
+  file: tr_056.yaml
+  source: Transformer
+  target: GQA
+  type: A
+  inferred: false
+  mapping: partial
+  source_slug: transformer
+  target_slug: gqa

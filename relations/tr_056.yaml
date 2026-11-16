@@ -1,0 +1,154 @@
+format_version: local_transition_v1
+transition_id: tr_056
+source_architecture: Transformer
+target_architecture: GQA
+relation_type: A
+inferred: false
+record_status: complete
+mapping_status: partial
+evidence:
+- source: User-supplied beyond_transformer_slides.pdf (not redistributed)
+  pages:
+  - 41
+  - 68
+  page_numbering: one_based_PDF
+  label: A 056
+  direction: Transformer -> GQA
+  question_mark_present: false
+  verification: direct_embedded_image_view
+  candidate_matches_original: true
+  correction_proposal: null
+- source: https://arxiv.org/html/2305.13245v3
+  section: 2.1, 2.2, Figure 2
+  verification: primary_source_read
+source_records:
+- side: source
+  implementation:
+    repository: https://github.com/tensorflow/tensor2tensor
+    version: v1.15.7
+    url: https://github.com/tensorflow/tensor2tensor/blob/v1.15.7/tensor2tensor/layers/common_attention.py
+    file: tensor2tensor/layers/common_attention.py
+    functions:
+    - multihead_attention
+    - dot_product_attention
+    authority: original_authors_official_repository; later release, not exact 2017
+      training snapshot
+    verification: source_text_read_only_no_import_or_execution
+  paper: https://arxiv.org/html/1706.03762v7
+  section: 3.2.1 and 3.2.2
+- side: target
+  implementation:
+    repository: https://github.com/meta-llama/llama
+    version: 689c7f261b9c5514636ecc3c5fefefcbb3e6eed7
+    url: https://github.com/meta-llama/llama/blob/689c7f261b9c5514636ecc3c5fefefcbb3e6eed7/llama/model.py
+    file: llama/model.py
+    functions:
+    - Attention.__init__
+    - Attention.forward
+    - repeat_kv
+    authority: Meta official Llama implementation of GQA; not original GQA paper authors
+      code
+    verification: source_text_read_only_no_import_or_execution
+scope:
+  source_yaml: ../architectures/transformer/representation.yaml
+  target_yaml: ../architectures/gqa/representation.yaml
+  path_base: relation_file_directory
+  included:
+  - descriptive_relationship
+  - available_core_component_correspondence
+  excluded:
+  - whole_model_conversion
+  - numerical_execution
+  - training
+  - performance_reproduction
+  - code_transformer
+  - weight_migration
+  mapping_boundary: grouped attention과 G-head prefix cache의 실제 ID 연결. projection,
+    head merge, output projection, checkpoint 평균, uptraining, 전체 decoder는 범위 밖. 출발
+    encoder에는 cache 없음.
+changes:
+- before_units:
+  - factors.project_a
+  - factors.partition_a
+  - factors.shape_q
+  - factors.shape_k
+  - factors.shape_v
+  after_units:
+  - factors.gqa_group
+  operation: descriptive_correspondence
+  mechanism: 출발 head별 QKV 구성과 대상 query-to-KV-group 대응을 연결한다. 대상은 투영 이후 QKV를 외부에서 받아
+    projection weight 축소 자체는 매핑하지 않는다.
+  state_and_resource_contract: Q head axis H와 KV head axis G를 구분해야 한다. bias와 packed/unpacked
+    weight layout은 target 계약이 정한다.
+  mapping_status: partial_projection_out_of_scope
+- before_units:
+  - factors.score_a
+  - factors.apply_mask
+  - factors.prob_a
+  - factors.mix_a
+  after_units:
+  - factors.gqa_scores
+  - factors.gqa_causal
+  - factors.gqa_softmax
+  - factors.gqa_output
+  operation: descriptive_correspondence
+  mechanism: 각 query head h가 floor(h/(H/G)) KV group을 읽어 개별 정규화와 value 집계를 수행한다. 대상은
+    head를 합치지 않은 B,H,T,D를 반환한다.
+  state_and_resource_contract: prefix P를 반영한 causal visibility. 대상 float64와 출발 float32
+    및 mask 계약은 다르다. head merge와 output projection은 대상 범위 밖.
+  mapping_status: mapped_scoped
+- before_units: []
+  after_units:
+  - factors.gqa_append
+  operation: descriptive_correspondence
+  mechanism: 외부 prefix cache에 새 G-head K/V를 순서대로 이어 붙인다. 출발 encoder에는 cache 부품이 없다.
+  state_and_resource_contract: 입력 불변, 반환 cache는 fresh storage B,G,P+T,D. 공식 Llama의
+    preallocated inplace API와 구분한다.
+  mapping_status: target_only_source_out_of_scope
+preserve:
+- query head별 scaled dot-product softmax와 value 가중합
+- query head 수 및 출력 결합의 개념. 토큰 sparse mask, RoPE, RMSNorm은 GQA 정의에 필수인 추가 변경으로 간주하지
+  않는다.
+conceptual_correspondence:
+- source_concept: head별 독립 K/V
+  target_concept: group별 K/V와 query-to-group 대응
+  mapping_status: mapped_scoped
+  reason: gqa_group, gqa_scores, gqa_softmax, gqa_output에 연결됨; learned projection은
+    제외.
+- source_concept: 논문의 autoregressive MHA cache 및 pretrained checkpoint
+  target_concept: 축소 KV cache, 그룹 평균 초기화, uptraining
+  mapping_status: partial
+  reason: 축소 cache는 gqa_append에 target-only로 연결. 출발 cache, checkpoint 평균과 uptraining은
+    여전히 범위 밖.
+application:
+  executable: false
+  command: null
+  patch_or_script: null
+validation:
+  profile: direction_type_evidence_path_part_id_only
+  status: PUBLICATION_PATHS_AND_ACTUAL_COMPONENT_IDS_CHECKED
+  numerical_tests: NOT_RUN_BY_DESIGN
+  prior_architecture_results: reused_without_revalidation
+  claim_boundary: Part references do not certify target implementation or external
+    LLM reconstruction.
+unresolved:
+- 원 GQA 논문 저자의 공개 구현은 이번 조사에서 확인하지 못했다. 슬라이드 69쪽도 GQA 코드가 제3자 구현임을 명시한다. 공식 Llama
+  코드는 공유 KV의 보조 근거이며 원 논문 구현으로 둔갑시키지 않는다.
+- 투영 파라미터 공유와 checkpoint 전환, 전체 decoder 매핑은 이 core로 완료됐다고 주장하지 않는다.
+specification_proposal:
+  required: false
+  reason: Descriptive relation and explicit scope fit local_transition_v1; no operator
+    semantics changed.
+motivation: query head의 표현을 유지하면서 공유 K/V head 수를 줄여 autoregressive decoding의 KV 저장과
+  읽기 비용을 낮춘다.
+conditions:
+- H query heads를 G KV groups에 대응시킨다. 균등 그룹은 H가 G로 나누어져야 하며 각 query가 읽는 KV group을 명시한다.
+- G=H는 MHA, G=1은 MQA이다. 중간 G는 서로 다른 query들이 같은 KV를 공유한다.
+- checkpoint 전환 시 그룹 내 K/V projection 평균과 추가 학습은 논문의 별도 절차이며 출력 보존 변환이 아니다.
+expected_effects:
+- 같은 batch, 길이와 head dimension에서 KV 저장 요소 수는 이상적으로 MHA의 G/H 비율이다. query head 수와 score
+  집계는 그대로 남는다.
+- 학습 후 품질과 속도의 절충은 논문 결과이지 이 세션의 재현 결과가 아니다.
+tradeoffs:
+- 독립 K/V projection의 자유도가 줄어든다. 평균 checkpoint는 원래 MHA와 일반적으로 동일 출력을 내지 않는다.
+- cache 구현과 sharding, 실제 KV 복제 방식에 따라 메모리 대역폭 이득이 달라진다.

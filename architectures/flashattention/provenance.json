@@ -1,0 +1,54 @@
+{
+  "format_version": 3,
+  "architecture": "flashattention",
+  "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
+  "scope": [
+    "tiled_forward_algorithm",
+    "online_softmax_rescaling",
+    "ragged_tiles",
+    "causal_or_noncausal_self_attention",
+    "logsumexp_output"
+  ],
+  "excluded": [
+    "GPU_kernel",
+    "HBM_SRAM_placement",
+    "fusion",
+    "CUDA_Triton_execution",
+    "backward_recomputation",
+    "gradients",
+    "dropout",
+    "bias",
+    "padding",
+    "projections",
+    "encoder",
+    "training",
+    "speed_or_memory_benchmark"
+  ],
+  "representation": {
+    "file": "representation.yaml",
+    "publication_changes": "Relative reading-rule path and published entry filename only; computations preserved"
+  },
+  "candidate": {
+    "file": "reconstructed.py",
+    "publication_code_changes": "Trailing whitespace cleanup only; computation unchanged"
+  },
+  "evaluation": {
+    "kind": "independent_reference_within_declared_scope",
+    "original_verdict": "RUNTIME_FAILURE",
+    "final_verdict": "PASS_WITHIN_DECLARED_SCOPE",
+    "representative_cases": 3,
+    "max_abs_error": 4.440892098500626e-16,
+    "tolerance": {
+      "atol": 1e-10,
+      "rtol": 1e-10
+    },
+    "full_model_training_or_performance_claim": false
+  },
+  "repair_required": true,
+  "repair_reason": "Broadcast row rescaling and row-update mask across accumulator feature axis.",
+  "limitations": [
+    "Small CPU fixtures, not all-input proof",
+    "No full training, gradient or performance reproduction",
+    "Official source read; mathematical independent reference, not full upstream attention runtime"
+  ]
+}

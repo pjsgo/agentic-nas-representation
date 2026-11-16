@@ -1,0 +1,53 @@
+{
+  "format_version": 3,
+  "architecture": "bigbird",
+  "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
+  "scope": [
+    "local_global_random_union",
+    "global_query_rows",
+    "block_expansion",
+    "scaled_joint_softmax",
+    "weighted_value_sum"
+  ],
+  "excluded": [
+    "random_graph_generation",
+    "automatic_random_plan",
+    "legacy_random_plan",
+    "padding",
+    "causal_attention",
+    "QKV_projections",
+    "output_projection",
+    "encoder",
+    "training",
+    "gradients",
+    "theoretical_proofs",
+    "kernel_speed"
+  ],
+  "representation": {
+    "file": "representation.yaml",
+    "publication_changes": "Relative reading-rule path and published entry filename only; computations preserved"
+  },
+  "candidate": {
+    "file": "reconstructed.py",
+    "publication_code_changes": "Trailing whitespace cleanup only; computation unchanged"
+  },
+  "evaluation": {
+    "kind": "independent_reference_within_declared_scope",
+    "original_verdict": "NUMERICAL_MISMATCH",
+    "final_verdict": "PASS_WITHIN_DECLARED_SCOPE",
+    "representative_cases": 3,
+    "max_abs_error": 2.220446049250313e-16,
+    "tolerance": {
+      "atol": 1e-11,
+      "rtol": 1e-11
+    },
+    "full_model_training_or_performance_claim": false
+  },
+  "repair_required": true,
+  "repair_reason": "Union random block connectivity with local/global connectivity instead of replacing it.",
+  "limitations": [
+    "Small CPU fixtures, not all-input proof",
+    "No full training, gradient or performance reproduction",
+    "Official source read; mathematical independent reference, not full upstream attention runtime"
+  ]
+}

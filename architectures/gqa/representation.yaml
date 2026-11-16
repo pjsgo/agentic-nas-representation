@@ -1,0 +1,85 @@
+representation_version: local_equational_graph_v1
+operator_profile: inline_equations
+reading_rules: ../../specs/representation/reading-rules-v1.md
+architecture: gqa
+architecture_entry: reconstructed.py:attention
+interface:
+  signature: attention(q, k, v, cache_k, cache_v) -> (y, new_k, new_v)
+  q: CPU float64 [B,H,T,D], preprojected queries
+  k_v: CPU float64 [B,G,T,D], preprojected new keys/values
+  cache_k_cache_v: CPU float64 [B,G,P,D], caller supplied prefix, P may be zero
+  constraints: B,H,G,T,D positive; H divisible by G; P>=0; all inputs finite abs<=20
+  outputs: y CPU float64 [B,H,T,D]; new_k,new_v CPU float64 [B,G,P+T,D]
+parameters: {}
+resources:
+  projections: All Q,K,V are supplied after projections and any positional transform.
+    No learned parameters or implicit projection is included.
+state:
+  persistent: Only returned new_k,new_v supplied to next call; no hidden state
+  input_mutation: false
+  aliasing: Returned new_k/new_v must have fresh storage, not alias input cache or
+    new k/v; retain only G heads, never H replicated cache heads.
+factors:
+  gqa_append:
+    equation: new_k=concatenate(cache_k,k) and new_v=concatenate(cache_v,v) along
+      token axis 2, preserving order.
+  gqa_group:
+    equation: r=H/G; each query head h reads group g=floor(h/r). Contiguous groups;
+      never modulo grouping or averaging query heads.
+  gqa_scores:
+    equation: s[b,h,t,j]=sum_d q[b,h,t,d]*new_k[b,floor(h/r),j,d]/sqrt(D).
+  gqa_causal:
+    equation: Query t has absolute position P+t. Allow exactly 0<=j<=P+t; mask future
+      new tokens.
+  gqa_softmax:
+    equation: p=exp(s-max_allowed(s))/sum_allowed exp(s-max_allowed(s)) over allowed
+      j only; each query head normalized separately.
+  gqa_output:
+    equation: y[b,h,t,d]=sum_allowed_j p[b,h,t,j]*new_v[b,floor(h/r),j,d]. Return
+      y,new_k,new_v without head merging or output projection.
+dataflow:
+- - cache_k
+  - gqa_append
+- - cache_v
+  - gqa_append
+- - k
+  - gqa_append
+- - v
+  - gqa_append
+- - gqa_group
+  - gqa_scores
+- - gqa_append
+  - gqa_scores
+- - q
+  - gqa_scores
+- - gqa_scores
+  - gqa_causal
+- - gqa_causal
+  - gqa_softmax
+- - gqa_softmax
+  - gqa_output
+- - gqa_append
+  - gqa_output
+scope:
+  included:
+  - contiguous_query_to_KV_group_mapping
+  - reduced_G_head_cache
+  - causal_prefix_append
+  - independent_query_head_normalization
+  - grouped_weighted_sum
+  - MQA_and_MHA_boundary_cases
+  excluded:
+  - learned_projections
+  - output_projection
+  - head_merge
+  - RoPE
+  - original_inplace_preallocated_cache_API
+  - checkpoint_mean_pooling
+  - uptraining
+  - full_decoder
+  - gradients
+  - performance
+implementation_boundary: Paper grouped sharing with official Meta Llama group order
+  and prefix visibility. Functional fresh-cache interface replaces original preallocated
+  in-place storage. CPU float64 equations, not original CUDA/distributed execution
+  or rounding.

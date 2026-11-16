@@ -31,5 +31,9 @@
 | [H3 → Mamba](tr_062.yaml) | A (tr_062) | partial |
 | [Mamba → Mamba-2/SSD](tr_063.yaml) | A (tr_063) | partial |
 | [GNMT → Transformer](tr_069.yaml) | P (tr_069) | partial |
+| [Sparse Transformer → Longformer](tr_034.yaml) | I (tr_034) | partial |
+| [Sparse Transformer → BigBird](tr_035.yaml) | I (tr_035) | partial |
+| [Transformer → FlashAttention](tr_054.yaml) | A (tr_054) | partial |
+| [Transformer → GQA](tr_056.yaml) | A (tr_056) | partial |
 
 [표현 안내](../docs/genealogy-guide.md) / [기계 판독 목록](catalog.yaml)

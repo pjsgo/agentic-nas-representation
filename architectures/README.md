@@ -25,3 +25,7 @@
 | [LSSL](lssl/README.md) | 고정 HiPPO-LegS, bilinear discretization, dense recurrence | [YAML](lssl/representation.yaml) | [코드](lssl/reconstructed.py) |
 | [Mamba-2 / SSD](mamba2-ssd/README.md) | scalar-identity multihead SSD chunk core | [YAML](mamba2-ssd/representation.yaml) | [코드](mamba2-ssd/reconstructed.py) |
 | [H3](h3/README.md) | scalar-head shift, diagonal SSM gated block | [YAML](h3/representation.yaml) | [코드](h3/reconstructed.py) |
+| [Longformer](longformer/README.md) | 여섯 투영을 포함한 양방향 window/global attention core | [YAML](longformer/representation.yaml) | [코드](longformer/reconstructed.py) |
+| [BigBird](bigbird/README.md) | 외부 random graph를 받는 local/global/random block attention core | [YAML](bigbird/representation.yaml) | [코드](bigbird/reconstructed.py) |
+| [FlashAttention](flashattention/README.md) | CPU 타일 전방 계산과 online softmax 누적, causal mask | [YAML](flashattention/representation.yaml) | [코드](flashattention/reconstructed.py) |
+| [GQA](gqa/README.md) | 외부 QKV의 query-to-KV 그룹 대응, causal prefix와 G-head cache | [YAML](gqa/representation.yaml) | [코드](gqa/reconstructed.py) |

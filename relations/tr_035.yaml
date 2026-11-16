@@ -1,0 +1,138 @@
+format_version: local_transition_v1
+transition_id: tr_035
+source_architecture: Sparse Transformer
+target_architecture: BigBird
+relation_type: I
+inferred: false
+record_status: complete
+mapping_status: partial
+evidence:
+- source: User-supplied beyond_transformer_slides.pdf (not redistributed)
+  pages:
+  - 41
+  - 68
+  page_numbering: one_based_PDF
+  label: I 035
+  direction: Sparse Transformer -> BigBird
+  question_mark_present: false
+  verification: direct_embedded_image_view
+  candidate_matches_original: true
+  correction_proposal: null
+- source: https://arxiv.org/html/2007.14062v2
+  section: 1.1, 2, Appendix D
+  verification: primary_source_read
+source_records:
+- side: source
+  implementation:
+    repository: https://github.com/openai/sparse_attention
+    version: c53f3bdbf6225be0582f0357072e82b13c69be7d
+    url: https://github.com/openai/sparse_attention/blob/c53f3bdbf6225be0582f0357072e82b13c69be7d/attention.py
+    file: attention.py
+    functions:
+    - get_attn_mask
+    - attention_impl
+    authority: original_authors_official_repository
+    verification: source_text_read_only_no_import_or_execution
+  paper: https://arxiv.org/html/1904.10509v1
+  section: 4 and 5.1
+- side: target
+  implementation:
+    repository: https://github.com/google-research/bigbird
+    version: 5e7d375950f9b001e13f1bbafb814c2956ed80af
+    url: https://github.com/google-research/bigbird/blob/5e7d375950f9b001e13f1bbafb814c2956ed80af/bigbird/core/attention.py
+    file: bigbird/core/attention.py
+    functions:
+    - get_single_block_row_attention
+    - bigbird_block_rand_mask_with_head
+    - bigbird_block_sparse_attention
+    authority: original_authors_official_repository
+    verification: source_text_read_only_no_import_or_execution
+scope:
+  source_yaml: ../architectures/sparse-transformer/representation.yaml
+  target_yaml: ../architectures/bigbird/representation.yaml
+  path_base: relation_file_directory
+  included:
+  - descriptive_relationship
+  - available_core_component_correspondence
+  excluded:
+  - whole_model_conversion
+  - numerical_execution
+  - training
+  - performance_reproduction
+  - code_transformer
+  - weight_migration
+  mapping_boundary: local/global/random 연결과 집계는 매핑. random graph 생성, 자동 plan, ETC,
+    projection, 전체 encoder, kernel 성능은 범위 밖.
+changes:
+- before_units:
+  - factors.sparse_local_pattern
+  - factors.sparse_strided_pattern
+  - factors.sparse_pattern
+  after_units:
+  - factors.bigbird_local_blocks
+  - factors.bigbird_global_blocks
+  - factors.bigbird_random_blocks
+  - factors.bigbird_connected_tokens
+  operation: descriptive_correspondence
+  mechanism: 선택된 causal local 또는 strided 위치 집합을 local/global/random block의 합집합으로 변경한다.
+    global query block은 모든 key block을 읽는다.
+  state_and_resource_contract: random_blocks는 caller 소유 read-only int64[H,M-2,R]이며
+    batch에 공유한다. RNG 소비와 지속 상태는 없다.
+  mapping_status: mapped_scoped
+- before_units:
+  - factors.sparse_scaled_query
+  - factors.sparse_scores
+  - factors.sparse_masked_scores
+  - factors.sparse_probabilities
+  - factors.sparse_output
+  after_units:
+  - factors.bigbird_scaled_scores
+  - factors.bigbird_probabilities
+  - factors.bigbird_output
+  operation: descriptive_correspondence
+  mechanism: 연결된 token 전체에 하나의 softmax를 적용하고 value를 집계한다. 세 경로를 각각 정규화한 뒤 더하지 않는다.
+  state_and_resource_contract: 양쪽 외부 QKV, 등록 파라미터 없음. 대상은 동일 Q/K/V head dimension,
+    no padding, no causal mask. 공식 B,N,H,D 출력은 대상 B,H,N,D로 명시 변환.
+  mapping_status: mapped_scoped
+preserve:
+- 희소 연결에 제한된 scaled softmax value 집계
+- 연결 패턴과 attention 집계의 분리. sparse idea 계승이며 코드 복제나 직접 구조 계승의 증거로 확대하지 않는다.
+conceptual_correspondence:
+- source_concept: 결정적 local/strided factor 구성
+  target_concept: local/global/random 구성과 random graph sampling
+  mapping_status: partial
+  reason: random 연결의 적용은 매핑되지만 생성은 외부 계약이다.
+- source_concept: Sparse Transformer의 선행 희소화 접근
+  target_concept: BigBird의 sparse graph 설계
+  mapping_status: conceptual_only
+  reason: 논문은 Child를 선행 연구로 인용하고 ETC를 직접 기반으로 명시한다. I 관계를 독점적인 직접 계승으로 읽지 않는다.
+application:
+  executable: false
+  command: null
+  patch_or_script: null
+validation:
+  profile: direction_type_evidence_path_part_id_only
+  status: PUBLICATION_PATHS_AND_ACTUAL_COMPONENT_IDS_CHECKED
+  numerical_tests: NOT_RUN_BY_DESIGN
+  prior_architecture_results: reused_without_revalidation
+  claim_boundary: Part references do not certify target implementation or external
+    LLM reconstruction.
+unresolved:
+- random graph 생성 및 자동 plan, 전체 모델과 이론적 성질은 매핑 완료로 표시하지 않는다.
+specification_proposal:
+  required: false
+  reason: Descriptive relation and explicit scope fit local_transition_v1; no operator
+    semantics changed.
+motivation: 제한된 희소 연결에서도 지역 문맥, 전역 전달, 멀리 떨어진 위치 접근을 함께 제공한다.
+conditions:
+- 선택 core는 bidirectional ITC 형태이며 첫 블록과 마지막 블록이 global이다. ETC의 추가 token 변형과 구분한다.
+- N=M*S, M>=8, R>=1이며 caller가 head별 directed random block 목록을 제공한다. 중복과 local/global
+  겹침을 허용하지 않는다.
+- 첫 내부 블록과 끝에서 두 번째 블록 사이의 random 선택 제한을 포함한 대상 YAML의 legal_row 계약을 따른다.
+- 선형 비용 주장은 block 크기, local 범위, global 수와 random 수가 고정되고 sparse 실행을 할 때에 한한다.
+expected_effects:
+- 지역 연결과 전역 연결에 random 경로를 추가하여 긴 문맥에 접근한다.
+- 논문의 표현력 결과는 명시된 가정의 전체 구조에 관한 것이며 이 작은 core의 검증 결과가 아니다.
+tradeoffs:
+- random graph 자원과 sampling 정책이 필요하다. block 정렬과 sparsity 처리에 구현 비용이 든다.
+- dense attention과 일반적으로 출력이 같지 않으며 인과성도 출발 core와 다르다.

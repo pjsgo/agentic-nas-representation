@@ -1,0 +1,58 @@
+{
+  "format_version": 3,
+  "architecture": "longformer",
+  "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
+  "scope": [
+    "bidirectional_sliding_window",
+    "ordinary_to_global",
+    "global_to_all_valid",
+    "distinct_six_projections",
+    "padding",
+    "duplicate_removal",
+    "global_output_selection"
+  ],
+  "excluded": [
+    "encoder",
+    "output_projection",
+    "residual",
+    "normalization",
+    "ffn",
+    "embeddings",
+    "training",
+    "dropout",
+    "gradients",
+    "dilation",
+    "autoregressive_attention",
+    "sliding_chunks_kernel",
+    "speed",
+    "long_sequence_performance"
+  ],
+  "representation": {
+    "file": "representation.yaml",
+    "publication_changes": "Relative reading-rule path and published entry filename only; computations preserved"
+  },
+  "candidate": {
+    "file": "reconstructed.py",
+    "publication_code_changes": "Trailing whitespace cleanup only; computation unchanged"
+  },
+  "evaluation": {
+    "kind": "independent_reference_within_declared_scope",
+    "original_verdict": "RUNTIME_FAILURE",
+    "final_verdict": "PASS_WITHIN_DECLARED_SCOPE",
+    "representative_cases": 3,
+    "max_abs_error": 5.960464477539063e-08,
+    "tolerance": {
+      "atol": 2e-06,
+      "rtol": 2e-05
+    },
+    "full_model_training_or_performance_claim": false,
+    "empty_row_contract": "PASS: finite softmax, zero probabilities/context for all-padding rows"
+  },
+  "repair_required": true,
+  "repair_reason": "Correct score/weight axis layout, invert forbidden-key mask, reshape noncontiguous output, and zero empty-key probabilities/context without NaN.",
+  "limitations": [
+    "Small CPU fixtures, not all-input proof",
+    "No full training, gradient or performance reproduction",
+    "Official source read; mathematical independent reference, not full upstream attention runtime"
+  ]
+}
