@@ -1,0 +1,264 @@
+format_version: local_transition_v1
+transition_id: tr_066
+source_architecture: Switch Transformer
+target_architecture: Jamba
+relation_type: C
+inferred: true
+record_status: complete
+mapping_status: partial
+core_mapping_status: complete_scoped
+part_mapping_complete: false
+evidence:
+- source: /mnt/data/beyond_transformer_slides.pdf
+  pages:
+  - 43
+  page_numbering: one_based_PDF
+  label: C? 066
+  direction: Switch Transformer -> Jamba
+  question_mark_present: true
+  verification: direct_embedded_image_view_from_original_pdf
+  pdf_objects:
+    page: 235
+    image: 240
+  correction_proposal: null
+motivation: 조건부 expert 계산을 hybrid decoder에 결합한다.
+conditions:
+- 원본 C? 유지. Jamba v0.1은 선택 top-2 확률을 재정규화하지 않는다. Switch의 overflow drop을 도착에 추가하지 않는다.
+expected_effects:
+- 모든 expert를 매 token 실행하지 않고 모델 용량을 늘린다.
+tradeoffs:
+- expert 저장과 routing 비용이 남고 top-2는 top-1보다 활성 계산이 크다. 직접 코드 계승은 확인된 사실이 아니다.
+changes:
+- before_units:
+  - factors.switch_router
+  - factors.switch_capacity_dispatch
+  - factors.switch_experts
+  - factors.switch_combine
+  after_units:
+  - factors.pre_ffn
+  - factors.experts
+  operation: descriptive_correspondence
+  mechanism: Switch의 top-1 capacity-limited ReLU expert routing을 Jamba의 top-2 full-capacity
+    SwiGLU expert 합산과 비교한다.
+  mapping_status: mapped_scoped
+  state_and_resource_contract: top-1 ReLU expert FFN 및 capacity dispatch core. attention,
+    norm, residual, 전체 Transformer는 없다. 원래 배치를 유지한 축소 차원 8층 주기. layer 4는 GQA, 나머지는
+    Mamba, 홀수 layer는 top-2 SwiGLU MoE. embedding, final norm, LM head와 나머지 주기는 없다.
+  cardinality: many_to_many_semantic_correspondence_not_tensor_or_parameter_identity
+preserve:
+- router softmax, 선택 expert 실행, gate 가중 output 합산
+scope:
+  source_yaml: ../architectures/switch-transformer/representation.yaml
+  target_yaml: ../architectures/jamba/representation.yaml
+  source_yaml_status: available
+  target_yaml_status: available
+  path_base: relation_file_directory
+  included:
+  - descriptive_relationship
+  - available_core_component_correspondence
+  excluded:
+  - whole_model_conversion
+  - numerical_execution
+  - training
+  - performance_reproduction
+  - code_transformer
+  - weight_or_state_migration
+  mapping_boundary: routing과 FFN expert 부품 대응; full Switch Transformer 및 분산 dispatch
+    제외
+  source_boundary: top-1 ReLU expert FFN 및 capacity dispatch core. attention, norm,
+    residual, 전체 Transformer는 없다.
+  target_boundary: 원래 배치를 유지한 축소 차원 8층 주기. layer 4는 GQA, 나머지는 Mamba, 홀수 layer는 top-2
+    SwiGLU MoE. embedding, final norm, LM head와 나머지 주기는 없다.
+  declared_scope_snapshot:
+    source:
+      included:
+      - deterministic_argmax_eval
+      - one_routing_group
+      - full_softmax_selected_gate
+      - explicit_capacity_rounding
+      - ordered_dispatch
+      - padding_mask
+      - overflow_drop
+      - bias_free_relu_experts
+      excluded:
+      - full_Transformer
+      - residual
+      - attention
+      - normalization
+      - training
+      - gradients
+      - load_balancing_loss
+      - z_loss
+      - jitter
+      - sampling
+      - dropout
+      - token_embeddings_in_router
+      - distributed_communication
+      - mixed_precision
+      - initialization_distribution
+    target:
+      included:
+      - one_original_eight_layer_cycle
+      - pre_norm_residuals
+      - causal_grouped_query_attention
+      - full_mamba_mixer
+      - normalized_dt_B_C
+      - dense_swiglu
+      - full_capacity_top2_swiglu_experts
+      - explicit_continuation_state
+      excluded:
+      - embeddings
+      - final_model_norm
+      - lm_head
+      - other_three_cycles
+      - training
+      - load_balancing_loss
+      - distributed_execution
+      - fused_kernels
+      - mixed_precision
+      - padding
+      - source_cache_class_API
+      scaling: Original cycle placement preserved. Hidden 4096 -> 4, Q heads 32 ->
+        2, KV heads 8 -> 1, Mamba inner 8192 -> 8, state 16 -> 2, dt rank 256 -> 2,
+        conv width 4 -> 3, FFN 14336 -> 6, experts 16 -> 4; top-k remains 2.
+  core_mapping_definition: complete_scoped는 선택 core의 설명 대응에 실제 ID가 연결된 상태이다. 전체 모델,
+    수치 동등성 또는 실행 변환 완료가 아니다.
+  component_coverage:
+    source:
+      mapped_units:
+      - factors.switch_router
+      - factors.switch_capacity_dispatch
+      - factors.switch_experts
+      - factors.switch_combine
+      unmapped_declared_units: []
+      unmapped_reason: 선택 관계 core 밖의 부품 또는 컨테이너이며 자동 대응을 추가하지 않는다.
+    target:
+      mapped_units:
+      - factors.pre_ffn
+      - factors.experts
+      unmapped_declared_units:
+      - factors.attention
+      - factors.jamba_cycle
+      - factors.layer_output
+      - factors.mamba
+      - factors.pre_mixer
+      unmapped_reason: 선택 관계 core 밖의 부품 또는 컨테이너이며 자동 대응을 추가하지 않는다.
+conceptual_correspondence:
+- source_concept: Switch Transformer
+  target_concept: Jamba
+  description: routing과 FFN expert 부품 대응; full Switch Transformer 및 분산 dispatch 제외
+  mapping_status: mapped_within_selected_core
+- description: 관계의 전체 논문 구조 중 위 source_boundary와 target_boundary에서 제외한 부분
+  part_ids: null
+  mapping_status: pending_outside_declared_restoration_scope
+  reason: 미선언 부품 ID를 만들지 않는다. 추가 복원은 이 세션 범위 밖이다.
+pending_components:
+- side: source
+  part_ids: null
+  status: pending
+  concepts:
+  - attention, norm, residual을 포함한 전체 Transformer
+  - 분산 expert dispatch
+  reason: 선택 복원 범위 밖이다. ID는 null로 유지하며 이 세션에서 추가 복원하지 않는다.
+- side: target
+  part_ids: null
+  status: pending
+  concepts:
+  - 나머지 3개 cycle
+  - embedding, final norm 및 LM head
+  - full-width checkpoint 및 distributed expert routing
+  reason: 선택 복원 범위 밖이다. ID는 null로 유지하며 이 세션에서 추가 복원하지 않는다.
+source_records:
+- side: source
+  architecture: Switch Transformer
+  paper:
+    url: https://jmlr.org/papers/v23/21-0998.html
+    section: section 2 routing and expert capacity
+  verification: existing_primary_source_review_reused_without_execution
+  metadata_path: ../architectures/switch-transformer/sources.yaml
+  implementation:
+    repository: https://github.com/tensorflow/mesh
+    provenance: Official implementation explicitly linked by paper footnote 2
+    commit: e6798a2610a2c2f4c4cd236d8214422cb1ecc00a
+    tag: null
+    file: mesh_tensorflow/transformer/moe.py
+    url: https://github.com/tensorflow/mesh/blob/e6798a2610a2c2f4c4cd236d8214422cb1ecc00a/mesh_tensorflow/transformer/moe.py
+    inspected_copy: source_moe.py.txt
+    functions:
+      _switch_gating: lines 1303-1457; full softmax, top_1, importance mask, exclusive
+        cumsum, capacity filter, dispatch/combine
+      transformer_moe_layer_v1: lines 202-567; capacity formula at 384-394, expert
+        input einsum at 481, bias-free FFN at 507-524, output einsum at 551
+  metadata_ownership: read_only_producer_or_baseline_record; copied source metadata
+    is not a new execution claim
+- side: target
+  architecture: Jamba
+  paper:
+    url: https://arxiv.org/html/2403.19887v2
+    section: sections 2, 6.4; producer selects original v1 and Jamba-v0.1
+  verification: primary_paper_and_selected_source_text_read; other metadata reused
+    from producer
+  metadata_path: /workspace/resnet_reconstruction/parallel_coverage/20261105/s4/experiments/20261116_genealogy_phase5_jamba_ttt/jamba/sources.yaml
+  implementation:
+    official: true
+    repository: https://huggingface.co/ai21labs/Jamba-v0.1
+    commit: 9efd11575ba791d9e3d25d4c8b670e78506b2df7
+    url: https://huggingface.co/ai21labs/Jamba-v0.1/blob/9efd11575ba791d9e3d25d4c8b670e78506b2df7/modeling_jamba.py
+    inspected_files:
+      modeling_jamba.py:
+      - JambaRMSNorm.forward
+      - JambaAttention.forward
+      - JambaMambaMixer.slow_forward
+      - JambaMLP.forward
+      - JambaSparseMoeBlock.forward
+      - JambaAttentionDecoderLayer.forward
+      - JambaMambaDecoderLayer.forward
+      - JambaModel.__init__
+      configuration_jamba.py:
+      - JambaConfig.layers_block_type
+      - JambaConfig.layers_num_experts
+      config.json:
+      - attn_layer_offset
+      - attn_layer_period
+      - expert_layer_offset
+      - expert_layer_period
+      - num_experts_per_tok
+    acquisition: Pinned files retrieved read-only, local evidence source_modeling.py,
+      source_configuration_jamba.py, source_config.json. No official modules imported
+      or executed.
+  source_text_paths:
+  - /workspace/resnet_reconstruction/parallel_coverage/20261105/s4/experiments/20261116_genealogy_phase5_jamba_ttt/jamba/source_modeling.py
+  G_direct_review:
+  - JambaSparseMoeBlock.forward
+  metadata_ownership: read_only_producer_or_baseline_record; copied source metadata
+    is not a new execution claim
+application:
+  executable: false
+  command: null
+  patch_or_script: null
+validation:
+  profile: direction_type_inference_sources_paths_parts_declared_scope_only
+  status: STATIC_DIRECTION_TYPE_INFERENCE_SOURCES_PATHS_IDS_SCOPE_CHECKED
+  numerical_tests: NOT_RUN_BY_DESIGN
+  prior_architecture_results: reused_without_revalidation
+  claim_boundary: 관계의 정적 확인은 실현기 또는 LLM 복원 성공 인증이 아니다.
+  reference_check:
+    source:
+      path: ../architectures/switch-transformer/representation.yaml
+      unique_ids: 4
+      declared_scope_checked: true
+    target:
+      path: ../architectures/jamba/representation.yaml
+      unique_ids: 2
+      declared_scope_checked: true
+unresolved:
+- Switch에서 Jamba로의 직접 역사적 부품 계승은 추론이다. top-1과 top-2, capacity 및 expert activation
+  차이를 보존한다.
+- 전체 mapping_status=partial; 범위 밖의 개념 대응은 실제 선언된 YAML이 추가되기 전까지 pending이다.
+specification_proposal:
+  required: false
+  reason: 기존 local_transition_v1 설명 관계 형식 사용. 공통 specs와 registry 수정 없음.
+provenance:
+  research_source: integration/20261116_genealogy_phase5_relations/tr_066.yaml
+  publication_changes: Relative endpoint paths only; source IDs, types, inferred flags
+    and scoped boundaries preserved

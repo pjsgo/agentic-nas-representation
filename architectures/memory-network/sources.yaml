@@ -1,0 +1,62 @@
+architecture: memory-network
+implementation_basis: PAPER_BASED_NOT_OFFICIAL_IMPLEMENTATION
+paper:
+  url: https://arxiv.org/abs/1410.3916v11
+  full_text: https://arxiv.org/html/1410.3916v11
+  version: arXiv 1410.3916v11, 2015-11-29
+  local_pdf: ../evidence/memory.pdf
+  inspected:
+  - Section 2 general framework
+  - Section 3.1 basic model
+  - equations 1-8
+  - footnotes 2-4
+code_search:
+  official_selected_variant: NOT_CONFIRMED
+  inspected_repository: https://github.com/facebookarchive/MemNN
+  inspected_commit: d7c5f6d5e1a4af6417ffff98535a96bb0947a6a8
+  inspected_files:
+  - README.md
+  - MemN2N-babi-matlab/build_model.m
+  - MemN2N-babi-matlab/memory/Memory.m
+  conclusion: The identified official repository provides end-to-end and later memory
+    variants. Its soft-addressing implementation is not the Section 3.1 hard-support
+    implementation.
+  selected_code_commit: null
+  selected_code_functions: []
+source_mapping:
+  memnn_store: Section 3.1 next-free-slot storage; supplied BoW counts stand for preprocessed
+    sentences
+  memnn_first_support: equations 2 and 5; role-partitioned feature map
+  memnn_second_support: equations 3 and 5 and footnote 3; original query plus selected
+    fact
+  memnn_response: equations 4 and 5; vocabulary ranking and separate UR
+scope_decisions:
+- Fix k=2 and single-word response; no softmax retrieval.
+- Represent three feature dictionaries as contiguous query, support, candidate blocks.
+  Both selected supports contribute to the support block.
+- Raw text tokenization ends at the supplied integer count-vector interface. G appends
+  facts and never changes old rows.
+- Query storage is outside this fact-bank boundary; the call stores only facts, then
+  performs O/R for query.
+- Lowest-index ties and zero initialization are explicit deterministic local interface
+  choices, not source-runtime claims.
+- The general I/G/O/R framework permits other designs; this artifact represents only
+  the stated basic variant.
+training:
+  source: Supporting fact labels and response labels supervise margin-ranking objectives,
+    equations 6-8.
+  reconstruction: Fixed supplied weights; no labels, loss, gradient, optimizer or
+    training accuracy.
+excluded:
+- word_stream_segmentation
+- relative_write_time
+- hash_retrieval
+- unseen_words
+- exact_match_features
+- RNN_generation
+- QA_training
+slides:
+  source: /mnt/data/beyond_transformer_slides.pdf
+  extraction: ../evidence/slides.txt
+  role: Pages 10 and 11 and genealogy discussion motivate memory lookup; original
+    paper defines the hard-support distinction.

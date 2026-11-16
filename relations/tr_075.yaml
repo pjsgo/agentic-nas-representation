@@ -1,0 +1,358 @@
+format_version: local_transition_v1
+transition_id: tr_075
+source_architecture: H3
+target_architecture: Hyena
+relation_type: I
+inferred: false
+record_status: complete
+mapping_status: partial
+core_mapping_status: complete_scoped
+part_mapping_complete: false
+evidence:
+- source: /mnt/data/beyond_transformer_slides.pdf
+  pages:
+  - 40
+  page_numbering: one_based_PDF
+  label: I 075
+  direction: H3 -> Hyena
+  question_mark_present: false
+  verification: direct_embedded_image_view_from_original_pdf
+  pdf_objects:
+    page: 214
+    image: 219
+  correction_proposal: null
+motivation: H3의 gate와 convolution 결합을 더 일반적인 operator로 확장한다.
+conditions:
+- H3에서 Hyena로의 I 관계이다. 논문의 SISO 재표현과 local scalar-head H3, 도착 Hyena order를 구분한다.
+expected_effects:
+- attention 행렬을 만들지 않는 data-dependent sequence mixer를 구성한다.
+tradeoffs:
+- order와 filter network에 따른 계산 비용이 남고 H3의 state와 Hyena filter는 직접 호환되지 않는다.
+changes:
+- before_units:
+  - factors.q_projection
+  - factors.k_projection
+  - factors.v_projection
+  - factors.shift_update
+  - factors.value_gate
+  - factors.diagonal_real_update
+  - factors.diagonal_imag_update
+  - factors.query_gate
+  - factors.output_projection
+  after_units:
+  - graph.hyena_position_grid
+  - graph.hyena_modulation_rates
+  - graph.hyena_input_projection
+  - graph.hyena_short_filter
+  - graph.hyena_implicit_filter
+  - graph.hyena_modulation
+  - graph.hyena_gated_long_convolution
+  - graph.hyena_output_projection
+  operation: descriptive_correspondence
+  mechanism: H3의 shift/diagonal SSM 필터와 두 gate를 arbitrary-order gating 및 implicit
+    long-filter recurrence로 일반화한다.
+  mapping_status: mapped_scoped
+  state_and_resource_contract: scalar-head block, shift 및 complex-pair diagonal carries.
+    전체 language model과 fused FFT는 없다. standalone order 2 또는 3, order-1 long stages,
+    고정 l_max grid, sine filter MLP, modulation 및 gate. full LM/residual/norm과 streaming
+    cache는 없다.
+  cardinality: many_to_many_semantic_correspondence_not_tensor_or_parameter_identity
+preserve:
+- 입력에 의해 조절되는 곱셈 gate와 causal convolution 합성
+scope:
+  source_yaml: ../architectures/h3/representation.yaml
+  target_yaml: ../architectures/hyena/representation.yaml
+  source_yaml_status: available
+  target_yaml_status: available
+  path_base: relation_file_directory
+  included:
+  - descriptive_relationship
+  - available_core_component_correspondence
+  excluded:
+  - whole_model_conversion
+  - numerical_execution
+  - training
+  - performance_reproduction
+  - code_transformer
+  - weight_or_state_migration
+  mapping_boundary: gate/convolution 부품의 아이디어 대응; 논문 전체 hierarchy 및 fused FFT 제외
+  source_boundary: scalar-head block, shift 및 complex-pair diagonal carries. 전체 language
+    model과 fused FFT는 없다.
+  target_boundary: standalone order 2 또는 3, order-1 long stages, 고정 l_max grid, sine
+    filter MLP, modulation 및 gate. full LM/residual/norm과 streaming cache는 없다.
+  declared_scope_snapshot:
+    source: Scalar-head block; raw float32 parameters; external real shift and real-pair
+      diagonal carries; supplied post-constructor parameters; no initializer/training/FFT
+      claim.
+    target:
+      included:
+      - input_projection
+      - causal_depthwise_short_filter
+      - position_generated_long_filter
+      - shared_frequency_sine_MLP
+      - exponential_modulation
+      - input_gating
+      - causal_FFT_convolution
+      - diagonal_skip
+      - output_projection
+      excluded:
+      - full_language_model
+      - residual_block
+      - normalization_layers
+      - training
+      - dropout
+      - fused_kernels
+      - bidirectional_filters
+      - streaming_cache
+      - lengths_above_l_max
+  core_mapping_definition: complete_scoped는 선택 core의 설명 대응에 실제 ID가 연결된 상태이다. 전체 모델,
+    수치 동등성 또는 실행 변환 완료가 아니다.
+  component_coverage:
+    source:
+      mapped_units:
+      - factors.q_projection
+      - factors.k_projection
+      - factors.v_projection
+      - factors.shift_update
+      - factors.value_gate
+      - factors.diagonal_real_update
+      - factors.diagonal_imag_update
+      - factors.query_gate
+      - factors.output_projection
+      unmapped_declared_units:
+      - factors.f001
+      - factors.f002
+      - factors.f003
+      - factors.f004
+      - factors.f005
+      - factors.f006
+      - factors.f007
+      - factors.f008
+      - factors.f009
+      - factors.f010
+      - factors.f011
+      - factors.f012
+      - factors.f013
+      - factors.f014
+      - factors.f015
+      - factors.f016
+      - factors.f017
+      - factors.f018
+      - factors.f019
+      - factors.f020
+      - factors.f021
+      - factors.f022
+      - factors.f023
+      - factors.f024
+      - factors.f025
+      - factors.f026
+      - factors.f027
+      - factors.f028
+      - factors.f029
+      - factors.f030
+      - factors.f031
+      - factors.f032
+      - factors.f033
+      - factors.f034
+      - factors.f035
+      - factors.f036
+      - factors.f037
+      - factors.f038
+      - factors.f039
+      - factors.f040
+      - factors.f041
+      - factors.f042
+      - factors.f043
+      - factors.f044
+      - factors.f045
+      - factors.f046
+      - factors.f047
+      - factors.f048
+      - factors.f049
+      - factors.f050
+      - factors.f051
+      - factors.f056
+      - factors.f057
+      - factors.f059
+      - factors.f060
+      - factors.f061
+      - factors.f062
+      - factors.f064
+      - factors.f065
+      - factors.f066
+      - factors.f067
+      - factors.f068
+      - factors.f069
+      - factors.f070
+      - factors.f071
+      - factors.f073
+      - factors.f075
+      - factors.f076
+      - factors.f077
+      - factors.f078
+      - factors.f079
+      - factors.f080
+      - factors.f081
+      - factors.f082
+      - factors.pair_final
+      - factors.sequence_scan
+      - factors.shift_right
+      - factors.step
+      - factors.unit
+      unmapped_reason: 선택 관계 core 밖의 부품 또는 컨테이너이며 자동 대응을 추가하지 않는다.
+    target:
+      mapped_units:
+      - graph.hyena_position_grid
+      - graph.hyena_modulation_rates
+      - graph.hyena_input_projection
+      - graph.hyena_short_filter
+      - graph.hyena_implicit_filter
+      - graph.hyena_modulation
+      - graph.hyena_gated_long_convolution
+      - graph.hyena_output_projection
+      unmapped_declared_units: []
+      unmapped_reason: 선택 관계 core 밖의 부품 또는 컨테이너이며 자동 대응을 추가하지 않는다.
+conceptual_correspondence:
+- source_concept: H3
+  target_concept: Hyena
+  description: gate/convolution 부품의 아이디어 대응; 논문 전체 hierarchy 및 fused FFT 제외
+  mapping_status: mapped_within_selected_core
+- description: 관계의 전체 논문 구조 중 위 source_boundary와 target_boundary에서 제외한 부분
+  part_ids: null
+  mapping_status: pending_outside_declared_restoration_scope
+  reason: 미선언 부품 ID를 만들지 않는다. 추가 복원은 이 세션 범위 밖이다.
+pending_components:
+- side: source
+  part_ids: null
+  status: pending
+  concepts:
+  - full language model 및 fused FFT
+  reason: 선택 복원 범위 밖이다. ID는 null로 유지하며 이 세션에서 추가 복원하지 않는다.
+- side: target
+  part_ids: null
+  status: pending
+  concepts:
+  - residual, normalization, FFN 및 전체 language model
+  - streaming cache와 전체 repository variant
+  reason: 선택 복원 범위 밖이다. ID는 null로 유지하며 이 세션에서 추가 복원하지 않는다.
+source_records:
+- side: source
+  architecture: H3
+  paper:
+    url: https://arxiv.org/html/2212.14052v3
+    section: sections 3.2-3.3, Algorithm 1
+  verification: existing_primary_source_review_reused_without_execution
+  metadata_path: ../architectures/h3/sources.yaml
+  implementation:
+    url: https://github.com/HazyResearch/H3
+    commit: 5c4d06b5795405170387c80998b58d76179a8a1a
+    license: Apache-2.0
+    official_status: Repository README identifies itself as official paper implementation
+    source_files:
+    - path: src/models/ssm/h3.py
+      functions:
+      - H3.__init__
+      - H3.forward
+      - H3.step
+      facts: head_dim=1 supported; affine biases; shift and diagonal D terms; no activation
+        after SSM; mode defaults to diag
+    - path: src/models/ssm/ss_kernel_shift.py
+      functions:
+      - SSKernelShift.step
+      - SSKernelShift.forward
+      facts: trainable B/C, fixed subdiagonal shift; update before C readout; real
+        external state
+    - path: src/models/ssm/ss_kernel_diag.py
+      functions:
+      - SSKernelDiag.__init__
+      - SSKernelDiag._A
+      - SSKernelDiag._setup_step
+      - SSKernelDiag.step
+      facts: A=-exp(inv_A_real)+i*A_imag; dt=exp(log_dt); bilinear; stored complex
+        pairs; 2*real(C*state)
+    - path: src/models/ssm/ss_kernel.py
+      functions:
+      - SSKernel.__init__
+      facts: mode=diag; n_ssm defaults to H; full d_state=4 stores 2 complex pairs;
+        shift stores 4 real coordinates
+    pinned_raw_url_pattern: https://raw.githubusercontent.com/HazyResearch/H3/5c4d06b5795405170387c80998b58d76179a8a1a/{path}
+    configuration:
+      d_model: 2
+      d_state: 4
+      head_dim: 1
+      mode: diag
+      disc: bilinear
+      real_type: exp
+      n_ssm: 2
+      channels: 1
+      rate: 1.0
+      l_max: null
+  metadata_ownership: read_only_producer_or_baseline_record; copied source metadata
+    is not a new execution claim
+- side: target
+  architecture: Hyena
+  paper:
+    url: https://arxiv.org/html/2302.10866v2
+    section: sections 2.2, 3.1-3.4; Appendix A.2
+  verification: primary_paper_and_selected_source_text_read; other metadata reused
+    from producer
+  metadata_path: /workspace/resnet_reconstruction/parallel_coverage/20261105/transformer/experiments/20261116_genealogy_phase5_hippo_hyena/hyena/sources.yaml
+  implementation:
+    repository: https://github.com/HazyResearch/safari
+    commit: 02220c69d247e5473616cd053a443ad99fd2559b
+    official_status: Author repository; README identifies the Hyena Hierarchy paper
+      and standalone implementation
+    files:
+    - path: standalone_hyena.py
+      url: https://github.com/HazyResearch/safari/blob/02220c69d247e5473616cd053a443ad99fd2559b/standalone_hyena.py
+      local_snapshot: source/standalone_hyena.py
+      functions:
+      - fftconv
+      - Sin.forward
+      - PositionalEmbedding.__init__
+      - PositionalEmbedding.forward
+      - ExponentialModulation.__init__
+      - ExponentialModulation.forward
+      - HyenaFilter.__init__
+      - HyenaFilter.filter
+      - HyenaOperator.__init__
+      - HyenaOperator.forward
+    directly_reviewed: true
+    executed: false
+  source_text_paths:
+  - /workspace/resnet_reconstruction/parallel_coverage/20261105/transformer/experiments/20261116_genealogy_phase5_hippo_hyena/hyena/source/standalone_hyena.py
+  G_direct_review:
+  - HyenaOperator.__init__
+  - HyenaOperator.forward
+  metadata_ownership: read_only_producer_or_baseline_record; copied source metadata
+    is not a new execution claim
+application:
+  executable: false
+  command: null
+  patch_or_script: null
+validation:
+  profile: direction_type_inference_sources_paths_parts_declared_scope_only
+  status: STATIC_DIRECTION_TYPE_INFERENCE_SOURCES_PATHS_IDS_SCOPE_CHECKED
+  numerical_tests: NOT_RUN_BY_DESIGN
+  prior_architecture_results: reused_without_revalidation
+  claim_boundary: 관계의 정적 확인은 실현기 또는 LLM 복원 성공 인증이 아니다.
+  reference_check:
+    source:
+      path: ../architectures/h3/representation.yaml
+      unique_ids: 9
+      declared_scope_checked: true
+    target:
+      path: ../architectures/hyena/representation.yaml
+      unique_ids: 8
+      declared_scope_checked: true
+unresolved:
+- H3 논문과 Hyena의 SISO 재표현은 k/v 표기를 바꿀 수 있다. 같은 이름의 projection을 곧바로 tensor 이식 대상으로 보지
+  않는다.
+- 전체 mapping_status=partial; 범위 밖의 개념 대응은 실제 선언된 YAML이 추가되기 전까지 pending이다.
+specification_proposal:
+  required: false
+  reason: 기존 local_transition_v1 설명 관계 형식 사용. 공통 specs와 registry 수정 없음.
+provenance:
+  research_source: integration/20261116_genealogy_phase5_relations/tr_075.yaml
+  publication_changes: Relative endpoint paths only; source IDs, types, inferred flags
+    and scoped boundaries preserved

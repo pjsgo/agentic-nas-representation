@@ -1,0 +1,85 @@
+architecture: retro
+review_date: '2026-11-16'
+primary_paper:
+  title: Improving Language Models by Retrieving from Trillions of Tokens
+  authors: Borgeaud et al.
+  version_used: ICML 2022 published PMLR 162, pages 2206-2240, 35-page PDF
+  url: https://proceedings.mlr.press/v162/borgeaud22a/borgeaud22a.pdf
+  arxiv_metadata: https://arxiv.org/abs/2112.04426v3
+  arxiv_version: v3, 2022-02-07; metadata checked; computational citations use published
+    PMLR version
+  inspected:
+  - section 2.4 and equations 3-4, PDF pages 3-4
+  - C.2.2 equation 6, PDF page 15
+  - C.2.3 and Listing 1, PDF pages 15-16
+  - Algorithm 1, PDF page 17
+author_code:
+  status: AUTHOR_PUBLISHED_SIMPLIFIED_LISTING_AVAILABLE_FULL_REPOSITORY_NOT_CONFIRMED
+  url: https://proceedings.mlr.press/v162/borgeaud22a/borgeaud22a.pdf
+  version: PMLR 162 published Listing 1
+  commit: null
+  tag: null
+  commit_reason: Code is embedded in the versioned paper, not a confirmed source repository.
+  file: borgeaud22a.pdf, PDF page 16, Listing 1
+  functions:
+  - cross_attention
+  - multi_neighbour_cross_attention
+  - multi_chunk_cross_attention
+  - relative_positional_encodings
+  missing: relative_positional_encodings body is ellipsis; multihead logic omitted;
+    no complete runnable original implementation confirmed.
+  search_evidence:
+  - https://github.com/google-deepmind/deepmind-research
+  - https://deepmind.google/blog/improving-language-models-by-retrieving-from-trillions-of-tokens/
+  search_note: Author announcement and official repository listing inspected; no original
+    RETRO runtime source located. This is not a proof that no repository exists.
+  third_party_not_used:
+  - https://github.com/lucidrains/RETRO-pytorch
+  - https://github.com/TobiasNorlund/retro
+  classification_note: TobiasNorlund/retro is official for a different generalization
+    paper, not the original Borgeaud paper.
+slides:
+  path: /mnt/data/beyond_transformer_slides.pdf
+  inspected_original_text_pages:
+  - 48
+  - 69
+  meaning: Page 48 associates external corpus retrieval with tr_055. Page 69 identifies
+    RETRO source implementation as third-party.
+  extraction: Read original PDF using existing read-only ToUnicode parser prefix under
+    coordinator; no shared-file writes. No claim of complete diagram OCR.
+scope_mapping:
+  retro_chunk_align: Section 2.4 equation 3 and multi_chunk_cross_attention shift/pad/truncate.
+  retro_projections: Listing 1 cross_attention, unscaled single-head Q/K/V.
+  retro_joint_attention: Listing 1 multi_neighbour_cross_attention jointly normalizes
+    neighbour and time axes.
+  position_bias: Listing 1 additive positional logits; C.2.2 distance i-r+m-1. Generator
+    is external.
+  retro_residual: Explicit local h+delta wrapper implementing identity prefix and
+    residual integration; Listing 1 itself returns only delta.
+  retrieval_encoder: Excluded computation; Algorithm 1 ENCODER and section 2.4 define
+    supplied e boundary and decoder-conditioning responsibility.
+local_adaptations:
+- Batch dimension and float64 CPU added; Listing 1 is unbatched simplified JAX.
+- Returned diagnostics store neighbour then token axes; listing flattens token then
+  neighbour. Identical joint sum with matching values.
+- No multihead, RMSNorm, FFN, projection biases or hidden runtime scaling inferred.
+- No padding slots; incomplete chunks rejected. All retrieved tokens, including continuation,
+  are visible inside the eligible source window.
+excluded:
+- retrieval index construction and actual nearest neighbour search
+- original encoder and its conditioning cross-attention implementation
+- relative position feature and learned logit generation
+- whole language model, training, database and serving
+additional_material_for_expansion:
+- original executable encoder and full attention implementation with pinned commit
+  or tag
+- original positional feature dimensions, frequencies and learned parameterization
+- source-backed normalization and multihead output projection details for full block
+  fidelity
+baseline:
+  integration_record: /workspace/resnet_reconstruction/parallel_coverage/20261105/integration/20261116_genealogy_phase4_integration/status.yaml
+  nodes: 35
+  relations: 38
+  reuse: Existing completion evidence and public formats read, no numerical rerun.
+  reading_rules: /workspace/agentic-nas-representation/specs/representation/reading-rules-v1.md
+  format_example: /workspace/agentic-nas-representation/architectures/synthesizer/representation.yaml

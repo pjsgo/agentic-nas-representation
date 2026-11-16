@@ -1,0 +1,131 @@
+architecture: Hyena
+review_date: '2026-11-16'
+paper:
+  url: https://arxiv.org/html/2302.10866v2
+  version: arXiv 2302.10866v2
+  anchors:
+  - section_3_1
+  - section_3_3_equation_7
+  - section_3_4_algorithms_1_2_3
+  directly_reviewed: true
+code:
+  repository: https://github.com/HazyResearch/safari
+  commit: 02220c69d247e5473616cd053a443ad99fd2559b
+  official_status: Author repository; README identifies the Hyena Hierarchy paper
+    and standalone implementation
+  files:
+  - path: standalone_hyena.py
+    url: https://github.com/HazyResearch/safari/blob/02220c69d247e5473616cd053a443ad99fd2559b/standalone_hyena.py
+    local_snapshot: source/standalone_hyena.py
+    functions:
+    - fftconv
+    - Sin.forward
+    - PositionalEmbedding.__init__
+    - PositionalEmbedding.forward
+    - ExponentialModulation.__init__
+    - ExponentialModulation.forward
+    - HyenaFilter.__init__
+    - HyenaFilter.filter
+    - HyenaOperator.__init__
+    - HyenaOperator.forward
+  directly_reviewed: true
+  executed: false
+selection:
+  variant: Official simplified standalone HyenaOperator; not the complete src/models/sequence/hyena.py
+    variant
+  order: 2 or 3; order input gates, order-1 long convolutions, final gate x[0]
+  paper_correspondence: Paper formal order N recurrence and Algorithm 3 present N
+    long filters. The selected standalone source instead uses order-1 long-filter
+    stages together with depthwise short filtering. Preserve actual source convention;
+    no equality to every paper order convention is claimed.
+  dimensions: D=1..8, width=1..16, l_max=2..32; tiny validation sizes, not a performance
+    limit of Hyena
+  explicit_options: emb_dim=5, num_inner_mlps=2, lr_pos_emb=0, modulation_lr=0, shift=0.05,
+    normalized=false, all dropout=0
+  filter_generator: Fixed full-horizon time and complex-exponential position grid,
+    three affine/sine layers sharing one trainable frequency vector, final biasless
+    linear map
+  modulation: Fixed exponentially decaying rates from log(0.01)/1.5 to log(0.01)/0.3,
+    absolute rates, additive window shift 0.05
+  convolution: Causal short depthwise cross-correlation with width 3; long zero-padded
+    FFT convolution plus trainable diagonal skip
+  normalization: No filter normalization. Candidate uses default forward FFT and 1/(2L)
+    inverse FFT; algebraically equivalent to source filter FFT divided by 2L and unnormalized
+    inverse FFT.
+  boundary: Negative time is zero; retain first L outputs; L<=l_max required; no implicit
+    truncation of longer inputs
+  adapters: CPU float64 throughout, flattened parameter names, deterministic zero
+    initialization except unit frequency followed by supplied weights. Fixed position/rate
+    buffers are configuration derived, not external trainable filters. Returns generated
+    filters and long-stage outputs for inspection. Upstream default learnable positional
+    embeddings disabled using its lr_pos_emb=0 option. Parameter initialization statistics,
+    optimizer metadata and float32 numerical rounding are not restored.
+parameter_mapping:
+  W_in_b_in: in_proj.weight/bias
+  W_short_b_short: short_filter.weight/bias
+  W0_b0: filter_fn.implicit_filter.0.weight/bias
+  W1_b1: filter_fn.implicit_filter.2.weight/bias
+  W2_b2: filter_fn.implicit_filter.4.weight/bias
+  freq: shared act.freq at implicit_filter indices 1,3,5
+  Wf: filter_fn.implicit_filter.6.weight
+  Dskip: filter_fn.bias
+  W_out_b_out: out_proj.weight/bias
+  buffers: pos/time/deltas correspond to squeezed pos_emb.z/pos_emb.t/modulation.deltas
+scope:
+  included:
+  - projections
+  - short_filter
+  - implicit_long_filter_generation
+  - modulation
+  - causal_convolution
+  - data_dependent_gating
+  - diagonal_skip
+  excluded:
+  - full_network
+  - language_model_head
+  - training
+  - learned_positions
+  - learned_decay_rates
+  - full_repository_variant
+  - fused_operators
+  - throughput_benchmarks
+  - source_bitwise_parity
+genealogy:
+  pdf: /mnt/data/beyond_transformer_slides.pdf
+  reviewed_pages:
+  - 43
+  - 68
+  limitation: No explicit Hyena node or edge was verified on these genealogy images;
+    no new slide edge or relation ID is invented. Target selection is explicitly user
+    requested. Algorithmic evidence comes from the original paper and official repository.
+  related_baseline: H3, LSSL and S4 records are reused as existing context, without
+    reexecution or an equivalence claim.
+independent_reference:
+  method: Independently rebuilt positional features and decay rates; scalar affine
+    and sine operations; explicit lag-by-lag causal convolution
+  independence: no candidate, torch, source or FFT imports; no shared core implementation
+validation_design:
+  cases:
+  - length_one_single_channel
+  - interior_length_multi_batch
+  - maximum_length_order_three
+  checks:
+  - output
+  - generated_kernel
+  - long_convolution_outputs
+  - future_input_causality
+  - fixed_horizon_prefix_consistency
+  - parameter_and_buffer_shapes
+  - input_nonmutation
+  - filter_ablation
+  - gate_ablation
+integration_genealogy_addendum:
+  source: User-supplied beyond_transformer_slides.pdf
+  page: 40
+  relations:
+  - 'tr_053: S4 -> Hyena X?'
+  - 'tr_075: H3 -> Hyena I'
+  - 'tr_076: Transformer -> Hyena A'
+  deferred: 'tr_052: WaveNet -> Hyena I?; WaveNet not restored'
+  authority: G phase5 direct original-image review; supersedes only earlier limited-page
+    observation, not source equations

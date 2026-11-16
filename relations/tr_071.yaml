@@ -1,0 +1,266 @@
+format_version: local_transition_v1
+transition_id: tr_071
+source_architecture: LSTMN
+target_architecture: Transformer
+relation_type: I
+inferred: false
+record_status: complete
+mapping_status: partial
+core_mapping_status: complete_scoped
+part_mapping_complete: false
+evidence:
+- source: /mnt/data/beyond_transformer_slides.pdf
+  pages:
+  - 38
+  page_numbering: one_based_PDF
+  label: I 071
+  direction: LSTMN -> Transformer
+  question_mark_present: false
+  verification: direct_embedded_image_view_from_original_pdf
+  pdf_objects:
+    page: 198
+    image: 203
+  correction_proposal: null
+- source: https://arxiv.org/html/1706.03762v7
+  section: 2 Background
+  verification: primary_source_read
+  claim: E2E recurrent attention 또는 LSTMN intra-attention을 관련연구로 인용. 직접 코드 또는 gate
+    계승 주장 없음.
+motivation: 문장 내부 token 관계를 attention으로 찾는 아이디어를 연결한다.
+conditions:
+- 원본 I 관계이다. Transformer 논문의 관련연구 인용을 확인하며 LSTM gate 직접 계승으로 해석하지 않는다.
+expected_effects:
+- token별 recurrent 의존 없이 context를 집계한다.
+tradeoffs:
+- cell tape와 LSTM gate는 없어지고 위치 표현 및 dense attention 비용이 필요하다.
+changes:
+- before_units:
+  - factors.lstmn_address
+  - factors.lstmn_read
+  after_units:
+  - factors.project_a
+  - factors.scale_q
+  - factors.score_a
+  - factors.apply_mask
+  - factors.prob_a
+  - factors.mix_a
+  - factors.project_b
+  operation: descriptive_correspondence
+  mechanism: LSTMN의 순차 hidden/cell tape 조회를 Transformer의 병렬 multihead self-attention으로
+    바꾸어 설명한다.
+  mapping_status: mapped_scoped
+  state_and_resource_contract: 단층 단일 문장, bias 없는 paper equations, hidden/cell tape와
+    previous weighted read. empty-tape zero read는 로컬 규약이며 공식 코드 parity는 확인 불가. 단일
+    eval encoder block. 전체 encoder-decoder, token embedding과 autoregressive decoding
+    cache가 없다.
+  cardinality: many_to_many_semantic_correspondence_not_tensor_or_parameter_identity
+preserve:
+- 문장 내부 표현에 대한 content-based attention read
+scope:
+  source_yaml: ../architectures/lstmn/representation.yaml
+  target_yaml: ../architectures/transformer/representation.yaml
+  source_yaml_status: available
+  target_yaml_status: available
+  path_base: relation_file_directory
+  included:
+  - descriptive_relationship
+  - available_core_component_correspondence
+  excluded:
+  - whole_model_conversion
+  - numerical_execution
+  - training
+  - performance_reproduction
+  - code_transformer
+  - weight_or_state_migration
+  mapping_boundary: intra-sequence attention 대응; LSTMN recurrent gate와 Transformer
+    FFN은 동일 부품 아님
+  source_boundary: 단층 단일 문장, bias 없는 paper equations, hidden/cell tape와 previous weighted
+    read. empty-tape zero read는 로컬 규약이며 공식 코드 parity는 확인 불가.
+  target_boundary: 단일 eval encoder block. 전체 encoder-decoder, token embedding과 autoregressive
+    decoding cache가 없다.
+  declared_scope_snapshot:
+    source:
+      variant: Single-layer single-sequence intra-attention memory-tape recurrence,
+        no bias
+      included:
+      - hidden_tape
+      - cell_tape
+      - previous_read_feedback
+      - causal_additive_attention
+      - weighted_hidden_and_cell_read
+      - gates_from_read_hidden
+      - cell_update_from_read_cell
+      - append_states
+      excluded:
+      - token_embedding
+      - task_head
+      - training
+      - gradients
+      - dropout
+      - bias
+      - multilayer_stack
+      - encoder_decoder_fusion
+      - truncation
+      - memory_rewrite
+    target: One eval functional block; positive B,T; fixed feature/head/hidden dimensions.
+      Only explicit boolean exclusion mask. Parameters fixture-supplied. Original
+      Module hierarchy, initialization and training are outside scope.
+  core_mapping_definition: complete_scoped는 선택 core의 설명 대응에 실제 ID가 연결된 상태이다. 전체 모델,
+    수치 동등성 또는 실행 변환 완료가 아니다.
+  component_coverage:
+    source:
+      mapped_units:
+      - factors.lstmn_address
+      - factors.lstmn_read
+      unmapped_declared_units:
+      - factors.lstmn_gates
+      - factors.lstmn_update
+      unmapped_reason: 선택 관계 core 밖의 부품 또는 컨테이너이며 자동 대응을 추가하지 않는다.
+    target:
+      mapped_units:
+      - factors.project_a
+      - factors.scale_q
+      - factors.score_a
+      - factors.apply_mask
+      - factors.prob_a
+      - factors.mix_a
+      - factors.project_b
+      unmapped_declared_units:
+      - factors.activate_a
+      - factors.contract_a
+      - factors.expand_a
+      - factors.join_a
+      - factors.mask_shape_a
+      - factors.mask_shape_b
+      - factors.merge_a
+      - factors.merge_b
+      - factors.normalize_a
+      - factors.normalize_b
+      - factors.order_k
+      - factors.order_mix
+      - factors.order_q
+      - factors.order_v
+      - factors.partition_a
+      - factors.scale_value
+      - factors.shape_k
+      - factors.shape_q
+      - factors.shape_v
+      - factors.stage_a
+      - factors.stage_b
+      - factors.turn_k
+      - factors.unit
+      unmapped_reason: 선택 관계 core 밖의 부품 또는 컨테이너이며 자동 대응을 추가하지 않는다.
+conceptual_correspondence:
+- source_concept: LSTMN
+  target_concept: Transformer
+  description: intra-sequence attention 대응; LSTMN recurrent gate와 Transformer FFN은
+    동일 부품 아님
+  mapping_status: mapped_within_selected_core
+- description: 관계의 전체 논문 구조 중 위 source_boundary와 target_boundary에서 제외한 부분
+  part_ids: null
+  mapping_status: pending_outside_declared_restoration_scope
+  reason: 미선언 부품 ID를 만들지 않는다. 추가 복원은 이 세션 범위 밖이다.
+pending_components:
+- side: source
+  part_ids: null
+  status: pending
+  concepts:
+  - task head와 encoder-decoder fusion
+  - multilayer 및 tape truncation/rewrite
+  reason: 선택 복원 범위 밖이다. ID는 null로 유지하며 이 세션에서 추가 복원하지 않는다.
+- side: target
+  part_ids: null
+  status: pending
+  concepts:
+  - 전체 encoder-decoder stack
+  - embedding 및 positional input
+  - autoregressive KV cache
+  reason: 선택 복원 범위 밖이다. ID는 null로 유지하며 이 세션에서 추가 복원하지 않는다.
+source_records:
+- side: source
+  architecture: LSTMN
+  paper:
+    url: https://arxiv.org/html/1601.06733v7
+    section: sections 3.2, 5, equations 4-9
+  verification: primary_paper_read; official_selected_implementation_unavailable_or_unconfirmed
+  metadata_path: /workspace/resnet_reconstruction/parallel_coverage/20261105/seq2seq/experiments/20261116_genealogy_phase5_memory/lstmn/sources.yaml
+  implementation:
+    paper_link: https://github.com/cheng6076/SNLI-attention
+    api_link: https://api.github.com/repos/cheng6076/SNLI-attention
+    observed: Both repository web page and GitHub API return 404 on this session's
+      access.
+    evidence: ../evidence/lstmn_repo.json.error
+    official_implementation: NOT_VERIFIED_UNAVAILABLE
+    commit_or_tag: null
+    files: []
+    functions: []
+    fallback: Implement paper equations directly; third-party implementations are
+      not relabeled official.
+  implementation_gap:
+    paper_link: https://github.com/cheng6076/SNLI-attention
+    api_link: https://api.github.com/repos/cheng6076/SNLI-attention
+    observed: Both repository web page and GitHub API return 404 on this session's
+      access.
+    evidence: ../evidence/lstmn_repo.json.error
+    official_implementation: NOT_VERIFIED_UNAVAILABLE
+    commit_or_tag: null
+    files: []
+    functions: []
+    fallback: Implement paper equations directly; third-party implementations are
+      not relabeled official.
+  metadata_ownership: read_only_producer_or_baseline_record; copied source metadata
+    is not a new execution claim
+- side: target
+  architecture: Transformer
+  paper:
+    url: https://arxiv.org/html/1706.03762v7
+    section: sections 2, 3.2, 3.3
+  verification: existing_primary_source_review_reused_without_execution
+  metadata_path: /workspace/resnet_reconstruction/parallel_coverage/20261105/integration/20261116_genealogy_phase4_integration/distribution/personal/relations/tr_040.yaml
+  inherited_source_record:
+    side: source
+    paper: https://arxiv.org/html/1706.03762v7
+    paper_version: 1706.03762v7
+    section: 3.2, 3.5
+    implementation:
+      repository: https://github.com/tensorflow/tensor2tensor
+      version: v1.15.7
+      url: https://github.com/tensorflow/tensor2tensor/blob/v1.15.7/tensor2tensor/layers/common_attention.py
+      file: tensor2tensor/layers/common_attention.py
+      functions:
+      - multihead_attention
+      - dot_product_attention
+      authority: original_authors_official_repository; later release, not exact 2017
+        snapshot
+      verification: phase3_source_review_reused_without_execution
+  metadata_ownership: read_only_producer_or_baseline_record; copied source metadata
+    is not a new execution claim
+application:
+  executable: false
+  command: null
+  patch_or_script: null
+validation:
+  profile: direction_type_inference_sources_paths_parts_declared_scope_only
+  status: STATIC_DIRECTION_TYPE_INFERENCE_SOURCES_PATHS_IDS_SCOPE_CHECKED
+  numerical_tests: NOT_RUN_BY_DESIGN
+  prior_architecture_results: reused_without_revalidation
+  claim_boundary: 관계의 정적 확인은 실현기 또는 LLM 복원 성공 인증이 아니다.
+  reference_check:
+    source:
+      path: ../architectures/lstmn/representation.yaml
+      unique_ids: 2
+      declared_scope_checked: true
+    target:
+      path: ../architectures/transformer/representation.yaml
+      unique_ids: 7
+      declared_scope_checked: true
+unresolved:
+- LSTMN 공식 코드 미확인. Transformer 관련연구 인용은 gate 또는 tape 구현의 직접 계승을 뜻하지 않는다.
+- 전체 mapping_status=partial; 범위 밖의 개념 대응은 실제 선언된 YAML이 추가되기 전까지 pending이다.
+specification_proposal:
+  required: false
+  reason: 기존 local_transition_v1 설명 관계 형식 사용. 공통 specs와 registry 수정 없음.
+provenance:
+  research_source: integration/20261116_genealogy_phase5_relations/tr_071.yaml
+  publication_changes: Relative endpoint paths only; source IDs, types, inferred flags
+    and scoped boundaries preserved

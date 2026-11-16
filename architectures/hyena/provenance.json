@@ -1,0 +1,68 @@
+{
+  "format_version": 3,
+  "architecture": "hyena",
+  "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
+  "scope": {
+    "included": [
+      "input_projection",
+      "causal_depthwise_short_filter",
+      "position_generated_long_filter",
+      "shared_frequency_sine_MLP",
+      "exponential_modulation",
+      "input_gating",
+      "causal_FFT_convolution",
+      "diagonal_skip",
+      "output_projection"
+    ],
+    "excluded": [
+      "full_language_model",
+      "residual_block",
+      "normalization_layers",
+      "training",
+      "dropout",
+      "fused_kernels",
+      "bidirectional_filters",
+      "streaming_cache",
+      "lengths_above_l_max"
+    ]
+  },
+  "generation": {
+    "attempts": 1,
+    "original_result": "FAIL",
+    "final_result": "PASS_WITHIN_DECLARED_SCOPE",
+    "repaired": true,
+    "sender": "producer; existing separately authorized experiment",
+    "new_integration_calls": 0
+  },
+  "evaluation": {
+    "cases": 3,
+    "final_result": "PASS_WITHIN_DECLARED_SCOPE",
+    "tolerance": {
+      "atol": 2e-11,
+      "rtol": 2e-11
+    },
+    "basis": "Existing independent-reference evidence; relocated candidate acceptance in integration report",
+    "research_result": "transformer/experiments/20261116_genealogy_phase5_hippo_hyena/hyena/repaired_result.json",
+    "reference_runtime_parity": "NOT_CLAIMED",
+    "integration_acceptance": {
+      "status": "PASS_WITHIN_DECLARED_SCOPE",
+      "cases": 3,
+      "candidate": "reconstructed.py",
+      "fixture_and_tolerance_changes": "NONE",
+      "purpose": "Relocated distribution candidate acceptance",
+      "report": "Research workspace: integration/20261116_genealogy_phase5_integration/evaluation/hyena/acceptance.json"
+    }
+  },
+  "candidate": {
+    "file": "reconstructed.py",
+    "research_source": "transformer/experiments/20261116_genealogy_phase5_hippo_hyena/hyena/repaired_model.py",
+    "computational_changes_by_integration": "None"
+  },
+  "representation": {
+    "file": "representation.yaml",
+    "publication_changes": "Module filename and relative reading-rule path only"
+  },
+  "limitations": [
+    "Declared block/core only; no full-model, training, speed, universal-schema or unmodified-one-shot claim for repaired candidates"
+  ]
+}

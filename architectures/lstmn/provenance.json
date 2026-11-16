@@ -1,0 +1,69 @@
+{
+  "format_version": 3,
+  "architecture": "lstmn",
+  "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
+  "scope": {
+    "variant": "Single-layer single-sequence intra-attention memory-tape recurrence, no bias",
+    "included": [
+      "hidden_tape",
+      "cell_tape",
+      "previous_read_feedback",
+      "causal_additive_attention",
+      "weighted_hidden_and_cell_read",
+      "gates_from_read_hidden",
+      "cell_update_from_read_cell",
+      "append_states"
+    ],
+    "excluded": [
+      "token_embedding",
+      "task_head",
+      "training",
+      "gradients",
+      "dropout",
+      "bias",
+      "multilayer_stack",
+      "encoder_decoder_fusion",
+      "truncation",
+      "memory_rewrite"
+    ]
+  },
+  "generation": {
+    "attempts": 1,
+    "original_result": "FAIL",
+    "final_result": "PASS_WITHIN_DECLARED_SCOPE",
+    "repaired": true,
+    "sender": "producer; existing separately authorized experiment",
+    "new_integration_calls": 0
+  },
+  "evaluation": {
+    "cases": 3,
+    "final_result": "PASS_WITHIN_DECLARED_SCOPE",
+    "tolerance": {
+      "atol": 1e-11,
+      "rtol": 1e-10
+    },
+    "basis": "Existing independent-reference evidence; relocated candidate acceptance in integration report",
+    "research_result": "seq2seq/experiments/20261116_genealogy_phase5_memory/lstmn/generation/repaired_result.json",
+    "reference_runtime_parity": "NOT_CLAIMED",
+    "integration_acceptance": {
+      "status": "PASS_WITHIN_DECLARED_SCOPE",
+      "cases": 3,
+      "candidate": "reconstructed.py",
+      "fixture_and_tolerance_changes": "NONE",
+      "purpose": "Relocated distribution candidate acceptance",
+      "report": "Research workspace: integration/20261116_genealogy_phase5_integration/evaluation/lstmn/acceptance.json"
+    }
+  },
+  "candidate": {
+    "file": "reconstructed.py",
+    "research_source": "seq2seq/experiments/20261116_genealogy_phase5_memory/lstmn/generation/repaired_model.py",
+    "computational_changes_by_integration": "None"
+  },
+  "representation": {
+    "file": "representation.yaml",
+    "publication_changes": "Module filename and relative reading-rule path only"
+  },
+  "limitations": [
+    "Declared block/core only; no full-model, training, speed, universal-schema or unmodified-one-shot claim for repaired candidates"
+  ]
+}

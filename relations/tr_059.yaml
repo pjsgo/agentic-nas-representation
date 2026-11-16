@@ -1,0 +1,273 @@
+format_version: local_transition_v1
+transition_id: tr_059
+source_architecture: Transformer
+target_architecture: RWKV
+relation_type: X
+inferred: false
+record_status: complete
+mapping_status: partial
+core_mapping_status: complete_scoped
+part_mapping_complete: false
+evidence:
+- source: /mnt/data/beyond_transformer_slides.pdf
+  pages:
+  - 43
+  page_numbering: one_based_PDF
+  label: X 059
+  direction: Transformer -> RWKV
+  question_mark_present: false
+  verification: direct_embedded_image_view_from_original_pdf
+  pdf_objects:
+    page: 235
+    image: 240
+  correction_proposal: null
+motivation: Transformer와 RNN 추론의 자원 절충을 비교한다.
+conditions:
+- RWKV v4 time-mixing 범위에서 비교하며 channel-mixing FFN과 전체 language model은 별도이다.
+expected_effects:
+- 과거 길이에 따라 커지는 KV cache를 고정 크기 recurrent state로 바꾼다.
+tradeoffs:
+- 세부 과거 정보가 압축되고 병렬 학습에 별도 scan/kernel 설계가 필요하다.
+changes:
+- before_units:
+  - factors.project_a
+  - factors.scale_q
+  - factors.score_a
+  - factors.apply_mask
+  - factors.prob_a
+  - factors.mix_a
+  - factors.project_b
+  after_units:
+  - factors.rwkv_shift
+  - factors.rwkv_project
+  - factors.rwkv_wkv
+  - factors.rwkv_output
+  operation: descriptive_comparison
+  mechanism: pairwise QK softmax를 channel별 WKV 감쇠 누적, token shift와 receptance gating으로
+    대체한다.
+  mapping_status: mapped_scoped
+  state_and_resource_contract: 단일 eval encoder block. 전체 encoder-decoder, token embedding과
+    autoregressive decoding cache가 없다. v4 time mixer, last_x 및 scaled a/b/p carry.
+    current-token bonus는 read에만 사용. channel mixer, norm, residual과 이후 버전은 없다.
+  cardinality: many_to_many_semantic_correspondence_not_tensor_or_parameter_identity
+preserve:
+- 입력 projection, sequence mixing 및 출력 projection의 역할
+scope:
+  source_yaml: ../architectures/transformer/representation.yaml
+  target_yaml: ../architectures/rwkv/representation.yaml
+  source_yaml_status: available
+  target_yaml_status: available
+  path_base: relation_file_directory
+  included:
+  - descriptive_relationship
+  - available_core_component_correspondence
+  excluded:
+  - whole_model_conversion
+  - numerical_execution
+  - training
+  - performance_reproduction
+  - code_transformer
+  - weight_or_state_migration
+  mapping_boundary: attention과 v4 time-mixing의 설명 대응; 파라미터 및 state migration 제외
+  source_boundary: 단일 eval encoder block. 전체 encoder-decoder, token embedding과 autoregressive
+    decoding cache가 없다.
+  target_boundary: v4 time mixer, last_x 및 scaled a/b/p carry. current-token bonus는
+    read에만 사용. channel mixer, norm, residual과 이후 버전은 없다.
+  declared_scope_snapshot:
+    source: One eval functional block; positive B,T; fixed feature/head/hidden dimensions.
+      Only explicit boolean exclusion mask. Parameters fixture-supplied. Original
+      Module hierarchy, initialization and training are outside scope.
+    target:
+      included:
+      - RWKV_v4_time_mixing
+      - token_shift
+      - independent_interpolations
+      - per_channel_decay
+      - current_token_bonus
+      - stabilized_scalar_WKV
+      - sigmoid_receptance
+      - output_projection
+      - explicit_state_continuation
+      excluded:
+      - channel_mixing
+      - channel_previous_input_state
+      - layernorm
+      - residual
+      - embedding
+      - full_block
+      - full_model
+      - training
+      - gradients
+      - initialization_distribution
+      - CUDA_kernel
+      - mixed_precision
+      - RWKV_v5_v6_v7
+  core_mapping_definition: complete_scoped는 선택 core의 설명 대응에 실제 ID가 연결된 상태이다. 전체 모델,
+    수치 동등성 또는 실행 변환 완료가 아니다.
+  component_coverage:
+    source:
+      mapped_units:
+      - factors.project_a
+      - factors.scale_q
+      - factors.score_a
+      - factors.apply_mask
+      - factors.prob_a
+      - factors.mix_a
+      - factors.project_b
+      unmapped_declared_units:
+      - factors.activate_a
+      - factors.contract_a
+      - factors.expand_a
+      - factors.join_a
+      - factors.mask_shape_a
+      - factors.mask_shape_b
+      - factors.merge_a
+      - factors.merge_b
+      - factors.normalize_a
+      - factors.normalize_b
+      - factors.order_k
+      - factors.order_mix
+      - factors.order_q
+      - factors.order_v
+      - factors.partition_a
+      - factors.scale_value
+      - factors.shape_k
+      - factors.shape_q
+      - factors.shape_v
+      - factors.stage_a
+      - factors.stage_b
+      - factors.turn_k
+      - factors.unit
+      unmapped_reason: 선택 관계 core 밖의 부품 또는 컨테이너이며 자동 대응을 추가하지 않는다.
+    target:
+      mapped_units:
+      - factors.rwkv_shift
+      - factors.rwkv_project
+      - factors.rwkv_wkv
+      - factors.rwkv_output
+      unmapped_declared_units: []
+      unmapped_reason: 선택 관계 core 밖의 부품 또는 컨테이너이며 자동 대응을 추가하지 않는다.
+conceptual_correspondence:
+- source_concept: Transformer
+  target_concept: RWKV
+  description: attention과 v4 time-mixing의 설명 대응; 파라미터 및 state migration 제외
+  mapping_status: mapped_within_selected_core
+- description: 관계의 전체 논문 구조 중 위 source_boundary와 target_boundary에서 제외한 부분
+  part_ids: null
+  mapping_status: pending_outside_declared_restoration_scope
+  reason: 미선언 부품 ID를 만들지 않는다. 추가 복원은 이 세션 범위 밖이다.
+pending_components:
+- side: source
+  part_ids: null
+  status: pending
+  concepts:
+  - 전체 encoder-decoder stack
+  - embedding 및 positional input
+  - autoregressive KV cache
+  reason: 선택 복원 범위 밖이다. ID는 null로 유지하며 이 세션에서 추가 복원하지 않는다.
+- side: target
+  part_ids: null
+  status: pending
+  concepts:
+  - channel mixing, layernorm, residual 및 full block
+  - 전체 language model
+  reason: 선택 복원 범위 밖이다. ID는 null로 유지하며 이 세션에서 추가 복원하지 않는다.
+source_records:
+- side: source
+  architecture: Transformer
+  paper:
+    url: https://arxiv.org/html/1706.03762v7
+    section: sections 2, 3.2, 3.3
+  verification: existing_primary_source_review_reused_without_execution
+  metadata_path: /workspace/resnet_reconstruction/parallel_coverage/20261105/integration/20261116_genealogy_phase4_integration/distribution/personal/relations/tr_040.yaml
+  inherited_source_record:
+    side: source
+    paper: https://arxiv.org/html/1706.03762v7
+    paper_version: 1706.03762v7
+    section: 3.2, 3.5
+    implementation:
+      repository: https://github.com/tensorflow/tensor2tensor
+      version: v1.15.7
+      url: https://github.com/tensorflow/tensor2tensor/blob/v1.15.7/tensor2tensor/layers/common_attention.py
+      file: tensor2tensor/layers/common_attention.py
+      functions:
+      - multihead_attention
+      - dot_product_attention
+      authority: original_authors_official_repository; later release, not exact 2017
+        snapshot
+      verification: phase3_source_review_reused_without_execution
+  metadata_ownership: read_only_producer_or_baseline_record; copied source metadata
+    is not a new execution claim
+- side: target
+  architecture: RWKV
+  paper:
+    url: https://arxiv.org/html/2305.13048v2
+    section: sections 2.2, 3.1-3.3, Appendix D
+  verification: primary_paper_and_selected_source_text_read; other metadata reused
+    from producer
+  metadata_path: /workspace/resnet_reconstruction/parallel_coverage/20261105/linear_transformer/experiments/20261116_genealogy_phase5_retnet_rwkv/rwkv/sources.yaml
+  implementation:
+    repository: https://github.com/BlinkDL/RWKV-LM
+    commit: 2eebb381a6160837ac45896c60d6963ef3cda929
+    files:
+    - path: RWKV-v4neo/src/model.py
+      url: https://github.com/BlinkDL/RWKV-LM/blob/2eebb381a6160837ac45896c60d6963ef3cda929/RWKV-v4neo/src/model.py
+      functions:
+      - RWKV_TimeMix.__init__
+      - RWKV_TimeMix.jit_func
+      - RWKV_TimeMix.forward
+      - WKV.forward
+      branch: Plain RWKV_TimeMix with empty RWKV_MY_TESTING; no experimental attention
+        or v5 class
+      inspected: Three independent interpolation vectors, four bias-free linear maps,
+        sigmoid receptance, raw decay transformed to -exp(raw)
+    - path: RWKV-v4neo/cuda/wkv_cuda.cu
+      url: https://github.com/BlinkDL/RWKV-LM/blob/2eebb381a6160837ac45896c60d6963ef3cda929/RWKV-v4neo/cuda/wkv_cuda.cu
+      functions:
+      - kernel_forward
+      inspected: Current bonus only during read, decayed old state only during update,
+        aa/bb/pp stabilization
+    - path: RWKV-v4/src/model_run.py
+      url: https://github.com/BlinkDL/RWKV-LM/blob/2eebb381a6160837ac45896c60d6963ef3cda929/RWKV-v4/src/model_run.py
+      functions:
+      - RWKV_RNN.__init__
+      - RWKV_RNN.SA
+      - RWKV_RNN.clear
+      - RWKV_TimeMix.forward
+      inspected: Decay preprocessing, previous-input state, explicit aa/bb/pp recurrent
+        update and output projection
+  source_text_paths:
+  - /workspace/resnet_reconstruction/parallel_coverage/20261105/linear_transformer/experiments/20261116_genealogy_phase5_retnet_rwkv/rwkv/evidence/RWKV-v4__src__model_run.py
+  G_direct_review:
+  - RWKV_TimeMix.forward
+  - RWKV_RNN.SA
+  metadata_ownership: read_only_producer_or_baseline_record; copied source metadata
+    is not a new execution claim
+application:
+  executable: false
+  command: null
+  patch_or_script: null
+validation:
+  profile: direction_type_inference_sources_paths_parts_declared_scope_only
+  status: STATIC_DIRECTION_TYPE_INFERENCE_SOURCES_PATHS_IDS_SCOPE_CHECKED
+  numerical_tests: NOT_RUN_BY_DESIGN
+  prior_architecture_results: reused_without_revalidation
+  claim_boundary: 관계의 정적 확인은 실현기 또는 LLM 복원 성공 인증이 아니다.
+  reference_check:
+    source:
+      path: ../architectures/transformer/representation.yaml
+      unique_ids: 7
+      declared_scope_checked: true
+    target:
+      path: ../architectures/rwkv/representation.yaml
+      unique_ids: 4
+      declared_scope_checked: true
+unresolved:
+- 전체 mapping_status=partial; 범위 밖의 개념 대응은 실제 선언된 YAML이 추가되기 전까지 pending이다.
+specification_proposal:
+  required: false
+  reason: 기존 local_transition_v1 설명 관계 형식 사용. 공통 specs와 registry 수정 없음.
+provenance:
+  research_source: integration/20261116_genealogy_phase5_relations/tr_059.yaml
+  publication_changes: Relative endpoint paths only; source IDs, types, inferred flags
+    and scoped boundaries preserved

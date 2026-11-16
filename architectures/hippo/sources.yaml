@@ -1,0 +1,86 @@
+architecture: HiPPO-LegS
+review_date: '2026-11-16'
+paper:
+  url: https://arxiv.org/html/2008.07669v2
+  version: arXiv 2008.07669v2, 2020-10-23
+  anchors:
+  - section_3_theorem_2_equation_3
+  - appendix_B3
+  - appendix_D3_equations_27_28_29
+  directly_reviewed: true
+code:
+  repository: https://github.com/HazyResearch/hippo-code
+  commit: 201148256bd2b71cb07668dc00075420cfd4c567
+  official_status: Linked by the original paper as its experiment implementation
+  files:
+  - path: model/op.py
+    url: https://github.com/HazyResearch/hippo-code/blob/201148256bd2b71cb07668dc00075420cfd4c567/model/op.py
+    functions:
+    - transition
+    branch: legs
+    local_snapshot: source/op.py
+  - path: model/hippo.py
+    url: https://github.com/HazyResearch/hippo-code/blob/201148256bd2b71cb07668dc00075420cfd4c567/model/hippo.py
+    functions:
+    - HiPPO_LegS.__init__
+    - HiPPO_LegS.forward
+    local_snapshot: source/hippo.py
+  - path: model/unroll.py
+    url: https://github.com/HazyResearch/hippo-code/blob/201148256bd2b71cb07668dc00075420cfd4c567/model/unroll.py
+    functions:
+    - variable_unroll_matrix_sequential
+    - variable_unroll_general_sequential
+    local_snapshot: source/unroll.py
+    evidence: Default zero state and sequential affine carry
+  directly_reviewed: true
+  executed: false
+selection:
+  measure: uniform probability measure on growing interval [0,t]
+  basis: orthonormal shifted Legendre polynomials; no tilting
+  variant: vanilla HiPPO_LegS, measure=legs, discretization=bilinear, sequential
+  sign: Paper Theorem 2 has positive A with leading minus; official transition returns
+    negative generator, used here.
+  discretization_difference: Official constructor uses At=A/k and Bt=B/k at k=1..max_length,
+    with the same k in both sides of the bilinear solve. Appendix B.3 instead displays
+    unequal k and k+1 endpoints. This restoration deliberately follows the official
+    constructor, and does not claim equality to that appendix recurrence.
+  initialization: zero coefficients before k=1; no singular t=0 ODE evaluation
+  adapters: CPU float64 instead of official float32 tensor casts. Batch-time-channel
+    layout, external initial state and sample offset added explicitly for continuation.
+    A/B registered fixed buffers; official A_stacked/B_stacked are plain attributes.
+    No learned parameters. Per-call discrete matrices returned for contract inspection.
+genealogy:
+  pdf: /mnt/data/beyond_transformer_slides.pdf
+  reviewed_image: ../slide_43_0.jpg
+  page: 43
+  observations: HiPPO (2020) connects to LSSL (2021) via C 048; LSSL to S4 via A 049.
+  interpretation: Diagram names the general HiPPO family, not a unique measure. LegS
+    is the explicitly selected representative, not the entire family or HiPPO-RNN.
+reuse:
+  lssl: /workspace/agentic-nas-representation/architectures/lssl/representation.yaml
+  s4: /workspace/agentic-nas-representation/architectures/s4/representation.yaml
+  relation: /workspace/agentic-nas-representation/relations/tr_049.yaml
+  differences: Existing LSSL shares the fixed LegS A/B but uses learned constant per-channel
+    dt, LTI recurrence and C/D readout. Existing S4 uses restricted conjugate rank-one
+    DPLR coordinates. Neither is this 1/k coefficient recurrence. No state migration,
+    complete-model equivalence, or new relation completion is claimed.
+  numerical_reruns: 0
+scope:
+  included:
+  - measure_specific_A_B_construction
+  - sample_clock
+  - source_bilinear_discretization
+  - coefficient_trajectory
+  - external_state_continuation
+  excluded:
+  - other_measures
+  - polynomial_decoder
+  - RNN_wrapper
+  - full_network
+  - training
+  - exact_ODE_solution
+  - source_runtime_bitwise_parity
+independent_reference:
+  method: scalar forward substitution after c_n/sqrt(2n+1) coordinate transform
+  independence: no realization or upstream imports; no dense solves or shared numerical
+    helpers

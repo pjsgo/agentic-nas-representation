@@ -1,0 +1,90 @@
+representation_version: local_hyena_standalone_v1
+operator_profile: self_contained_equations
+architecture: Hyena
+architecture_entry: Model
+scope:
+  included: [input_projection, causal_depthwise_short_filter, position_generated_long_filter, shared_frequency_sine_MLP, exponential_modulation, input_gating, causal_FFT_convolution, diagonal_skip, output_projection]
+  excluded: [full_language_model, residual_block, normalization_layers, training, dropout, fused_kernels, bidirectional_filters, streaming_cache, lengths_above_l_max]
+configuration:
+  D: {type: integer, minimum: 1, maximum: 8, default: 2}
+  l_max: {type: integer, minimum: 2, maximum: 32, default: 9}
+  order: {type: integer, choices: [2,3], default: 2}
+  width: {type: integer, minimum: 1, maximum: 16, default: 4}
+  fixed: {emb_dim: 5, num_inner_mlps: 2, short_filter_size: 3, lr_pos_emb: 0, modulation_lr: 0, fast_decay_pct: 0.3, slow_decay_pct: 1.5, target: 0.01, shift: 0.05, normalized: false, dropout: 0.0, filter_dropout: 0.0}
+  derived: {C: '(order+1)*D', F: '(order-1)*D'}
+interface:
+  constructor: Model(D=2, l_max=9, order=2, width=4), subclass torch.nn.Module
+  forward: forward(u) -> dict
+  dtype: torch.float64
+  device: cpu
+  inputs: {u: '[B,L,D], B>=1 and 1<=L<=l_max, finite'}
+  outputs:
+    y: '[B,L,D]'
+    kernel: '[order-1,D,L], generated modulated causal long filters'
+    long_outputs: '[order-1,B,D,L], results after each long convolution and diagonal skip'
+  errors: ValueError for invalid configuration, input shape, dtype, device or length
+parameters:
+  W_in: {shape: [C,D]}
+  b_in: {shape: [C]}
+  W_short: {shape: [C,1,3]}
+  b_short: {shape: [C]}
+  W0: {shape: [width,5]}
+  b0: {shape: [width]}
+  W1: {shape: [width,width]}
+  b1: {shape: [width]}
+  W2: {shape: [width,width]}
+  b2: {shape: [width]}
+  freq: {shape: [1,width], sharing: one_parameter_used_by_all_three_sine_activations}
+  Wf: {shape: [F,width]}
+  Dskip: {shape: [F]}
+  W_out: {shape: [D,D]}
+  b_out: {shape: [D]}
+parameter_contract: >-
+  All listed names are direct nn.Parameter attributes, independent except explicitly shared freq,
+  float64 CPU and requires_grad=true. Initialize freq to ones and other parameters to zeros;
+  caller supplies weights via state_dict before meaningful evaluation. No random initialization
+  or training behavior is claimed. No output bias for the filter MLP final projection.
+buffers:
+  pos: {shape: [l_max,5], persistent: true, trainable: false}
+  time: {shape: [l_max], persistent: true, trainable: false}
+  deltas: {shape: [F], persistent: true, trainable: false}
+state_contract: No recurrent state or cache. Do not mutate input, parameters or buffers. No derived tensors registered.
+operators:
+  positions: >-
+    For s=0..l_max-1, time[s]=s/(l_max-1); omega=2*pi*s/l_max;
+    f0=0.0001, f1=1; pos[s]=[time[s],cos(f0*omega),cos(f1*omega),-sin(f0*omega),-sin(f1*omega)].
+    This is a fixed horizon grid; slice its prefix for L, never rebuild with L as horizon.
+  decays: 'deltas[j]=a+(b-a)*j/(F-1), a=log(0.01)/1.5, b=log(0.01)/0.3; when F=1 use a'
+  linear: 'linear(x,W,b)=x @ transpose(W)+b on last dimension; absent bias means zero'
+  projection: 'p=linear(u,W_in,b_in); transpose to [B,C,L]'
+  short_filter: >-
+    z[b,c,t]=b_short[c]+sum_{r=0}^2 W_short[c,0,r]*p[b,c,t+r-2],
+    with p at negative indices zero. Equivalent to groups=C Conv1d, padding=2, then first L outputs.
+    Split z along C into order+1 consecutive D-channel groups x[0]..x[order-1],v.
+  filter_mlp: >-
+    a0=sin(freq*linear(pos[:L],W0,b0));
+    a1=sin(freq*linear(a0,W1,b1));
+    a2=sin(freq*linear(a1,W2,b2)); raw=a2 @ transpose(Wf) with shape [L,F].
+    freq broadcasts along L and is the SAME parameter in all three uses.
+  modulation: >-
+    h[s,j]=raw[s,j]*(exp(-time[s]*abs(deltas[j]))+0.05).
+    kernel[o,d,s]=h[s,o*D+d]. No filter normalization, no softmax, no channel norm.
+  long_conv: >-
+    conv(a,k)[b,d,t]=sum_{s=0}^t k[d,s]*a[b,d,t-s]. Both sequences have length L.
+    Implement via real FFT with n=2*L, zero padding, rfft norm=backward on both,
+    multiply transforms, irfft norm=backward, keep first L. No extra scale.
+    Equivalently source divides filter FFT by 2*L and uses irfft norm=forward.
+  gated_recurrence: >-
+    Starting v from split z, for o=0..order-2 in ascending order:
+    a=v*x[order-1-o]; v=conv(a,kernel[o])+Dskip[o*D:(o+1)*D][None,:,None]*a;
+    long_outputs[o]=v. After loop q=v*x[0]. No activation on gates and no dropout.
+  output: 'transpose q from [B,D,L] to [B,L,D]; y=linear(q,W_out,b_out)'
+graph:
+- {id: hyena_position_grid, op: positions, inputs: [l_max], outputs: [pos,time]}
+- {id: hyena_modulation_rates, op: decays, inputs: [F], outputs: [deltas]}
+- {id: hyena_input_projection, op: projection, inputs: [u,W_in,b_in], outputs: [p]}
+- {id: hyena_short_filter, op: short_filter, inputs: [p,W_short,b_short], outputs: [x,v]}
+- {id: hyena_implicit_filter, op: filter_mlp, inputs: [pos,W0,b0,W1,b1,W2,b2,freq,Wf], outputs: [raw]}
+- {id: hyena_modulation, op: modulation, inputs: [raw,time,deltas], outputs: [kernel]}
+- {id: hyena_gated_long_convolution, op: gated_recurrence, inputs: [x,v,kernel,Dskip], outputs: [q,long_outputs]}
+- {id: hyena_output_projection, op: output, inputs: [q,W_out,b_out], outputs: [y]}

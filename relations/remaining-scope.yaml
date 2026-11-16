@@ -1,0 +1,35 @@
+scope: Known exclusions; not blockers for scoped phase5 baseline
+deferred_relations:
+- id: tr_052
+  source: WaveNet
+  target: Hyena
+  type: I
+  inferred: true
+  evidence: /mnt/data/beyond_transformer_slides.pdf
+  page: 40
+  reason: WaveNet은 기존 35개와 이번 신규 10개에 속하지 않는 6차 미복원 끝점이다.
+source_gaps:
+- node: Memory Network
+  status: OFFICIAL_SELECTED_HARD_SUPPORT_IMPLEMENTATION_NOT_CONFIRMED
+  impact: 논문 기반 k=2 hard-support 대응. E2E 공식 코드를 원형 코드로 사용하지 않음.
+- node: LSTMN
+  status: AUTHOR_REPOSITORY_404
+  url: https://github.com/cheng6076/SNLI-attention
+  impact: 논문 식과 로컬 초기화 계약에 한정. 공식 runtime parity 미확인.
+- node: RETRO
+  status: AUTHOR_SIMPLIFIED_LISTING_ONLY
+  impact: 논문 Listing 1을 공식 코드 근거로 사용. 전체 실행 저장소와 생략된 position 함수는 미확인.
+closed_existing_node_omissions:
+- tr_005
+- tr_013
+- tr_018
+- tr_021
+- tr_051
+- tr_073
+- tr_074
+remaining_full_model_mapping: 48 partial, 16 complete_scoped; all 64 descriptive
+historical_execution:
+- tr_037
+- tr_061
+automatic_transform_support: Not implemented by this completion
+common_schema_certification: Not claimed

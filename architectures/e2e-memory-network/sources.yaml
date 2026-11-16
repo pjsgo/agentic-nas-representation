@@ -1,0 +1,72 @@
+architecture: e2e-memory-network
+implementation_basis: PAPER_AND_PINNED_OFFICIAL_CODE_FORMULAS_LOCAL_FLOAT64_PORT
+paper:
+  url: https://papers.neurips.cc/paper/5846-end-to-end-memory-networks.pdf
+  version: NIPS 2015 proceedings, final published PDF
+  arxiv_identifier: '1503.08895'
+  local_pdf: ../evidence/e2e.pdf
+  inspected:
+  - Section 2.1 equations 1-3
+  - Section 2.2 multiple layers and adjacent tying
+  - Section 4.1 BoW and position/time alternatives
+code:
+  repository: https://github.com/facebookarchive/MemNN
+  commit: d7c5f6d5e1a4af6417ffff98535a96bb0947a6a8
+  official_evidence: Paper footnote 2 links facebook/MemNN; archived repository README
+    links Section 4 QA implementation.
+  base_url: https://raw.githubusercontent.com/facebookarchive/MemNN/d7c5f6d5e1a4af6417ffff98535a96bb0947a6a8/
+  files:
+  - path: MemN2N-babi-matlab/build_model.m
+    functions:
+    - top-level model construction
+    - share_type == 1 block
+    inspected_lines: 19-73
+    evidence: ../evidence/build_model.m
+  - path: MemN2N-babi-matlab/memory/Memory.m
+    functions:
+    - initQueryModule
+    - initOutputModule
+    - fprop
+    evidence: ../evidence/memory_Memory.m
+  - path: MemN2N-babi-matlab/memory/MemoryBoW.m
+    functions:
+    - initQueryModule
+    - initOutputModule
+    evidence: ../evidence/memory_MemoryBoW.m
+  - path: MemN2N-babi-matlab/config_babi.m
+    functions:
+    - configuration script
+    evidence: ../evidence/config_babi.m
+source_mapping:
+  memn2n_embed: MemoryBoW lookup and Sum(2); build_model query lookup and sum
+  memn2n_address: MemoryBoW initQueryModule MatVecProd(true) then Softmax
+  memn2n_read: MemoryBoW initOutputModule MatVecProd(false); Memory.fprop combines
+    the two
+  memn2n_update: build_model Duplicate, Parallel(memory, Identity), AddTable in nhops
+    loop
+  memn2n_answer: build_model LinearNB, Softmax and share_type==1 classifier tie
+scope_decisions:
+- Select supported use_bow=true, enable_time=false, share_type=1, add_proj=false,
+  add_nonlin=false. This is not the default PE+TE config.
+- Count-vector matrix multiplication replaces repeated lookup-and-sum exactly for
+  unpadded BoW inputs.
+- One E tensor holds K+1 distinct tables with adjacent usage and final classifier
+  reuse. No padding or nil-token row is needed at this boundary.
+- Float64 CPU formulas only; MATLAB runtime, source training state and initialization
+  are not reproduced.
+excluded:
+- full_QA_dataset_training
+- learned_query_transform
+- position_encoding
+- temporal_encoding
+- memory_buffer_loader
+- linear_start
+- gradients
+slides:
+  source: /mnt/data/beyond_transformer_slides.pdf
+  extraction: ../evidence/slides.txt
+  inspected_pages:
+  - 10
+  - 11
+  role: External memory lookup and progression into LSTMN; exact multi-hop equations
+    come from paper and official code.

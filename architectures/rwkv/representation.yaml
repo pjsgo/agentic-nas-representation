@@ -1,0 +1,119 @@
+representation_version: local_rwkv_v4_time_mixer_v1
+operator_profile: self_contained_equations_v1
+architecture: rwkv-v4
+architecture_entry: reconstructed.py:time_mix
+interface:
+  signature: 'time_mix(x, params, state=None) -> dict'
+  inputs:
+    x: CPU torch.float64[B,T,D], finite
+    params: 'dict of nine distinct caller tensors: mix_k,mix_v,mix_r [D]; wk,wv,wr [D,C]; wo [C,D]; decay_raw,u [C]. All CPU float64 and finite. This list has nine keys: three mixes, four matrices, decay_raw, u.'
+    state: 'None or dict {last_x: float64[B,D], a: float64[B,C], b: float64[B,C], p: float64[B,C]} on CPU'
+  constraints:
+  - B,T,D,C positive, no empty sequences
+  - exp(decay_raw) finite and strictly positive; all computed projections and output finite
+  - mix coefficients are finite real values, not constrained to [0,1]
+  - 'state last_x,a,b finite; b>=0. Each cell either b>0 and finite p, or b=0,a=0,p=-inf for empty history. Inputs must make a positive representable read denominator.'
+  outputs:
+    xk: float64[B,T,D]
+    xv: float64[B,T,D]
+    xr: float64[B,T,D]
+    k: float64[B,T,C]
+    v: float64[B,T,C]
+    receptance: float64[B,T,C]
+    wkv: float64[B,T,C]
+    output: float64[B,T,D]
+    a_trace: float64[B,T,C], updated scaled numerator at each t
+    b_trace: float64[B,T,C], updated scaled denominator at each t
+    p_trace: float64[B,T,C], updated shared log scale at each t
+    state: 'dict {last_x,a,b,p} after final token'
+factors:
+  rwkv_shift:
+    operator: independent_current_previous_interpolation
+    attributes: >-
+      prev[b,t,d]=state.last_x[b,d] at t=0, else x[b,t-1,d].
+      xk=x*mix_k+prev*(1-mix_k); xv=x*mix_v+prev*(1-mix_v); xr=x*mix_r+prev*(1-mix_r).
+      Mix parameters broadcast over batch and time, not over feature d. No clipping.
+  rwkv_project:
+    operator: bias_free_projections_and_sigmoid
+    attributes: >-
+      k[b,t,c]=sum_d xk[b,t,d]*wk[d,c]; v[b,t,c]=sum_d xv[b,t,d]*wv[d,c].
+      r[b,t,c]=sum_d xr[b,t,d]*wr[d,c]; receptance=sigmoid(r)=1/(1+exp(-r)), evaluated stably.
+      ell[c]=-exp(decay_raw[c]) is a negative log decay; it is not -decay_raw or sigmoid(decay_raw).
+  rwkv_wkv:
+    operator: numerically_stable_read_then_update_scan
+    attributes: >-
+      Scan t=0..T-1 separately for every b,c. Read old a,b,p before state update.
+      z=max(p,u+k_t); e_old=exp(p-z); e_new=exp(u+k_t-z).
+      wkv_t=(e_old*a+e_new*v_t)/(e_old*b+e_new).
+      z_next=max(p+ell,k_t); f_old=exp(p+ell-z_next); f_new=exp(k_t-z_next).
+      a_next=f_old*a+f_new*v_t; b_next=f_old*b+f_new; p_next=z_next.
+      a_trace,b_trace,p_trace store next values at each t; next values become old state for t+1.
+      Empty p=-inf gives exp(-inf)=0; k_t and u+k_t are finite so maxima are finite.
+      u is only the current-token bonus in readout, never part of accumulated state.
+      No epsilon, clipping, softmax over channels, matrix KV state, head splitting or positional rotation.
+  rwkv_output:
+    operator: receptance_gate_and_output_projection
+    attributes: 'output[b,t,d]=sum_c (receptance[b,t,c]*wkv[b,t,c])*wo[c,d]. No residual addition.'
+dataflow:
+  - [x, rwkv_shift.current]
+  - [state.last_x, rwkv_shift.previous]
+  - [params.mix_k, rwkv_shift.mix_k]
+  - [params.mix_v, rwkv_shift.mix_v]
+  - [params.mix_r, rwkv_shift.mix_r]
+  - [rwkv_shift.xk, rwkv_project.xk]
+  - [rwkv_shift.xv, rwkv_project.xv]
+  - [rwkv_shift.xr, rwkv_project.xr]
+  - [params.wk, rwkv_project.wk]
+  - [params.wv, rwkv_project.wv]
+  - [params.wr, rwkv_project.wr]
+  - [params.decay_raw, rwkv_project.decay]
+  - [rwkv_project.k, rwkv_wkv.k]
+  - [rwkv_project.v, rwkv_wkv.v]
+  - [rwkv_project.ell, rwkv_wkv.ell]
+  - [params.u, rwkv_wkv.u]
+  - [state.a, rwkv_wkv.a]
+  - [state.b, rwkv_wkv.b]
+  - [state.p, rwkv_wkv.p]
+  - [rwkv_project.receptance, rwkv_output.receptance]
+  - [rwkv_wkv.wkv, rwkv_output.wkv]
+  - [params.wo, rwkv_output.wo]
+  - [rwkv_output.output, output]
+  - [rwkv_shift.xk, xk]
+  - [rwkv_shift.xv, xv]
+  - [rwkv_shift.xr, xr]
+  - [rwkv_project.k, k]
+  - [rwkv_project.v, v]
+  - [rwkv_project.receptance, receptance]
+  - [rwkv_wkv.wkv, wkv]
+  - [rwkv_wkv.a_trace, a_trace]
+  - [rwkv_wkv.b_trace, b_trace]
+  - [rwkv_wkv.p_trace, p_trace]
+  - [rwkv_wkv.final_a_b_p, state_out.a_b_p]
+  - [x.last_token, state_out.last_x]
+parameters:
+  mix_k: {shape: [D], initialization: caller_supplied}
+  mix_v: {shape: [D], initialization: caller_supplied}
+  mix_r: {shape: [D], initialization: caller_supplied}
+  wk: {shape: [D,C], initialization: caller_supplied}
+  wv: {shape: [D,C], initialization: caller_supplied}
+  wr: {shape: [D,C], initialization: caller_supplied}
+  wo: {shape: [C,D], initialization: caller_supplied}
+  decay_raw: {shape: [C], initialization: caller_supplied}
+  u: {shape: [C], initialization: caller_supplied}
+state:
+  initialization: 'None: last_x=0,a=0,b=0,p=-inf. Final last_x=x[:,-1,:]. All parameter tensors shared over time and batch, independent across parameter names.'
+  meaning: >-
+    a and b represent unnormalized numerator A=a*exp(p) and denominator B=b*exp(p).
+    These products describe meaning only and must not be materialized by the realization.
+    After processing tokens 0..t from initial state a0,b0,p0, A=exp((t+1)*ell+p0)*a0+sum_{s=0}^t exp((t-s)*ell+k_s)*v_s;
+    B has b0 and value 1 in place of a0 and v_s. p=max(p0+(t+1)*ell,max_{s<=t}(k_s+(t-s)*ell)).
+    Read at t instead uses prior tokens with exponent k_s+(t-1-s)*ell, current exponent u+k_t, and initial history exponent p0+t*ell.
+  input_mutation: false
+  rng_consumption: false
+  persistence: Explicit input and return only, no hidden buffers
+scope:
+  included: [RWKV_v4_time_mixing, token_shift, independent_interpolations, per_channel_decay, current_token_bonus, stabilized_scalar_WKV, sigmoid_receptance, output_projection, explicit_state_continuation]
+  excluded: [channel_mixing, channel_previous_input_state, layernorm, residual, embedding, full_block, full_model, training, gradients, initialization_distribution, CUDA_kernel, mixed_precision, RWKV_v5_v6_v7]
+semantics_status:
+  common_schema_certification: not_claimed
+  basis: Explicit local equations and existing genealogy reading rules

@@ -1,0 +1,95 @@
+architecture: jamba
+selection:
+  genealogy: /mnt/data/beyond_transformer_slides.pdf
+  evidence: Page 43 embedded image inspected directly; Jamba (2024), incoming C064,
+    A065, C?066. Slide does not name a checkpoint revision.
+  version: Original March 2024 Jamba, Jamba-v0.1; not Jamba-1.5 or later family
+  rationale: Year and hybrid lineage match original paper; original paper links ai21labs/Jamba-v0.1.
+    This is an explicit version choice where slide lacks patch version.
+paper:
+  url: https://arxiv.org/html/2403.19887v1
+  version: arXiv:2403.19887v1, 2024-03-28
+  inspected:
+  - section 2
+  - Figure 1
+  - section 3.1
+  - section 6.4
+implementation:
+  official: true
+  repository: https://huggingface.co/ai21labs/Jamba-v0.1
+  commit: 9efd11575ba791d9e3d25d4c8b670e78506b2df7
+  url: https://huggingface.co/ai21labs/Jamba-v0.1/blob/9efd11575ba791d9e3d25d4c8b670e78506b2df7/modeling_jamba.py
+  inspected_files:
+    modeling_jamba.py:
+    - JambaRMSNorm.forward
+    - JambaAttention.forward
+    - JambaMambaMixer.slow_forward
+    - JambaMLP.forward
+    - JambaSparseMoeBlock.forward
+    - JambaAttentionDecoderLayer.forward
+    - JambaMambaDecoderLayer.forward
+    - JambaModel.__init__
+    configuration_jamba.py:
+    - JambaConfig.layers_block_type
+    - JambaConfig.layers_num_experts
+    config.json:
+    - attn_layer_offset
+    - attn_layer_period
+    - expert_layer_offset
+    - expert_layer_period
+    - num_experts_per_tok
+  acquisition: Pinned files retrieved read-only, local evidence source_modeling.py,
+    source_configuration_jamba.py, source_config.json. No official modules imported
+    or executed.
+source_mapping:
+  cycle: config attention i%8==4; experts i%2==1; model loops layers
+  residuals: 'Both decoder classes: input RMSNorm, mixer, add residual; pre-FF RMSNorm,
+    FF, add residual'
+  mamba: 'slow_forward lines 901-976: raw projection, causal depthwise conv, SiLU,
+    selection, dt/B/C RMSNorm, positive delta, selective scan, D skip, SiLU gate,
+    output projection'
+  attention: 'JambaAttention lines 293-381: bias-free GQA, head repeat, scaled dot
+    product, causal mask from model, KV append'
+  moe: 'JambaSparseMoeBlock lines 1006-1067: full softmax then top2; no selected-weight
+    renormalization; no drop/capacity; SwiGLU experts'
+reuse:
+  completed_phase4: /workspace/resnet_reconstruction/parallel_coverage/20261105/integration/20261116_genealogy_phase4_integration/status.yaml
+  existing_nodes: 35
+  existing_relations: 38
+  project: /workspace/agentic-nas-representation
+  read:
+  - specs/representation/reading-rules-v1.md
+  - architectures/mamba/representation.yaml
+  - architectures/mamba/provenance.json
+  - architectures/transformer/provenance.json
+  - architectures/sparse-moe/provenance.json
+  - architectures/switch-transformer/representation.yaml
+  method: Reuse completed scoped evidence and representation conventions, no numerical
+    reruns or imports of existing candidates. Mamba selective-scan algebra reused
+    conceptually; new convolution/projections/internal norms and hybrid composition
+    are tested here.
+  non_equivalence: Existing standalone RMSNorm uses epsilon outside sqrt; Jamba source
+    has epsilon inside sqrt. Sparse-MoE uses selected normalization and ReLU, Switch
+    uses top1 capacity drop; neither substitutes for Jamba expert path.
+restored_scope: One 8-layer cycle with original placement, reduced widths/expert count,
+  pre-embedded inputs, all layer states, float64 deterministic equations.
+excluded_scope:
+- full_32_layer_model
+- final_model_norm
+- embeddings
+- lm_head
+- training
+- outer_gradients
+- auxiliary_losses
+- distributed_execution
+- padding
+- mixed_precision
+- source_runtime_bitwise_parity
+limitations:
+- Source cache class interface is replaced by functional per-layer state dictionaries.
+  Continuations implement the same causal recurrence, including multi-token continuations
+  beyond the source fast decode path.
+- Official float32 casts and PyTorch topk tie behavior are outside scope. Float64
+  and distinct routing logits are declared explicitly.
+- Local reference is equation-level independent implementation, not execution of pretrained
+  official model.

@@ -1,0 +1,73 @@
+representation_version: local_equational_graph_v1
+operator_profile: inline_equations_below
+reading_rules: ../../specs/representation/reading-rules-v1.md
+architecture: e2e-memory-network
+architecture_entry: reconstructed.py:E2EMemoryNetwork
+scope:
+  variant: BoW multi-hop, adjacent weight tying, identity query update, no position or temporal encoding
+  included: [input_memory_embedding, output_memory_embedding, query_embedding, soft_addressing, weighted_read, hop_query_update, tied_answer_projection]
+  excluded: [tokenization, padding, memory_eviction, temporal_encoding, position_encoding, linear_start, nonlinear_hops, learned_H, QA_training, loss, gradients]
+interface:
+  constructor: 'E2EMemoryNetwork(vocab_size: int, embedding_dim: int, hops: int); subclass torch.nn.Module'
+  forward: 'forward(facts, query) -> dict'
+  inputs:
+    facts: 'CPU float64 [N,V], nonnegative integer BoW counts <=4, N>=1; every row is a valid memory'
+    query: 'CPU float64 [V], nonnegative integer BoW counts <=4'
+  constraints: '1<=V,D<=32; 1<=N<=16; 1<=K=hops<=4; finite weights abs<=2; no batch; no implicit scale or mask. Invalid-input diagnostics excluded.'
+  returns:
+    input_memory: 'float64 [K,N,D]'
+    output_memory: 'float64 [K,N,D]'
+    scores: 'float64 [K,N]'
+    probabilities: 'float64 [K,N]'
+    reads: 'float64 [K,D]'
+    queries: 'float64 [K+1,D], initial query followed by every updated query'
+    logits: 'float64 [V]'
+    answer_probabilities: 'float64 [V]'
+parameters:
+  E: 'One nn.Parameter float64 [K+1,V,D]; different hop slices store distinct embeddings'
+  initialization: 'zeros; caller supplies E via state_dict before evaluation; no RNG'
+  sharing: 'B=A^1=E[0]. For zero-based hop k, A=E[k], C=E[k+1]. Thus C of hop k is A of hop k+1, as the same slice, not a copied parameter. Final classifier W=E[K] in [V,D] orientation, the same final output-embedding slice. No separate B, W or hop parameters.'
+state:
+  state_dict: [E]
+  buffers: []
+  cache: none
+  updates: 'Inputs and parameters never mutated. Query state is reset from query on each call. All hops read the same supplied fact rows.'
+notation:
+  arithmetic: 'CPU float64; k=0..K-1, j=0..N-1, v=0..V-1, d=0..D-1'
+  softmax: 'For vector z, subtract max(z), exponentiate, divide by sum; normalize across memory N or vocabulary V as specified.'
+factors:
+  memn2n_embed:
+    operator: bag_of_words_embeddings
+    equation: 'u[0,d]=sum_v query[v]*E[0,v,d]. m[k,j,d]=sum_v facts[j,v]*E[k,v,d]; c[k,j,d]=sum_v facts[j,v]*E[k+1,v,d]. No division by sentence length and no position/time terms.'
+  memn2n_address:
+    operator: unscaled_dot_softmax
+    equation: 'At hop k, scores[k,j]=sum_d m[k,j,d]*u[k,d]. p[k,:]=softmax(scores[k,:]) over all N memories.'
+  memn2n_read:
+    operator: weighted_output_memory_sum
+    equation: 'o[k,d]=sum_j p[k,j]*c[k,j,d]. Read c, not m.'
+  memn2n_update:
+    operator: additive_query_recurrence
+    equation: 'u[k+1,d]=u[k,d]+o[k,d]. This updated query drives hop k+1. Execute exactly K hops in increasing k; no learned transform or activation.'
+  memn2n_answer:
+    operator: tied_projection_softmax
+    equation: 'logits[v]=sum_d E[K,v,d]*u[K,d]; answer_probabilities=softmax(logits) over V. Return m as input_memory, c as output_memory, p as probabilities, o as reads, u as queries.'
+contains:
+  memn2n_core: [memn2n_embed, memn2n_address, memn2n_read, memn2n_update, memn2n_answer]
+scan:
+  axis: 'k=0..K-1'
+  initial: 'u[0] from memn2n_embed'
+  body: [memn2n_address, memn2n_read, memn2n_update]
+  carry: 'u[k+1] becomes the next hop query'
+dataflow:
+  - [facts, memn2n_embed.facts]
+  - [query, memn2n_embed.query]
+  - [E, memn2n_embed.E]
+  - [memn2n_embed.m, memn2n_address.m]
+  - [memn2n_embed.u0, memn2n_address.initial_query]
+  - [memn2n_address.p, memn2n_read.p]
+  - [memn2n_embed.c, memn2n_read.c]
+  - [memn2n_read.o, memn2n_update.o]
+  - [memn2n_update.u_next, memn2n_address.next_hop_query]
+  - [memn2n_update.u_final, memn2n_answer.u]
+  - [E, memn2n_answer.E]
+specification_note: Inline equations define a selected official-code-supported configuration; no default PE/TE, training or universal primitive-schema claim.

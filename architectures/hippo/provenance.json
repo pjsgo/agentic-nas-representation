@@ -1,0 +1,61 @@
+{
+  "format_version": 3,
+  "architecture": "hippo",
+  "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
+  "scope": {
+    "included": [
+      "scaled_Legendre_operator_construction",
+      "time_varying_bilinear_discretization",
+      "coefficient_state_scan"
+    ],
+    "excluded": [
+      "LegT",
+      "LagT",
+      "HiPPO_RNN_wrapper",
+      "learned_readout",
+      "polynomial_signal_decoder",
+      "training",
+      "exact_continuous_projection",
+      "parallel_scan"
+    ]
+  },
+  "generation": {
+    "attempts": 1,
+    "original_result": "FAIL",
+    "final_result": "PASS_WITHIN_DECLARED_SCOPE",
+    "repaired": true,
+    "sender": "producer; existing separately authorized experiment",
+    "new_integration_calls": 0
+  },
+  "evaluation": {
+    "cases": 3,
+    "final_result": "PASS_WITHIN_DECLARED_SCOPE",
+    "tolerance": {
+      "atol": 2e-12,
+      "rtol": 2e-12
+    },
+    "basis": "Existing independent-reference evidence; relocated candidate acceptance in integration report",
+    "research_result": "transformer/experiments/20261116_genealogy_phase5_hippo_hyena/hippo/repaired_result.json",
+    "reference_runtime_parity": "NOT_CLAIMED",
+    "integration_acceptance": {
+      "status": "PASS_WITHIN_DECLARED_SCOPE",
+      "cases": 3,
+      "candidate": "reconstructed.py",
+      "fixture_and_tolerance_changes": "NONE",
+      "purpose": "Relocated distribution candidate acceptance",
+      "report": "Research workspace: integration/20261116_genealogy_phase5_integration/evaluation/hippo/acceptance.json"
+    }
+  },
+  "candidate": {
+    "file": "reconstructed.py",
+    "research_source": "transformer/experiments/20261116_genealogy_phase5_hippo_hyena/hippo/repaired_model.py",
+    "computational_changes_by_integration": "None"
+  },
+  "representation": {
+    "file": "representation.yaml",
+    "publication_changes": "Module filename and relative reading-rule path only"
+  },
+  "limitations": [
+    "Declared block/core only; no full-model, training, speed, universal-schema or unmodified-one-shot claim for repaired candidates"
+  ]
+}

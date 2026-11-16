@@ -1,0 +1,80 @@
+representation_version: local_retnet_retention_core_v1
+operator_profile: self_contained_equations_v1
+architecture: retnet
+architecture_entry: reconstructed.py:retention
+interface:
+  signature: 'retention(x, wq, wk, wv, state=None, mode="recurrent") -> dict'
+  inputs:
+    x: CPU torch.float64[B,T,D], finite
+    wq: CPU torch.float64[D,H,K], finite
+    wk: CPU torch.float64[D,H,K], finite and independent of wq
+    wv: CPU torch.float64[D,H,V], finite
+    state: 'None or dict {kv: float64[B,H,K,V], position: Python int >= 0}; kv finite'
+    mode: 'parallel or recurrent; same declared unnormalized retention semantics'
+  constraints: [B,T,D,H,V positive, K positive and even, finite intermediates, no empty sequences]
+  outputs:
+    q: float64[B,T,H,K], rotated queries
+    k: float64[B,T,H,K], scaled and rotated keys
+    v: float64[B,T,H,V]
+    output: float64[B,T,H,V], raw per-head retention
+    state: 'dict {kv: float64[B,H,K,V], position: int}; final state'
+factors:
+  ret_projection:
+    operator: independent_bias_free_projections
+    attributes: 'q0[b,t,h,i]=sum_d x[b,t,d]*wq[d,h,i]; k0=sum_d x*wk / sqrt(K); v[b,t,h,j]=sum_d x[b,t,d]*wv[d,h,j].'
+  ret_position:
+    operator: adjacent_pair_rotation
+    attributes: >-
+      Set L=K/2. omega[j]=10000^(-j/(L-1)) for L>1, and omega[0]=1 for L=1.
+      Absolute position n=state.position+t, with t zero based.
+      For each pair (a,b)=(q0[...,2j],q0[...,2j+1]), rotated pair is
+      (a*cos(n*omega[j])-b*sin(n*omega[j]), a*sin(n*omega[j])+b*cos(n*omega[j])).
+      Apply exactly the same real rotation to k0. No additional xPos magnitude scaling.
+  ret_decay:
+    operator: fixed_head_decay
+    attributes: 'gamma[h]=1-2^(-5-h), h=0..H-1. No learnable decay and no softmax or kernel feature map.'
+  ret_core:
+    operator: equivalent_explicit_sum_or_scan
+    attributes: >-
+      S_in is state.kv. Recurrent: S_t[b,h,i,j]=gamma[h]*S_{t-1}[b,h,i,j]+k[b,t,h,i]*v[b,t,h,j], with S_{-1}=S_in.
+      output[b,t,h,j]=sum_i q[b,t,h,i]*S_t[b,h,i,j]. Read AFTER incorporating current k,v.
+      Parallel: output[b,t,h,j]=gamma[h]^(t+1)*sum_i q[b,t,h,i]*S_in[b,h,i,j]
+      +sum_{s=0}^t gamma[h]^(t-s)*(sum_i q[b,t,h,i]*k[b,s,h,i])*v[b,s,h,j].
+      Both modes return final kv=gamma[h]^T*S_in+sum_{s=0}^{T-1} gamma[h]^(T-1-s)*outer(k_s,v_s).
+      No decay-mask row normalization, score normalization or running-scale reparameterization.
+      Final position=initial position+T. All time steps reuse the same three independent projection tensors.
+dataflow:
+  - [x, ret_projection.x]
+  - [wq, ret_projection.wq]
+  - [wk, ret_projection.wk]
+  - [wv, ret_projection.wv]
+  - [ret_projection.q0, ret_position.q0]
+  - [ret_projection.k0, ret_position.k0]
+  - [state.position, ret_position.offset]
+  - [ret_position.q, ret_core.q]
+  - [ret_position.k, ret_core.k]
+  - [ret_projection.v, ret_core.v]
+  - [ret_decay.gamma, ret_core.gamma]
+  - [state.kv, ret_core.initial]
+  - [mode, ret_core.mode]
+  - [ret_core.output, output]
+  - [ret_core.final_state, state_out]
+  - [ret_position.q, q]
+  - [ret_position.k, k]
+  - [ret_projection.v, v]
+parameters:
+  wq: {shape: [D,H,K], initialization: caller_supplied, sharing: all_times_only}
+  wk: {shape: [D,H,K], initialization: caller_supplied, sharing: all_times_only}
+  wv: {shape: [D,H,V], initialization: caller_supplied, sharing: all_times_only}
+state:
+  initialization: 'None means zero kv and position=0. Explicit kv and position are caller supplied; position controls phase only, not number of decays applied to kv.'
+  input_mutation: false
+  rng_consumption: false
+  persistence: Explicit input and return only; no hidden buffers
+scope:
+  included: [multi_scale_fixed_head_decay, independent_projections, real_position_rotation, key_scaling, causal_retention, parallel_sum, recurrent_matrix_state, state_continuation]
+  excluded: [gating, head_normalization, output_projection, full_MSR, residual, FFN, full_RetNet, chunkwise_optimization, official_path_specific_scaling, training, gradients, mixed_precision]
+semantics_status:
+  common_schema_certification: not_claimed
+  basis: Explicit local equations and existing genealogy reading rules
+  variant: Paper raw retention with official real pair rotation and key scaling; not exact TorchScale forward

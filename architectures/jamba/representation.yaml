@@ -1,0 +1,91 @@
+representation_version: local_equational_graph_v1
+operator_profile: self_contained_float64_equations_v1
+architecture: jamba-v0.1-eight-layer-cycle
+architecture_entry: reconstructed.py:jamba
+interface:
+  signature: 'jamba(x, parameters, state=None) -> dict'
+  x: 'CPU torch.float64[B,T,4], finite, B,T positive'
+  parameters: 'list of 8 dictionaries described below, all CPU float64 finite tensors'
+  state: 'None or list of 8 per-layer dictionaries as below, matching B and common processed length L'
+  output: 'dict: output [B,T,4], layers list of 8 [B,T,4] post-FFN tensors, routes list of 8 tensors or None, state list of 8 dictionaries'
+  routes: 'odd layers return full router probabilities [B,T,4]; even layers return None'
+  constraints: 'No padding. Finite intermediates. Routing logits must have distinct entries per token; ties outside domain. No implicit initialization of supplied parameters.'
+scope:
+  included: [one_original_eight_layer_cycle, pre_norm_residuals, causal_grouped_query_attention, full_mamba_mixer, normalized_dt_B_C, dense_swiglu, full_capacity_top2_swiglu_experts, explicit_continuation_state]
+  excluded: [embeddings, final_model_norm, lm_head, other_three_cycles, training, load_balancing_loss, distributed_execution, fused_kernels, mixed_precision, padding, source_cache_class_API]
+  scaling: 'Original cycle placement preserved. Hidden 4096 -> 4, Q heads 32 -> 2, KV heads 8 -> 1, Mamba inner 8192 -> 8, state 16 -> 2, dt rank 256 -> 2, conv width 4 -> 3, FFN 14336 -> 6, experts 16 -> 4; top-k remains 2.'
+parameters:
+  ownership: 'Caller owns tensors. No registered parameters/buffers or RNG. Layers and experts untied; each layer reused across tokens and batch.'
+  all_layers:
+    n1: [4]
+    n2: [4]
+    gate: '[E,4,6] where E=4 for odd layers, E=1 for even layers'
+    up: '[E,4,6]'
+    down: '[E,6,4]'
+  odd_layers: {router: [4,4]}
+  attention_layer_4: {q: [4,4], k: [4,2], v: [4,2], o: [4,4]}
+  mamba_layers_except_4:
+    in: [4,16]
+    conv: [8,3]
+    cb: [8]
+    select: [8,6]
+    nt: [2]
+    nb: [2]
+    nc: [2]
+    dt: [2,8]
+    db: [8]
+    A_log: [8,2]
+    skip: [8]
+    out: [8,4]
+  orientation: 'All matrix products use input-output kernels. Biases only cb and db.'
+state:
+  attention_4: 'k and v [B,L,2] hold unreplicated projected KV in chronological order; None initializes empty L=0. Append current projections. Return [B,L+T,2].'
+  mamba: 'conv [B,8,3] raw in-projection history oldest to newest; ssm [B,8,2]. None initializes zeros. conv includes latest raw token after step. ssm includes latest update.'
+  mutation: 'Do not mutate x, parameters or supplied state. Returned states are separate tensors.'
+notation:
+  rms: 'RMS(z,g)=z*g/sqrt(mean(z*z,last_axis,keepdim=True)+1e-6). Epsilon inside sqrt. No mean subtraction or bias.'
+  silu: 'silu(z)=z/(1+exp(-z))'
+  softmax: 'softmax(z)_i=exp(z_i-max(z))/sum_j exp(z_j-max(z)); float64 throughout'
+  precision: 'Promoted mathematical profile; official float32 casts deliberately not reproduced.'
+factors:
+  jamba_cycle:
+    scan: 'Layers l=0..7 in increasing order; h initially x; l=4 attention, all others Mamba. Odd l has 4 experts, even l has 1 dense expert.'
+  pre_mixer:
+    equation: 'u=RMS(h,n1); r=h+mixer(u); mixer defined by layer type below'
+  attention:
+    equation: >-
+      Q=reshape(u@q,[B,T,2,2]); Knew=u@k; Vnew=u@v.
+      K=concat(state.k,Knew,time); V=concat(state.v,Vnew,time).
+      For b,t,head a in {0,1}, scores[s]=dot(Q[b,t,a,:],K[b,s,:])/sqrt(2) for 0<=s<=L+t.
+      Both heads use the same sole KV head. p=softmax(scores); c[b,t,a,:]=sum_s p[s]*V[b,s,:].
+      mixer(u)=reshape(c,[B,T,4])@o. No RoPE, positional input, dropout, window, or future keys.
+  mamba:
+    equation: >-
+      For each token t in increasing order: [raw,z]=split(u[:,t,:]@in,8,8).
+      Shift conv history left by one and append raw at index 2. a=silu(sum_j conv[:,:,j]*conv_kernel[:,j]+cb).
+      [d0,B0,C0]=split(a@select,2,2,2); d=RMS(d0,nt); Bv=RMS(B0,nb); Cv=RMS(C0,nc).
+      delta=log(1+exp(d@dt+db)); A=-exp(A_log).
+      ssm[b,i,n]=exp(delta[b,i]*A[i,n])*ssm[b,i,n]+delta[b,i]*Bv[b,n]*a[b,i].
+      y[b,i]=(sum_n ssm[b,i,n]*Cv[b,n]+skip[i]*a[b,i])*silu(z[b,i]); mixer[:,t,:]=y@out.
+      conv_kernel means parameters[l]['conv']; conv history means state[l]['conv'].
+  pre_ffn:
+    equation: 'v=RMS(r,n2); expert_e(v)=(silu(v@gate[e])*(v@up[e]))@down[e]'
+  experts:
+    equation: >-
+      Even l: f=expert_0(v), routes=None.
+      Odd l: logits=v@router; routes=softmax(logits) over all 4 experts;
+      select the 2 largest probabilities and f=sum_selected routes[e]*expert_e(v).
+      Do NOT renormalize selected probabilities. No capacity, dropped tokens, noise, bias, shared expert or router residual.
+  layer_output:
+    equation: 'h=r+f; append h to layers. After l=7 return output=h and all final layer states and routes.'
+contains:
+  jamba_cycle: [pre_mixer, attention, mamba, pre_ffn, experts, layer_output]
+dataflow:
+  - [h, pre_mixer]
+  - [pre_mixer.u, attention_or_mamba]
+  - [attention_or_mamba.output, pre_mixer.r]
+  - [pre_mixer.r, pre_ffn]
+  - [pre_ffn.v, experts]
+  - [experts.f, layer_output]
+  - [layer_output.h, next_layer.h]
+semantics_status: {common_schema_certified: false, common_spec_changes: [], local_equations_sufficient: true}

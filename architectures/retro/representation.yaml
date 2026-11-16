@@ -1,0 +1,103 @@
+representation_version: local_equational_graph_v1
+operator_profile: inline_equations_below
+reading_rules: ../../specs/representation/reading-rules-v1.md
+architecture: retro
+architecture_entry: reconstructed.py:retro_cca
+variant: single_head_listing1_core_with_explicit_residual_wrapper
+scope:
+  included: [chunk_shift, neighbour_time_joint_softmax, query_key_value_projections, supplied_position_logits, retrieval_value_aggregation, residual_wrapper]
+  excluded: [retrieval_index, nearest_neighbour_search, bert_retriever, retrieval_encoder, encoder_decoder_conditioning_computation, position_logit_generation, multihead_logic, normalization, ffn, token_embeddings, lm_head, training, dropout, caching, partial_chunks, padding_tokens]
+interface:
+  function: 'retro_cca(h, e, q, k, v, position_bias, chunk_size) -> dict'
+  tensors: 'All tensors finite torch.float64 CPU. B,L,K,D,m positive integers. N=L*m, R=2*m. chunk_size is Python int m, not bool. All retrieval slots valid; no padding.'
+  inputs:
+    h: '[B,N,D], causal decoder hidden activations at the CCA input boundary'
+    e: '[B,L,K,R,D], already encoded retrieved neighbour plus continuation; u axis is the chunk used for retrieval, not the attending chunk'
+    q: '[D,D], query projection; row-vector convention'
+    k: '[D,D], key projection'
+    v: '[D,D], value projection including effective value-to-output map for this simplified single head'
+    position_bias: '[m,R], precomputed additive position logits shared across batch, source chunks and neighbours'
+    chunk_size: 'm'
+  outputs:
+    output: '[B,N,D], h + delta'
+    delta: '[B,N,D], attention contribution, exactly zero for t<m-1'
+    logits: '[B,N,K,R], content plus position logits at active positions, zero sentinel at inactive positions'
+    probabilities: '[B,N,K,R], normalized jointly across K and R at active positions, exactly zero at inactive positions'
+    chunk_index: '[N], int64 CPU; -1 for t<m-1, otherwise floor((t-(m-1))/m)'
+  invalid_inputs: 'Raise ValueError for non-Tensor floating arguments, nonfinite inputs, wrong dtype/device/rank/shape, empty dimensions, invalid chunk_size, N not divisible by m, L!=N/m or R!=2*m.'
+boundaries:
+  encoded_retrieval: >-
+    Caller owns construction of e[b,u,j]. Semantically it is the output of a bidirectional
+    retrieval encoder applied separately to neighbour j of source chunk u and its continuation,
+    conditioned by cross-attention on causal decoder activations of source chunk u at the
+    first retrieval layer. Encoder weights are shared across chunks and neighbours.
+    This function neither constructs nor verifies that provenance. Fixed synthetic encoded
+    arrays are valid unit-test inputs, not an implemented retrieval encoder.
+  causality: >-
+    h at t may depend only on observed tokens through t. Source chunk u spans zero-based
+    positions u*m through (u+1)*m-1. Retrieval selection and encoder conditioning for e[u]
+    must not depend on current-sequence tokens after (u+1)*m-1. Retrieved external-corpus
+    continuation is allowed in full; it is not current-sequence future ground truth.
+    The caller must enforce corpus eligibility and prevent target-document contamination.
+    Causal safety of the full system is conditional on these boundary obligations.
+  position_logits: >-
+    Caller supplies already evaluated additive position logits using query-relative position
+    distance i-r+m-1, where i is attending-chunk offset and r is neighbour token offset.
+    The original positional feature transform is outside scope. This core applies supplied
+    values exactly and does not invent a cosine basis, frequencies or learned transform.
+    Numerical contract accepts any finite [m,2*m] bias, including zero.
+parameters:
+  registration: 'Functional interface; caller owns q,k,v, with no internal Parameters or buffers.'
+  sharing: 'Three distinct effective matrices, shared across batch, source chunks and neighbours. No implicit tying.'
+  count: '3*D*D scalar supplied projection entries. position_bias is a boundary input, not an internally learned parameter.'
+  scaling: 'No runtime sqrt(D) scaling, projection bias or output matrix beyond v; follows simplified attention equations.'
+state: {persistent: none, cache: none, random: false, input_mutation: false, parameter_mutation: false}
+notation:
+  indices: 'All zero-based: b batch, t decoder position, u source chunk, j neighbour, r neighbour token, i attending-chunk offset, a/c/d channels.'
+factors:
+  retro_chunk_align:
+    operator: shifted_chunk_eligibility
+    equations:
+      - 'active(t) = (t >= m-1)'
+      - 'u(t) = floor((t-(m-1))/m), i(t) = (t-(m-1)) mod m for active t'
+      - 'Only e[b,u(t),:,:,:] is visible to active t; no other source chunk is visible.'
+    attributes: 'First m-1 positions have no retrieval. Last sequence position uses u=L-1 and i=0. No triangular mask over retrieved tokens: all K*R slots from the eligible chunk are visible.'
+  retro_projections:
+    operator: linear
+    equations:
+      - 'query[b,t,c] = sum_a h[b,t,a]*q[a,c]'
+      - 'key[b,u,j,r,c] = sum_a e[b,u,j,r,a]*k[a,c]'
+      - 'value[b,u,j,r,d] = sum_a e[b,u,j,r,a]*v[a,d]'
+  retro_joint_attention:
+    operator: joint_neighbour_token_softmax
+    equations:
+      - 'For active t: logits[b,t,j,r] = sum_c query[b,t,c]*key[b,u(t),j,r,c] + position_bias[i(t),r]'
+      - 'z[b,t] = max over all j,r of logits[b,t,j,r]'
+      - 'probabilities[b,t,j,r] = exp(logits[b,t,j,r]-z[b,t]) / sum_{j2,r2} exp(logits[b,t,j2,r2]-z[b,t])'
+      - 'delta[b,t,d] = sum_{j,r} probabilities[b,t,j,r]*value[b,u(t),j,r,d]'
+      - 'For inactive t: logits, probabilities and delta are all zero, with no softmax evaluation.'
+    attributes: 'Neighbour order is explicit; never average separately normalized per-neighbour attention. Returned tensors use j,r order; a simultaneous permutation of flattened keys and values preserves the sum.'
+  retro_residual:
+    operator: add
+    equation: 'output[b,t,d] = h[b,t,d] + delta[b,t,d]'
+    attributes: 'Explicit residual wrapper around the simplified attention contribution; no norm or FFN. Inactive positions are identity.'
+contains:
+  retro_cca_core: [retro_chunk_align, retro_projections, retro_joint_attention, retro_residual]
+dataflow:
+  - [chunk_size, retro_chunk_align.m]
+  - [h, retro_projections.h]
+  - [e, retro_projections.e]
+  - [q, retro_projections.q]
+  - [k, retro_projections.k]
+  - [v, retro_projections.v]
+  - [retro_chunk_align, retro_joint_attention.eligibility]
+  - [retro_projections, retro_joint_attention.projections]
+  - [position_bias, retro_joint_attention.position_bias]
+  - [retro_joint_attention.delta, retro_residual.delta]
+  - [h, retro_residual.h]
+  - [retro_residual.output, output]
+  - [retro_joint_attention.delta, delta]
+  - [retro_joint_attention.logits, logits]
+  - [retro_joint_attention.probabilities, probabilities]
+  - [retro_chunk_align.u, chunk_index]
+specification_note: 'Scoped equation graph, not full RETRO or universal schema certification. Decoder conditioning on encoded retrieval is implemented; conditioning the retrieval encoder on decoder states is an external boundary.'

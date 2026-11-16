@@ -1,0 +1,88 @@
+representation_version: local_equational_graph_v1
+operator_profile: inline_equations_below
+reading_rules: ../../specs/representation/reading-rules-v1.md
+architecture: lstmn
+architecture_entry: reconstructed.py:LSTMN
+scope:
+  variant: Single-layer single-sequence intra-attention memory-tape recurrence, no bias
+  included: [hidden_tape, cell_tape, previous_read_feedback, causal_additive_attention, weighted_hidden_and_cell_read, gates_from_read_hidden, cell_update_from_read_cell, append_states]
+  excluded: [token_embedding, task_head, training, gradients, dropout, bias, multilayer_stack, encoder_decoder_fusion, truncation, memory_rewrite]
+interface:
+  constructor: 'LSTMN(input_dim: int, hidden_dim: int, attention_dim: int); subclass torch.nn.Module'
+  forward: 'forward(x, hidden_memory, cell_memory, previous_read) -> dict'
+  inputs:
+    x: 'CPU float64 [T,I], already embedded sequence'
+    hidden_memory: 'CPU float64 [P,H], prefix hidden tape; P=0 permitted'
+    cell_memory: 'CPU float64 [P,H], aligned prefix cell tape'
+    previous_read: 'CPU float64 [H], last attention-weighted hidden read before this chunk; zero when P=0'
+  constraints: '1<=T<=8; 0<=P<=8; 1<=I,H,A<=16; finite inputs and parameters abs<=2. P>0 allows caller-supplied prefix states. No batch, padding or invalid-input diagnostic contract.'
+  returns:
+    hidden_memory: 'float64 [P+T,H], old prefix then new hidden states'
+    cell_memory: 'float64 [P+T,H], old prefix then new cell states'
+    scores: 'float64 [T,P+T], active scores for j<P+t; unused positions exactly zero'
+    attention: 'float64 [T,P+T], active probabilities for j<P+t; unused positions exactly zero'
+    hidden_reads: 'float64 [T,H]'
+    cell_reads: 'float64 [T,H]'
+    gates: 'float64 [T,4,H], order input, forget, output, proposal; proposal uses tanh'
+    output: 'float64 [T,H], new hidden states'
+    final_read: 'float64 [H], hidden_reads[T-1]; supply as previous_read for continuation'
+parameters:
+  Wh: 'nn.Parameter float64 [A,H], maps past hidden state into attention space'
+  Wx: 'nn.Parameter float64 [A,I], maps current token into attention space'
+  Wr: 'nn.Parameter float64 [A,H], maps previous weighted hidden read into attention space'
+  v: 'nn.Parameter float64 [A], attention vector'
+  W: 'nn.Parameter float64 [4*H,H+I], gates; concatenate current read hidden first, token second'
+  sharing: 'All five parameters distinct storage; each reused at every time step. No bias parameters.'
+  initialization: 'zeros; caller supplies all five via state_dict before evaluation; no RNG'
+state:
+  state_dict: [Wh, Wx, Wr, v, W]
+  buffers: []
+  initialization: 'For a fresh sequence, both tapes are [0,H], previous_read=zeros[H]. No sentinel slot is inserted.'
+  empty_read: 'If there are no previous slots, hidden and cell reads are zeros and attention/scores row remains all zero. Softmax over an empty set is never evaluated.'
+  continuation: 'Carry both complete tapes and final_read. The previous_read is a weighted hidden summary, not the most recent hidden state.'
+  mutation: 'No input/parameter mutation and no persistent module cache. Existing tape slots remain unchanged; each step appends one hidden and one cell state.'
+notation:
+  indexing: 't=0..T-1 indexes current chunk; at t, n=P+t prior slots are available; j=0..n-1 only'
+  arithmetic: 'float64; sigmoid(z)=1/(1+exp(-z)); softmax subtracts active-score maximum before exponentiation'
+factors:
+  lstmn_address:
+    operator: causal_additive_attention_with_previous_read
+    equation: 'Let rprev=previous_read initially. For n>0, s[j]=sum_a v[a]*tanh(sum_h Wh[a,h]*Hmem[j,h]+sum_i Wx[a,i]*x[t,i]+sum_h Wr[a,h]*rprev[h]). p=softmax(s) over j<n only. Write s and p to first n columns of zero-initialized scores[t] and attention[t].'
+  lstmn_read:
+    operator: paired_tape_weighted_read
+    equation: 'rh[h]=sum_{j<n} p[j]*Hmem[j,h]; rc[h]=sum_{j<n} p[j]*Cmem[j,h]. For n=0 set rh=rc=zeros[H]. hidden_reads[t]=rh; cell_reads[t]=rc.'
+  lstmn_gates:
+    operator: read_conditioned_gates
+    equation: 'z=W@concat(rh,x[t]) in [4*H]. i=sigmoid(z[0:H]); f=sigmoid(z[H:2H]); o=sigmoid(z[2H:3H]); g=tanh(z[3H:4H]); gates[t]=stack(i,f,o,g).'
+  lstmn_update:
+    operator: read_cell_update_and_append
+    equation: 'c=f*rc+i*g; h=o*tanh(c), with elementwise products. Append c and h to Cmem and Hmem. Do not update old slots. Set rprev=rh for the next step, not h. output[t]=h; after last step final_read=rprev.'
+contains:
+  lstmn_core: [lstmn_address, lstmn_read, lstmn_gates, lstmn_update]
+scan:
+  axis: 't=0..T-1'
+  initial: 'Hmem=hidden_memory, Cmem=cell_memory, rprev=previous_read'
+  body: [lstmn_address, lstmn_read, lstmn_gates, lstmn_update]
+  carry: [Hmem, Cmem, rprev]
+dataflow:
+  - [hidden_memory, lstmn_address.initial_hidden_tape]
+  - [previous_read, lstmn_address.initial_previous_read]
+  - [x, lstmn_address.x]
+  - [Wh, lstmn_address.Wh]
+  - [Wx, lstmn_address.Wx]
+  - [Wr, lstmn_address.Wr]
+  - [v, lstmn_address.v]
+  - [lstmn_address.p, lstmn_read.p]
+  - [hidden_memory, lstmn_read.initial_hidden_tape]
+  - [cell_memory, lstmn_read.initial_cell_tape]
+  - [lstmn_read.rh, lstmn_gates.rh]
+  - [x, lstmn_gates.x]
+  - [W, lstmn_gates.W]
+  - [lstmn_gates.gates, lstmn_update.gates]
+  - [lstmn_read.rc, lstmn_update.rc]
+  - [lstmn_read.rh, lstmn_update.rprev]
+  - [lstmn_update.Hmem, lstmn_address.next_hidden_tape]
+  - [lstmn_update.Hmem, lstmn_read.next_hidden_tape]
+  - [lstmn_update.Cmem, lstmn_read.next_cell_tape]
+  - [lstmn_update.rprev, lstmn_address.next_previous_read]
+specification_note: Paper equations 4-9 without unshown biases. Empty-tape initialization and explicit streaming boundary are local conventions; no official runtime parity claim.

@@ -1,0 +1,86 @@
+format_version: local_transition_v1
+transition_id: tr_013
+source_architecture: LSTM
+target_architecture: GNMT
+relation_type: A
+inferred: false
+record_status: complete
+mapping_status: partial
+core_mapping_status: complete_scoped
+part_mapping_complete: false
+evidence:
+- source: User-supplied beyond_transformer_slides.pdf (not redistributed)
+  page: 38
+  page_numbering: one_based_PDF
+  label: A 013
+  verification: Direct original embedded image review during phase5 integration; endpoint,
+    direction, type and question mark inspected
+source_records:
+- side: source
+  source_metadata: ../architectures/lstm/provenance.json
+  provenance: ../architectures/lstm/provenance.json
+  authority: Existing scoped node evidence; diagram supplies relation attribution,
+    not a new historical proof
+  source_metadata_note: Legacy node retains source evidence through provenance; no
+    separate sources.yaml published.
+- side: target
+  source_metadata: ../architectures/gnmt/sources.yaml
+  provenance: ../architectures/gnmt/provenance.json
+  authority: Existing scoped node evidence; diagram supplies relation attribution,
+    not a new historical proof
+scope:
+  source_yaml: ../architectures/lstm/representation.yaml
+  target_yaml: ../architectures/gnmt/representation.yaml
+  path_base: relation_file_directory
+  included:
+  - descriptive_relationship
+  - available_core_component_correspondence
+  excluded:
+  - whole_model_conversion
+  - numerical_equivalence_between_endpoints
+  - weight_or_state_migration
+  - training
+  - performance
+  mapping_boundary: 현대 LSTM cell과 축소 3층 GNMT 간 대응이며 1997 원형, 8층 원 모델, beam search·학습은
+    포함하지 않는다.
+changes:
+- before_units:
+  - body
+  - update
+  - expose
+  after_units:
+  - ef_cell/lstm_state
+  - eb_cell/lstm_state
+  - e2_cell/lstm_state
+  - e3_cell/lstm_state
+  - d1_cell/lstm_state
+  - d2_cell/lstm_state
+  - d3_cell/lstm_state
+  operation: descriptive_correspondence
+  mechanism: 단층 LSTM cell 계산을 양방향 하단 encoder와 상위 encoder/decoder 층의 LSTM 부품으로 대응한다.
+  mapping_status: mapped_scoped
+  cardinality: semantic_many_to_many_not_parameter_identity
+  state_and_resource_contract: 현대 LSTM cell과 축소 3층 GNMT 간 대응이며 1997 원형, 8층 원 모델, beam
+    search·학습은 포함하지 않는다.
+preserve:
+- 관련 계산 개념의 대응만 보존; 파라미터·출력 동일성은 요구하지 않음
+conditions:
+- 현대 LSTM cell과 축소 3층 GNMT 간 대응이며 1997 원형, 8층 원 모델, beam search·학습은 포함하지 않는다.
+expected_effects:
+- 계보 설명과 후속 범위 결정에 이용 가능; 효과의 실험적 증명은 별도
+tradeoffs:
+- 범위가 다른 endpoint를 전체 모델 변환으로 해석할 수 없음
+unresolved:
+- 현대 LSTM cell과 축소 3층 GNMT 간 대응이며 1997 원형, 8층 원 모델, beam search·학습은 포함하지 않는다.
+application:
+  executable: false
+  command: null
+  patch_or_script: null
+  availability: descriptive_publication
+validation:
+  status: STATIC_MAPPING_REVIEWED
+  claim_boundary: Source direction and declared part references only; no new numerical
+    transformation
+provenance:
+  origin: Integration completion of seven owner-inventoried omissions
+  historical_source: G phase5 existing_node_omissions; directly rechecked images

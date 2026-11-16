@@ -43,6 +43,34 @@ membership:
   - tr_044
   - tr_041
   - tr_033
+  phase5:
+  - tr_009
+  - tr_010
+  - tr_011
+  - tr_048
+  - tr_053
+  - tr_055
+  - tr_057
+  - tr_058
+  - tr_059
+  - tr_060
+  - tr_064
+  - tr_065
+  - tr_066
+  - tr_067
+  - tr_068
+  - tr_070
+  - tr_071
+  - tr_075
+  - tr_076
+  phase5_existing_node_completion:
+  - tr_005
+  - tr_013
+  - tr_018
+  - tr_021
+  - tr_051
+  - tr_073
+  - tr_074
 relations:
 - id: tr_003
   file: tr_003.yaml
@@ -53,6 +81,9 @@ relations:
   mapping: partial
   source_slug: simple-rnn
   target_slug: lstm
+  record_status: complete
+  core_mapping: partial
+  executable: false
 - id: tr_004
   file: tr_004.yaml
   source: LSTM
@@ -62,6 +93,21 @@ relations:
   mapping: complete_scoped
   source_slug: lstm
   target_slug: seq2seq
+  record_status: complete
+  core_mapping: complete_scoped
+  executable: false
+- id: tr_005
+  file: tr_005.yaml
+  source: RNN Encoder–Decoder / GRU
+  target: Seq2Seq
+  type: X
+  inferred: true
+  mapping: partial
+  core_mapping: complete_scoped
+  executable: false
+  source_slug: gru-encoder-decoder
+  target_slug: seq2seq
+  record_status: complete
 - id: tr_006
   file: tr_006.yaml
   source: RNN Encoder–Decoder/GRU
@@ -71,6 +117,9 @@ relations:
   mapping: partial
   source_slug: gru-encoder-decoder
   target_slug: bahdanau-attention
+  record_status: complete
+  core_mapping: partial
+  executable: false
 - id: tr_007
   file: tr_007.yaml
   source: Seq2Seq
@@ -80,6 +129,9 @@ relations:
   mapping: partial
   source_slug: seq2seq
   target_slug: bahdanau-attention
+  record_status: complete
+  core_mapping: partial
+  executable: false
 - id: tr_008
   file: tr_008.yaml
   source: Bahdanau
@@ -89,6 +141,57 @@ relations:
   mapping: complete_scoped
   source_slug: bahdanau-attention
   target_slug: luong-attention
+  record_status: complete
+  core_mapping: complete_scoped
+  executable: false
+- id: tr_009
+  file: tr_009.yaml
+  source: Memory Network
+  target: E2E Memory Network
+  type: A
+  inferred: false
+  mapping: partial
+  core_mapping: complete_scoped
+  executable: false
+  source_slug: memory-network
+  target_slug: e2e-memory-network
+  record_status: complete
+- id: tr_010
+  file: tr_010.yaml
+  source: LSTM
+  target: LSTMN
+  type: A
+  inferred: false
+  mapping: partial
+  core_mapping: complete_scoped
+  executable: false
+  source_slug: lstm
+  target_slug: lstmn
+  record_status: complete
+- id: tr_011
+  file: tr_011.yaml
+  source: E2E Memory Network
+  target: LSTMN
+  type: I
+  inferred: false
+  mapping: partial
+  core_mapping: complete_scoped
+  executable: false
+  source_slug: e2e-memory-network
+  target_slug: lstmn
+  record_status: complete
+- id: tr_013
+  file: tr_013.yaml
+  source: LSTM
+  target: GNMT
+  type: A
+  inferred: false
+  mapping: partial
+  core_mapping: complete_scoped
+  executable: false
+  source_slug: lstm
+  target_slug: gnmt
+  record_status: complete
 - id: tr_014
   file: tr_014.yaml
   source: Bahdanau
@@ -98,6 +201,21 @@ relations:
   mapping: complete_scoped
   source_slug: bahdanau-attention
   target_slug: gnmt
+  record_status: complete
+  core_mapping: complete_scoped
+  executable: false
+- id: tr_018
+  file: tr_018.yaml
+  source: ResNet
+  target: GNMT
+  type: C
+  inferred: false
+  mapping: partial
+  core_mapping: complete_scoped
+  executable: false
+  source_slug: resnet
+  target_slug: gnmt
+  record_status: complete
 - id: tr_019
   file: tr_019.yaml
   source: ResNet
@@ -107,6 +225,9 @@ relations:
   mapping: complete_scoped
   source_slug: resnet
   target_slug: transformer
+  record_status: complete
+  core_mapping: complete_scoped
+  executable: false
 - id: tr_020
   file: tr_020.yaml
   source: LayerNorm
@@ -116,6 +237,21 @@ relations:
   mapping: complete_scoped
   source_slug: layernorm
   target_slug: transformer
+  record_status: complete
+  core_mapping: complete_scoped
+  executable: false
+- id: tr_021
+  file: tr_021.yaml
+  source: Bahdanau Attention
+  target: Transformer
+  type: I
+  inferred: false
+  mapping: partial
+  core_mapping: complete_scoped
+  executable: false
+  source_slug: bahdanau-attention
+  target_slug: transformer
+  record_status: complete
 - id: tr_022
   file: tr_022.yaml
   source: Luong
@@ -125,6 +261,9 @@ relations:
   mapping: complete_scoped
   source_slug: luong-attention
   target_slug: transformer
+  record_status: complete
+  core_mapping: complete_scoped
+  executable: false
 - id: tr_026
   file: tr_026.yaml
   source: Seq2Seq
@@ -134,159 +273,9 @@ relations:
   mapping: partial
   source_slug: seq2seq
   target_slug: transformer
-- id: tr_029
-  file: tr_029.yaml
-  source: Transformer
-  target: Transformer-XL
-  type: A
-  inferred: false
-  mapping: complete_scoped
-  source_slug: transformer
-  target_slug: transformer-xl
-- id: tr_031
-  file: tr_031.yaml
-  source: Transformer-XL
-  target: Compressive Transformer
-  type: A
-  inferred: false
-  mapping: complete_scoped
-  source_slug: transformer-xl
-  target_slug: compressive-transformer
-- id: tr_032
-  file: tr_032.yaml
-  source: Transformer
-  target: Sparse Transformer
-  type: A
-  inferred: false
-  mapping: complete_scoped
-  source_slug: transformer
-  target_slug: sparse-transformer
-- id: tr_036
-  file: tr_036.yaml
-  source: Transformer
-  target: Linformer
-  type: A
-  inferred: false
-  mapping: complete_scoped
-  source_slug: transformer
-  target_slug: linformer
-- id: tr_037
-  file: tr_037.yaml
-  source: Transformer
-  target: Linear Transformer
-  type: A
-  inferred: false
-  mapping: complete_scoped
-  source_slug: transformer
-  target_slug: linear-transformer
-- id: tr_038
-  file: tr_038.yaml
-  source: Transformer
-  target: Performer
-  type: A
-  inferred: false
-  mapping: complete_scoped
-  source_slug: transformer
-  target_slug: performer
-- id: tr_039
-  file: tr_039.yaml
-  source: Linear Transformer
-  target: Performer
-  type: I
-  inferred: true
-  mapping: complete_scoped
-  source_slug: linear-transformer
-  target_slug: performer
-- id: tr_049
-  file: tr_049.yaml
-  source: LSSL
-  target: S4
-  type: A
-  inferred: false
-  mapping: complete_scoped
-  source_slug: lssl
-  target_slug: s4
-- id: tr_050
-  file: tr_050.yaml
-  source: S4
-  target: H3
-  type: C
-  inferred: false
-  mapping: complete_scoped
-  source_slug: s4
-  target_slug: h3
-- id: tr_061
-  file: tr_061.yaml
-  source: S4
-  target: Mamba-1
-  type: A
-  inferred: false
-  mapping: complete_scoped
-  source_slug: s4
-  target_slug: mamba
-- id: tr_062
-  file: tr_062.yaml
-  source: H3
-  target: Mamba
-  type: A
-  inferred: false
-  mapping: partial
-  source_slug: h3
-  target_slug: mamba
-- id: tr_063
-  file: tr_063.yaml
-  source: Mamba
-  target: Mamba-2/SSD
-  type: A
-  inferred: false
-  mapping: partial
-  source_slug: mamba
-  target_slug: mamba2-ssd
-- id: tr_069
-  file: tr_069.yaml
-  source: GNMT
-  target: Transformer
-  type: P
-  inferred: false
-  mapping: partial
-  source_slug: gnmt
-  target_slug: transformer
-- id: tr_034
-  file: tr_034.yaml
-  source: Sparse Transformer
-  target: Longformer
-  type: I
-  inferred: false
-  mapping: partial
-  source_slug: sparse-transformer
-  target_slug: longformer
-- id: tr_035
-  file: tr_035.yaml
-  source: Sparse Transformer
-  target: BigBird
-  type: I
-  inferred: false
-  mapping: partial
-  source_slug: sparse-transformer
-  target_slug: bigbird
-- id: tr_054
-  file: tr_054.yaml
-  source: Transformer
-  target: FlashAttention
-  type: A
-  inferred: false
-  mapping: partial
-  source_slug: transformer
-  target_slug: flashattention
-- id: tr_056
-  file: tr_056.yaml
-  source: Transformer
-  target: GQA
-  type: A
-  inferred: false
-  mapping: partial
-  source_slug: transformer
-  target_slug: gqa
+  record_status: complete
+  core_mapping: partial
+  executable: false
 - id: tr_028
   file: tr_028.yaml
   source: Transformer
@@ -296,6 +285,21 @@ relations:
   mapping: partial
   source_slug: transformer
   target_slug: relative-position
+  record_status: complete
+  core_mapping: complete_scoped
+  executable: false
+- id: tr_029
+  file: tr_029.yaml
+  source: Transformer
+  target: Transformer-XL
+  type: A
+  inferred: false
+  mapping: complete_scoped
+  source_slug: transformer
+  target_slug: transformer-xl
+  record_status: complete
+  core_mapping: complete_scoped
+  executable: false
 - id: tr_030
   file: tr_030.yaml
   source: Relative Position
@@ -305,78 +309,33 @@ relations:
   mapping: partial
   source_slug: relative-position
   target_slug: transformer-xl
-- id: tr_046
-  file: tr_046.yaml
-  source: Relative Position
-  target: RoPE
-  type: I
-  inferred: true
-  mapping: partial
-  source_slug: relative-position
-  target_slug: rope
-- id: tr_047
-  file: tr_047.yaml
-  source: Transformer
-  target: ALiBi
+  record_status: complete
+  core_mapping: complete_scoped
+  executable: false
+- id: tr_031
+  file: tr_031.yaml
+  source: Transformer-XL
+  target: Compressive Transformer
   type: A
   inferred: false
-  mapping: partial
-  source_slug: transformer
-  target_slug: alibi
-- id: tr_045
-  file: tr_045.yaml
+  mapping: complete_scoped
+  source_slug: transformer-xl
+  target_slug: compressive-transformer
+  record_status: complete
+  core_mapping: complete_scoped
+  executable: false
+- id: tr_032
+  file: tr_032.yaml
   source: Transformer
-  target: FNet
+  target: Sparse Transformer
   type: A
   inferred: false
-  mapping: partial
+  mapping: complete_scoped
   source_slug: transformer
-  target_slug: fnet
-- id: tr_043
-  file: tr_043.yaml
-  source: Sparse MoE
-  target: Switch Transformer
-  type: C
-  inferred: false
-  mapping: partial
-  source_slug: sparse-moe
-  target_slug: switch-transformer
-- id: tr_040
-  file: tr_040.yaml
-  source: Transformer
-  target: Synthesizer
-  type: A
-  inferred: false
-  mapping: partial
-  source_slug: transformer
-  target_slug: synthesizer
-- id: tr_042
-  file: tr_042.yaml
-  source: Transformer
-  target: Pre-LN
-  type: C
-  inferred: false
-  mapping: partial
-  source_slug: transformer
-  target_slug: pre-ln
-- id: tr_044
-  file: tr_044.yaml
-  source: Transformer
-  target: Switch Transformer
-  type: A
-  inferred: false
-  mapping: partial
-  source_slug: transformer
-  target_slug: switch-transformer
-- id: tr_041
-  file: tr_041.yaml
-  source: LayerNorm
-  target: RMSNorm
-  type: A
-  inferred: false
-  mapping: partial
-  source_slug: layernorm
-  target_slug: rmsnorm
+  target_slug: sparse-transformer
+  record_status: complete
+  core_mapping: complete_scoped
+  executable: false
 - id: tr_033
   file: tr_033.yaml
   source: Transformer
@@ -386,3 +345,503 @@ relations:
   mapping: partial
   source_slug: transformer
   target_slug: reformer
+  record_status: complete
+  core_mapping: complete_scoped
+  executable: false
+- id: tr_034
+  file: tr_034.yaml
+  source: Sparse Transformer
+  target: Longformer
+  type: I
+  inferred: false
+  mapping: partial
+  source_slug: sparse-transformer
+  target_slug: longformer
+  record_status: complete
+  core_mapping: partial
+  executable: false
+- id: tr_035
+  file: tr_035.yaml
+  source: Sparse Transformer
+  target: BigBird
+  type: I
+  inferred: false
+  mapping: partial
+  source_slug: sparse-transformer
+  target_slug: bigbird
+  record_status: complete
+  core_mapping: partial
+  executable: false
+- id: tr_036
+  file: tr_036.yaml
+  source: Transformer
+  target: Linformer
+  type: A
+  inferred: false
+  mapping: complete_scoped
+  source_slug: transformer
+  target_slug: linformer
+  record_status: complete
+  core_mapping: complete_scoped
+  executable: false
+- id: tr_037
+  file: tr_037.yaml
+  source: Transformer
+  target: Linear Transformer
+  type: A
+  inferred: false
+  mapping: complete_scoped
+  source_slug: transformer
+  target_slug: linear-transformer
+  record_status: complete
+  core_mapping: complete_scoped
+  executable: false
+- id: tr_038
+  file: tr_038.yaml
+  source: Transformer
+  target: Performer
+  type: A
+  inferred: false
+  mapping: complete_scoped
+  source_slug: transformer
+  target_slug: performer
+  record_status: complete
+  core_mapping: complete_scoped
+  executable: false
+- id: tr_039
+  file: tr_039.yaml
+  source: Linear Transformer
+  target: Performer
+  type: I
+  inferred: true
+  mapping: complete_scoped
+  source_slug: linear-transformer
+  target_slug: performer
+  record_status: complete
+  core_mapping: complete_scoped
+  executable: false
+- id: tr_040
+  file: tr_040.yaml
+  source: Transformer
+  target: Synthesizer
+  type: A
+  inferred: false
+  mapping: partial
+  source_slug: transformer
+  target_slug: synthesizer
+  record_status: complete
+  core_mapping: complete_scoped
+  executable: false
+- id: tr_041
+  file: tr_041.yaml
+  source: LayerNorm
+  target: RMSNorm
+  type: A
+  inferred: false
+  mapping: partial
+  source_slug: layernorm
+  target_slug: rmsnorm
+  record_status: complete
+  core_mapping: complete_scoped
+  executable: false
+- id: tr_042
+  file: tr_042.yaml
+  source: Transformer
+  target: Pre-LN
+  type: C
+  inferred: false
+  mapping: partial
+  source_slug: transformer
+  target_slug: pre-ln
+  record_status: complete
+  core_mapping: complete_scoped
+  executable: false
+- id: tr_043
+  file: tr_043.yaml
+  source: Sparse MoE
+  target: Switch Transformer
+  type: C
+  inferred: false
+  mapping: partial
+  source_slug: sparse-moe
+  target_slug: switch-transformer
+  record_status: complete
+  core_mapping: complete_scoped
+  executable: false
+- id: tr_044
+  file: tr_044.yaml
+  source: Transformer
+  target: Switch Transformer
+  type: A
+  inferred: false
+  mapping: partial
+  source_slug: transformer
+  target_slug: switch-transformer
+  record_status: complete
+  core_mapping: complete_scoped
+  executable: false
+- id: tr_045
+  file: tr_045.yaml
+  source: Transformer
+  target: FNet
+  type: A
+  inferred: false
+  mapping: partial
+  source_slug: transformer
+  target_slug: fnet
+  record_status: complete
+  core_mapping: complete_scoped
+  executable: false
+- id: tr_046
+  file: tr_046.yaml
+  source: Relative Position
+  target: RoPE
+  type: I
+  inferred: true
+  mapping: partial
+  source_slug: relative-position
+  target_slug: rope
+  record_status: complete
+  core_mapping: complete_scoped
+  executable: false
+- id: tr_047
+  file: tr_047.yaml
+  source: Transformer
+  target: ALiBi
+  type: A
+  inferred: false
+  mapping: partial
+  source_slug: transformer
+  target_slug: alibi
+  record_status: complete
+  core_mapping: complete_scoped
+  executable: false
+- id: tr_048
+  file: tr_048.yaml
+  source: HiPPO
+  target: LSSL
+  type: C
+  inferred: false
+  mapping: partial
+  core_mapping: complete_scoped
+  executable: false
+  source_slug: hippo
+  target_slug: lssl
+  record_status: complete
+- id: tr_049
+  file: tr_049.yaml
+  source: LSSL
+  target: S4
+  type: A
+  inferred: false
+  mapping: complete_scoped
+  source_slug: lssl
+  target_slug: s4
+  record_status: complete
+  core_mapping: complete_scoped
+  executable: false
+- id: tr_050
+  file: tr_050.yaml
+  source: S4
+  target: H3
+  type: C
+  inferred: false
+  mapping: complete_scoped
+  source_slug: s4
+  target_slug: h3
+  record_status: complete
+  core_mapping: complete_scoped
+  executable: false
+- id: tr_051
+  file: tr_051.yaml
+  source: Transformer
+  target: H3
+  type: X
+  inferred: false
+  mapping: partial
+  core_mapping: complete_scoped
+  executable: false
+  source_slug: transformer
+  target_slug: h3
+  record_status: complete
+- id: tr_053
+  file: tr_053.yaml
+  source: S4
+  target: Hyena
+  type: X
+  inferred: true
+  mapping: partial
+  core_mapping: complete_scoped
+  executable: false
+  source_slug: s4
+  target_slug: hyena
+  record_status: complete
+- id: tr_054
+  file: tr_054.yaml
+  source: Transformer
+  target: FlashAttention
+  type: A
+  inferred: false
+  mapping: partial
+  source_slug: transformer
+  target_slug: flashattention
+  record_status: complete
+  core_mapping: partial
+  executable: false
+- id: tr_055
+  file: tr_055.yaml
+  source: Transformer
+  target: RETRO
+  type: C
+  inferred: false
+  mapping: partial
+  core_mapping: complete_scoped
+  executable: false
+  source_slug: transformer
+  target_slug: retro
+  record_status: complete
+- id: tr_056
+  file: tr_056.yaml
+  source: Transformer
+  target: GQA
+  type: A
+  inferred: false
+  mapping: partial
+  source_slug: transformer
+  target_slug: gqa
+  record_status: complete
+  core_mapping: partial
+  executable: false
+- id: tr_057
+  file: tr_057.yaml
+  source: Linear Transformer
+  target: RWKV
+  type: I
+  inferred: true
+  mapping: partial
+  core_mapping: complete_scoped
+  executable: false
+  source_slug: linear-transformer
+  target_slug: rwkv
+  record_status: complete
+- id: tr_058
+  file: tr_058.yaml
+  source: Transformer
+  target: RetNet
+  type: X
+  inferred: false
+  mapping: partial
+  core_mapping: complete_scoped
+  executable: false
+  source_slug: transformer
+  target_slug: retnet
+  record_status: complete
+- id: tr_059
+  file: tr_059.yaml
+  source: Transformer
+  target: RWKV
+  type: X
+  inferred: false
+  mapping: partial
+  core_mapping: complete_scoped
+  executable: false
+  source_slug: transformer
+  target_slug: rwkv
+  record_status: complete
+- id: tr_060
+  file: tr_060.yaml
+  source: Linear Transformer
+  target: RetNet
+  type: I
+  inferred: true
+  mapping: partial
+  core_mapping: complete_scoped
+  executable: false
+  source_slug: linear-transformer
+  target_slug: retnet
+  record_status: complete
+- id: tr_061
+  file: tr_061.yaml
+  source: S4
+  target: Mamba-1
+  type: A
+  inferred: false
+  mapping: complete_scoped
+  source_slug: s4
+  target_slug: mamba
+  record_status: complete
+  core_mapping: complete_scoped
+  executable: false
+- id: tr_062
+  file: tr_062.yaml
+  source: H3
+  target: Mamba
+  type: A
+  inferred: false
+  mapping: partial
+  source_slug: h3
+  target_slug: mamba
+  record_status: complete
+  core_mapping: partial
+  executable: false
+- id: tr_063
+  file: tr_063.yaml
+  source: Mamba
+  target: Mamba-2/SSD
+  type: A
+  inferred: false
+  mapping: partial
+  source_slug: mamba
+  target_slug: mamba2-ssd
+  record_status: complete
+  core_mapping: partial
+  executable: false
+- id: tr_064
+  file: tr_064.yaml
+  source: Mamba
+  target: Jamba
+  type: C
+  inferred: false
+  mapping: partial
+  core_mapping: complete_scoped
+  executable: false
+  source_slug: mamba
+  target_slug: jamba
+  record_status: complete
+- id: tr_065
+  file: tr_065.yaml
+  source: Transformer
+  target: Jamba
+  type: A
+  inferred: false
+  mapping: partial
+  core_mapping: complete_scoped
+  executable: false
+  source_slug: transformer
+  target_slug: jamba
+  record_status: complete
+- id: tr_066
+  file: tr_066.yaml
+  source: Switch Transformer
+  target: Jamba
+  type: C
+  inferred: true
+  mapping: partial
+  core_mapping: complete_scoped
+  executable: false
+  source_slug: switch-transformer
+  target_slug: jamba
+  record_status: complete
+- id: tr_067
+  file: tr_067.yaml
+  source: Mamba
+  target: TTT
+  type: P
+  inferred: false
+  mapping: partial
+  core_mapping: complete_scoped
+  executable: false
+  source_slug: mamba
+  target_slug: ttt
+  record_status: complete
+- id: tr_068
+  file: tr_068.yaml
+  source: Transformer
+  target: TTT
+  type: X
+  inferred: false
+  mapping: partial
+  core_mapping: complete_scoped
+  executable: false
+  source_slug: transformer
+  target_slug: ttt
+  record_status: complete
+- id: tr_069
+  file: tr_069.yaml
+  source: GNMT
+  target: Transformer
+  type: P
+  inferred: false
+  mapping: partial
+  source_slug: gnmt
+  target_slug: transformer
+  record_status: complete
+  core_mapping: partial
+  executable: false
+- id: tr_070
+  file: tr_070.yaml
+  source: E2E Memory Network
+  target: Transformer
+  type: I
+  inferred: false
+  mapping: partial
+  core_mapping: complete_scoped
+  executable: false
+  source_slug: e2e-memory-network
+  target_slug: transformer
+  record_status: complete
+- id: tr_071
+  file: tr_071.yaml
+  source: LSTMN
+  target: Transformer
+  type: I
+  inferred: false
+  mapping: partial
+  core_mapping: complete_scoped
+  executable: false
+  source_slug: lstmn
+  target_slug: transformer
+  record_status: complete
+- id: tr_073
+  file: tr_073.yaml
+  source: LSTM
+  target: RNN Encoder–Decoder / GRU
+  type: I
+  inferred: false
+  mapping: partial
+  core_mapping: complete_scoped
+  executable: false
+  source_slug: lstm
+  target_slug: gru-encoder-decoder
+  record_status: complete
+- id: tr_074
+  file: tr_074.yaml
+  source: Linear Transformer
+  target: H3
+  type: I
+  inferred: false
+  mapping: partial
+  core_mapping: complete_scoped
+  executable: false
+  source_slug: linear-transformer
+  target_slug: h3
+  record_status: complete
+- id: tr_075
+  file: tr_075.yaml
+  source: H3
+  target: Hyena
+  type: I
+  inferred: false
+  mapping: partial
+  core_mapping: complete_scoped
+  executable: false
+  source_slug: h3
+  target_slug: hyena
+  record_status: complete
+- id: tr_076
+  file: tr_076.yaml
+  source: Transformer
+  target: Hyena
+  type: A
+  inferred: false
+  mapping: partial
+  core_mapping: complete_scoped
+  executable: false
+  source_slug: transformer
+  target_slug: hyena
+  record_status: complete
+counts:
+  records: 64
+  complete_scoped: 16
+  partial: 48
+  public_executable: 0

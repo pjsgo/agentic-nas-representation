@@ -1,0 +1,294 @@
+format_version: local_transition_v1
+transition_id: tr_060
+source_architecture: Linear Transformer
+target_architecture: RetNet
+relation_type: I
+inferred: true
+record_status: complete
+mapping_status: partial
+core_mapping_status: complete_scoped
+part_mapping_complete: false
+evidence:
+- source: /mnt/data/beyond_transformer_slides.pdf
+  pages:
+  - 43
+  page_numbering: one_based_PDF
+  label: I? 060
+  direction: Linear Transformer -> RetNet
+  question_mark_present: true
+  verification: direct_embedded_image_view_from_original_pdf
+  pdf_objects:
+    page: 235
+    image: 240
+  correction_proposal: null
+motivation: 선형 attention의 누적 memory 아이디어를 감쇠 retention과 연결한다.
+conditions:
+- 원본 I?를 유지한다. 선택 raw retention에 TorchScale의 mode별 stabilization까지 있다고 가정하지 않는다.
+- 출발 core는 기존 in-place S/Z 계약이고 대상은 명시적 비변이 반환 상태이다. 상태 aliasing까지 보존하는 변환이 아니다.
+expected_effects:
+- 병렬식과 순환식으로 선택 retention core를 표현한다.
+tradeoffs:
+- 부호 있는 score와 decay로 normalization 의미가 바뀌며 동일 출력이나 무손실 압축은 보장되지 않는다.
+changes:
+- before_units:
+  - factors.f_q_phi
+  - factors.f_k_phi
+  - factors.f_outer
+  - factors.f_s_next
+  - factors.f_z_next
+  - factors.f_den_sum
+  - factors.f_den_eps
+  - factors.f_reciprocal
+  - factors.f_read_sum
+  - factors.f_y
+  after_units:
+  - factors.ret_projection
+  - factors.ret_position
+  - factors.ret_decay
+  - factors.ret_core
+  operation: descriptive_correspondence
+  mechanism: positive feature map과 query normalization을 없애고 rotated Q/K, 고정 head별
+    decay, matrix state update와 readout을 사용한다.
+  mapping_status: mapped_scoped
+  state_and_resource_contract: 외부 q/k/v를 받는 ELU+1 recurrent core. 학습된 projection과
+    전체 Transformer block은 없다. S/Z는 기존 계약의 in-place state이다. raw retention, rotated
+    Q/K, key scaling, fixed head decay. gate/head norm/output projection과 공식 경로별 scaling
+    및 full MSR는 없다.
+  cardinality: many_to_many_semantic_correspondence_not_tensor_or_parameter_identity
+preserve:
+- outer-product 누적과 query에 의한 상태 readout
+scope:
+  source_yaml: ../architectures/linear-transformer/representation.yaml
+  target_yaml: ../architectures/retnet/representation.yaml
+  source_yaml_status: available
+  target_yaml_status: available
+  path_base: relation_file_directory
+  included:
+  - descriptive_relationship
+  - available_core_component_correspondence
+  excluded:
+  - whole_model_conversion
+  - numerical_execution
+  - training
+  - performance_reproduction
+  - code_transformer
+  - weight_or_state_migration
+  mapping_boundary: state update 및 readout 대응; full gated MSR와 chunkwise 최적화 제외
+  source_boundary: 외부 q/k/v를 받는 ELU+1 recurrent core. 학습된 projection과 전체 Transformer
+    block은 없다. S/Z는 기존 계약의 in-place state이다.
+  target_boundary: raw retention, rotated Q/K, key scaling, fixed head decay. gate/head
+    norm/output projection과 공식 경로별 scaling 및 full MSR는 없다.
+  declared_scope_snapshot:
+    source: 'Arithmetic-only scoped decomposition: relu(x)+(exp(-relu(-x))-1), then
+      original +1; all operations/calls already in v0.3. Numerical tolerance tested
+      separately; no bitwise/source Module identity claim. Not full-source Common
+      Schema PASS.'
+    target:
+      included:
+      - multi_scale_fixed_head_decay
+      - independent_projections
+      - real_position_rotation
+      - key_scaling
+      - causal_retention
+      - parallel_sum
+      - recurrent_matrix_state
+      - state_continuation
+      excluded:
+      - gating
+      - head_normalization
+      - output_projection
+      - full_MSR
+      - residual
+      - FFN
+      - full_RetNet
+      - chunkwise_optimization
+      - official_path_specific_scaling
+      - training
+      - gradients
+      - mixed_precision
+  core_mapping_definition: complete_scoped는 선택 core의 설명 대응에 실제 ID가 연결된 상태이다. 전체 모델,
+    수치 동등성 또는 실행 변환 완료가 아니다.
+  component_coverage:
+    source:
+      mapped_units:
+      - factors.f_q_phi
+      - factors.f_k_phi
+      - factors.f_outer
+      - factors.f_s_next
+      - factors.f_z_next
+      - factors.f_den_sum
+      - factors.f_den_eps
+      - factors.f_reciprocal
+      - factors.f_read_sum
+      - factors.f_y
+      unmapped_declared_units:
+      - factors.body
+      - factors.e_exp
+      - factors.e_join
+      - factors.e_minimum
+      - factors.e_minus_one
+      - factors.e_neg
+      - factors.e_negative_magnitude
+      - factors.e_one
+      - factors.e_positive
+      - factors.elementwise_branch
+      - factors.entry
+      - factors.f_den_product
+      - factors.f_eps
+      - factors.f_k_elu
+      - factors.f_key_expand
+      - factors.f_one
+      - factors.f_q_elu
+      - factors.f_query_expand
+      - factors.f_read_product
+      - factors.f_scale_expand
+      - factors.f_value_expand
+      - factors.iterate
+      unmapped_reason: 선택 관계 core 밖의 부품 또는 컨테이너이며 자동 대응을 추가하지 않는다.
+    target:
+      mapped_units:
+      - factors.ret_projection
+      - factors.ret_position
+      - factors.ret_decay
+      - factors.ret_core
+      unmapped_declared_units: []
+      unmapped_reason: 선택 관계 core 밖의 부품 또는 컨테이너이며 자동 대응을 추가하지 않는다.
+conceptual_correspondence:
+- source_concept: Linear Transformer
+  target_concept: RetNet
+  description: state update 및 readout 대응; full gated MSR와 chunkwise 최적화 제외
+  mapping_status: mapped_within_selected_core
+- description: 관계의 전체 논문 구조 중 위 source_boundary와 target_boundary에서 제외한 부분
+  part_ids: null
+  mapping_status: pending_outside_declared_restoration_scope
+  reason: 미선언 부품 ID를 만들지 않는다. 추가 복원은 이 세션 범위 밖이다.
+pending_components:
+- side: source
+  part_ids: null
+  status: pending
+  concepts:
+  - 학습 projection과 전체 Transformer block
+  reason: 선택 복원 범위 밖이다. ID는 null로 유지하며 이 세션에서 추가 복원하지 않는다.
+- side: target
+  part_ids: null
+  status: pending
+  concepts:
+  - gating, head normalization, output projection 및 full MSR
+  - FFN 및 전체 RetNet
+  - chunkwise 최적화 및 공식 mode별 scaling
+  reason: 선택 복원 범위 밖이다. ID는 null로 유지하며 이 세션에서 추가 복원하지 않는다.
+source_records:
+- side: source
+  architecture: Linear Transformer
+  paper:
+    url: https://proceedings.mlr.press/v119/katharopoulos20a.html
+    section: sections 3.2-3.4
+  verification: existing_primary_source_review_reused_without_execution
+  metadata_path: /workspace/resnet_reconstruction/parallel_coverage/20261105/integration/20261116_genealogy_phase4_integration/distribution/personal/relations/tr_037.yaml
+  inherited_source_record:
+    authority: read_only_existing_provenance
+    details:
+      paper:
+        title: 'Transformers are RNNs: Fast Autoregressive Transformers with Linear
+          Attention'
+        authors: Katharopoulos et al.
+        version: PMLR 119, 2020, pages 5156-5165
+        url: https://proceedings.mlr.press/v119/katharopoulos20a.html
+        pdf: https://proceedings.mlr.press/v119/katharopoulos20a/katharopoulos20a.pdf
+        sections:
+        - 3.2
+        - 3.3
+        - 3.4
+        reviewed: publication page and available PDF text; exact chosen numerical
+          convention grounded in pinned code below
+      implementation:
+        repository: https://github.com/idiap/fast-transformers
+        commit: 2ad36b97e64cb93862937bd21fcc9568d989561f
+        version: 0.4.0
+        license: MIT
+        local_provenance: parallel_coverage/20261105/linear_transformer/source/provenance.json
+        file: fast_transformers/recurrent/attention/self_attention/linear_attention.py
+        symbol: RecurrentLinearAttention.forward
+        feature_map_file: fast_transformers/feature_maps/base.py
+        reviewed: local pinned source read as text; not imported or executed
+        exact_convention: ELU+1; key-value outer product; key-sum carry; updated-state
+          query read; epsilon 1e-6 outside dot product
+        inference_contract: supplied state tensors updated in place when grad_fn absent;
+          same tensors returned
+        implemented_simplifications: sequence wrapper; no event dispatcher or memory
+          alias; no training branch
+  metadata_ownership: read_only_producer_or_baseline_record; copied source metadata
+    is not a new execution claim
+- side: target
+  architecture: RetNet
+  paper:
+    url: https://arxiv.org/html/2307.08621v4
+    section: sections 2.1-2.4, equations 5-8
+  verification: primary_paper_and_selected_source_text_read; other metadata reused
+    from producer
+  metadata_path: /workspace/resnet_reconstruction/parallel_coverage/20261105/linear_transformer/experiments/20261116_genealogy_phase5_retnet_rwkv/retnet/sources.yaml
+  implementation:
+    repository: https://github.com/microsoft/torchscale
+    commit: 4d1e0e82e5adf86dd424f1463192635b73fc8efc
+    files:
+    - path: torchscale/component/multiscale_retention.py
+      url: https://github.com/microsoft/torchscale/blob/4d1e0e82e5adf86dd424f1463192635b73fc8efc/torchscale/component/multiscale_retention.py
+      functions:
+      - rotate_every_two
+      - theta_shift
+      - MultiScaleRetention.__init__
+      - MultiScaleRetention.parallel_forward
+      - MultiScaleRetention.recurrent_forward
+      - MultiScaleRetention.forward
+      inspected: Independent bias-free projections, key_dim^-0.5, real pair rotation,
+        separate head readout, path-specific scaling, gating and head RMS normalization
+    - path: torchscale/architecture/retnet.py
+      url: https://github.com/microsoft/torchscale/blob/4d1e0e82e5adf86dd424f1463192635b73fc8efc/torchscale/architecture/retnet.py
+      functions:
+      - RetNetRelPos.__init__
+      - RetNetRelPos.forward
+      inspected: linspace frequency endpoints, fixed head decay, absolute recurrent
+        position and parallel decay-mask normalization
+    - path: torchscale/component/rms_norm.py
+      url: https://github.com/microsoft/torchscale/blob/4d1e0e82e5adf86dd424f1463192635b73fc8efc/torchscale/component/rms_norm.py
+      functions:
+      - RMSNorm._norm
+      - RMSNorm.forward
+      inspected: Mean square plus epsilon inside reciprocal square root, non-affine
+        per-head use in retention, float32 internal cast
+  source_text_paths:
+  - /workspace/resnet_reconstruction/parallel_coverage/20261105/linear_transformer/experiments/20261116_genealogy_phase5_retnet_rwkv/retnet/evidence/torchscale__component__multiscale_retention.py
+  G_direct_review:
+  - MultiScaleRetention.__init__
+  - parallel_forward
+  - recurrent_forward
+  metadata_ownership: read_only_producer_or_baseline_record; copied source metadata
+    is not a new execution claim
+application:
+  executable: false
+  command: null
+  patch_or_script: null
+validation:
+  profile: direction_type_inference_sources_paths_parts_declared_scope_only
+  status: STATIC_DIRECTION_TYPE_INFERENCE_SOURCES_PATHS_IDS_SCOPE_CHECKED
+  numerical_tests: NOT_RUN_BY_DESIGN
+  prior_architecture_results: reused_without_revalidation
+  claim_boundary: 관계의 정적 확인은 실현기 또는 LLM 복원 성공 인증이 아니다.
+  reference_check:
+    source:
+      path: ../architectures/linear-transformer/representation.yaml
+      unique_ids: 10
+      declared_scope_checked: true
+    target:
+      path: ../architectures/retnet/representation.yaml
+      unique_ids: 4
+      declared_scope_checked: true
+unresolved:
+- 전체 mapping_status=partial; 범위 밖의 개념 대응은 실제 선언된 YAML이 추가되기 전까지 pending이다.
+specification_proposal:
+  required: false
+  reason: 기존 local_transition_v1 설명 관계 형식 사용. 공통 specs와 registry 수정 없음.
+provenance:
+  research_source: integration/20261116_genealogy_phase5_relations/tr_060.yaml
+  publication_changes: Relative endpoint paths only; source IDs, types, inferred flags
+    and scoped boundaries preserved

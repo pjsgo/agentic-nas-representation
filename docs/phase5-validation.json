@@ -1,0 +1,40 @@
+{
+  "status": "PASS",
+  "kind": "SEMANTIC_ENDPOINT_PART_CATALOG_AND_LINK_AUDIT",
+  "nodes": 45,
+  "relations": 64,
+  "resolved_part_references": 678,
+  "mapping_counts": {
+    "partial": 48,
+    "complete_scoped": 16
+  },
+  "inferred_relations": [
+    "tr_005",
+    "tr_039",
+    "tr_046",
+    "tr_053",
+    "tr_057",
+    "tr_060",
+    "tr_066"
+  ],
+  "negative_controls": [
+    "unknown part rejected",
+    "catalog inferred mismatch rejected"
+  ],
+  "errors": [],
+  "integrity_checks": "SKIPPED",
+  "numerical_reruns": 0,
+  "api_calls": 0,
+  "numerical_acceptance": {
+    "targets": 10,
+    "representative_cases": 30,
+    "status": "PASS_WITHIN_DECLARED_SCOPE",
+    "candidate_origin_counts": {
+      "unmodified": 2,
+      "agent_repaired": 8
+    },
+    "fixture_reference_tolerance_changes": "NONE",
+    "baseline_35_numerical_reruns": 0,
+    "new_api_calls": 0
+  }
+}

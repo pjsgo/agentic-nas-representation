@@ -1,0 +1,70 @@
+representation_version: local_equational_graph_v1
+operator_profile: inline_equations_below
+reading_rules: ../../specs/representation/reading-rules-v1.md
+architecture: memory-network
+architecture_entry: reconstructed.py:MemoryNetwork
+scope:
+  variant: Section 3.1 basic BoW MemNN, exactly two discrete supports and single-word ranking
+  included: [supplied_count_features, append_fact_storage, two_argmax_supports, role_specific_embeddings, answer_ranking]
+  excluded: [tokenization, question_storage, segmentation, temporal_features, hashing, unknown_words, exact_match_features, RNN_response, training, margin_loss, gradients]
+  boundary: Input sentences are already vocabulary count vectors. Only facts are appended; query is supplied to O/R against this explicit fact bank. No claim of the entire general I/G/O/R framework.
+interface:
+  constructor: 'MemoryNetwork(vocab_size: int, embedding_dim: int); subclass torch.nn.Module'
+  forward: 'forward(memory, facts, query) -> dict'
+  inputs:
+    memory: 'CPU float64 [N,V], old fact count vectors; N>=0'
+    facts: 'CPU float64 [F,V], new facts in append order; F>=0, N+F>=1'
+    query: 'CPU float64 [V], question count vector'
+  constraints: '1<=V,D<=32; 1<=N+F<=16; finite nonnegative integer counts <=4; finite weights with abs<=2; no batching; invalid-input diagnostics excluded'
+  returns:
+    memory: 'float64 [N+F,V], appended fact bank'
+    support_scores: 'float64 [2,N+F], scores before each argmax'
+    support_indices: 'int64 [2], zero-based; repeated index allowed'
+    response_features: 'float64 [3*V]'
+    answer_scores: 'float64 [V], unnormalized ranking scores'
+    answer: 'int64 scalar, zero-based vocabulary index'
+parameters:
+  UO: 'nn.Parameter float64 [D,3*V], support scorer'
+  UR: 'nn.Parameter float64 [D,3*V], response scorer, distinct storage from UO'
+  initialization: 'zeros; caller supplies all weights via state_dict before evaluation; no RNG'
+  sharing: 'UO reused in both hops and both sides of its bilinear score; UR reused on both sides of response score. No UO/UR sharing.'
+state:
+  state_dict: [UO, UR]
+  buffers: []
+  persistent_memory: none
+  updates: 'All inputs and parameters unchanged. Returned memory is newly allocated; caller passes it to another call if desired.'
+notation:
+  roles: 'In [3*V] features, blocks 0,1,2 are query, selected support sum, candidate respectively.'
+  argmax: 'Choose lowest index on ties. No exclusion of the first support in the second selection.'
+factors:
+  memnn_store:
+    operator: append_rows
+    equation: 'M=concat(memory,facts,axis=0). Input feature map is identity on supplied counts; old rows are unchanged.'
+  memnn_first_support:
+    operator: role_bilinear_argmax
+    equation: 'x1=concat(query,zeros[V],zeros[V]); y_j=concat(zeros[V],zeros[V],M[j]). s1[j]=(UO@x1) dot (UO@y_j); i1=argmax_j s1[j].'
+  memnn_second_support:
+    operator: conditional_role_bilinear_argmax
+    equation: 'x2=concat(query,M[i1],zeros[V]); s2[j]=(UO@x2) dot (UO@y_j); i2=argmax_j s2[j]. Both searches cover every stored fact.'
+  memnn_response:
+    operator: role_bilinear_word_ranking
+    equation: 'r=concat(query,M[i1]+M[i2],zeros[V]); y_w=concat(zeros[V],zeros[V],one_hot(w,V)). answer_scores[w]=(UR@r) dot (UR@y_w); answer=argmax_w answer_scores[w]. response_features=r; support_scores=stack(s1,s2); support_indices=[i1,i2]. No softmax anywhere.'
+contains:
+  memnn_core: [memnn_store, memnn_first_support, memnn_second_support, memnn_response]
+dataflow:
+  - [memory, memnn_store.memory]
+  - [facts, memnn_store.facts]
+  - [memnn_store.M, memnn_first_support.M]
+  - [query, memnn_first_support.query]
+  - [UO, memnn_first_support.UO]
+  - [memnn_store.M, memnn_second_support.M]
+  - [query, memnn_second_support.query]
+  - [UO, memnn_second_support.UO]
+  - [memnn_first_support.i1, memnn_second_support.i1]
+  - [memnn_first_support.i1, memnn_response.i1]
+  - [memnn_second_support.i2, memnn_response.i2]
+  - [memnn_store.M, memnn_response.M]
+  - [query, memnn_response.query]
+  - [UR, memnn_response.UR]
+training_boundary: 'Paper supervises support selections and response with margin ranking losses. This artifact only evaluates fixed-weight inference without support labels.'
+specification_note: Inline equations are normative; local equational format, not universal primitive-schema certification.

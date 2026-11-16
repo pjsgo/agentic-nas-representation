@@ -53,3 +53,22 @@
 - [synthesizer](synthesizer/README.md): LLM 생성 원본을 계산 수정 없이 독립 참조와 비교하여 통과했습니다.
 
 - [fnet](fnet/README.md): LLM 생성 원본을 계산 수정 없이 독립 참조와 비교하여 통과했습니다.
+
+<!-- phase5-completion -->
+
+## 5차 통합
+
+45개 아키텍처·64개 관계. 신규 10개 배포 코드의 독립 참조 대표 사례 30개 통과. 생성 원문 통과 2개·수정본 통과 8개.
+
+[검증과 한계](../docs/phase5-readiness.md) · [전체 관계도](../docs/genealogy-map.md)
+
+- [hippo](hippo/README.md)
+- [hyena](hyena/README.md)
+- [retnet](retnet/README.md)
+- [rwkv](rwkv/README.md)
+- [memory-network](memory-network/README.md)
+- [e2e-memory-network](e2e-memory-network/README.md)
+- [lstmn](lstmn/README.md)
+- [retro](retro/README.md)
+- [jamba](jamba/README.md)
+- [ttt](ttt/README.md)

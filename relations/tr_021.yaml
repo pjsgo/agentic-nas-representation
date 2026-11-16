@@ -1,0 +1,85 @@
+format_version: local_transition_v1
+transition_id: tr_021
+source_architecture: Bahdanau Attention
+target_architecture: Transformer
+relation_type: I
+inferred: false
+record_status: complete
+mapping_status: partial
+core_mapping_status: complete_scoped
+part_mapping_complete: false
+evidence:
+- source: User-supplied beyond_transformer_slides.pdf (not redistributed)
+  page: 38
+  page_numbering: one_based_PDF
+  label: I 021
+  verification: Direct original embedded image review during phase5 integration; endpoint,
+    direction, type and question mark inspected
+source_records:
+- side: source
+  source_metadata: ../architectures/bahdanau-attention/sources.yaml
+  provenance: ../architectures/bahdanau-attention/provenance.json
+  authority: Existing scoped node evidence; diagram supplies relation attribution,
+    not a new historical proof
+- side: target
+  source_metadata: ../architectures/transformer/provenance.json
+  provenance: ../architectures/transformer/provenance.json
+  authority: Existing scoped node evidence; diagram supplies relation attribution,
+    not a new historical proof
+  source_metadata_note: Legacy node retains source evidence through provenance; no
+    separate sources.yaml published.
+scope:
+  source_yaml: ../architectures/bahdanau-attention/representation.yaml
+  target_yaml: ../architectures/transformer/representation.yaml
+  path_base: relation_file_directory
+  included:
+  - descriptive_relationship
+  - available_core_component_correspondence
+  excluded:
+  - whole_model_conversion
+  - numerical_equivalence_between_endpoints
+  - weight_or_state_migration
+  - training
+  - performance
+  mapping_boundary: 제공된 encoder memory와 이전 decoder query를 받는 GRU 경계는 multihead self-attention
+    경계와 다르다. 동일 함수나 직접 코드 변환을 주장하지 않는다.
+changes:
+- before_units:
+  - additive_attention/energy
+  - additive_attention/weights
+  - additive_attention/context
+  after_units:
+  - score_a
+  - prob_a
+  - mix_a
+  operation: descriptive_correspondence
+  mechanism: query에 따른 score, key축 정규화, value 가중합의 아이디어를 additive cross-attention에서
+    scaled dot-product self-attention으로 대응한다.
+  mapping_status: mapped_scoped
+  cardinality: semantic_many_to_many_not_parameter_identity
+  state_and_resource_contract: 제공된 encoder memory와 이전 decoder query를 받는 GRU 경계는 multihead
+    self-attention 경계와 다르다. 동일 함수나 직접 코드 변환을 주장하지 않는다.
+preserve:
+- 관련 계산 개념의 대응만 보존; 파라미터·출력 동일성은 요구하지 않음
+conditions:
+- 제공된 encoder memory와 이전 decoder query를 받는 GRU 경계는 multihead self-attention 경계와 다르다.
+  동일 함수나 직접 코드 변환을 주장하지 않는다.
+expected_effects:
+- 계보 설명과 후속 범위 결정에 이용 가능; 효과의 실험적 증명은 별도
+tradeoffs:
+- 범위가 다른 endpoint를 전체 모델 변환으로 해석할 수 없음
+unresolved:
+- 제공된 encoder memory와 이전 decoder query를 받는 GRU 경계는 multihead self-attention 경계와 다르다.
+  동일 함수나 직접 코드 변환을 주장하지 않는다.
+application:
+  executable: false
+  command: null
+  patch_or_script: null
+  availability: descriptive_publication
+validation:
+  status: STATIC_MAPPING_REVIEWED
+  claim_boundary: Source direction and declared part references only; no new numerical
+    transformation
+provenance:
+  origin: Integration completion of seven owner-inventoried omissions
+  historical_source: G phase5 existing_node_omissions; directly rechecked images

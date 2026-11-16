@@ -1,0 +1,277 @@
+format_version: local_transition_v1
+transition_id: tr_068
+source_architecture: Transformer
+target_architecture: TTT
+relation_type: X
+inferred: false
+record_status: complete
+mapping_status: partial
+core_mapping_status: complete_scoped
+part_mapping_complete: false
+evidence:
+- source: /mnt/data/beyond_transformer_slides.pdf
+  pages:
+  - 43
+  page_numbering: one_based_PDF
+  label: X 068
+  direction: Transformer -> TTT
+  question_mark_present: false
+  verification: direct_embedded_image_view_from_original_pdf
+  pdf_objects:
+    page: 235
+    image: 240
+  correction_proposal: null
+motivation: 성장하는 KV cache 대신 context를 학습기 state로 압축하는 대안을 비교한다.
+conditions:
+- 원본 X 관계이며 일반 Transformer attention과 모든 TTT variant가 동등하다는 주장이 아니다.
+- 실제 대상은 single-head TTT-Linear이고 T%chunk_size=0인 완전 chunk만 허용한다. chunk 시작 W/b에서 gradient를
+  계산하며 prefix별 갱신 뒤 query를 읽는다.
+- TTT의 inner update는 설명 대상 계산이다. 이 관계 세션에서는 그 수치 계산이나 학습을 실행하지 않았다.
+expected_effects:
+- 고정된 learner 차원에서 context 길이에 독립적인 state 크기를 갖는다.
+tradeoffs:
+- 압축 손실, inner update 비용과 병렬 mini-batch 구현 제약이 남는다.
+changes:
+- before_units:
+  - factors.project_a
+  - factors.scale_q
+  - factors.score_a
+  - factors.apply_mask
+  - factors.prob_a
+  - factors.mix_a
+  - factors.project_b
+  after_units:
+  - factors.views
+  - factors.rates
+  - factors.chunk_scan
+  - factors.training_loss
+  - factors.inner_gradient
+  - factors.prefix_update
+  - factors.prediction
+  operation: descriptive_comparison
+  mechanism: attention의 append-and-read KV memory를 key/value 기반 self-supervised update와
+    query 기반 learner readout으로 바꾼다.
+  mapping_status: mapped_scoped
+  state_and_resource_contract: 단일 eval encoder block. 전체 encoder-decoder, token embedding과
+    autoregressive decoding cache가 없다. single-head TTT-Linear residual LN learner와
+    learned views, whole-chunk gradients 및 causal prefix update. TTT-MLP, full wrapper,
+    RoPE, outer training과 partial-chunk cache는 없다.
+  cardinality: many_to_many_semantic_correspondence_not_tensor_or_parameter_identity
+preserve:
+- 현재 입력으로 과거 정보를 조회하는 sequence layer 역할
+scope:
+  source_yaml: ../architectures/transformer/representation.yaml
+  target_yaml: ../architectures/ttt/representation.yaml
+  source_yaml_status: available
+  target_yaml_status: available
+  path_base: relation_file_directory
+  included:
+  - descriptive_relationship
+  - available_core_component_correspondence
+  excluded:
+  - whole_model_conversion
+  - numerical_execution
+  - training
+  - performance_reproduction
+  - code_transformer
+  - weight_or_state_migration
+  mapping_boundary: attention과 선택 TTT learner core 비교; 전체 TTT backbone 및 training
+    제외
+  source_boundary: 단일 eval encoder block. 전체 encoder-decoder, token embedding과 autoregressive
+    decoding cache가 없다.
+  target_boundary: single-head TTT-Linear residual LN learner와 learned views, whole-chunk
+    gradients 및 causal prefix update. TTT-MLP, full wrapper, RoPE, outer training과
+    partial-chunk cache는 없다.
+  declared_scope_snapshot:
+    source: One eval functional block; positive B,T; fixed feature/head/hidden dimensions.
+      Only explicit boolean exclusion mask. Parameters fixture-supplied. Original
+      Module hierarchy, initialization and training are outside scope.
+    target:
+      included:
+      - single_head_TTT_Linear_inner_learner
+      - learned_view_projections
+      - residual_LN_learner
+      - input_dependent_learning_rate
+      - frozen_chunk_gradients
+      - causal_prefix_updates
+      - learned_initial_state
+      - learned_token_scaling
+      - chunk_boundary_continuation
+      excluded:
+      - TTT_MLP
+      - full_language_model
+      - outer_training
+      - outer_gradients
+      - backbone_residual_FFN
+      - RoPE
+      - pre_convolution
+      - outer_post_norm
+      - output_projection
+      - gating
+      - multi_head_wrapper
+      - partial_chunk_cache
+      - fused_kernels
+      - mixed_precision
+      boundary_note: The official inner ttt method consumes already prepared views.
+        This scope supplies simple unrotated learned views following paper sections
+        2.3 and 2.7, and preserves the official inner learner update. It is not the
+        complete TTTBase.forward wrapper or a checkpoint-compatible block.
+  core_mapping_definition: complete_scoped는 선택 core의 설명 대응에 실제 ID가 연결된 상태이다. 전체 모델,
+    수치 동등성 또는 실행 변환 완료가 아니다.
+  component_coverage:
+    source:
+      mapped_units:
+      - factors.project_a
+      - factors.scale_q
+      - factors.score_a
+      - factors.apply_mask
+      - factors.prob_a
+      - factors.mix_a
+      - factors.project_b
+      unmapped_declared_units:
+      - factors.activate_a
+      - factors.contract_a
+      - factors.expand_a
+      - factors.join_a
+      - factors.mask_shape_a
+      - factors.mask_shape_b
+      - factors.merge_a
+      - factors.merge_b
+      - factors.normalize_a
+      - factors.normalize_b
+      - factors.order_k
+      - factors.order_mix
+      - factors.order_q
+      - factors.order_v
+      - factors.partition_a
+      - factors.scale_value
+      - factors.shape_k
+      - factors.shape_q
+      - factors.shape_v
+      - factors.stage_a
+      - factors.stage_b
+      - factors.turn_k
+      - factors.unit
+      unmapped_reason: 선택 관계 core 밖의 부품 또는 컨테이너이며 자동 대응을 추가하지 않는다.
+    target:
+      mapped_units:
+      - factors.views
+      - factors.rates
+      - factors.chunk_scan
+      - factors.training_loss
+      - factors.inner_gradient
+      - factors.prefix_update
+      - factors.prediction
+      unmapped_declared_units: []
+      unmapped_reason: 선택 관계 core 밖의 부품 또는 컨테이너이며 자동 대응을 추가하지 않는다.
+conceptual_correspondence:
+- source_concept: Transformer
+  target_concept: TTT
+  description: attention과 선택 TTT learner core 비교; 전체 TTT backbone 및 training 제외
+  mapping_status: mapped_within_selected_core
+- description: 관계의 전체 논문 구조 중 위 source_boundary와 target_boundary에서 제외한 부분
+  part_ids: null
+  mapping_status: pending_outside_declared_restoration_scope
+  reason: 미선언 부품 ID를 만들지 않는다. 추가 복원은 이 세션 범위 밖이다.
+pending_components:
+- side: source
+  part_ids: null
+  status: pending
+  concepts:
+  - 전체 encoder-decoder stack
+  - embedding 및 positional input
+  - autoregressive KV cache
+  reason: 선택 복원 범위 밖이다. ID는 null로 유지하며 이 세션에서 추가 복원하지 않는다.
+- side: target
+  part_ids: null
+  status: pending
+  concepts:
+  - TTT-MLP
+  - multihead 및 RoPE/pre-convolution/outer norm/gating/output projection wrapper
+  - partial-chunk cache
+  - 전체 language model
+  reason: 선택 복원 범위 밖이다. ID는 null로 유지하며 이 세션에서 추가 복원하지 않는다.
+source_records:
+- side: source
+  architecture: Transformer
+  paper:
+    url: https://arxiv.org/html/1706.03762v7
+    section: sections 2, 3.2, 3.3
+  verification: existing_primary_source_review_reused_without_execution
+  metadata_path: /workspace/resnet_reconstruction/parallel_coverage/20261105/integration/20261116_genealogy_phase4_integration/distribution/personal/relations/tr_040.yaml
+  inherited_source_record:
+    side: source
+    paper: https://arxiv.org/html/1706.03762v7
+    paper_version: 1706.03762v7
+    section: 3.2, 3.5
+    implementation:
+      repository: https://github.com/tensorflow/tensor2tensor
+      version: v1.15.7
+      url: https://github.com/tensorflow/tensor2tensor/blob/v1.15.7/tensor2tensor/layers/common_attention.py
+      file: tensor2tensor/layers/common_attention.py
+      functions:
+      - multihead_attention
+      - dot_product_attention
+      authority: original_authors_official_repository; later release, not exact 2017
+        snapshot
+      verification: phase3_source_review_reused_without_execution
+  metadata_ownership: read_only_producer_or_baseline_record; copied source metadata
+    is not a new execution claim
+- side: target
+  architecture: TTT
+  paper:
+    url: https://arxiv.org/html/2407.04620v1
+    section: sections 2.1-2.4, 2.7, Appendix A
+  verification: primary_paper_and_selected_source_text_read; other metadata reused
+    from producer
+  metadata_path: /workspace/resnet_reconstruction/parallel_coverage/20261105/s4/experiments/20261116_genealogy_phase5_jamba_ttt/ttt/sources.yaml
+  implementation:
+    official: true
+    repository: https://github.com/test-time-training/ttt-lm-pytorch
+    commit: cd831db10c8c9a0f6340f02da5613316a8a92b67
+    url: https://github.com/test-time-training/ttt-lm-pytorch/blob/cd831db10c8c9a0f6340f02da5613316a8a92b67/ttt.py
+    file: ttt.py
+    functions:
+    - TTTBase.__init__
+    - TTTBase.get_eta
+    - TTTBase._init_qkvo_proj
+    - TTTLinear.__init__
+    - TTTLinear.ttt
+    - ln_fwd
+    - ln_fused_l2_bwd
+    acquisition: Pinned source_modeling.py retrieved for reading only. No official
+      module imported or executed. Original paper directly links this official repository.
+  source_text_paths:
+  - /workspace/resnet_reconstruction/parallel_coverage/20261105/s4/experiments/20261116_genealogy_phase5_jamba_ttt/ttt/source_modeling.py
+  G_direct_review:
+  - TTTLinear.ttt
+  metadata_ownership: read_only_producer_or_baseline_record; copied source metadata
+    is not a new execution claim
+application:
+  executable: false
+  command: null
+  patch_or_script: null
+validation:
+  profile: direction_type_inference_sources_paths_parts_declared_scope_only
+  status: STATIC_DIRECTION_TYPE_INFERENCE_SOURCES_PATHS_IDS_SCOPE_CHECKED
+  numerical_tests: NOT_RUN_BY_DESIGN
+  prior_architecture_results: reused_without_revalidation
+  claim_boundary: 관계의 정적 확인은 실현기 또는 LLM 복원 성공 인증이 아니다.
+  reference_check:
+    source:
+      path: ../architectures/transformer/representation.yaml
+      unique_ids: 7
+      declared_scope_checked: true
+    target:
+      path: ../architectures/ttt/representation.yaml
+      unique_ids: 7
+      declared_scope_checked: true
+unresolved:
+- 전체 mapping_status=partial; 범위 밖의 개념 대응은 실제 선언된 YAML이 추가되기 전까지 pending이다.
+specification_proposal:
+  required: false
+  reason: 기존 local_transition_v1 설명 관계 형식 사용. 공통 specs와 registry 수정 없음.
+provenance:
+  research_source: integration/20261116_genealogy_phase5_relations/tr_068.yaml
+  publication_changes: Relative endpoint paths only; source IDs, types, inferred flags
+    and scoped boundaries preserved

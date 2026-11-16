@@ -1,0 +1,114 @@
+architecture: rwkv-v4
+version_decision:
+  selected: Original 2023 RWKV scalar per-channel WKV, RWKV-v4 family
+  reasoning: Slide 43 labels RWKV as 2023 without a numbered variant. The original
+    paper's time-mixing equations and Appendix D match the official RWKV-v4 SA and
+    plain RWKV-v4neo RWKV_TimeMix branch.
+  not_selected:
+  - RWKV_TimeMix_RWKV5_Preview
+  - RWKV_TimeMix_RWKV5
+  - experimental_a_attention_branch
+  - RWKV_v6
+  - RWKV_v7
+  limitation: Slide alone cannot identify a code revision. Version fixed by the paper's
+    scalar WKV and matching versioned implementation directories, not by the current
+    repository default model.
+paper:
+  url: https://arxiv.org/html/2305.13048v2
+  version: arXiv:2305.13048v2, 2023-12-11; original submission 2023-05-22
+  inspected: Section 3.1 equations 11-13 and 16-17; Appendix D equations 19-28
+  role: Time interpolation, explicit exponential weighted history, receptance gating,
+    stable recurrent state interpretation
+slides:
+  path: /mnt/data/beyond_transformer_slides.pdf
+  page: 43
+  evidence: ../slide_43_0.png
+  inspection: Original embedded genealogy image visually read; RWKV node dated 2023
+  limitation: No numeric version or mixer equations on this slide
+code:
+  repository: https://github.com/BlinkDL/RWKV-LM
+  commit: 2eebb381a6160837ac45896c60d6963ef3cda929
+  files:
+  - path: RWKV-v4neo/src/model.py
+    url: https://github.com/BlinkDL/RWKV-LM/blob/2eebb381a6160837ac45896c60d6963ef3cda929/RWKV-v4neo/src/model.py
+    functions:
+    - RWKV_TimeMix.__init__
+    - RWKV_TimeMix.jit_func
+    - RWKV_TimeMix.forward
+    - WKV.forward
+    branch: Plain RWKV_TimeMix with empty RWKV_MY_TESTING; no experimental attention
+      or v5 class
+    inspected: Three independent interpolation vectors, four bias-free linear maps,
+      sigmoid receptance, raw decay transformed to -exp(raw)
+  - path: RWKV-v4neo/cuda/wkv_cuda.cu
+    url: https://github.com/BlinkDL/RWKV-LM/blob/2eebb381a6160837ac45896c60d6963ef3cda929/RWKV-v4neo/cuda/wkv_cuda.cu
+    functions:
+    - kernel_forward
+    inspected: Current bonus only during read, decayed old state only during update,
+      aa/bb/pp stabilization
+  - path: RWKV-v4/src/model_run.py
+    url: https://github.com/BlinkDL/RWKV-LM/blob/2eebb381a6160837ac45896c60d6963ef3cda929/RWKV-v4/src/model_run.py
+    functions:
+    - RWKV_RNN.__init__
+    - RWKV_RNN.SA
+    - RWKV_RNN.clear
+    - RWKV_TimeMix.forward
+    inspected: Decay preprocessing, previous-input state, explicit aa/bb/pp recurrent
+      update and output projection
+mapping:
+  rwkv_shift: Paper equations 11-13 and RWKV_TimeMix.jit_func
+  rwkv_project: Same equations; WKV.forward converts raw trainable decay to negative
+    exponential
+  rwkv_wkv: Paper equation 16 and Appendix D; kernel_forward and RWKV_RNN.SA
+  rwkv_output: Paper equation 17 and RWKV_TimeMix.forward
+state_contract:
+  last_x: Previous time-mixer input, not previous output or channel-mixer input
+  a_b: Scaled numerator and denominator; logical unscaled values are a*exp(p), b*exp(p),
+    never materialized
+  p: Common log scale selected by maximum; update includes decay of previous scale,
+    read uses current-token bonus
+  update_order: Read old summary and current bonus first; then decay old summary and
+    insert current token without bonus
+  scope_size: B*D previous-input scalars plus 3*B*C WKV scalars; channel-mixer state
+    absent
+adaptations:
+- Row-vector matrices in [input,output] orientation, transpose of official Linear.weight
+  storage
+- CPU float64 and arbitrary small D,C supported by v4neo dim_att interface
+- Empty state uses negative infinity instead of -1e30 in v4 SA or -1e38 in CUDA; same
+  mathematical empty-history intent without finite sentinel artifacts
+- Explicit caller-provided state and returned traces; official CUDA training kernel
+  does not expose these arguments
+- Caller supplies independent parameters; paper and code initialization details are
+  excluded
+included:
+- token_shift
+- time_mixing
+- weighted_key_value
+- current_bonus
+- negative_exponential_decay
+- sigmoid_receptance
+- output_projection
+- stabilized_state
+- continuation
+excluded:
+- channel_mixing
+- channel_state
+- layernorm
+- residual
+- full_block
+- full_model
+- training
+- CUDA_execution
+- mixed_precision
+- later_RWKV_versions
+validation:
+  independent_reference: Scalar interpolation and projections plus explicit weighted
+    history enumeration at every prefix; no recursive a/b/p implementation and no
+    candidate imports
+  stability_case: Large positive and negative projected keys beyond direct float64
+    exp range, compared using independent per-prefix max-shifted history sums
+  source_runtime: NOT_EXECUTED; upstream imports would build CUDA kernels or depend
+    on model checkpoints and training packages
+  limitation: Equation-level v4 time mixer reconstruction, not official kernel bitwise
+    parity or full RWKV restoration

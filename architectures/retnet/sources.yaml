@@ -1,0 +1,92 @@
+architecture: retnet
+selected_scope: Multi-scale raw retention core with real position rotation and key
+  scaling
+paper:
+  url: https://arxiv.org/html/2307.08621v4
+  version: arXiv:2307.08621v4, 2023-08-09
+  inspected: Section 2.1 equations 4-6, Section 2.2 equation 8 and retention score
+    normalization
+  role: Causal exponential retention, parallel/recurrent duality and fixed head decays
+slides:
+  path: /mnt/data/beyond_transformer_slides.pdf
+  page: 43
+  evidence: ../slide_43_0.png
+  inspection: Visually read original embedded genealogy image; RetNet 2023 and RWKV
+    2023 appear next to Linear Transformer and Transformer
+  limitation: Slide is genealogy evidence, not executable specification
+code:
+  repository: https://github.com/microsoft/torchscale
+  commit: 4d1e0e82e5adf86dd424f1463192635b73fc8efc
+  files:
+  - path: torchscale/component/multiscale_retention.py
+    url: https://github.com/microsoft/torchscale/blob/4d1e0e82e5adf86dd424f1463192635b73fc8efc/torchscale/component/multiscale_retention.py
+    functions:
+    - rotate_every_two
+    - theta_shift
+    - MultiScaleRetention.__init__
+    - MultiScaleRetention.parallel_forward
+    - MultiScaleRetention.recurrent_forward
+    - MultiScaleRetention.forward
+    inspected: Independent bias-free projections, key_dim^-0.5, real pair rotation,
+      separate head readout, path-specific scaling, gating and head RMS normalization
+  - path: torchscale/architecture/retnet.py
+    url: https://github.com/microsoft/torchscale/blob/4d1e0e82e5adf86dd424f1463192635b73fc8efc/torchscale/architecture/retnet.py
+    functions:
+    - RetNetRelPos.__init__
+    - RetNetRelPos.forward
+    inspected: linspace frequency endpoints, fixed head decay, absolute recurrent
+      position and parallel decay-mask normalization
+  - path: torchscale/component/rms_norm.py
+    url: https://github.com/microsoft/torchscale/blob/4d1e0e82e5adf86dd424f1463192635b73fc8efc/torchscale/component/rms_norm.py
+    functions:
+    - RMSNorm._norm
+    - RMSNorm.forward
+    inspected: Mean square plus epsilon inside reciprocal square root, non-affine
+      per-head use in retention, float32 internal cast
+mapping:
+  ret_projection: MultiScaleRetention.forward and constructor
+  ret_position: theta_shift plus RetNetRelPos
+  ret_decay: Paper equation 8 and RetNetRelPos
+  ret_core: Paper equations 5-6, unnormalized mathematical state
+normalization_and_scaling:
+  implemented: Same 1/sqrt(K) key scaling in both modes; raw retention matrix state;
+    no score or output normalization
+  official_parallel: Decay row divided by sqrt(sum decay); resulting scores divided
+    by clamp(sum(abs(scores)),1,5e4)
+  official_recurrent: scale_t=gamma*scale_previous+1; stored kv equals raw kv/sqrt(scale_t);
+    no score row clamp
+  implication: Raw equality here is not a claim of equality between official pre-normalization
+    path outputs
+  post_normalization: Official per-head RMSNorm is not paper-centered GroupNorm. Positive
+    scaling can largely cancel but nonzero epsilon prevents unconditional exact invariance.
+    Both normalizations excluded here.
+  diagnostic: validate.py compares source-derived pre-RMS scaling expressions on a
+    scaling-sensitive zero-state case and requires a nonzero difference
+adaptations:
+- General positive D,H,V and even K rather than enforcing official D=H*K
+- Expose per-head output and matrix state, no flatten or output projection
+- Float64 CPU equations instead of official mixed precision kernels or float32 norm
+- Caller-supplied nonzero state and explicit position are supported algebraic extensions
+  of paper recurrence
+excluded:
+- gating
+- head_normalization
+- output_projection
+- full_MSR
+- residual
+- FFN
+- chunkwise_optimization
+- embeddings
+- training
+- initialization_distribution
+validation:
+  independent_reference: Scalar projections, trigonometric rotation and explicit history
+    sums; imports no realization helpers
+  source_runtime: NOT_EXECUTED; upstream code inspected without imports
+  limitation: Equation-level restoration only; not a complete RetNet or upstream numerical
+    parity certificate
+paper_code_differences:
+- Paper score normalization uses max(abs(sum(scores)),1); pinned code uses clamp(sum(abs(scores)),1,5e4).
+  Neither is included in the declared raw core.
+- Selected decay schedule is equation 8 and RetNetRelPos, not the alternate head-count-dependent
+  schedule used for paper language-model experiments in Section 3.1.

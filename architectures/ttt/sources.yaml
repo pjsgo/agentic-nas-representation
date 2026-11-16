@@ -1,0 +1,79 @@
+architecture: ttt-linear
+selection:
+  genealogy: /mnt/data/beyond_transformer_slides.pdf
+  evidence: 'Page 43 embedded image directly inspected: TTT (2024), P067 from Mamba
+    and X068 from Transformer. Slide does not specify Linear versus MLP.'
+  variant: TTT-Linear, single-head residual LayerNorm inner learner with learned input
+    views and chunked updates
+  rationale: Choose the smaller of the original paper variants while retaining the
+    input-generated learning problem, parameter gradients, updates and updated-state
+    predictions.
+paper:
+  url: https://arxiv.org/html/2407.04620v1
+  version: arXiv:2407.04620v1, 2024-07-05
+  inspected:
+  - sections 2.1-2.4
+  - section 2.7
+  - Appendix A
+implementation:
+  official: true
+  repository: https://github.com/test-time-training/ttt-lm-pytorch
+  commit: cd831db10c8c9a0f6340f02da5613316a8a92b67
+  url: https://github.com/test-time-training/ttt-lm-pytorch/blob/cd831db10c8c9a0f6340f02da5613316a8a92b67/ttt.py
+  file: ttt.py
+  functions:
+  - TTTBase.__init__
+  - TTTBase.get_eta
+  - TTTBase._init_qkvo_proj
+  - TTTLinear.__init__
+  - TTTLinear.ttt
+  - ln_fwd
+  - ln_fused_l2_bwd
+  acquisition: Pinned source_modeling.py retrieved for reading only. No official module
+    imported or executed. Original paper directly links this official repository.
+source_mapping:
+  task: Paper section 2.3 learned Q/K/V views. Official TTTLinear.ttt uses target
+    XV-XK because inner learner has residual XK.
+  loss: ln_fused_l2_bwd gradient is (LN(z)-target) propagated through LN, equivalent
+    to half squared Euclidean loss. No feature-average loss.
+  gradient: LN population variance with eps=1e-6, affine gamma/beta; outer parameters
+    fixed during inner differentiation.
+  update: TTTLinear.ttt computes all Z1 and gradients using W1_init,b1_init. Prefix
+    primal updates use causal sums and token_eta. Last prefix is chunk carry.
+  learning_rate: TTTBase.get_eta uses base_lr/head_dim times sigmoid(input gate);
+    separate max(1/(i+1)+learnable_token_idx[i],0) scales each query prefix.
+  output: TTTLinear.ttt normalizes updated query affine transform and adds XQ residual.
+  initial: TTTLinear owns learnable W1,b1 replicated by batch. Here caller supplies
+    W0,b0; initialization sampling and outer learning excluded.
+restored_scope: One-head TTT-Linear inner learner, explicit input views, complete-chunk
+  state carry. Small chunk sizes include online K=1 and minibatch K=2,3. Input-dependent
+  learning remains active.
+excluded_scope:
+- TTT_MLP
+- outer_training
+- full_backbone
+- outer_post_norm
+- output_projection
+- outer_gating
+- pre_convolution
+- RoPE
+- partial_chunk_cache
+- fused_dual_kernel
+- multi_head_wrapper
+- checkpoint_conversion
+limitations:
+- Official paper experiments use chunk size 16; small fixtures use 1,2,3 but equations
+  retain configurable K and causal chunk semantics.
+- Official ttt method receives prepared views; this scope uses unrotated learned projections
+  and does not claim full TTTBase.forward reproduction.
+- Declared float64 equations avoid source mixed precision and hardware differences.
+- Independent reference differentiates its own residual learner loss with torch.autograd
+  and separately computes updates. Candidate uses explicit analytic LN gradients and
+  tensor cumulative sums. No shared gradient, update or normalization helper.
+reuse:
+  existing_nodes: 35
+  existing_relations: 38
+  phase4_status: /workspace/resnet_reconstruction/parallel_coverage/20261105/integration/20261116_genealogy_phase4_integration/status.yaml
+  reading_rules: /workspace/agentic-nas-representation/specs/representation/reading-rules-v1.md
+  action: Existing results and local representation conventions read and retained;
+    no prior architecture numerical rerun.

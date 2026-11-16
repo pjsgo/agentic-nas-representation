@@ -1,0 +1,280 @@
+format_version: local_transition_v1
+transition_id: tr_009
+source_architecture: Memory Network
+target_architecture: E2E Memory Network
+relation_type: A
+inferred: false
+record_status: complete
+mapping_status: partial
+core_mapping_status: complete_scoped
+part_mapping_complete: false
+evidence:
+- source: /mnt/data/beyond_transformer_slides.pdf
+  pages:
+  - 39
+  page_numbering: one_based_PDF
+  label: A 009
+  direction: Memory Network -> E2E Memory Network
+  question_mark_present: false
+  verification: direct_embedded_image_view_from_original_pdf
+  pdf_objects:
+    page: 205
+    image: 210
+  correction_proposal: null
+motivation: Memory Network의 support-label 감독과 이산 선택을 완화한다.
+conditions:
+- 입출력 쌍으로 학습하는 연속 hop을 전제한다. hard support의 argmax 파라미터를 그대로 이식하지 않는다.
+expected_effects:
+- supporting-fact 정답 없이 end-to-end 미분 경로를 제공한다.
+tradeoffs:
+- 모든 memory slot을 읽는 비용과 soft selection의 혼합 손실이 남는다. 학습 성공은 이 기록의 검증 대상이 아니다.
+changes:
+- before_units:
+  - factors.memnn_store
+  - factors.memnn_first_support
+  - factors.memnn_second_support
+  - factors.memnn_response
+  after_units:
+  - factors.memn2n_embed
+  - factors.memn2n_address
+  - factors.memn2n_read
+  - factors.memn2n_update
+  - factors.memn2n_answer
+  operation: descriptive_correspondence
+  mechanism: 두 번의 argmax supporting-fact 선택을 key-query softmax와 value 가중합 hop으로 바꾸고
+    query를 갱신한다.
+  mapping_status: mapped_scoped
+  state_and_resource_contract: BoW fact bank, k=2 hard argmax support, single-word
+    answer ranking. 학습 margin loss와 일반 I/G/O/R의 모든 변형은 없다. BoW adjacent tying, additive
+    query update, K hops. PE/TE, padding, learned H, 학습은 없다.
+  cardinality: many_to_many_semantic_correspondence_not_tensor_or_parameter_identity
+preserve:
+- 명시적 fact memory, query 기반 조회, 여러 번 읽은 뒤 응답한다는 구성
+scope:
+  source_yaml: ../architectures/memory-network/representation.yaml
+  target_yaml: ../architectures/e2e-memory-network/representation.yaml
+  source_yaml_status: available
+  target_yaml_status: available
+  path_base: relation_file_directory
+  included:
+  - descriptive_relationship
+  - available_core_component_correspondence
+  excluded:
+  - whole_model_conversion
+  - numerical_execution
+  - training
+  - performance_reproduction
+  - code_transformer
+  - weight_or_state_migration
+  mapping_boundary: hard support와 soft memory hop의 계산 대응; 전체 I/G/O/R 프레임워크나 학습 손실
+    대응은 범위 밖
+  source_boundary: BoW fact bank, k=2 hard argmax support, single-word answer ranking.
+    학습 margin loss와 일반 I/G/O/R의 모든 변형은 없다.
+  target_boundary: BoW adjacent tying, additive query update, K hops. PE/TE, padding,
+    learned H, 학습은 없다.
+  declared_scope_snapshot:
+    source:
+      variant: Section 3.1 basic BoW MemNN, exactly two discrete supports and single-word
+        ranking
+      included:
+      - supplied_count_features
+      - append_fact_storage
+      - two_argmax_supports
+      - role_specific_embeddings
+      - answer_ranking
+      excluded:
+      - tokenization
+      - question_storage
+      - segmentation
+      - temporal_features
+      - hashing
+      - unknown_words
+      - exact_match_features
+      - RNN_response
+      - training
+      - margin_loss
+      - gradients
+      boundary: Input sentences are already vocabulary count vectors. Only facts are
+        appended; query is supplied to O/R against this explicit fact bank. No claim
+        of the entire general I/G/O/R framework.
+    target:
+      variant: BoW multi-hop, adjacent weight tying, identity query update, no position
+        or temporal encoding
+      included:
+      - input_memory_embedding
+      - output_memory_embedding
+      - query_embedding
+      - soft_addressing
+      - weighted_read
+      - hop_query_update
+      - tied_answer_projection
+      excluded:
+      - tokenization
+      - padding
+      - memory_eviction
+      - temporal_encoding
+      - position_encoding
+      - linear_start
+      - nonlinear_hops
+      - learned_H
+      - QA_training
+      - loss
+      - gradients
+  core_mapping_definition: complete_scoped는 선택 core의 설명 대응에 실제 ID가 연결된 상태이다. 전체 모델,
+    수치 동등성 또는 실행 변환 완료가 아니다.
+  component_coverage:
+    source:
+      mapped_units:
+      - factors.memnn_store
+      - factors.memnn_first_support
+      - factors.memnn_second_support
+      - factors.memnn_response
+      unmapped_declared_units: []
+      unmapped_reason: 선택 관계 core 밖의 부품 또는 컨테이너이며 자동 대응을 추가하지 않는다.
+    target:
+      mapped_units:
+      - factors.memn2n_embed
+      - factors.memn2n_address
+      - factors.memn2n_read
+      - factors.memn2n_update
+      - factors.memn2n_answer
+      unmapped_declared_units: []
+      unmapped_reason: 선택 관계 core 밖의 부품 또는 컨테이너이며 자동 대응을 추가하지 않는다.
+conceptual_correspondence:
+- source_concept: Memory Network
+  target_concept: E2E Memory Network
+  description: hard support와 soft memory hop의 계산 대응; 전체 I/G/O/R 프레임워크나 학습 손실 대응은 범위
+    밖
+  mapping_status: mapped_within_selected_core
+- description: 관계의 전체 논문 구조 중 위 source_boundary와 target_boundary에서 제외한 부분
+  part_ids: null
+  mapping_status: pending_outside_declared_restoration_scope
+  reason: 미선언 부품 ID를 만들지 않는다. 추가 복원은 이 세션 범위 밖이다.
+pending_components:
+- side: source
+  part_ids: null
+  status: pending
+  concepts:
+  - tokenization, temporal/hash/unknown-word 확장
+  - 일반 I/G/O/R 프레임워크의 나머지 변형
+  reason: 선택 복원 범위 밖이다. ID는 null로 유지하며 이 세션에서 추가 복원하지 않는다.
+- side: target
+  part_ids: null
+  status: pending
+  concepts:
+  - position/temporal encoding
+  - learned H 또는 nonlinear hop
+  - padding과 memory buffer
+  reason: 선택 복원 범위 밖이다. ID는 null로 유지하며 이 세션에서 추가 복원하지 않는다.
+source_records:
+- side: source
+  architecture: Memory Network
+  paper:
+    url: https://arxiv.org/html/1410.3916v11
+    section: sections 2, 3.1
+  verification: primary_paper_read; official_selected_implementation_unavailable_or_unconfirmed
+  metadata_path: /workspace/resnet_reconstruction/parallel_coverage/20261105/seq2seq/experiments/20261116_genealogy_phase5_memory/memory_network/sources.yaml
+  implementation:
+    official_selected_variant: NOT_CONFIRMED
+    inspected_repository: https://github.com/facebookarchive/MemNN
+    inspected_commit: d7c5f6d5e1a4af6417ffff98535a96bb0947a6a8
+    inspected_files:
+    - README.md
+    - MemN2N-babi-matlab/build_model.m
+    - MemN2N-babi-matlab/memory/Memory.m
+    conclusion: The identified official repository provides end-to-end and later memory
+      variants. Its soft-addressing implementation is not the Section 3.1 hard-support
+      implementation.
+    selected_code_commit: null
+    selected_code_functions: []
+  implementation_gap:
+    official_selected_variant: NOT_CONFIRMED
+    inspected_repository: https://github.com/facebookarchive/MemNN
+    inspected_commit: d7c5f6d5e1a4af6417ffff98535a96bb0947a6a8
+    inspected_files:
+    - README.md
+    - MemN2N-babi-matlab/build_model.m
+    - MemN2N-babi-matlab/memory/Memory.m
+    conclusion: The identified official repository provides end-to-end and later memory
+      variants. Its soft-addressing implementation is not the Section 3.1 hard-support
+      implementation.
+    selected_code_commit: null
+    selected_code_functions: []
+  metadata_ownership: read_only_producer_or_baseline_record; copied source metadata
+    is not a new execution claim
+- side: target
+  architecture: E2E Memory Network
+  paper:
+    url: https://arxiv.org/html/1503.08895v5
+    section: sections 2.1-2.2
+  verification: primary_paper_and_selected_source_text_read; other metadata reused
+    from producer
+  metadata_path: /workspace/resnet_reconstruction/parallel_coverage/20261105/seq2seq/experiments/20261116_genealogy_phase5_memory/e2e_memory_network/sources.yaml
+  implementation:
+    repository: https://github.com/facebookarchive/MemNN
+    commit: d7c5f6d5e1a4af6417ffff98535a96bb0947a6a8
+    official_evidence: Paper footnote 2 links facebook/MemNN; archived repository
+      README links Section 4 QA implementation.
+    base_url: https://raw.githubusercontent.com/facebookarchive/MemNN/d7c5f6d5e1a4af6417ffff98535a96bb0947a6a8/
+    files:
+    - path: MemN2N-babi-matlab/build_model.m
+      functions:
+      - top-level model construction
+      - share_type == 1 block
+      inspected_lines: 19-73
+      evidence: ../evidence/build_model.m
+    - path: MemN2N-babi-matlab/memory/Memory.m
+      functions:
+      - initQueryModule
+      - initOutputModule
+      - fprop
+      evidence: ../evidence/memory_Memory.m
+    - path: MemN2N-babi-matlab/memory/MemoryBoW.m
+      functions:
+      - initQueryModule
+      - initOutputModule
+      evidence: ../evidence/memory_MemoryBoW.m
+    - path: MemN2N-babi-matlab/config_babi.m
+      functions:
+      - configuration script
+      evidence: ../evidence/config_babi.m
+  source_text_paths:
+  - /workspace/resnet_reconstruction/parallel_coverage/20261105/seq2seq/experiments/20261116_genealogy_phase5_memory/evidence/memory_Memory.m
+  - /workspace/resnet_reconstruction/parallel_coverage/20261105/seq2seq/experiments/20261116_genealogy_phase5_memory/evidence/build_model.m
+  - /workspace/resnet_reconstruction/parallel_coverage/20261105/seq2seq/experiments/20261116_genealogy_phase5_memory/evidence/memory_MemoryBoW.m
+  G_direct_review:
+  - Memory.initQueryModule
+  - Memory.initOutputModule
+  - Memory.fprop
+  metadata_ownership: read_only_producer_or_baseline_record; copied source metadata
+    is not a new execution claim
+application:
+  executable: false
+  command: null
+  patch_or_script: null
+validation:
+  profile: direction_type_inference_sources_paths_parts_declared_scope_only
+  status: STATIC_DIRECTION_TYPE_INFERENCE_SOURCES_PATHS_IDS_SCOPE_CHECKED
+  numerical_tests: NOT_RUN_BY_DESIGN
+  prior_architecture_results: reused_without_revalidation
+  claim_boundary: 관계의 정적 확인은 실현기 또는 LLM 복원 성공 인증이 아니다.
+  reference_check:
+    source:
+      path: ../architectures/memory-network/representation.yaml
+      unique_ids: 4
+      declared_scope_checked: true
+    target:
+      path: ../architectures/e2e-memory-network/representation.yaml
+      unique_ids: 5
+      declared_scope_checked: true
+unresolved:
+- Memory Network hard-support 원 구현은 확인되지 않았다. facebookarchive/MemNN의 E2E 코드를 원형 hard-support
+  구현으로 인용하지 않는다.
+- 전체 mapping_status=partial; 범위 밖의 개념 대응은 실제 선언된 YAML이 추가되기 전까지 pending이다.
+specification_proposal:
+  required: false
+  reason: 기존 local_transition_v1 설명 관계 형식 사용. 공통 specs와 registry 수정 없음.
+provenance:
+  research_source: integration/20261116_genealogy_phase5_relations/tr_009.yaml
+  publication_changes: Relative endpoint paths only; source IDs, types, inferred flags
+    and scoped boundaries preserved

@@ -12,3 +12,7 @@
 아키텍처의 `genealogy/`는 관계에서 사용하는 부품 ID를 보존한 별도 표현입니다. 관계 파일 자체는 최상위 `relations/`에서 관리합니다.
 
 [관계 필드, 유형, 부품 참조 규칙](../specs/relations/local-transition-v1.md) / [복원 YAML 읽기](representation-guide.md)
+
+<!-- phase5-completion -->
+
+[전체 관계도](genealogy-map.md) · [5차 범위와 검증](phase5-readiness.md)

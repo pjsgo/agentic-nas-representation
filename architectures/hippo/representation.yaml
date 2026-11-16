@@ -1,0 +1,47 @@
+representation_version: local_hippo_legs_v1
+operator_profile: self_contained_equations
+architecture: HiPPO-LegS
+architecture_entry: Model
+scope:
+  included: [scaled_Legendre_operator_construction, time_varying_bilinear_discretization, coefficient_state_scan]
+  excluded: [LegT, LagT, HiPPO_RNN_wrapper, learned_readout, polynomial_signal_decoder, training, exact_continuous_projection, parallel_scan]
+configuration:
+  N: {type: integer, minimum: 1, maximum: 16, default: 4}
+interface:
+  constructor: Model(N=4), subclass torch.nn.Module
+  forward: forward(u, initial_state=None, offset=0) -> dict
+  dtype: torch.float64
+  device: cpu
+  inputs:
+    u: '[B,L,H], positive B,L,H; finite'
+    initial_state: 'None or [B,H,N]; None means zero coefficients'
+    offset: 'nonnegative Python integer, count of already processed samples'
+  outputs:
+    states: '[B,L,H,N], coefficients after each input'
+    final_state: '[B,H,N], last coefficients'
+    Ad: '[L,N,N], discrete transition for this call'
+    Bd: '[L,N], discrete input vector for this call'
+  errors: ValueError for invalid N, shape, dtype, device or offset
+parameters: {}
+buffers:
+  A: {shape: [N,N], dtype: float64, persistent: true, trainable: false}
+  B: {shape: [N], dtype: float64, persistent: true, trainable: false}
+state_contract:
+  external: initial_state and offset are supplied by caller; no hidden cache
+  initialization: zero state before sample with k=1 for a fresh call; no evaluation of 1/0
+  continuation: pass final_state and offset+L; caller is responsible for matching state and offset
+  mutation: no mutation of inputs or buffers; no derived tensors registered
+measure:
+  density: 'mu_t(x)=1/t for 0<=x<=t, zero elsewhere; t>0'
+  basis: 'g_n(t,x)=sqrt(2*n+1)*P_n(2*x/t-1), n=0..N-1, ordinary Legendre P_n'
+  coefficients: 'c_n(t)=integral_0^t f(x)*g_n(t,x) dx/t; discrete states approximate these coefficients'
+  continuous_equation: 'dc/dt=(A*c+B*f(t))/t; A uses the negative-generator convention'
+  time_assumption: 'Uniform sample clock. Use source frozen-time bilinear rule with k=offset+j+1. No learned dt. This is not the unequal endpoint k and k+1 rule.'
+operators:
+  legs: 'A[n,n]=-(n+1); A[n,m]=-sqrt((2*n+1)*(2*m+1)) if n>m; A[n,m]=0 if n<m; B[n]=sqrt(2*n+1)'
+  discretize: 'For j=0..L-1: k=offset+j+1; Q=I-A/(2*k); Ad[j]=solve(Q,I+A/(2*k)); Bd[j]=solve(Q,B/k)'
+  scan: 'c=initial_state or zeros[B,H,N]; for j=0..L-1: c[b,h,n]=sum_m Ad[j,n,m]*c_old[b,h,m]+Bd[j,n]*u[b,j,h]; states[:,j]=c; final_state=c'
+graph:
+- {id: hippo_legs_operator, op: legs, inputs: [N], outputs: [A,B]}
+- {id: hippo_clock_discretization, op: discretize, inputs: [A,B,offset,u], outputs: [Ad,Bd]}
+- {id: hippo_coefficient_scan, op: scan, inputs: [u,initial_state,Ad,Bd], outputs: [states,final_state]}

@@ -7,3 +7,7 @@
 - [해석 명세](../specs/README.md): 현재 사용하는 규칙과 버전
 
 [프로젝트 소개](../README.md)
+
+<!-- phase5-completion -->
+
+[5차 기저 사용 범위](phase5-readiness.md) · [전체 관계도](genealogy-map.md)

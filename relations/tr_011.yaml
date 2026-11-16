@@ -1,0 +1,271 @@
+format_version: local_transition_v1
+transition_id: tr_011
+source_architecture: E2E Memory Network
+target_architecture: LSTMN
+relation_type: I
+inferred: false
+record_status: complete
+mapping_status: partial
+core_mapping_status: complete_scoped
+part_mapping_complete: false
+evidence:
+- source: /mnt/data/beyond_transformer_slides.pdf
+  pages:
+  - 39
+  page_numbering: one_based_PDF
+  label: I 011
+  direction: E2E Memory Network -> LSTMN
+  question_mark_present: false
+  verification: direct_embedded_image_view_from_original_pdf
+  pdf_objects:
+    page: 205
+    image: 210
+  correction_proposal: null
+motivation: 외부 memory의 soft addressing을 문장 내부의 순차 상태에 적용한다.
+conditions:
+- 아이디어 계승이며 E2E의 embedding tying이나 hop 수를 LSTMN에 강제하지 않는다.
+expected_effects:
+- 과거 token을 query로 조회하며 읽기와 문맥 상태 갱신을 결합한다.
+tradeoffs:
+- LSTMN에는 recurrent gate와 tape 상태가 추가되고 E2E와 입력 및 상태 계약이 다르다.
+changes:
+- before_units:
+  - factors.memn2n_address
+  - factors.memn2n_read
+  - factors.memn2n_update
+  after_units:
+  - factors.lstmn_address
+  - factors.lstmn_read
+  - factors.lstmn_gates
+  - factors.lstmn_update
+  operation: descriptive_correspondence
+  mechanism: 정적 fact bank의 여러 hop을 token마다 증가하는 hidden/cell tape의 attention 읽기로 바꾼다.
+  mapping_status: mapped_scoped
+  state_and_resource_contract: BoW adjacent tying, additive query update, K hops.
+    PE/TE, padding, learned H, 학습은 없다. 단층 단일 문장, bias 없는 paper equations, hidden/cell
+    tape와 previous weighted read. empty-tape zero read는 로컬 규약이며 공식 코드 parity는 확인 불가.
+  cardinality: many_to_many_semantic_correspondence_not_tensor_or_parameter_identity
+preserve:
+- 미분 가능한 score, softmax, 가중 memory read
+scope:
+  source_yaml: ../architectures/e2e-memory-network/representation.yaml
+  target_yaml: ../architectures/lstmn/representation.yaml
+  source_yaml_status: available
+  target_yaml_status: available
+  path_base: relation_file_directory
+  included:
+  - descriptive_relationship
+  - available_core_component_correspondence
+  excluded:
+  - whole_model_conversion
+  - numerical_execution
+  - training
+  - performance_reproduction
+  - code_transformer
+  - weight_or_state_migration
+  mapping_boundary: soft addressing 아이디어 대응; 동일 파라미터나 동일 출력 주장 없음
+  source_boundary: BoW adjacent tying, additive query update, K hops. PE/TE, padding,
+    learned H, 학습은 없다.
+  target_boundary: 단층 단일 문장, bias 없는 paper equations, hidden/cell tape와 previous weighted
+    read. empty-tape zero read는 로컬 규약이며 공식 코드 parity는 확인 불가.
+  declared_scope_snapshot:
+    source:
+      variant: BoW multi-hop, adjacent weight tying, identity query update, no position
+        or temporal encoding
+      included:
+      - input_memory_embedding
+      - output_memory_embedding
+      - query_embedding
+      - soft_addressing
+      - weighted_read
+      - hop_query_update
+      - tied_answer_projection
+      excluded:
+      - tokenization
+      - padding
+      - memory_eviction
+      - temporal_encoding
+      - position_encoding
+      - linear_start
+      - nonlinear_hops
+      - learned_H
+      - QA_training
+      - loss
+      - gradients
+    target:
+      variant: Single-layer single-sequence intra-attention memory-tape recurrence,
+        no bias
+      included:
+      - hidden_tape
+      - cell_tape
+      - previous_read_feedback
+      - causal_additive_attention
+      - weighted_hidden_and_cell_read
+      - gates_from_read_hidden
+      - cell_update_from_read_cell
+      - append_states
+      excluded:
+      - token_embedding
+      - task_head
+      - training
+      - gradients
+      - dropout
+      - bias
+      - multilayer_stack
+      - encoder_decoder_fusion
+      - truncation
+      - memory_rewrite
+  core_mapping_definition: complete_scoped는 선택 core의 설명 대응에 실제 ID가 연결된 상태이다. 전체 모델,
+    수치 동등성 또는 실행 변환 완료가 아니다.
+  component_coverage:
+    source:
+      mapped_units:
+      - factors.memn2n_address
+      - factors.memn2n_read
+      - factors.memn2n_update
+      unmapped_declared_units:
+      - factors.memn2n_answer
+      - factors.memn2n_embed
+      unmapped_reason: 선택 관계 core 밖의 부품 또는 컨테이너이며 자동 대응을 추가하지 않는다.
+    target:
+      mapped_units:
+      - factors.lstmn_address
+      - factors.lstmn_read
+      - factors.lstmn_gates
+      - factors.lstmn_update
+      unmapped_declared_units: []
+      unmapped_reason: 선택 관계 core 밖의 부품 또는 컨테이너이며 자동 대응을 추가하지 않는다.
+conceptual_correspondence:
+- source_concept: E2E Memory Network
+  target_concept: LSTMN
+  description: soft addressing 아이디어 대응; 동일 파라미터나 동일 출력 주장 없음
+  mapping_status: mapped_within_selected_core
+- description: 관계의 전체 논문 구조 중 위 source_boundary와 target_boundary에서 제외한 부분
+  part_ids: null
+  mapping_status: pending_outside_declared_restoration_scope
+  reason: 미선언 부품 ID를 만들지 않는다. 추가 복원은 이 세션 범위 밖이다.
+pending_components:
+- side: source
+  part_ids: null
+  status: pending
+  concepts:
+  - position/temporal encoding
+  - learned H 또는 nonlinear hop
+  - padding과 memory buffer
+  reason: 선택 복원 범위 밖이다. ID는 null로 유지하며 이 세션에서 추가 복원하지 않는다.
+- side: target
+  part_ids: null
+  status: pending
+  concepts:
+  - task head와 encoder-decoder fusion
+  - multilayer 및 tape truncation/rewrite
+  reason: 선택 복원 범위 밖이다. ID는 null로 유지하며 이 세션에서 추가 복원하지 않는다.
+source_records:
+- side: source
+  architecture: E2E Memory Network
+  paper:
+    url: https://arxiv.org/html/1503.08895v5
+    section: sections 2.1-2.2
+  verification: primary_paper_and_selected_source_text_read; other metadata reused
+    from producer
+  metadata_path: /workspace/resnet_reconstruction/parallel_coverage/20261105/seq2seq/experiments/20261116_genealogy_phase5_memory/e2e_memory_network/sources.yaml
+  implementation:
+    repository: https://github.com/facebookarchive/MemNN
+    commit: d7c5f6d5e1a4af6417ffff98535a96bb0947a6a8
+    official_evidence: Paper footnote 2 links facebook/MemNN; archived repository
+      README links Section 4 QA implementation.
+    base_url: https://raw.githubusercontent.com/facebookarchive/MemNN/d7c5f6d5e1a4af6417ffff98535a96bb0947a6a8/
+    files:
+    - path: MemN2N-babi-matlab/build_model.m
+      functions:
+      - top-level model construction
+      - share_type == 1 block
+      inspected_lines: 19-73
+      evidence: ../evidence/build_model.m
+    - path: MemN2N-babi-matlab/memory/Memory.m
+      functions:
+      - initQueryModule
+      - initOutputModule
+      - fprop
+      evidence: ../evidence/memory_Memory.m
+    - path: MemN2N-babi-matlab/memory/MemoryBoW.m
+      functions:
+      - initQueryModule
+      - initOutputModule
+      evidence: ../evidence/memory_MemoryBoW.m
+    - path: MemN2N-babi-matlab/config_babi.m
+      functions:
+      - configuration script
+      evidence: ../evidence/config_babi.m
+  source_text_paths:
+  - /workspace/resnet_reconstruction/parallel_coverage/20261105/seq2seq/experiments/20261116_genealogy_phase5_memory/evidence/memory_Memory.m
+  - /workspace/resnet_reconstruction/parallel_coverage/20261105/seq2seq/experiments/20261116_genealogy_phase5_memory/evidence/build_model.m
+  - /workspace/resnet_reconstruction/parallel_coverage/20261105/seq2seq/experiments/20261116_genealogy_phase5_memory/evidence/memory_MemoryBoW.m
+  G_direct_review:
+  - Memory.initQueryModule
+  - Memory.initOutputModule
+  - Memory.fprop
+  metadata_ownership: read_only_producer_or_baseline_record; copied source metadata
+    is not a new execution claim
+- side: target
+  architecture: LSTMN
+  paper:
+    url: https://arxiv.org/html/1601.06733v7
+    section: sections 3.2, 5, equations 4-9
+  verification: primary_paper_read; official_selected_implementation_unavailable_or_unconfirmed
+  metadata_path: /workspace/resnet_reconstruction/parallel_coverage/20261105/seq2seq/experiments/20261116_genealogy_phase5_memory/lstmn/sources.yaml
+  implementation:
+    paper_link: https://github.com/cheng6076/SNLI-attention
+    api_link: https://api.github.com/repos/cheng6076/SNLI-attention
+    observed: Both repository web page and GitHub API return 404 on this session's
+      access.
+    evidence: ../evidence/lstmn_repo.json.error
+    official_implementation: NOT_VERIFIED_UNAVAILABLE
+    commit_or_tag: null
+    files: []
+    functions: []
+    fallback: Implement paper equations directly; third-party implementations are
+      not relabeled official.
+  implementation_gap:
+    paper_link: https://github.com/cheng6076/SNLI-attention
+    api_link: https://api.github.com/repos/cheng6076/SNLI-attention
+    observed: Both repository web page and GitHub API return 404 on this session's
+      access.
+    evidence: ../evidence/lstmn_repo.json.error
+    official_implementation: NOT_VERIFIED_UNAVAILABLE
+    commit_or_tag: null
+    files: []
+    functions: []
+    fallback: Implement paper equations directly; third-party implementations are
+      not relabeled official.
+  metadata_ownership: read_only_producer_or_baseline_record; copied source metadata
+    is not a new execution claim
+application:
+  executable: false
+  command: null
+  patch_or_script: null
+validation:
+  profile: direction_type_inference_sources_paths_parts_declared_scope_only
+  status: STATIC_DIRECTION_TYPE_INFERENCE_SOURCES_PATHS_IDS_SCOPE_CHECKED
+  numerical_tests: NOT_RUN_BY_DESIGN
+  prior_architecture_results: reused_without_revalidation
+  claim_boundary: 관계의 정적 확인은 실현기 또는 LLM 복원 성공 인증이 아니다.
+  reference_check:
+    source:
+      path: ../architectures/e2e-memory-network/representation.yaml
+      unique_ids: 3
+      declared_scope_checked: true
+    target:
+      path: ../architectures/lstmn/representation.yaml
+      unique_ids: 4
+      declared_scope_checked: true
+unresolved:
+- LSTMN 공식 구현 미확인. soft addressing의 역사적 관계 표시는 슬라이드 권위이며 코드 직접 계승을 증명하지 않는다.
+- 전체 mapping_status=partial; 범위 밖의 개념 대응은 실제 선언된 YAML이 추가되기 전까지 pending이다.
+specification_proposal:
+  required: false
+  reason: 기존 local_transition_v1 설명 관계 형식 사용. 공통 specs와 registry 수정 없음.
+provenance:
+  research_source: integration/20261116_genealogy_phase5_relations/tr_011.yaml
+  publication_changes: Relative endpoint paths only; source IDs, types, inferred flags
+    and scoped boundaries preserved

@@ -1,0 +1,61 @@
+architecture: lstmn
+implementation_basis: PAPER_BASED_NOT_OFFICIAL_IMPLEMENTATION
+paper:
+  url: https://aclanthology.org/D16-1053/
+  pdf: https://aclanthology.org/D16-1053.pdf
+  version: EMNLP 2016 proceedings, pages 551-561, DOI 10.18653/v1/D16-1053
+  local_pdf: ../evidence/lstmn.pdf
+  inspected:
+  - Section 3.2
+  - Figure 2
+  - equations 4-9 on printed page 554
+  - Section 5 official code link on printed page 555
+code_search:
+  paper_link: https://github.com/cheng6076/SNLI-attention
+  api_link: https://api.github.com/repos/cheng6076/SNLI-attention
+  observed: Both repository web page and GitHub API return 404 on this session's access.
+  evidence: ../evidence/lstmn_repo.json.error
+  official_implementation: NOT_VERIFIED_UNAVAILABLE
+  commit_or_tag: null
+  files: []
+  functions: []
+  fallback: Implement paper equations directly; third-party implementations are not
+    relabeled official.
+source_mapping:
+  lstmn_address: equation 4 with previous weighted hidden read and equation 5 softmax
+  lstmn_read: equation 6 applies the same weights to hidden and cell tapes
+  lstmn_gates: equation 7 uses concatenated current read hidden and token
+  lstmn_update: equations 8-9 combine forget-gated read cell with proposal, then expose
+    hidden output
+scope_decisions:
+- Separate aligned hidden and cell tapes hold every prior token state; attention accesses
+  only past slots.
+- Equation 4 carries the previous weighted hidden read, not the immediately previous
+  hidden state.
+- No biases added because displayed equations omit them; no claim that unavailable
+  author code uses this exact parameterization.
+- The paper does not fully specify empty-tape handling. This local boundary uses empty
+  tapes and zero reads, with no sentinel; this is an explicit convention.
+- A provided prefix and previous_read enable continuation; no memory cap is reached
+  within the short declared scope.
+- One shared set of five weight tensors across steps, all distinct from one another;
+  no task output layer.
+excluded:
+- dataset_training
+- task_heads
+- token_embeddings
+- multilayer_model
+- shallow_fusion
+- deep_fusion
+- attention_write
+- tape_truncation
+- dropout
+- gradients
+slides:
+  source: /mnt/data/beyond_transformer_slides.pdf
+  extraction: ../evidence/slides.txt
+  inspected_pages:
+  - 10
+  - 11
+  role: Past representation lookup motivates the node; paper defines cell-tape reads
+    and gate-level integration beyond slide shorthand.

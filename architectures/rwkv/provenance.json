@@ -1,0 +1,72 @@
+{
+  "format_version": 3,
+  "architecture": "rwkv",
+  "candidate_origin": "UNMODIFIED_EXTERNAL_LLM_CODE",
+  "scope": {
+    "included": [
+      "RWKV_v4_time_mixing",
+      "token_shift",
+      "independent_interpolations",
+      "per_channel_decay",
+      "current_token_bonus",
+      "stabilized_scalar_WKV",
+      "sigmoid_receptance",
+      "output_projection",
+      "explicit_state_continuation"
+    ],
+    "excluded": [
+      "channel_mixing",
+      "channel_previous_input_state",
+      "layernorm",
+      "residual",
+      "embedding",
+      "full_block",
+      "full_model",
+      "training",
+      "gradients",
+      "initialization_distribution",
+      "CUDA_kernel",
+      "mixed_precision",
+      "RWKV_v5_v6_v7"
+    ]
+  },
+  "generation": {
+    "attempts": 1,
+    "original_result": "PASS_WITHIN_DECLARED_SCOPE",
+    "final_result": "PASS_WITHIN_DECLARED_SCOPE",
+    "repaired": false,
+    "sender": "producer; existing separately authorized experiment",
+    "new_integration_calls": 0
+  },
+  "evaluation": {
+    "cases": 3,
+    "final_result": "PASS_WITHIN_DECLARED_SCOPE",
+    "tolerance": {
+      "atol": 3e-10,
+      "rtol": 3e-11
+    },
+    "basis": "Existing independent-reference evidence; relocated candidate acceptance in integration report",
+    "research_result": "linear_transformer/experiments/20261116_genealogy_phase5_retnet_rwkv/rwkv/generation/generated_result.json",
+    "reference_runtime_parity": "NOT_CLAIMED",
+    "integration_acceptance": {
+      "status": "PASS_WITHIN_DECLARED_SCOPE",
+      "cases": 3,
+      "candidate": "reconstructed.py",
+      "fixture_and_tolerance_changes": "NONE",
+      "purpose": "Relocated distribution candidate acceptance",
+      "report": "Research workspace: integration/20261116_genealogy_phase5_integration/evaluation/rwkv/acceptance.json"
+    }
+  },
+  "candidate": {
+    "file": "reconstructed.py",
+    "research_source": "linear_transformer/experiments/20261116_genealogy_phase5_retnet_rwkv/rwkv/generation/generated_model.py",
+    "computational_changes_by_integration": "None"
+  },
+  "representation": {
+    "file": "representation.yaml",
+    "publication_changes": "Module filename and relative reading-rule path only"
+  },
+  "limitations": [
+    "Declared block/core only; no full-model, training, speed, universal-schema or unmodified-one-shot claim for repaired candidates"
+  ]
+}

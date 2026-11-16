@@ -351,6 +351,106 @@
       "candidate_origin": "UNMODIFIED_EXTERNAL_LLM_CODE",
       "materials": "architectures/fnet/README.md",
       "provenance": "architectures/fnet/provenance.json"
+    },
+    {
+      "architecture": "hippo",
+      "title": "hippo",
+      "scope": "scaled_Legendre_operator_construction; time_varying_bilinear_discretization; coefficient_state_scan",
+      "representation": "architectures/hippo/representation.yaml",
+      "reconstructed_code": "architectures/hippo/reconstructed.py",
+      "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
+      "materials": "architectures/hippo/README.md",
+      "provenance": "architectures/hippo/provenance.json"
+    },
+    {
+      "architecture": "hyena",
+      "title": "hyena",
+      "scope": "input_projection; causal_depthwise_short_filter; position_generated_long_filter; shared_frequency_sine_MLP; exponential_modulation; input_gating; causal_FFT_convolution; diagonal_skip; output_projection",
+      "representation": "architectures/hyena/representation.yaml",
+      "reconstructed_code": "architectures/hyena/reconstructed.py",
+      "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
+      "materials": "architectures/hyena/README.md",
+      "provenance": "architectures/hyena/provenance.json"
+    },
+    {
+      "architecture": "retnet",
+      "title": "retnet",
+      "scope": "multi_scale_fixed_head_decay; independent_projections; real_position_rotation; key_scaling; causal_retention; parallel_sum; recurrent_matrix_state; state_continuation",
+      "representation": "architectures/retnet/representation.yaml",
+      "reconstructed_code": "architectures/retnet/reconstructed.py",
+      "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
+      "materials": "architectures/retnet/README.md",
+      "provenance": "architectures/retnet/provenance.json"
+    },
+    {
+      "architecture": "rwkv",
+      "title": "rwkv",
+      "scope": "RWKV_v4_time_mixing; token_shift; independent_interpolations; per_channel_decay; current_token_bonus; stabilized_scalar_WKV; sigmoid_receptance; output_projection; explicit_state_continuation",
+      "representation": "architectures/rwkv/representation.yaml",
+      "reconstructed_code": "architectures/rwkv/reconstructed.py",
+      "candidate_origin": "UNMODIFIED_EXTERNAL_LLM_CODE",
+      "materials": "architectures/rwkv/README.md",
+      "provenance": "architectures/rwkv/provenance.json"
+    },
+    {
+      "architecture": "memory-network",
+      "title": "memory-network",
+      "scope": "supplied_count_features; append_fact_storage; two_argmax_supports; role_specific_embeddings; answer_ranking",
+      "representation": "architectures/memory-network/representation.yaml",
+      "reconstructed_code": "architectures/memory-network/reconstructed.py",
+      "candidate_origin": "UNMODIFIED_EXTERNAL_LLM_CODE",
+      "materials": "architectures/memory-network/README.md",
+      "provenance": "architectures/memory-network/provenance.json"
+    },
+    {
+      "architecture": "e2e-memory-network",
+      "title": "e2e-memory-network",
+      "scope": "input_memory_embedding; output_memory_embedding; query_embedding; soft_addressing; weighted_read; hop_query_update; tied_answer_projection",
+      "representation": "architectures/e2e-memory-network/representation.yaml",
+      "reconstructed_code": "architectures/e2e-memory-network/reconstructed.py",
+      "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
+      "materials": "architectures/e2e-memory-network/README.md",
+      "provenance": "architectures/e2e-memory-network/provenance.json"
+    },
+    {
+      "architecture": "lstmn",
+      "title": "lstmn",
+      "scope": "hidden_tape; cell_tape; previous_read_feedback; causal_additive_attention; weighted_hidden_and_cell_read; gates_from_read_hidden; cell_update_from_read_cell; append_states",
+      "representation": "architectures/lstmn/representation.yaml",
+      "reconstructed_code": "architectures/lstmn/reconstructed.py",
+      "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
+      "materials": "architectures/lstmn/README.md",
+      "provenance": "architectures/lstmn/provenance.json"
+    },
+    {
+      "architecture": "retro",
+      "title": "retro",
+      "scope": "chunk_shift; neighbour_time_joint_softmax; query_key_value_projections; supplied_position_logits; retrieval_value_aggregation; residual_wrapper",
+      "representation": "architectures/retro/representation.yaml",
+      "reconstructed_code": "architectures/retro/reconstructed.py",
+      "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
+      "materials": "architectures/retro/README.md",
+      "provenance": "architectures/retro/provenance.json"
+    },
+    {
+      "architecture": "jamba",
+      "title": "jamba",
+      "scope": "one_original_eight_layer_cycle; pre_norm_residuals; causal_grouped_query_attention; full_mamba_mixer; normalized_dt_B_C; dense_swiglu; full_capacity_top2_swiglu_experts; explicit_continuation_state",
+      "representation": "architectures/jamba/representation.yaml",
+      "reconstructed_code": "architectures/jamba/reconstructed.py",
+      "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
+      "materials": "architectures/jamba/README.md",
+      "provenance": "architectures/jamba/provenance.json"
+    },
+    {
+      "architecture": "ttt",
+      "title": "ttt",
+      "scope": "single_head_TTT_Linear_inner_learner; learned_view_projections; residual_LN_learner; input_dependent_learning_rate; frozen_chunk_gradients; causal_prefix_updates; learned_initial_state; learned_token_scaling; chunk_boundary_continuation",
+      "representation": "architectures/ttt/representation.yaml",
+      "reconstructed_code": "architectures/ttt/reconstructed.py",
+      "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
+      "materials": "architectures/ttt/README.md",
+      "provenance": "architectures/ttt/provenance.json"
     }
   ]
 }

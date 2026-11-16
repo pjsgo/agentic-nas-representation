@@ -1,0 +1,70 @@
+{
+  "format_version": 3,
+  "architecture": "retnet",
+  "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
+  "scope": {
+    "included": [
+      "multi_scale_fixed_head_decay",
+      "independent_projections",
+      "real_position_rotation",
+      "key_scaling",
+      "causal_retention",
+      "parallel_sum",
+      "recurrent_matrix_state",
+      "state_continuation"
+    ],
+    "excluded": [
+      "gating",
+      "head_normalization",
+      "output_projection",
+      "full_MSR",
+      "residual",
+      "FFN",
+      "full_RetNet",
+      "chunkwise_optimization",
+      "official_path_specific_scaling",
+      "training",
+      "gradients",
+      "mixed_precision"
+    ]
+  },
+  "generation": {
+    "attempts": 1,
+    "original_result": "FAIL",
+    "final_result": "PASS_WITHIN_DECLARED_SCOPE",
+    "repaired": true,
+    "sender": "producer; existing separately authorized experiment",
+    "new_integration_calls": 0
+  },
+  "evaluation": {
+    "cases": 3,
+    "final_result": "PASS_WITHIN_DECLARED_SCOPE",
+    "tolerance": {
+      "atol": 2e-10,
+      "rtol": 2e-11
+    },
+    "basis": "Existing independent-reference evidence; relocated candidate acceptance in integration report",
+    "research_result": "linear_transformer/experiments/20261116_genealogy_phase5_retnet_rwkv/retnet/generation/repaired_result.json",
+    "reference_runtime_parity": "NOT_CLAIMED",
+    "integration_acceptance": {
+      "status": "PASS_WITHIN_DECLARED_SCOPE",
+      "cases": 3,
+      "candidate": "reconstructed.py",
+      "fixture_and_tolerance_changes": "NONE",
+      "purpose": "Relocated distribution candidate acceptance",
+      "report": "Research workspace: integration/20261116_genealogy_phase5_integration/evaluation/retnet/acceptance.json"
+    }
+  },
+  "candidate": {
+    "file": "reconstructed.py",
+    "research_source": "linear_transformer/experiments/20261116_genealogy_phase5_retnet_rwkv/retnet/generation/repaired_model.py",
+    "computational_changes_by_integration": "None"
+  },
+  "representation": {
+    "file": "representation.yaml",
+    "publication_changes": "Module filename and relative reading-rule path only"
+  },
+  "limitations": [
+    "Declared block/core only; no full-model, training, speed, universal-schema or unmodified-one-shot claim for repaired candidates"
+  ]
+}

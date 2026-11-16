@@ -1,0 +1,83 @@
+representation_version: local_equational_graph_v1
+operator_profile: self_contained_float64_equations_v1
+architecture: ttt-linear-single-head-learning-core
+architecture_entry: reconstructed.py:ttt_linear
+interface:
+  signature: 'ttt_linear(x, parameters, chunk_size, base_lr=1.0, state=None) -> dict'
+  x: 'CPU torch.float64[B,T,D], finite, B,T,D positive'
+  parameters: 'dict of supplied finite CPU torch.float64 tensors below; head width H>=2'
+  chunk_size: 'Python integer K>=1, T%K==0; only whole chunks supported'
+  base_lr: 'finite Python float >=0, default 1.0'
+  state: 'None or dict W [B,H,H], b [B,H], finite CPU float64, at chunk boundary'
+  outputs:
+    output: '[B,T,H], residual inner learner predictions AFTER update'
+    loss: '[B,T], loss evaluated at chunk-start parameters before update'
+    grad_W: '[B,T,H,H], unweighted per-token gradients at chunk start'
+    grad_b: '[B,T,H], unweighted per-token bias gradients at chunk start'
+    W_path: '[B,T,H,H], prefix updated W used for each output'
+    b_path: '[B,T,H], prefix updated b used for each output'
+    lr: '[B,T], per-token scalar lambda before alpha factor'
+    state: 'dict W [B,H,H], b [B,H] final boundary state'
+  invalid: 'Raise ValueError for chunk_size<1 or T%chunk_size!=0. Other inputs must satisfy declared domain.'
+parameters:
+  q: {shape: [D,H], role: test_view_kernel}
+  k: {shape: [D,H], role: training_view_kernel}
+  v: {shape: [D,H], role: label_view_kernel}
+  W0: {shape: [H,H], role: initial_inner_linear_kernel}
+  b0: {shape: [H], role: initial_inner_bias}
+  gamma: {shape: [H], role: inner_LN_scale}
+  beta: {shape: [H], role: inner_LN_bias}
+  lr_weight: {shape: [D], role: input_dependent_learning_rate_gate}
+  lr_bias: {shape: [], role: learning_rate_gate_bias}
+  token_offset: {shape: [K], role: learnable_offset_to_reciprocal_chunk_position}
+  orientation: 'Row vectors; input-output matrix orientation. All parameters untied and reused over batch/time. No internal parameter registration or initialization.'
+state:
+  initial: 'If None, clone W0 and b0 separately for each sequence. Else copy supplied W and b. Each batch sample evolves independently.'
+  carry: 'Only W,b at complete chunk boundaries. No pending gradient accumulator because every call ends at a boundary.'
+  mutation: 'Do not mutate x, any supplied parameter or supplied state. Outer parameters fixed. Only local inner W,b evolve. No optimizer, RNG, outer training, or persistent module buffers.'
+notation:
+  ln: 'LN(z)=gamma*(z-mean(z,last_axis))/sqrt(mean((z-mean(z,last_axis))^2,last_axis)+1e-6)+beta; population variance; keep reduction dimensions for broadcasting.'
+  sigmoid: 'sigmoid(z)=1/(1+exp(-z))'
+  loss_scaling: 'Use half SUM of squares over head features, no division by H or K or B. This matches the official fused L2 derivative; paper squared-loss convention absorbs factor 2 into learning rate.'
+factors:
+  views:
+    equation: 'Q=x@q; X=x@k; V=x@v; target=V-X. Projections bias-free. No RoPE or temporal convolution is inserted in this declared inner-core boundary.'
+  rates:
+    equation: 'lambda[b,t]=(base_lr/H)*sigmoid(sum_d x[b,t,d]*lr_weight[d]+lr_bias); alpha[i]=max(1/(i+1)+token_offset[i],0) for i=0..K-1. Return lr=lambda.'
+  chunk_scan:
+    scan: 'For chunks c=0,K,2K,...,T-K, freeze current inner state as Wc,bc for ALL gradients in that chunk. Batch samples independent. The last prefix update becomes the next chunk start.'
+  training_loss:
+    equation: 'z_i=X[:,c+i,:]@Wc+bc (per batch); normalized residual prediction=LN(z_i); loss_i=0.5*sum_h (LN(z_i)-target[:,c+i,:])^2'
+  inner_gradient:
+    equation: >-
+      mu_i=mean_h(z_i); std_i=sqrt(mean_h((z_i-mu_i)^2)+1e-6); n_i=(z_i-mu_i)/std_i;
+      e_i=(gamma*n_i+beta-target_i)*gamma;
+      g_i=(e_i-mean_h(e_i)-n_i*mean_h(e_i*n_i))/std_i;
+      grad_W_i[a,h]=X_i[a]*g_i[h]; grad_b_i[h]=g_i[h].
+      Gradient is with respect to Wc,bc only. Views, gamma,beta,lambda,alpha fixed inside this derivative.
+  prefix_update:
+    equation: >-
+      For i=0..K-1: Wi=Wc-alpha[i]*sum_{j=0}^i lambda[c+j]*grad_W_j;
+      bi=bc-alpha[i]*sum_{j=0}^i lambda[c+j]*grad_b_j.
+      The alpha of the QUERY prefix i multiplies the entire sum. Do not apply alpha[j] to each summand.
+      Do not compute gradients at Wi inside the same chunk. W_path[:,c+i]=Wi; b_path[:,c+i]=bi.
+  prediction:
+    equation: 'output[:,c+i,:]=Q[:,c+i,:]+LN(Q[:,c+i,:]@Wi+bi). This uses updated Wi,bi, including token i. Carry W_{K-1},b_{K-1} into next chunk; return final carry.'
+contains:
+  chunk_scan: [training_loss, inner_gradient, prefix_update, prediction]
+dataflow:
+  - [x, views]
+  - [x, rates]
+  - [views.X_and_target, training_loss]
+  - [chunk_start_state, training_loss]
+  - [training_loss.z, inner_gradient]
+  - [inner_gradient, prefix_update]
+  - [rates, prefix_update]
+  - [prefix_update, prediction]
+  - [views.Q, prediction]
+  - [last_prefix_state, next_chunk_start_state]
+scope:
+  included: [single_head_TTT_Linear_inner_learner, learned_view_projections, residual_LN_learner, input_dependent_learning_rate, frozen_chunk_gradients, causal_prefix_updates, learned_initial_state, learned_token_scaling, chunk_boundary_continuation]
+  excluded: [TTT_MLP, full_language_model, outer_training, outer_gradients, backbone_residual_FFN, RoPE, pre_convolution, outer_post_norm, output_projection, gating, multi_head_wrapper, partial_chunk_cache, fused_kernels, mixed_precision]
+  boundary_note: 'The official inner ttt method consumes already prepared views. This scope supplies simple unrotated learned views following paper sections 2.3 and 2.7, and preserves the official inner learner update. It is not the complete TTTBase.forward wrapper or a checkpoint-compatible block.'
+semantics_status: {common_schema_certified: false, common_spec_changes: [], local_equations_sufficient: true}
