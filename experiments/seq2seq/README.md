@@ -22,3 +22,9 @@ flowchart LR
 Decoder 입력은 teacher forcing으로 공급합니다. Encoder의 마지막 h/c가 decoder 초기 상태로 연결됩니다. 주요 계산을 묶어 보여주는 요약도이며, 세부 연산과 연결은 위 YAML과 코드를 기준으로 확인합니다.
 
 [평가 조건·출처](../../results/summary.json) · [전체 결과](../README.md)
+
+## 관련 관계
+
+- [LSTM → Seq2Seq](../../relations/tr_004.yaml) — C · tr_004
+- [Seq2Seq → Bahdanau](../../relations/tr_007.yaml) — P · tr_007
+- [Seq2Seq → Transformer](../../relations/tr_026.yaml) — A · tr_026

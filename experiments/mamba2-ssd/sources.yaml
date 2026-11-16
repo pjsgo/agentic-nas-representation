@@ -1,0 +1,42 @@
+architecture: Mamba-2_SSD
+paper:
+  url: https://arxiv.org/abs/2405.21060
+  inspected_version: https://arxiv.org/html/2405.21060v1
+  anchors:
+  - section_5_scalar_identity
+  - section_6_SSD_algorithm
+  - section_7_architecture
+  - listing_1
+code:
+  repository: https://github.com/state-spaces/mamba
+  commit: e9594ce1c732d97440f0332fdc43170a2294dbfa
+  files:
+  - path: mamba_ssm/modules/ssd_minimal.py
+    url: https://github.com/state-spaces/mamba/blob/e9594ce1c732d97440f0332fdc43170a2294dbfa/mamba_ssm/modules/ssd_minimal.py
+    functions:
+    - segsum
+    - segsum_unstable
+    - ssd_minimal_discrete
+    - test_correctness
+    mapping: Four SSD stages; discrete X=dt*x, a=dt*A; initial state adapted from [batch,1,heads,feature,state]
+      to [batch,heads,feature,state].
+  - path: mamba_ssm/modules/mamba2_simple.py
+    url: https://github.com/state-spaces/mamba/blob/e9594ce1c732d97440f0332fdc43170a2294dbfa/mamba_ssm/modules/mamba2_simple.py
+    functions:
+    - Mamba2Simple.__init__
+    - Mamba2Simple.forward
+    mapping: A_log/dt_bias/D and softplus time scale; external x/B/C at post-convolution boundary, external dt_logits
+      at pre-bias boundary.
+scope:
+  included: Multihead scalar-identity selective SSM; actual chunk-diagonal and low-rank offdiagonal contractions;
+    chunk-boundary state; continuous-to-discrete scaling and D skip.
+  excluded: input/output projections, convolution, gated RMSNorm, grouping, fused Triton/CUDA kernels, full network,
+    training, performance claims.
+  dimensions: two heads, three features per head, four state coordinates, ngroups=heads, positive lengths divisible
+    by two
+  stability_limit: Prefix subtraction matches official segsum_unstable; short float64 fixtures only, no long-sequence
+    numerical stability claim.
+  reference_independence: Independent NumPy scalar-head recurrence, no block algorithm or helpers shared with candidate.
+    Not renamed prior Mamba code.
+  distinction_from_mamba1: A has one scalar per head (not per channel/state diagonal); shared transition across
+    P and N; candidate realizes SSD semiseparable block matrix algorithm.

@@ -1,0 +1,38 @@
+primary_urls:
+- https://arxiv.org/html/1609.08144v2
+- https://github.com/tensorflow/nmt/blob/0be864257a76c151eef20ea689755f08bc1faf4e/nmt/gnmt_model.py
+- https://github.com/tensorflow/nmt/blob/0be864257a76c151eef20ea689755f08bc1faf4e/nmt/attention_model.py
+- https://github.com/tensorflow/nmt/blob/0be864257a76c151eef20ea689755f08bc1faf4e/nmt/model_helper.py
+- https://github.com/tensorflow/tensorflow/blob/v1.12.0/tensorflow/python/ops/rnn_cell_impl.py
+- https://github.com/tensorflow/tensorflow/blob/v1.12.0/tensorflow/contrib/seq2seq/python/ops/attention_wrapper.py
+source_versions:
+- arXiv:1609.08144v2
+- tensorflow/nmt 0be864257a76c151eef20ea689755f08bc1faf4e
+- TensorFlow v1.12.0 (source inspection only)
+files_functions_or_equations:
+- Paper section 3; GNMTModel._build_encoder/_build_decoder_cell; GNMTAttentionMultiCell.__call__; gnmt_residual_fn;
+  create_attention_mechanism
+- model_helper._single_cell/_cell_list; rnn_cell_impl.BasicLSTMCell.call; attention_wrapper.BahdanauAttention, _bahdanau_score,
+  AttentionWrapper.call
+included: 'Small 3-layer GNMT encoder/decoder: bidirectional bottom encoder, 2 uni layers, top residual, bottom
+  decoder additive attention, previous context broadcast to upper layers'
+excluded:
+- training/gradients
+- tokenization/embedding lookup
+- beam search
+- full translation system
+- original initializer fidelity
+- 8-layer/1024-wide configuration
+- gnmt_v2 current-attention broadcast alternative
+- wordpieces
+- quantization
+- length/coverage beam penalties
+- multi-GPU placement
+- padding/variable lengths within a batch
+- vocabulary projection/softmax
+adaptations:
+- Reduced depth preserves a bidirectional layer, width-changing uni layer and residual uni layer.
+- Decoder top residual adds lower hidden output only, never context; raw recurrent h/c are carried.
+- Completed LSTM code reused; effective supplied biases absorb TensorFlow forget_bias=1 and map IFGO ordering.
+- Official tutorial variant is specified explicitly, not a claim to reproduce the proprietary 2016 production system.
+reference_kind: independent NumPy equation transcription, not upstream project execution

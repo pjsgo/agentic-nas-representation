@@ -1,0 +1,45 @@
+{
+  "format_version": 3,
+  "architecture": "compressive-transformer",
+  "scope": [
+    "mean_pooling_baseline",
+    "fixed_capacity_dual_fifo",
+    "joint_causal_attention",
+    "separate_relative_position_banks",
+    "segment_state_update"
+  ],
+  "excluded": [
+    "learned_conv_compression",
+    "dilated_conv",
+    "max_pooling",
+    "most_used_compression",
+    "auxiliary_attention_reconstruction_loss",
+    "auxiliary_autoencoding_loss",
+    "full_training",
+    "residual_norm_ffn_tower",
+    "input_embedding_mlp",
+    "single_token_sampling_schedule",
+    "dropout"
+  ],
+  "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
+  "representation": {
+    "file": "representation.yaml",
+    "research_source": "parallel_coverage/20261105/transformer/experiments/20261115_genealogy_phase1_memory/compressive_transformer/architecture.yaml",
+    "publication_changes": "Workspace-only provenance paths relocated; calculation and IDs unchanged"
+  },
+  "candidate": {
+    "file": "repaired_model.py",
+    "research_source": "parallel_coverage/20261105/transformer/experiments/20261115_genealogy_phase1_memory/llm_core_review_v1/compressive_transformer/repaired_model.py",
+    "publication_code_changes": "Whitespace formatting only; calculations unchanged"
+  },
+  "evaluation": {
+    "kind": "summary_of_existing_evidence_no_rerun",
+    "original_verdict": "CORE_MISMATCH",
+    "final_verdict": "PASS_WITHIN_DECLARED_SCOPE",
+    "representative_cases": 3,
+    "research_source": "parallel_coverage/20261105/transformer/experiments/20261115_genealogy_phase1_memory/llm_core_review_v1/compressive_transformer/repaired_evaluation.json",
+    "full_model_training_or_performance_claim": false
+  },
+  "repair_required": true,
+  "repair_reason": "Causal mask compares global current-key indices C+M+j to local query i, blocking every current key in declared configurations"
+}

@@ -1,0 +1,22 @@
+architecture: LayerNorm
+paper:
+  url: https://arxiv.org/abs/1607.06450v1
+  location: section 3, layer-wise statistics and gain/bias
+official_code:
+  url: https://github.com/pytorch/pytorch/blob/6c8c5ad5eaf47a62fafbb4a2747198cbffbf1ff0/torch/nn/modules/normalization.py
+  version: PyTorch 2.2.1; commit 6c8c5ad5eaf47a62fafbb4a2747198cbffbf1ff0
+  file_function: torch/nn/modules/normalization.py:LayerNorm.forward; torch/nn/functional.py:layer_norm
+source_decisions:
+- PyTorch trailing-axis generalization; biased variance and epsilon inside square root.
+- Supplied gamma/beta retained as registered Parameters, no running state.
+implemented:
+- ln.mean
+- ln.center
+- ln.variance
+- ln.normalize
+- ln.affine
+excluded:
+- full_network_training
+- initialization_equivalence
+- mixed_precision
+reference_independence: official_native_layer_norm_vs_explicit_tensor_reductions

@@ -28,3 +28,11 @@ flowchart LR
 동일한 준비 계수에서 sequence와 impulse-kernel 경로가 나뉩니다. 각 반복 내부의 상태 갱신은 하나의 노드로 요약했습니다. 주요 계산을 묶어 보여주는 요약도이며, 세부 연산과 연결은 위 YAML과 코드를 기준으로 확인합니다.
 
 [평가 조건·출처](../../results/summary.json) · [전체 결과](../README.md)
+
+## 관련 관계
+
+- [LSSL → S4](../../relations/tr_049.yaml) — A · tr_049
+- [S4 → H3](../../relations/tr_050.yaml) — C · tr_050
+- [S4 → Mamba-1](../../relations/tr_061.yaml) — A · tr_061
+
+[관계용 별도 표현과 계약](genealogy/README.md)

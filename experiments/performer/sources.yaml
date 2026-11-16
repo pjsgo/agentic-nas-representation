@@ -1,0 +1,34 @@
+paper:
+  url: https://arxiv.org/abs/2009.14794v4
+  relevant_content: FAVOR+ positive orthogonal random features and normalized attention
+  inspection: paper abstract and official implementation; arithmetic grounded in inspected source below
+official_code:
+  repository: https://github.com/google-research/google-research
+  commit: bb18d9b0cb460fee1a080fa2eeb4109fe3805275
+  url: https://github.com/google-research/google-research/blob/bb18d9b0cb460fee1a080fa2eeb4109fe3805275/performer/fast_attention/tensorflow/fast_attention.py
+  file: performer/fast_attention/tensorflow/fast_attention.py
+  functions:
+  - create_projection_matrix
+  - softmax_kernel_transformation
+  - noncausal_numerator
+  - noncausal_denominator
+  - favor_attention
+  inspection: source read; entire upstream project not imported or executed
+adaptation: Axes translated BLHD to BHL D. Query max over features; key max over sequence and features. Epsilon
+  inside feature map. Projection fixed and shared; RNG bit identity excluded.
+scope:
+  included:
+  - D^(-1/4) normalization
+  - fixed random feature map
+  - linear associative normalized aggregation
+  excluded:
+  - full Transformer blocks
+  - QKV and output feature projections
+  - training
+  - dropout
+  - original class hierarchy
+  - performance claims
+  - exact softmax equivalence
+  - causal scan
+  - random redraw schedule
+  - random number generator bit identity

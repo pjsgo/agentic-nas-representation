@@ -1,0 +1,111 @@
+format_version: local_transition_v1
+transition_id: tr_038
+source_architecture: Transformer
+target_architecture: Performer
+relation_type: A
+inferred: false
+motivation: softmax attention을 효율적으로 근사
+conditions:
+- random projection, feature 수, stabilization, redraw 계약 필요; 현재 noncausal fixed projection core
+expected_effects:
+- 길이 선형 attention 계산 의도
+- 기대 효과이며 이번 세션의 성능 측정 결과가 아님
+tradeoffs:
+- 유한 random feature 근사 오차; exact softmax 출력 일치 아님
+changes:
+- before_units:
+  - scale_q
+  - score_a
+  - prob_a
+  - mix_a
+  after_units:
+  - performer_query_features
+  - performer_key_features
+  - performer_kv_summary
+  - performer_key_sum
+  - performer_numerator
+  - performer_denominator
+  - performer_output
+  operation: descriptive_correspondence
+  mechanism: 양의 orthogonal random features FAVOR+로 softmax kernel 근사, phi(Q)(phi(K)^T V)와 normalizer로 결합 순서 변경
+  mapping_status: mapped_scoped
+  state_and_resource_contract: omega[M,D] fixed shared buffer; D^-1/4 scaling on both Q/K; epsilon inside feature;
+    noncausal core
+preserve:
+- query/key/value 역할과 정규화된 aggregation
+conceptual_correspondence:
+- source_concept: Transformer의 관련 계산
+  target_concept: 양의 orthogonal random features FAVOR+로 softmax kernel 근사, phi(Q)(phi(K)^T V)와 normalizer로 결합 순서
+    변경
+  part_ids: See changes[].before_units/after_units; concepts outside scope remain pending
+  mapping_status: mapped_within_declared_scope
+mapping_status: complete_scoped
+record_status: complete
+unresolved: []
+scope:
+  included:
+  - descriptive_relationship
+  - available_core_component_correspondence
+  excluded:
+  - new_reconstruction
+  - numerical_tests
+  - training
+  - whole_model_conversion
+  - weight_or_state_migration
+  source_yaml: ../experiments/transformer/20261113-core-completion/representation.yaml
+  target_yaml: ../experiments/performer/representation.yaml
+  path_base: relation_file_directory
+  mapping_boundary: omega[M,D] fixed shared buffer; D^-1/4 scaling on both Q/K; epsilon inside feature; noncausal
+    core
+evidence:
+- source: beyond_transformer_slides.pdf
+  page: 68
+  claim: A·038 Transformer → Performer
+  verification: direct_embedded_image_view
+  availability: User-supplied slides; not redistributed
+- source: https://arxiv.org/html/2009.14794v4
+  section: sections 2.2–2.4 FAVOR+
+  verification: primary_source_read
+source_records:
+- side: target
+  verification: provenance read; referenced core source inspected as text or equations; no execution
+  official_code:
+    repository: https://github.com/google-research/google-research
+    commit: bb18d9b0cb460fee1a080fa2eeb4109fe3805275
+    url: https://github.com/google-research/google-research/blob/bb18d9b0cb460fee1a080fa2eeb4109fe3805275/performer/fast_attention/tensorflow/fast_attention.py
+    file: performer/fast_attention/tensorflow/fast_attention.py
+    functions:
+    - create_projection_matrix
+    - softmax_kernel_transformation
+    - noncausal_numerator
+    - noncausal_denominator
+    - favor_attention
+    inspection: source read; entire upstream project not imported or executed
+- side: source
+  repository: https://github.com/pytorch/pytorch
+  version: 2.2.1
+  commit: 6c8c5ad5eaf47a62fafbb4a2747198cbffbf1ff0
+  files_functions:
+  - torch/nn/modules/transformer.py:TransformerEncoderLayer.forward
+  - torch/nn/functional.py:multi_head_attention_forward, layer_norm
+  provenance: Research workspace evidence (not bundled)
+  authority: official framework implementation underlying completed functional encoder block; not original whole
+    Transformer repository
+  verification: existing source and YAML text; no rerun
+application:
+  executable: false
+  command: null
+  patch_or_script: null
+  availability: descriptive_publication; research transformation runners not distributed
+validation:
+  profile: relation_consistency_only
+  status: RELATION_RECORDED_MAPPING_REVIEWED
+  claim_boundary: Direction/type/source/path/part-ID consistency only. Producer result evidence is reused; mapping
+    completeness does not certify architecture numerical correctness.
+  publication_check: Paths and component IDs only; no numerical rerun
+provenance:
+  research_source: parallel_coverage/20261105/integration/20261115_genealogy_phase1_relations/tr_038.yaml
+  publication_changes:
+  - repository-relative YAML paths
+  - workspace-only runner references replaced by explicit historical evidence
+  - source metadata trimmed; calculations and component IDs preserved

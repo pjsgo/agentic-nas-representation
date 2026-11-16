@@ -1,0 +1,20 @@
+primary_urls:
+- https://arxiv.org/html/1406.1078v3
+source_versions:
+- arXiv:1406.1078v3
+files_functions_or_equations:
+- Appendix A.1 encoder and A.1.1 decoder; context V and initial V-prime
+included: Cho 2014 Appendix A encoder/context bridge/conditional decoder hidden-state core
+excluded:
+- training/gradients
+- tokenization/embedding lookup
+- beam search
+- full translation system
+- original initializer fidelity
+- maxout output head and factorized vocabulary classifier
+adaptations:
+- H=5,I=3; biases fixed zero as displayed equations. Encoder reset-before; decoder reset-after on recurrent-plus-context,
+  exactly distinguished by appendix.
+- Reuse existing Seq2Seq source scan -> bridge -> teacher-forced target scan contract; replace LSTM with Cho GRU
+  and context pathway.
+reference_kind: independent NumPy equation transcription, not upstream project execution

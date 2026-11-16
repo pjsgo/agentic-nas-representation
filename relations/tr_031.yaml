@@ -1,0 +1,112 @@
+format_version: local_transition_v1
+transition_id: tr_031
+source_architecture: Transformer-XL
+target_architecture: Compressive Transformer
+relation_type: A
+inferred: false
+motivation: cache가 차면 오래된 hidden을 버리는 문제
+conditions:
+- 압축률, FIFO 순서, 상대 위치를 구분; average pooling과 학습 conv 압축은 별도 변형
+expected_effects:
+- 같은 memory slot으로 더 긴 과거 표현
+- 기대 효과이며 이번 세션의 성능 측정 결과가 아님
+tradeoffs:
+- 압축 정보 손실, 별도 state/보조 loss 비용
+changes:
+- before_units:
+  - txl.memory_read
+  - txl.relative_score
+  - txl.causal_attention
+  - txl.memory_update
+  after_units:
+  - ct.memory_read
+  - ct.relative_compressed
+  - ct.relative_episodic
+  - ct.joint_attention
+  - ct.evict
+  - ct.compress_mean
+  - ct.episodic_update
+  - ct.compressed_update
+  operation: descriptive_correspondence
+  mechanism: 퇴출될 hidden을 압축해 별도 compressed memory에 저장하고 최근 memory와 함께 attention; 학습 압축 시 보조 reconstruction loss
+  mapping_status: mapped_scoped
+  state_and_resource_contract: two fixed-capacity FIFOs; average pooling rate with aligned segments; no compressor
+    parameters/loss; Sonnet memory state gradients retained versus TXL detached state
+preserve:
+- segment recurrence, 최근 hidden memory와 attention 조회
+conceptual_correspondence:
+- source_concept: Transformer-XL의 관련 계산
+  target_concept: 퇴출될 hidden을 압축해 별도 compressed memory에 저장하고 최근 memory와 함께 attention; 학습 압축 시 보조 reconstruction
+    loss
+  part_ids: See changes[].before_units/after_units; concepts outside scope remain pending
+  mapping_status: mapped_within_declared_scope
+mapping_status: complete_scoped
+record_status: complete
+unresolved: []
+scope:
+  included:
+  - descriptive_relationship
+  - available_core_component_correspondence
+  excluded:
+  - new_reconstruction
+  - numerical_tests
+  - training
+  - whole_model_conversion
+  - weight_or_state_migration
+  source_yaml: ../experiments/transformer-xl/representation.yaml
+  target_yaml: ../experiments/compressive-transformer/representation.yaml
+  path_base: relation_file_directory
+  mapping_boundary: two fixed-capacity FIFOs; average pooling rate with aligned segments; no compressor parameters/loss;
+    Sonnet memory state gradients retained versus TXL detached state
+evidence:
+- source: beyond_transformer_slides.pdf
+  page: 68
+  claim: A·031 Transformer-XL → Compressive Transformer
+  verification: direct_embedded_image_view
+  availability: User-supplied slides; not redistributed
+- source: https://arxiv.org/html/1911.05507v1
+  section: section 3, Algorithm 1, section 3.2
+  verification: primary_source_read
+source_records:
+- side: source
+  verification: provenance read; referenced core source inspected as text or equations; no execution
+  official_code:
+    url: https://github.com/kimiyoung/transformer-xl/blob/44781ed21dbaec88b280f74d9ae2877f52b492a5/pytorch/mem_transformer.py
+    commit: 44781ed21dbaec88b280f74d9ae2877f52b492a5
+    file_functions:
+    - PositionalEmbedding.forward
+    - RelMultiHeadAttn._rel_shift
+    - RelPartialLearnableMultiHeadAttn.forward
+    - MemTransformerLM._update_mems
+    - MemTransformerLM._forward
+- side: target
+  verification: provenance read; referenced core source inspected as text or equations; no execution
+  official_code:
+    url: https://github.com/google-deepmind/sonnet/blob/cd5b5fa48e15e4d020f744968f5209949ebe750f/sonnet/python/modules/nets/transformer.py
+    commit: cd5b5fa48e15e4d020f744968f5209949ebe750f
+    branch: v1
+    functions:
+    - PoolCompressor._build
+    - CompressiveTransformer._build
+    - _concat_and_slice
+    - MultiheadAttention._build
+    - TransformerTower._build
+    - get_position_encodings
+    - rel_shift
+application:
+  executable: false
+  command: null
+  patch_or_script: null
+  availability: descriptive_publication; research transformation runners not distributed
+validation:
+  profile: relation_consistency_only
+  status: RELATION_RECORDED_MAPPING_REVIEWED
+  claim_boundary: Direction/type/source/path/part-ID consistency only. Producer result evidence is reused; mapping
+    completeness does not certify architecture numerical correctness.
+  publication_check: Paths and component IDs only; no numerical rerun
+provenance:
+  research_source: parallel_coverage/20261105/integration/20261115_genealogy_phase1_relations/tr_031.yaml
+  publication_changes:
+  - repository-relative YAML paths
+  - workspace-only runner references replaced by explicit historical evidence
+  - source metadata trimmed; calculations and component IDs preserved

@@ -1,0 +1,28 @@
+paper:
+  url: https://arxiv.org/abs/1904.10509v1
+  relevant_content: 'Sections 3.1-3.2: factorized sparse local and strided connectivity'
+  inspection: paper abstract and official implementation; arithmetic grounded in inspected source below
+official_code:
+  repository: https://github.com/openai/sparse_attention
+  commit: c53f3bdbf6225be0582f0357072e82b13c69be7d
+  url: https://github.com/openai/sparse_attention/blob/c53f3bdbf6225be0582f0357072e82b13c69be7d/attention.py
+  file: attention.py
+  functions:
+  - get_attn_mask
+  - attention_impl
+  inspection: source read; entire upstream project not imported or executed
+adaptation: Split-head boundary B,H,N,D; source finite -1e9 mask retained; no optimized sparse kernel.
+scope:
+  included:
+  - official local/strided sparse connectivity
+  - scaled masked softmax aggregation
+  excluded:
+  - full Transformer blocks
+  - QKV and output feature projections
+  - training
+  - dropout
+  - original class hierarchy
+  - performance claims
+  - fixed pattern
+  - block-sparse CUDA kernel
+  - layer alternation schedule

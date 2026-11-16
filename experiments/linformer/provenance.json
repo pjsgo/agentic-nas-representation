@@ -1,0 +1,41 @@
+{
+  "format_version": 3,
+  "architecture": "linformer",
+  "scope": [
+    "sequence-axis learned low-rank projection",
+    "softmax across compressed sequence"
+  ],
+  "excluded": [
+    "full Transformer blocks",
+    "QKV and output feature projections",
+    "training",
+    "dropout",
+    "original class hierarchy",
+    "performance claims",
+    "feature projection biases (commuting projection boundary only valid without bias)",
+    "incremental cache",
+    "padding",
+    "causal masking"
+  ],
+  "candidate_origin": "UNMODIFIED_EXTERNAL_LLM_CODE",
+  "representation": {
+    "file": "representation.yaml",
+    "research_source": "parallel_coverage/20261105/linear_transformer/experiments/20261115_genealogy_phase1_attention/linformer/representation.yaml",
+    "publication_changes": "Workspace-only provenance paths relocated; calculation and IDs unchanged"
+  },
+  "candidate": {
+    "file": "generated_model.py",
+    "research_source": "parallel_coverage/20261105/linear_transformer/experiments/20261115_genealogy_phase1_attention/llm_core_review_v1/linformer/generated_model.py",
+    "publication_code_changes": "Whitespace formatting only; calculations unchanged"
+  },
+  "evaluation": {
+    "kind": "summary_of_existing_evidence_no_rerun",
+    "original_verdict": "CORE_CONFIRMED",
+    "final_verdict": "PASS_WITHIN_DECLARED_SCOPE",
+    "representative_cases": 3,
+    "research_source": "parallel_coverage/20261105/linear_transformer/experiments/20261115_genealogy_phase1_attention/llm_core_review_v1/linformer/evaluation.json",
+    "full_model_training_or_performance_claim": false
+  },
+  "repair_required": false,
+  "repair_reason": null
+}

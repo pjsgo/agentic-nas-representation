@@ -26,3 +26,10 @@ flowchart LR
 q/k/v는 외부 입력입니다. S/Z는 제자리 갱신하며, 갱신한 상태로 현재 시점의 출력을 계산합니다. 주요 계산을 묶어 보여주는 요약도이며, 세부 연산과 연결은 위 YAML과 코드를 기준으로 확인합니다.
 
 [평가 조건·출처](../../results/summary.json) · [전체 결과](../README.md)
+
+## 관련 관계
+
+- [Transformer → Linear Transformer](../../relations/tr_037.yaml) — A · tr_037
+- [Linear Transformer → Performer](../../relations/tr_039.yaml) — I? · tr_039
+
+[관계용 별도 표현과 계약](genealogy/README.md)

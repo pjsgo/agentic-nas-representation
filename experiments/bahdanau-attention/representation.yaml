@@ -1,0 +1,163 @@
+representation_version: r1_expression_graph_v1
+operator_profile: ../../docs/operator-profiles/rnn.yaml
+architecture: bahdanau_attention
+architecture_entry: main
+scope: Additive alignment from previous decoder state, masked source context, conditional GRU decoder recurrence
+excluded:
+- training/gradients
+- tokenization/embedding lookup
+- beam search
+- full translation system
+- original initializer fidelity
+- bidirectional encoder execution; annotations supplied at boundary
+- initial-state projection from backward encoder
+- deep maxout vocabulary head
+interface:
+  inputs:
+    memory: '[B,S,10], externally supplied concatenated bidirectional annotations'
+    mask: '[B,S] bool, at least one true/row'
+    target: '[B,T,3]'
+    h0: '[B,5], supplied decoder initial state'
+  dtype: float64
+  layout: batch,time,feature
+  constraints: B,S,T>=1; H=5; CPU; eval; no in-place mutation
+  outputs:
+    output: '[B,T,5]'
+    context: '[B,T,10]'
+    weights: '[B,T,S]'
+    final_h: '[B,5]'
+parameters:
+  aW:
+  - 4
+  - 5
+  aU:
+  - 4
+  - 10
+  av:
+  - 1
+  - 4
+  dWz:
+  - 5
+  - 3
+  dUz:
+  - 5
+  - 5
+  dCz:
+  - 5
+  - 10
+  dWr:
+  - 5
+  - 3
+  dUr:
+  - 5
+  - 5
+  dCr:
+  - 5
+  - 10
+  dWn:
+  - 5
+  - 3
+  dUn:
+  - 5
+  - 5
+  dCn:
+  - 5
+  - 10
+functions:
+  additive_attention:
+    args:
+    - query
+    - memory
+    - mask
+    nodes:
+    - id: energy
+      expr: linear(tanh(linear(query,p['aW'])[:,None,:]+linear(memory,p['aU'])),p['av']).squeeze(-1)
+    - id: weights
+      expr: masked_softmax(energy,mask)
+    - id: context
+      expr: (weights[:,:,None]*memory).sum(dim=1)
+    return: (context,weights,energy)
+  conditional_gru:
+    args:
+    - x
+    - h
+    - context
+    nodes:
+    - id: z
+      expr: sigmoid(linear(x,p['dWz'])+linear(h,p['dUz'])+linear(context,p['dCz']))
+    - id: r
+      expr: sigmoid(linear(x,p['dWr'])+linear(h,p['dUr'])+linear(context,p['dCr']))
+    - id: proposal
+      expr: tanh(linear(x,p['dWn'])+linear(r*h,p['dUn'])+linear(context,p['dCn']))
+    - id: hidden
+      expr: (1-z)*h+z*proposal
+    return: (hidden, hidden)
+  decoder_step:
+    args:
+    - x
+    - h
+    - memory
+    - mask
+    nodes:
+    - id: alignment
+      expr: additive_attention(h,memory,mask)
+    - id: update
+      expr: conditional_gru(x,h,alignment[0])
+    return: ((update[0],alignment[0],alignment[1]),update[1])
+  main:
+    args:
+    - memory
+    - mask
+    - target
+    - h0
+    nodes:
+    - id: decoder_scan
+      expr: 'scan(lambda x,h: decoder_step(x,h,memory,mask),target,h0)'
+    return: '{''output'':decoder_scan[0][0],''context'':decoder_scan[0][1],''weights'':decoder_scan[0][2],''final_h'':decoder_scan[1]}'
+state_contract: State is explicit in function arguments and scan carry. Parameters shared over time; different prefixes
+  are distinct resources.
+candidate_origin: LOCAL_YAML_REALIZATION_NO_EXTERNAL_GENERATION
+common_schema_status: LOCAL_EXTENSION_NOT_COMMON_V0_3_PASS
+stable_component_ids:
+- additive_attention/energy
+- additive_attention/weights
+- additive_attention/context
+- conditional_gru/z
+- conditional_gru/r
+- conditional_gru/proposal
+- conditional_gru/hidden
+- decoder_step/alignment
+- decoder_step/update
+- main/decoder_scan
+operator_semantics: ../operator_profile.yaml
+components:
+  additive_attention/energy:
+    function: additive_attention
+    node: energy
+  additive_attention/weights:
+    function: additive_attention
+    node: weights
+  additive_attention/context:
+    function: additive_attention
+    node: context
+  conditional_gru/z:
+    function: conditional_gru
+    node: z
+  conditional_gru/r:
+    function: conditional_gru
+    node: r
+  conditional_gru/proposal:
+    function: conditional_gru
+    node: proposal
+  conditional_gru/hidden:
+    function: conditional_gru
+    node: hidden
+  decoder_step/alignment:
+    function: decoder_step
+    node: alignment
+  decoder_step/update:
+    function: decoder_step
+    node: update
+  main/decoder_scan:
+    function: main
+    node: decoder_scan

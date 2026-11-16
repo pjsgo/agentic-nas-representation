@@ -1,0 +1,98 @@
+format_version: local_transition_v1
+transition_id: tr_004
+source_architecture: LSTM
+target_architecture: Seq2Seq
+relation_type: C
+inferred: false
+motivation: 입출력 길이와 정렬이 다른 시퀀스 변환
+conditions:
+- encoder와 decoder 파라미터는 서로 독립; teacher forcing과 자유 생성 구분
+expected_effects:
+- 가변 길이 입력에서 가변 길이 출력 조건화
+- 기대 효과이며 이번 세션의 성능 측정 결과가 아님
+tradeoffs:
+- 고정 크기 context 병목과 순차 decoding
+changes:
+- before_units:
+  - body
+  - iterate
+  after_units:
+  - step_a
+  - step_b
+  - read_a
+  - handoff
+  - read_b
+  operation: descriptive_correspondence
+  mechanism: 독립된 encoder/decoder LSTM을 배치하고 마지막 encoder 상태로 decoder를 초기화
+  mapping_status: mapped_scoped
+  state_and_resource_contract: encoder/decoder independent weights, shared within time; final h/c bridge; teacher
+    forcing
+preserve:
+- LSTM gate/cell과 시간축 parameter sharing
+conceptual_correspondence:
+- source_concept: LSTM의 관련 계산
+  target_concept: 독립된 encoder/decoder LSTM을 배치하고 마지막 encoder 상태로 decoder를 초기화
+  part_ids: See changes[].before_units/after_units; concepts outside scope remain pending
+  mapping_status: mapped_within_declared_scope
+mapping_status: complete_scoped
+record_status: complete
+unresolved: []
+scope:
+  included:
+  - descriptive_relationship
+  - available_core_component_correspondence
+  excluded:
+  - new_reconstruction
+  - numerical_tests
+  - training
+  - whole_model_conversion
+  - weight_or_state_migration
+  source_yaml: ../experiments/lstm/representation.yaml
+  target_yaml: ../experiments/seq2seq/representation.yaml
+  path_base: relation_file_directory
+  mapping_boundary: encoder/decoder independent weights, shared within time; final h/c bridge; teacher forcing
+evidence:
+- source: beyond_transformer_slides.pdf
+  page: 67
+  claim: C·004 LSTM → Seq2Seq
+  verification: direct_embedded_image_view
+  availability: User-supplied slides; not redistributed
+- source: https://arxiv.org/html/1409.3215v3
+  section: section 2; two distinct LSTMs, final state bridge
+  verification: primary_source_read
+source_records:
+- side: source
+  url: https://github.com/pytorch/pytorch/blob/6c8c5ad5eaf47a62fafbb4a2747198cbffbf1ff0/torch/nn/modules/rnn.py
+  version: PyTorch 2.2.1
+  file: torch/nn/modules/rnn.py
+  functions:
+  - LSTM documented equations
+  - LSTMCell.forward
+  verification: source equations read as text; no import
+- side: target
+  repository: https://github.com/bentrevett/pytorch-seq2seq
+  commit: b3cd54c72cd6e4e63f672d334c795b4fe744ef92
+  file: 1 - Sequence to Sequence Learning with Neural Networks.ipynb
+  functions:
+  - Encoder.forward
+  - Decoder.forward
+  - Seq2Seq.forward
+  authority: third-party tutorial used by completed reconstruction; NOT original Sutskever implementation
+  verification: text read; existing reconstruction reused
+application:
+  executable: false
+  command: null
+  patch_or_script: null
+  availability: descriptive_publication; research transformation runners not distributed
+validation:
+  profile: relation_consistency_only
+  status: RELATION_RECORDED_MAPPING_REVIEWED
+  claim_boundary: Direction/type/source/path/part-ID consistency only. Producer result evidence is reused; mapping
+    completeness does not certify architecture numerical correctness.
+  publication_check: Paths and component IDs only; no numerical rerun
+provenance:
+  research_source: parallel_coverage/20261105/integration/20261115_genealogy_phase1_relations/tr_004.yaml
+  publication_changes:
+  - repository-relative YAML paths
+  - workspace-only runner references replaced by explicit historical evidence
+  - source metadata trimmed; calculations and component IDs preserved

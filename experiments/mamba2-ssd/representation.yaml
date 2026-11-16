@@ -1,0 +1,31 @@
+format_version: local_ssm_core_v1
+architecture: Mamba-2_SSD
+scope:
+  included: [scalar_identity_per_head, selective_dt_B_C_inputs, multi_feature_heads, SSD_chunk_diagonal_blocks, SSD_low_rank_offdiagonal_blocks, chunk_boundary_state, D_skip]
+  excluded: [input_projection, causal_convolution, gating_RMSNorm, output_projection, grouped_BC, fused_GPU_kernels, full_network, training]
+configuration: {heads: 2, head_dim: 3, state_size: 4, block_len: 2}
+interface:
+  inputs: {x: [batch, time, heads, head_dim], dt_logits: [batch, time, heads], B: [batch, time, heads, state_size], C: [batch, time, heads, state_size], initial_state: [batch, heads, head_dim, state_size]}
+  outputs: {y: [batch, time, heads, head_dim], final_state: [batch, heads, head_dim, state_size]}
+  dtype: float64
+  constraints: [positive_batch_and_time, time_divisible_by_block_len, CPU, ngroups_equals_heads]
+parameters: {A_log: [2], dt_bias: [2], D: [2]}
+buffers: {}
+parameter_contract: A_log/dt_bias/D independent trainable Parameters; B/C and dt_logits external token-selective tensors; scalar A per head broadcast across both P and N
+state_contract: external S_prev with axes batch/head/feature/state; S_t=exp(a_t)*S_prev+X_t outer B_t; no input mutation
+operators:
+  discretize: 'dt=softplus(dt_logits+dt_bias); a=dt*(-exp(A_log)); X=dt*x'
+  chunks: 'reshape time into chunks,Q; a -> [batch,head,chunks,Q]; prefix=cumsum(a,-1)'
+  diagonal: 'L[i,j]=exp(sum_{k=j+1..i}a[k]) for i>=j else 0; Ydiag[i,p]=sum_jn C[i,n]*B[j,n]*L[i,j]*X[j,p]'
+  local_state: 'U[c,p,n]=sum_j exp(prefix[c,-1]-prefix[c,j])*X[c,j,p]*B[c,j,n]'
+  boundaries: 'totals=[0,prefix[c,-1]]; W[z,c]=exp(sum_{k=c+1..z}totals[k]) for z>=c else 0; all_states=W@[S0,U]; starts=all_states[:-1]; final=all_states[-1]'
+  offdiagonal: 'Yoff[c,i,p]=exp(prefix[c,i])*sum_n C[c,i,n]*starts[c,p,n]'
+  merge_skip: 'reshape(Ydiag+Yoff) + D[head]*x'
+graph:
+  - {id: ssd_selective_discretize, op: discretize, inputs: [x, dt_logits, A_log, dt_bias], outputs: [X, a]}
+  - {id: ssd_chunk_partition, op: chunks, inputs: [X, a, B, C], outputs: [Xc, ac, Bc, Cc, prefix]}
+  - {id: ssd_diagonal_blocks, op: diagonal, inputs: [Xc, ac, Bc, Cc], outputs: [Ydiag]}
+  - {id: ssd_local_state_factor, op: local_state, inputs: [Xc, Bc, prefix], outputs: [local_states]}
+  - {id: ssd_boundary_propagation, op: boundaries, inputs: [local_states, prefix, initial_state], outputs: [starts, final_state]}
+  - {id: ssd_offdiagonal_blocks, op: offdiagonal, inputs: [Cc, starts, prefix], outputs: [Yoff]}
+  - {id: ssd_merge_skip, op: merge_skip, inputs: [Ydiag, Yoff, D, x], outputs: [y]}

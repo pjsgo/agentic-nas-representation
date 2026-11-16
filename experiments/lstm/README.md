@@ -25,3 +25,8 @@ flowchart LR
 한 시점의 계산을 시간축으로 반복하며 같은 파라미터를 재사용합니다. 최종 h/c도 반환합니다. 주요 계산을 묶어 보여주는 요약도이며, 세부 연산과 연결은 위 YAML과 코드를 기준으로 확인합니다.
 
 [평가 조건·출처](../../results/summary.json) · [전체 결과](../README.md)
+
+## 관련 관계
+
+- [Simple RNN → LSTM](../../relations/tr_003.yaml) — A · tr_003
+- [LSTM → Seq2Seq](../../relations/tr_004.yaml) — C · tr_004

@@ -1,0 +1,58 @@
+format_version: local_source_record_v1
+paper:
+  title: 'Hungry Hungry Hippos: Towards Language Modeling with State Space Models'
+  url: https://arxiv.org/html/2212.14052v3
+  sections:
+  - 2.1 state-space recurrence and convolution
+  - 3.2 Algorithm 1 H3 layer
+  - 3.3 multiplicative recall mechanism
+  used_for: Projections, shift on K, product with V, diagonal SSM, Q readout and output projection
+repository:
+  url: https://github.com/HazyResearch/H3
+  commit: 5c4d06b5795405170387c80998b58d76179a8a1a
+  license: Apache-2.0
+  official_status: Repository README identifies itself as official paper implementation
+  source_files:
+  - path: src/models/ssm/h3.py
+    functions:
+    - H3.__init__
+    - H3.forward
+    - H3.step
+    facts: head_dim=1 supported; affine biases; shift and diagonal D terms; no activation after SSM; mode defaults
+      to diag
+  - path: src/models/ssm/ss_kernel_shift.py
+    functions:
+    - SSKernelShift.step
+    - SSKernelShift.forward
+    facts: trainable B/C, fixed subdiagonal shift; update before C readout; real external state
+  - path: src/models/ssm/ss_kernel_diag.py
+    functions:
+    - SSKernelDiag.__init__
+    - SSKernelDiag._A
+    - SSKernelDiag._setup_step
+    - SSKernelDiag.step
+    facts: A=-exp(inv_A_real)+i*A_imag; dt=exp(log_dt); bilinear; stored complex pairs; 2*real(C*state)
+  - path: src/models/ssm/ss_kernel.py
+    functions:
+    - SSKernel.__init__
+    facts: mode=diag; n_ssm defaults to H; full d_state=4 stores 2 complex pairs; shift stores 4 real coordinates
+  pinned_raw_url_pattern: https://raw.githubusercontent.com/HazyResearch/H3/5c4d06b5795405170387c80998b58d76179a8a1a/{path}
+  configuration:
+    d_model: 2
+    d_state: 4
+    head_dim: 1
+    mode: diag
+    disc: bilinear
+    real_type: exp
+    n_ssm: 2
+    channels: 1
+    rate: 1.0
+    l_max: null
+mamba_relation:
+  paper_url: https://arxiv.org/html/2312.00752v2
+  sections:
+  - 3.2 Algorithm 2
+  - 3.4 Figure 3
+  - 3.6 Real vs. Complex
+  claims: Simplifies H3 plus MLP; replaces first multiplicative gate by activation; input-dependent delta/B/C; real
+    state default

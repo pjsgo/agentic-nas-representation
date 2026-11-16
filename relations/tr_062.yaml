@@ -1,0 +1,182 @@
+format_version: local_transition_v1
+transition_id: tr_062
+source_architecture: H3
+target_architecture: Mamba
+relation_type: A
+inferred: false
+motivation: Make memory dynamics depend on token content while simplifying the gated SSM plus MLP architecture.
+conditions:
+- Architecture ancestry and selective-state change are distinct; external gating alone is not selective dynamics.
+- This relationship preserves the separate direct S4-to-Mamba tr_061 edge.
+- Peer B scope begins after convolution and ends before output gate, so it cannot realize the full A·062 block mapping.
+expected_effects:
+- Content-dependent retention and readout through delta/B/C.
+- A combined gated sequence/MLP block with expansion and SiLU.
+tradeoffs:
+- Input-dependent parameters prevent a single fixed convolution kernel; efficient implementation requires selective
+  scan.
+- State representation and parameter meanings change; H3 weights and states are not directly transferable.
+- Full gate/projection/convolution changes exceed the peer selective-core implementation.
+changes:
+- before_units:
+  - graph.discretize
+  - graph.diagonal_memory
+  after_units:
+  - factors.selection
+  - factors.selective_scan
+  operation: replace_memory_core_and_generate_selective_parameters
+  mechanism: Static complex bilinear H3 S4D becomes real A=-exp(A_log), delta/B/C generated from input, exp(delta*A)
+    retention and practical delta*B input update.
+  wiring: Peer input is post-convolution activated u, not H3 kv; no equality assertion.
+  state: '[B,2,2] complex H3 carry versus peer [B,1,2] real carry; no state migration defined.'
+  mapping_status: mapped_scoped
+- before_units:
+  - graph.diagonal_skip
+  - graph.readout
+  after_units:
+  - factors.f0170
+  - factors.f0171
+  - factors.f0172
+  operation: preserve_direct_path_role
+  mechanism: Channelwise D times memory input added to updated-state readout; shapes differ.
+  mapping_status: mapped_scoped
+- before_units: &id001
+  - graph.k_proj
+  - graph.v_proj
+  - graph.shift_memory
+  - graph.value_gate
+  after_units: []
+  operation: architecture_simplification_outside_peer_yaml
+  mechanism: Replace first explicit multiplicative gate with activation on main convolution branch; combine with
+    expanded MLP structure.
+  wiring: paper_fig3 IDs are conceptual labels, not implemented target YAML units.
+  mapping_status: pending
+- before_units: &id002
+  - graph.q_proj
+  - graph.query_gate
+  - graph.output_projection
+  after_units: []
+  operation: retain_and_change_output_gating_role_outside_peer_yaml
+  mechanism: Project gate branch and apply SiLU, multiply with SSM output and project back to model width.
+  wiring: These conceptual IDs are outside peer B scope and not claims of implemented parts.
+  mapping_status: pending
+preserve:
+- Causal recurrent memory, a direct path and multiplicative output-gating role at block level.
+- Input/output feature projection roles; not identical learned tensors or dimensions.
+conceptual_correspondence:
+- source_units: *id001
+  target_concept: Replace first explicit multiplicative gate with activation on main convolution branch; combine
+    with expanded MLP structure.
+  target_units: []
+  mapping_status: pending
+  reason: Full target block absent; paper_fig3 labels are concepts, not real part IDs.
+- source_units: *id002
+  target_concept: Project gate branch and apply SiLU, multiply with SSM output and project back to model width.
+  target_units: []
+  mapping_status: pending
+  reason: Full target block absent; paper_fig3 labels are concepts, not real part IDs.
+mapping_status: partial
+record_status: complete
+unresolved:
+- Complete target block and any weight/state migration are outside scope.
+- 원본 계보 DB는 미입수; 슬라이드 기반 local_transition_v1 기록이며 DB import 주장 아님
+scope:
+  included:
+  - architecture correspondence
+  - explicit selective-core mapping to peer YAML
+  excluded:
+  - executable H3-to-Mamba conversion
+  - full Mamba block reconstruction
+  - numerical equality across architectures
+  source_yaml: ../experiments/h3/genealogy/representation.yaml
+  target_yaml: ../experiments/mamba/genealogy/representation.yaml
+  path_base: relation_file_directory
+evidence:
+- source: beyond_transformer_slides.pdf
+  page: 43
+  claim: A·062; direction and absence of ? directly confirmed
+  verification: direct_embedded_image_view_this_session
+  availability: User-supplied slides; not redistributed
+- source: beyond_transformer_slides.pdf
+  page: 43
+  claim: A·062
+  verification: inherited_document_transcription
+  historical_evidence_only: true
+  availability: User-supplied slides; not redistributed
+- source: https://arxiv.org/html/2312.00752v2
+  section: 3.4 Figure 3
+  claim: Simplify H3 and MLP into a single homogeneous block; replace first multiplicative gate by activation
+- source: https://arxiv.org/html/2312.00752v2
+  section: 3.2 Algorithm 2; 3.6
+  claim: Input-dependent delta/B/C and default real diagonal state
+source_records:
+- authority: read_only_existing_provenance
+  details:
+    paper:
+      title: 'Hungry Hungry Hippos: Towards Language Modeling with State Space Models'
+      url: https://arxiv.org/html/2212.14052v3
+      sections:
+      - 2.1 state-space recurrence and convolution
+      - 3.2 Algorithm 1 H3 layer
+      - 3.3 multiplicative recall mechanism
+      used_for: Projections, shift on K, product with V, diagonal SSM, Q readout and output projection
+    repository:
+      url: https://github.com/HazyResearch/H3
+      commit: 5c4d06b5795405170387c80998b58d76179a8a1a
+      license: Apache-2.0
+      official_status: Repository README identifies itself as official paper implementation
+      source_files:
+      - path: src/models/ssm/h3.py
+        functions:
+        - H3.__init__
+        - H3.forward
+        - H3.step
+        facts: head_dim=1 supported; affine biases; shift and diagonal D terms; no activation after SSM; mode defaults
+          to diag
+      - path: src/models/ssm/ss_kernel_shift.py
+        functions:
+        - SSKernelShift.step
+        - SSKernelShift.forward
+        facts: trainable B/C, fixed subdiagonal shift; update before C readout; real external state
+      - path: src/models/ssm/ss_kernel_diag.py
+        functions:
+        - SSKernelDiag.__init__
+        - SSKernelDiag._A
+        - SSKernelDiag._setup_step
+        - SSKernelDiag.step
+        facts: A=-exp(inv_A_real)+i*A_imag; dt=exp(log_dt); bilinear; stored complex pairs; 2*real(C*state)
+      - path: src/models/ssm/ss_kernel.py
+        functions:
+        - SSKernel.__init__
+        facts: mode=diag; n_ssm defaults to H; full d_state=4 stores 2 complex pairs; shift stores 4 real coordinates
+      pinned_raw_url_pattern: https://raw.githubusercontent.com/HazyResearch/H3/5c4d06b5795405170387c80998b58d76179a8a1a/{path}
+      configuration:
+        d_model: 2
+        d_state: 4
+        head_dim: 1
+        mode: diag
+        disc: bilinear
+        real_type: exp
+        n_ssm: 2
+        channels: 1
+        rate: 1.0
+        l_max: null
+application:
+  executable: false
+  command: null
+  patch_or_script: null
+  availability: descriptive_publication; research transformation runners not distributed
+validation:
+  profile: genealogy_execution_v2
+  status: relationship_recorded_not_executed
+  cases: []
+  tolerance: null
+  claim_boundary: Direction/type/source/path/part-ID consistency only. Producer result evidence is reused; mapping
+    completeness does not certify architecture numerical correctness.
+  publication_check: Paths and component IDs only; no numerical rerun
+provenance:
+  research_source: parallel_coverage/20261105/integration/20261115_genealogy_phase1_relations/tr_062.yaml
+  publication_changes:
+  - repository-relative YAML paths
+  - workspace-only runner references replaced by explicit historical evidence
+  - source metadata trimmed; calculations and component IDs preserved

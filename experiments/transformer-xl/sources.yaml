@@ -1,0 +1,32 @@
+architecture: Transformer-XL
+paper:
+  url: https://arxiv.org/abs/1901.02860
+  location: sections 3.2 and 3.3; segment recurrence and relative attention
+official_code:
+  url: https://github.com/kimiyoung/transformer-xl/blob/44781ed21dbaec88b280f74d9ae2877f52b492a5/pytorch/mem_transformer.py
+  commit: 44781ed21dbaec88b280f74d9ae2877f52b492a5
+  file_functions:
+  - PositionalEmbedding.forward
+  - RelMultiHeadAttn._rel_shift
+  - RelPartialLearnableMultiHeadAttn.forward
+  - MemTransformerLM._update_mems
+  - MemTransformerLM._forward
+implemented:
+- txl.memory_read
+- txl.qkv
+- txl.relative_position
+- txl.relative_score
+- txl.causal_attention
+- txl.output
+- txl.postnorm
+- txl.memory_update
+excluded:
+- ffn
+- embedding
+- language_model_head
+- full_training
+- ext_len_nonzero
+- same_length
+- learned_position_table
+- dropout
+- original_class_identity

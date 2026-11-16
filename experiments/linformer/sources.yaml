@@ -1,0 +1,31 @@
+paper:
+  url: https://arxiv.org/abs/2006.04768v3
+  relevant_content: 'Section 3: E/F sequence projections and compressed attention'
+  inspection: paper abstract and official implementation; arithmetic grounded in inspected source below
+official_code:
+  repository: https://github.com/facebookresearch/fairseq
+  commit: 3d262bb25690e4eb2e7d3c1309b1e9c406ca4b99
+  url: https://github.com/facebookresearch/fairseq/blob/3d262bb25690e4eb2e7d3c1309b1e9c406ca4b99/examples/linformer/linformer_src/modules/multihead_linear_attention.py
+  file: examples/linformer/linformer_src/modules/multihead_linear_attention.py
+  functions:
+  - MultiheadLinearAttention.__init__
+  - MultiheadLinearAttention.forward
+  inspection: source read; entire upstream project not imported or executed
+adaptation: 'Paper preprojected Q/K/V boundary. Official bias-free sequence compression confirmed. Feature bias
+  excluded: cannot move bias through sequence projection in general. E/F distinct, shared heads, prefix slicing
+  for N<=Nmax.'
+scope:
+  included:
+  - sequence-axis learned low-rank projection
+  - softmax across compressed sequence
+  excluded:
+  - full Transformer blocks
+  - QKV and output feature projections
+  - training
+  - dropout
+  - original class hierarchy
+  - performance claims
+  - feature projection biases (commuting projection boundary only valid without bias)
+  - incremental cache
+  - padding
+  - causal masking

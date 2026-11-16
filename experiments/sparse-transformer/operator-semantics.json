@@ -1,0 +1,14 @@
+{
+  "general": "Factors form a dependency graph. Inputs are ordered operands; dataflow lists edges. Negative axes count from the end. Elementwise arithmetic uses ordinary broadcasting. Resource identity/sharing is part of the computation. B=batch, H=head, N=sequence, D=query/key feature, V=value feature, R=compressed sequence, M=random feature.",
+  "dimension_scale": "Multiply first input by (its size on attributes.axis) raised to attributes.power.",
+  "einsum": "Einstein summation exactly according to attributes.equation; repeated contracted indices are summed.",
+  "softmax": "Exponentiate and normalize along attributes.axis only; stable max subtraction is permitted.",
+  "positions": "Integer positions 0 through N-1, where N is first input size on axis 2, on the same device.",
+  "pairwise_difference": "Given positions p, form matrix with entry [i,j] = p[i] - p[j]; row is query, column is key.",
+  "ge": "Elementwise first input >= attributes.value.",
+  "lt": "Elementwise first input < attributes.value.",
+  "mod_eq": "Elementwise remainder modulo positive attributes.modulus equals attributes.value.",
+  "and": "Elementwise logical conjunction of two boolean inputs.",
+  "select_pattern": "Select first input for mode local, second input for mode strided. This selects one pattern, not a union.",
+  "masked_logits": "Keep first-input logits where second-input boolean mask is true, replace elsewhere by attributes.fill. Broadcast the [N,N] mask across batch and heads."
+}

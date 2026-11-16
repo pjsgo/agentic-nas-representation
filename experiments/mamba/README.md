@@ -29,3 +29,11 @@ flowchart LR
 B/C, delta logits, gate는 외부에서 공급됩니다. 시점별 상태 갱신 뒤 readout·D skip·gate를 적용합니다. 주요 계산을 묶어 보여주는 요약도이며, 세부 연산과 연결은 위 YAML과 코드를 기준으로 확인합니다.
 
 [평가 조건·출처](../../results/summary.json) · [전체 결과](../README.md)
+
+## 관련 관계
+
+- [S4 → Mamba-1](../../relations/tr_061.yaml) — A · tr_061
+- [H3 → Mamba](../../relations/tr_062.yaml) — A · tr_062
+- [Mamba → Mamba-2/SSD](../../relations/tr_063.yaml) — A · tr_063
+
+[관계용 별도 표현과 계약](genealogy/README.md)

@@ -1,21 +1,27 @@
-# 7개 아키텍처 복원 결과
+# 아키텍처 자료
 
-**7개 아키텍처의 핵심 블록·코어 복원 완료.**
+각 폴더는 계산 구조·사용 범위·입출력 계약과 복원 YAML·코드를 제공합니다. 관계는 별도 [관계 목록](../relations/README.md)에서 관리합니다.
 
-신경망 구조의 연산·연결·반복·상태 전달을 YAML로 표현하고, 실행 가능한 PyTorch 코드로 복원해 참조 구현과 비교했습니다.
-
-| 아키텍처 | 복원 범위 | 검증 결과 | 표현 | 최종 구현 |
-|---|---|---|---|---|
-| [ResNet](resnet/README.md#구조도) | Identity-shortcut BasicBlock | 7개 입력 검증 통과 | [YAML](resnet/generator/input.yaml) | [코드](resnet/response_review/generated_model.py) |
-| [LSTM](lstm/README.md#구조도) | 단방향 LSTM core, T≥1 | T=1/3/5 출력·상태 및 파라미터 공유 확인 | [YAML](lstm/representation.yaml) | [코드](lstm/generated_model.py) |
-| [Seq2Seq](seq2seq/README.md#구조도) | 단일 layer teacher-forcing core | 3개 fixture의 계산·상태 전달 검증 통과 | [YAML](seq2seq/representation.yaml) | [코드](seq2seq/generated_model.py) |
-| [Transformer](transformer/README.md#구조도) | 단일 encoder block | 9개 fixture의 출력·구조 검증 통과 | [YAML](transformer/20261113-core-completion/representation.yaml) | [코드](transformer/20261113-core-completion/generated_model.py) |
-| [Linear Transformer](linear-transformer/README.md#구조도) | ELU+1 recurrent attention | 출력·S/Z 상태 전달 검증 통과 | [YAML](linear-transformer/20261113-core-completion/representation.yaml) | [코드](linear-transformer/20261113-core-completion/generated_model.py) |
-| [S4](s4/README.md#구조도) | Rank-1 DPLR/NPLR recurrent·impulse core | 엄격·실용 검증 통과 | [YAML](s4/20261113-core-completion/representation.yaml) | [코드](s4/20261113-core-completion/repaired_model.py) |
-| [Mamba](mamba/README.md#구조도) | Selective-scan core | 4개 fixture의 출력·시점별 상태 검증 통과 | [YAML](mamba/representation.yaml) | [코드](mamba/generated_model.py) |
-
-완료 범위는 표에 명시한 블록·코어와 평가 조건입니다. 전체 모델 학습 성능은 포함하지 않습니다.
-
-각 코드는 평가에 사용한 최종 구현입니다. 실행에 필요한 파라미터와 입력 조건은 아키텍처별 README 및 코드의 인터페이스를 참고하세요.
-
-[프로젝트 소개](../README.md) · [결과 요약](../results/summary.md) · [파일 출처](manifest.json)
+| 아키텍처 | 대상 범위 | 복원 YAML | 구현 |
+|---|---|---|---|
+| [ResNet](resnet/README.md) | Identity shortcut BasicBlock, channels=64, CPU float32 eval | [YAML](resnet/generator/input.yaml) | [코드](resnet/response_review/generated_model.py) |
+| [LSTM](lstm/README.md) | Single-layer unidirectional core, T>=1; tested T=1,3,5, B=2,I=4,H=5 | [YAML](lstm/representation.yaml) | [코드](lstm/generated_model.py) |
+| [Seq2Seq](seq2seq/README.md) | Pre-embedded one-layer LSTM encoder/decoder, 100% teacher forcing, three CPU float32 fixtures | [YAML](seq2seq/representation.yaml) | [코드](seq2seq/generated_model.py) |
+| [Transformer](transformer/README.md) | Single encoder block, nine CPU float32 eval fixtures | [YAML](transformer/20261113-core-completion/representation.yaml) | [코드](transformer/20261113-core-completion/generated_model.py) |
+| [Linear Transformer](linear-transformer/README.md) | ELU+1 recurrent linear-attention core; external q/k/v and in-place S/Z state, four CPU float32 fixtures | [YAML](linear-transformer/20261113-core-completion/representation.yaml) | [코드](linear-transformer/20261113-core-completion/generated_model.py) |
+| [S4](s4/README.md) | Original rank-1 DPLR/NPLR recurrent/impulse-kernel core, Nfull=4,H=channels=1, CPU eval | [YAML](s4/20261113-core-completion/representation.yaml) | [코드](s4/20261113-core-completion/repaired_model.py) |
+| [Mamba](mamba/README.md) | Mamba-1 selective-scan core, channels=3,state_size=2, four CPU float32 fixtures | [YAML](mamba/representation.yaml) | [코드](mamba/generated_model.py) |
+| [Simple RNN](simple-rnn/README.md) | Elman tanh 순환 core | [YAML](simple-rnn/representation.yaml) | [코드](simple-rnn/generated_model.py) |
+| [RNN Encoder–Decoder / GRU](gru-encoder-decoder/README.md) | Cho 2014 encoder·고정 context·조건부 GRU decoder | [YAML](gru-encoder-decoder/representation.yaml) | [코드](gru-encoder-decoder/generated_model.py) |
+| [Bahdanau Attention](bahdanau-attention/README.md) | 제공된 encoder memory에 대한 additive attention·조건부 GRU | [YAML](bahdanau-attention/representation.yaml) | [코드](bahdanau-attention/repaired_model.py) |
+| [Luong Attention](luong-attention/README.md) | global/general attention·LSTM·input feeding | [YAML](luong-attention/representation.yaml) | [코드](luong-attention/repaired_model.py) |
+| [GNMT](gnmt/README.md) | 3층 encoder–decoder·양방향 하단 encoder·residual·attention | [YAML](gnmt/representation.yaml) | [코드](gnmt/repaired_model.py) |
+| [LayerNorm](layernorm/README.md) | 마지막 축의 population 통계·affine 정규화 | [YAML](layernorm/representation.yaml) | [코드](layernorm/generated_model.py) |
+| [Transformer-XL](transformer-xl/README.md) | segment recurrence·상대 위치 attention sublayer | [YAML](transformer-xl/representation.yaml) | [코드](transformer-xl/repaired_model.py) |
+| [Compressive Transformer](compressive-transformer/README.md) | 평균 풀링 압축·두 단계 FIFO memory attention | [YAML](compressive-transformer/representation.yaml) | [코드](compressive-transformer/repaired_model.py) |
+| [Sparse Transformer](sparse-transformer/README.md) | local/strided causal attention core | [YAML](sparse-transformer/representation.yaml) | [코드](sparse-transformer/repaired_model.py) |
+| [Linformer](linformer/README.md) | sequence 축 low-rank projection attention core | [YAML](linformer/representation.yaml) | [코드](linformer/generated_model.py) |
+| [Performer](performer/README.md) | 고정 random features의 정규화 attention core | [YAML](performer/representation.yaml) | [코드](performer/generated_model.py) |
+| [LSSL](lssl/README.md) | 고정 HiPPO-LegS·bilinear discretization·dense recurrence | [YAML](lssl/representation.yaml) | [코드](lssl/repaired_model.py) |
+| [Mamba-2 / SSD](mamba2-ssd/README.md) | scalar-identity multihead SSD chunk core | [YAML](mamba2-ssd/representation.yaml) | [코드](mamba2-ssd/repaired_model.py) |
+| [H3](h3/README.md) | scalar-head shift·diagonal SSM gated block | [YAML](h3/representation.yaml) | [코드](h3/generated_model.py) |

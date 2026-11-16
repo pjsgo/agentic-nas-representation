@@ -26,3 +26,16 @@ flowchart LR
 두 residual 연결과 attention mask를 표시했습니다. FFN은 확장·활성화·축소 연산을 묶어 표시한 것입니다. 주요 계산을 묶어 보여주는 요약도이며, 세부 연산과 연결은 위 YAML과 코드를 기준으로 확인합니다.
 
 [평가 조건·출처](../../results/summary.json) · [전체 결과](../README.md)
+
+## 관련 관계
+
+- [ResNet → Transformer](../../relations/tr_019.yaml) — C · tr_019
+- [LayerNorm → Transformer](../../relations/tr_020.yaml) — C · tr_020
+- [Luong → Transformer](../../relations/tr_022.yaml) — C · tr_022
+- [Seq2Seq → Transformer](../../relations/tr_026.yaml) — A · tr_026
+- [Transformer → Transformer-XL](../../relations/tr_029.yaml) — A · tr_029
+- [Transformer → Sparse Transformer](../../relations/tr_032.yaml) — A · tr_032
+- [Transformer → Linformer](../../relations/tr_036.yaml) — A · tr_036
+- [Transformer → Linear Transformer](../../relations/tr_037.yaml) — A · tr_037
+- [Transformer → Performer](../../relations/tr_038.yaml) — A · tr_038
+- [GNMT → Transformer](../../relations/tr_069.yaml) — P · tr_069

@@ -1,0 +1,31 @@
+format_version: local_ssm_core_v1
+architecture: LSSL
+scope:
+  included: [HiPPO_LegS_dense_transition, bilinear_discretization, learned_log_dt, dense_state_recurrence, C_readout, D_skip, impulse_kernel]
+  excluded: [full_network, nonlinear_postprocessing, channel_mixing, structured_trainable_transition_parameterization, FFT_optimization, upstream_cache_convention, training]
+configuration: {heads: 2, state_size: 4}
+interface:
+  inputs: {u: [batch, time, heads], initial_state: [batch, heads, state_size]}
+  outputs: {y: [batch, time, heads], final_state: [batch, heads, state_size], kernel: [heads, time]}
+  dtype: float64
+  constraints: [positive_batch_and_time, CPU]
+parameters:
+  log_dt: [2]
+  C: [2, 4]
+  D: [2]
+buffers: {A: [4, 4], B: [4]}
+parameter_contract: A/B fixed shared HiPPO-LegS; log_dt/C/D independent trainable Parameters; no derived tensors registered
+state_contract: external x_prev before first token; x_t=Ad*x_prev+Bd*u_t; no mutation; final_state=x_last
+operators:
+  hippo_legs: 'A[i,i]=-(i+1); A[i,j]=-sqrt((2i+1)(2j+1)) for i>j; zero above diagonal; B[i]=sqrt(2i+1)'
+  exp: dt=exp(log_dt)
+  bilinear: 'Ad=solve(I-dt*A/2,I+dt*A/2); Bd=solve(I-dt*A/2,dt*B) per head'
+  dense_scan: 'x_t=Ad*x_prev+Bd*u_t; stack x_t'
+  readout: 'y[b,t,h]=sum_n C[h,n]*x[b,t,h,n]+D[h]*u[b,t,h]'
+  krylov: 'kernel[h,k]=C[h] @ Ad[h]^k @ Bd[h], k=0..T-1'
+graph:
+  - {id: lssl_timescale, op: exp, inputs: [log_dt], outputs: [dt]}
+  - {id: lssl_bilinear, op: bilinear, inputs: [A, B, dt], outputs: [Ad, Bd]}
+  - {id: lssl_dense_memory, op: dense_scan, inputs: [u, initial_state, Ad, Bd], outputs: [states, final_state]}
+  - {id: lssl_readout_skip, op: readout, inputs: [states, C, D, u], outputs: [y]}
+  - {id: lssl_krylov_kernel, op: krylov, inputs: [Ad, Bd, C, u], outputs: [kernel]}

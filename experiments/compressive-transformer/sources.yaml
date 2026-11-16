@@ -1,0 +1,53 @@
+architecture: Compressive Transformer
+paper:
+  url: https://arxiv.org/abs/1911.05507v1
+  locations:
+  - Algorithm_1_dual_FIFO_memory
+  - section_3.2_mean_pooling_baseline
+  - Algorithm_2_auxiliary_loss_excluded
+official_code:
+  url: https://github.com/google-deepmind/sonnet/blob/cd5b5fa48e15e4d020f744968f5209949ebe750f/sonnet/python/modules/nets/transformer.py
+  commit: cd5b5fa48e15e4d020f744968f5209949ebe750f
+  branch: v1
+  functions:
+  - PoolCompressor._build
+  - CompressiveTransformer._build
+  - _concat_and_slice
+  - MultiheadAttention._build
+  - TransformerTower._build
+  - get_position_encodings
+  - rel_shift
+implemented:
+  compression: AVG valid pooling; kernel=stride=rate; no trainable compression parameters
+  auxiliary_objective: none; PoolCompressor returns scalar zero
+  storage: zero-initialized fixed-size episodic and compressed FIFO; oldest T episodic slots pooled and appended
+    to compressed FIFO
+  lookup: single softmax over compressed + episodic + current, distinct learned relative projections and biases
+    per bank
+  state_gradient: preserved, matching Sonnet concatenation/slicing; no training claimed
+excluded:
+  compression:
+  - ConvCompressor
+  - dilated_convolution
+  - max_pooling
+  - most_used
+  auxiliary_objective:
+  - attention_reconstruction
+  - autoencoding
+  - BPTT_training
+  model:
+  - whole_tower
+  - residual_layernorm_ffn
+  - embedding_mlp
+  - language_head
+  - stochastic_dropout
+  - single_token_schedule
+reference_independence:
+  oracle: numpy_per_head_per_query_dot_products_direct_distance_scalar_block_averages_FIFO_list_updates
+  official_project_execution: false
+  boundary: input_is_attention_sublayer_embeddings_and_output_is_projected_attention_read
+adaptations:
+- Float64 CPU calculations; no TensorFlow package installed or imported.
+- Negative infinity causal mask replaces negative 1e6; equivalent for tested finite bounded inputs.
+- Multi-token aligned segments only, T<=M, T divisible by rate, kernel_size=0.
+- Sonnet slot-relative coordinates per bank are preserved; compression rate is not multiplied into relative positions.

@@ -1,0 +1,36 @@
+{
+  "format_version": 3,
+  "architecture": "bahdanau-attention",
+  "scope": "Additive alignment from previous decoder state, masked source context, conditional GRU decoder recurrence",
+  "excluded": [
+    "training/gradients",
+    "tokenization/embedding lookup",
+    "beam search",
+    "full translation system",
+    "original initializer fidelity",
+    "bidirectional encoder execution; annotations supplied at boundary",
+    "initial-state projection from backward encoder",
+    "deep maxout vocabulary head"
+  ],
+  "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
+  "representation": {
+    "file": "representation.yaml",
+    "research_source": "parallel_coverage/20261105/seq2seq/experiments/20261115_genealogy_phase1_rnn/bahdanau_attention/architecture.yaml",
+    "publication_changes": "Workspace-only provenance paths relocated; calculation and IDs unchanged"
+  },
+  "candidate": {
+    "file": "repaired_model.py",
+    "research_source": "parallel_coverage/20261105/seq2seq/experiments/20261115_genealogy_phase1_rnn/generation/bahdanau_attention/repaired_model.py",
+    "publication_code_changes": "Whitespace formatting only; calculations unchanged"
+  },
+  "evaluation": {
+    "kind": "summary_of_existing_evidence_no_rerun",
+    "original_verdict": "FAIL",
+    "final_verdict": "PASS_WITHIN_DECLARED_SCOPE",
+    "representative_cases": 3,
+    "research_source": "parallel_coverage/20261105/seq2seq/experiments/20261115_genealogy_phase1_rnn/generation/bahdanau_attention/repaired_result.json",
+    "full_model_training_or_performance_claim": false
+  },
+  "repair_required": true,
+  "repair_reason": "Restore exact declared mask suppression for all finite energies"
+}

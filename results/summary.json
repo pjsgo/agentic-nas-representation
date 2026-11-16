@@ -4,8 +4,9 @@
   "research_direction": "구조화된 아키텍처 계보와 변화 맥락을 활용해 에이전트가 더 나은 시퀀스 모델을 탐색하도록 연구",
   "role": "계산 흐름·반복·상태 전달·객체 공유의 Factorization, YAML 표현, 코드 복원 및 검증",
   "current_outputs": [
-    "아키텍처별 YAML 표현",
-    "생성된 복원 코드"
+    "아키텍처 복원 YAML·코드",
+    "출처·사용 계약",
+    "관계 YAML·부품 대응"
   ],
   "next_direction": "계보 전체로 표현을 확장하고 변화 맥락과 Factorization을 에이전트에 함께 제공하며, EvoScientist 기반 편집·실험 흐름으로 연결",
   "architectures": [
@@ -22,7 +23,8 @@
       "evidence": {
         "research_source": "runs/20261102T054907186861Z_resnet_source_grounded_v0_2/result.md",
         "sha256": "8399a2a5488ab6492760a5d15eb406710c0479a7900a40de2f5233feb8befb0a"
-      }
+      },
+      "title": "ResNet"
     },
     {
       "architecture": "lstm",
@@ -37,7 +39,8 @@
       "evidence": {
         "research_source": "parallel_coverage/20261105/lstm/evaluations/t_ge_1_v1/report.md",
         "sha256": "658fe396522d55f1e813dfd5ca89c056192473f3327b0de602c95c5e7ddb639d"
-      }
+      },
+      "title": "LSTM"
     },
     {
       "architecture": "seq2seq",
@@ -52,7 +55,8 @@
       "evidence": {
         "research_source": "parallel_coverage/20261105/seq2seq/evaluations/20261109_structure_v1_1/result.md",
         "sha256": "bd8df7ce408e9b3269282318cf7682b753a931ef9ba8faa3ac7ef1e5593d3901"
-      }
+      },
+      "title": "Seq2Seq"
     },
     {
       "architecture": "transformer",
@@ -67,7 +71,8 @@
       "evidence": {
         "research_source": "parallel_coverage/20261105/transformer/experiments/20261112_runtime_trace_fresh_v1/result.md",
         "sha256": "c40b84ad9cd164328b18494805dfbaad1c3760b2d95e113f2b6e51d316bd1a6e"
-      }
+      },
+      "title": "Transformer"
     },
     {
       "architecture": "linear-transformer",
@@ -82,7 +87,8 @@
       "evidence": {
         "research_source": "parallel_coverage/20261105/linear_transformer/experiments/20261113_current_candidate_recheck_v1/result.md",
         "sha256": "8c001d9807161e5eacc5860c6586864897854811eb913f929110960f45828f4d"
-      }
+      },
+      "title": "Linear Transformer"
     },
     {
       "architecture": "s4",
@@ -97,7 +103,8 @@
       "evidence": {
         "research_source": "parallel_coverage/20261105/s4/experiments/20261113_strict_fix_v1/result.md",
         "sha256": "e2a37161a3a44cf3a1be512ea919971b1b887be885e7c8507c8cfd0efa0cd9e1"
-      }
+      },
+      "title": "S4"
     },
     {
       "architecture": "mamba",
@@ -112,20 +119,174 @@
       "evidence": {
         "research_source": "parallel_coverage/20261105/mamba/evaluations/20261110_practical_v1/result.md",
         "sha256": "4e06ea5be6004096ae87d1ad5588a7ae3a942ee85db6e2040f64bca66f306dc7"
-      }
+      },
+      "title": "Mamba"
     },
     {
-      "architecture": "resnet",
-      "variant": "post-add-gelu",
-      "scope": "BasicBlock의 지정된 마지막 활성화 편집",
-      "representation": "experiments/resnet-gelu/generator/input.yaml",
-      "reconstructed_code": "experiments/resnet-gelu/response_review/generated_model.py",
-      "materials": "experiments/resnet-gelu/README.md"
+      "architecture": "simple-rnn",
+      "title": "Simple RNN",
+      "scope": "Elman tanh 순환 core",
+      "representation": "experiments/simple-rnn/representation.yaml",
+      "reconstructed_code": "experiments/simple-rnn/generated_model.py",
+      "candidate_origin": "UNMODIFIED_EXTERNAL_LLM_CODE",
+      "materials": "experiments/simple-rnn/README.md",
+      "provenance": "experiments/simple-rnn/provenance.json",
+      "reconstruction": "PASS_WITHIN_DECLARED_SCOPE"
+    },
+    {
+      "architecture": "gru-encoder-decoder",
+      "title": "RNN Encoder–Decoder / GRU",
+      "scope": "Cho 2014 encoder·고정 context·조건부 GRU decoder",
+      "representation": "experiments/gru-encoder-decoder/representation.yaml",
+      "reconstructed_code": "experiments/gru-encoder-decoder/generated_model.py",
+      "candidate_origin": "UNMODIFIED_EXTERNAL_LLM_CODE",
+      "materials": "experiments/gru-encoder-decoder/README.md",
+      "provenance": "experiments/gru-encoder-decoder/provenance.json",
+      "reconstruction": "PASS_WITHIN_DECLARED_SCOPE"
+    },
+    {
+      "architecture": "bahdanau-attention",
+      "title": "Bahdanau Attention",
+      "scope": "제공된 encoder memory에 대한 additive attention·조건부 GRU",
+      "representation": "experiments/bahdanau-attention/representation.yaml",
+      "reconstructed_code": "experiments/bahdanau-attention/repaired_model.py",
+      "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
+      "materials": "experiments/bahdanau-attention/README.md",
+      "provenance": "experiments/bahdanau-attention/provenance.json",
+      "reconstruction": "PASS_WITHIN_DECLARED_SCOPE"
+    },
+    {
+      "architecture": "luong-attention",
+      "title": "Luong Attention",
+      "scope": "global/general attention·LSTM·input feeding",
+      "representation": "experiments/luong-attention/representation.yaml",
+      "reconstructed_code": "experiments/luong-attention/repaired_model.py",
+      "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
+      "materials": "experiments/luong-attention/README.md",
+      "provenance": "experiments/luong-attention/provenance.json",
+      "reconstruction": "PASS_WITHIN_DECLARED_SCOPE"
+    },
+    {
+      "architecture": "gnmt",
+      "title": "GNMT",
+      "scope": "3층 encoder–decoder·양방향 하단 encoder·residual·attention",
+      "representation": "experiments/gnmt/representation.yaml",
+      "reconstructed_code": "experiments/gnmt/repaired_model.py",
+      "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
+      "materials": "experiments/gnmt/README.md",
+      "provenance": "experiments/gnmt/provenance.json",
+      "reconstruction": "PASS_WITHIN_DECLARED_SCOPE"
+    },
+    {
+      "architecture": "layernorm",
+      "title": "LayerNorm",
+      "scope": "마지막 축의 population 통계·affine 정규화",
+      "representation": "experiments/layernorm/representation.yaml",
+      "reconstructed_code": "experiments/layernorm/generated_model.py",
+      "candidate_origin": "UNMODIFIED_EXTERNAL_LLM_CODE",
+      "materials": "experiments/layernorm/README.md",
+      "provenance": "experiments/layernorm/provenance.json",
+      "reconstruction": "PASS_WITHIN_DECLARED_SCOPE"
+    },
+    {
+      "architecture": "transformer-xl",
+      "title": "Transformer-XL",
+      "scope": "segment recurrence·상대 위치 attention sublayer",
+      "representation": "experiments/transformer-xl/representation.yaml",
+      "reconstructed_code": "experiments/transformer-xl/repaired_model.py",
+      "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
+      "materials": "experiments/transformer-xl/README.md",
+      "provenance": "experiments/transformer-xl/provenance.json",
+      "reconstruction": "PASS_WITHIN_DECLARED_SCOPE"
+    },
+    {
+      "architecture": "compressive-transformer",
+      "title": "Compressive Transformer",
+      "scope": "평균 풀링 압축·두 단계 FIFO memory attention",
+      "representation": "experiments/compressive-transformer/representation.yaml",
+      "reconstructed_code": "experiments/compressive-transformer/repaired_model.py",
+      "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
+      "materials": "experiments/compressive-transformer/README.md",
+      "provenance": "experiments/compressive-transformer/provenance.json",
+      "reconstruction": "PASS_WITHIN_DECLARED_SCOPE"
+    },
+    {
+      "architecture": "sparse-transformer",
+      "title": "Sparse Transformer",
+      "scope": "local/strided causal attention core",
+      "representation": "experiments/sparse-transformer/representation.yaml",
+      "reconstructed_code": "experiments/sparse-transformer/repaired_model.py",
+      "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
+      "materials": "experiments/sparse-transformer/README.md",
+      "provenance": "experiments/sparse-transformer/provenance.json",
+      "reconstruction": "PASS_WITHIN_DECLARED_SCOPE"
+    },
+    {
+      "architecture": "linformer",
+      "title": "Linformer",
+      "scope": "sequence 축 low-rank projection attention core",
+      "representation": "experiments/linformer/representation.yaml",
+      "reconstructed_code": "experiments/linformer/generated_model.py",
+      "candidate_origin": "UNMODIFIED_EXTERNAL_LLM_CODE",
+      "materials": "experiments/linformer/README.md",
+      "provenance": "experiments/linformer/provenance.json",
+      "reconstruction": "PASS_WITHIN_DECLARED_SCOPE"
+    },
+    {
+      "architecture": "performer",
+      "title": "Performer",
+      "scope": "고정 random features의 정규화 attention core",
+      "representation": "experiments/performer/representation.yaml",
+      "reconstructed_code": "experiments/performer/generated_model.py",
+      "candidate_origin": "UNMODIFIED_EXTERNAL_LLM_CODE",
+      "materials": "experiments/performer/README.md",
+      "provenance": "experiments/performer/provenance.json",
+      "reconstruction": "PASS_WITHIN_DECLARED_SCOPE"
+    },
+    {
+      "architecture": "lssl",
+      "title": "LSSL",
+      "scope": "고정 HiPPO-LegS·bilinear discretization·dense recurrence",
+      "representation": "experiments/lssl/representation.yaml",
+      "reconstructed_code": "experiments/lssl/repaired_model.py",
+      "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
+      "materials": "experiments/lssl/README.md",
+      "provenance": "experiments/lssl/provenance.json",
+      "reconstruction": "PASS_WITHIN_DECLARED_SCOPE"
+    },
+    {
+      "architecture": "mamba2-ssd",
+      "title": "Mamba-2 / SSD",
+      "scope": "scalar-identity multihead SSD chunk core",
+      "representation": "experiments/mamba2-ssd/representation.yaml",
+      "reconstructed_code": "experiments/mamba2-ssd/repaired_model.py",
+      "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
+      "materials": "experiments/mamba2-ssd/README.md",
+      "provenance": "experiments/mamba2-ssd/provenance.json",
+      "reconstruction": "PASS_WITHIN_DECLARED_SCOPE"
+    },
+    {
+      "architecture": "h3",
+      "title": "H3",
+      "scope": "scalar-head shift·diagonal SSM gated block",
+      "representation": "experiments/h3/representation.yaml",
+      "reconstructed_code": "experiments/h3/generated_model.py",
+      "candidate_origin": "UNMODIFIED_EXTERNAL_LLM_CODE",
+      "materials": "experiments/h3/README.md",
+      "provenance": "experiments/h3/provenance.json",
+      "reconstruction": "PASS_WITHIN_DECLARED_SCOPE"
     }
   ],
-  "note": "7종의 지정 핵심 단위에서 각 평가 기준에 따른 복원 검증 완료. 동일한 엄격 기준의 전체 모델 7종 성공이 아니며 S4는 생성 후 수정본이다.",
+  "note": "Declared cores only; existing evidence reused, no common full-model or training certification. Generated and repaired code origins remain separate.",
   "team_context": "아키텍처 간 무엇이 어떻게 변했는지와 그 배경을 구조화해 정리",
-  "updated_at_kst": "2026-11-13",
-  "milestone": "SEVEN_CORE_RECONSTRUCTIONS_COMPLETE",
-  "completed_architecture_count": 7
+  "updated_at_kst": "2026-11-16",
+  "milestone": "PHASE1_SCOPED_RECONSTRUCTIONS",
+  "completed_architecture_count": 21,
+  "relations": {
+    "catalog": "relations/catalog.yaml",
+    "knowledge_records": 23,
+    "complete_scoped": 16,
+    "partial": 7,
+    "executable_publication": false
+  }
 }

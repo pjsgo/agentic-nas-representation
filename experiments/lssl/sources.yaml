@@ -1,0 +1,37 @@
+architecture: LSSL
+paper:
+  url: https://arxiv.org/abs/2110.13985
+  publication_url: https://papers.neurips.cc/paper_files/paper/2021/file/05546b0e38ab9175cd905eebcc6ebb76-Paper.pdf
+  anchors:
+  - section_2
+  - equations_1_to_4
+  - figure_1
+code:
+  repository: https://github.com/state-spaces/s4
+  commit: e757cef57d89e448c413de7325ed5601aceaac13
+  files:
+  - path: src/models/sequence/modules/lssl.py
+    url: https://github.com/state-spaces/s4/blob/e757cef57d89e448c413de7325ed5601aceaac13/src/models/sequence/modules/lssl.py
+    functions:
+    - Platypus.forward
+    - linear_system_from_krylov
+  - path: src/models/hippo/transition.py
+    url: https://github.com/state-spaces/s4/blob/e757cef57d89e448c413de7325ed5601aceaac13/src/models/hippo/transition.py
+    functions:
+    - AdaptiveTransition.bilinear
+    - AdaptiveTransition.gbt_A
+    - AdaptiveTransition.gbt_B
+  - path: src/models/hippo/hippo.py
+    url: https://github.com/state-spaces/s4/blob/e757cef57d89e448c413de7325ed5601aceaac13/src/models/hippo/hippo.py
+    functions:
+    - transition
+    selection: legs
+scope:
+  included: fixed HiPPO-LegS A/B shared across channels, independently learned log_dt/C/D, bilinear dynamics, dense
+    recurrence, Krylov output kernel
+  excluded: trainable structured A/B, post-core activation/mixing/dropout, full network, training, upstream cache
+    behavior, FFT performance
+  state_adapter: Paper x_prev contract; source Platypus cache state is preadvanced, so its cache layout is not claimed
+    equivalent.
+  reference_independence: NumPy similarity transform and explicit matrix powers/convolution; candidate uses Torch
+    direct LegS entries and recurrent update. No shared calculation helpers.

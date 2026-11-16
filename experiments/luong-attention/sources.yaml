@@ -1,0 +1,20 @@
+primary_urls:
+- https://aclanthology.org/D15-1166.pdf
+source_versions:
+- EMNLP 2015 final D15-1166
+files_functions_or_equations:
+- Sections 3.1/3.3; equations 5,7,8; Figure 4
+included: Global/general bilinear attention after LSTM update, attentional vector and recurrent input feeding
+excluded:
+- training/gradients
+- tokenization/embedding lookup
+- beam search
+- full translation system
+- original initializer fidelity
+- local-m/local-p/dot/concat/location alternatives
+- encoder execution and vocabulary projection
+- stacked decoder layers
+adaptations:
+- LSTM primitive reused from completed local lstm/generated_model.py, H=5; initial h/c supplied from encoder boundary.
+- General score is h_t^T Wa memory_s. Input feed concatenated with next target embedding.
+reference_kind: independent NumPy equation transcription, not upstream project execution

@@ -1,0 +1,17 @@
+primary_urls:
+- https://docs.pytorch.org/docs/2.9/generated/torch.nn.RNN.html
+- https://github.com/pytorch/pytorch/blob/v2.9.0/torch/nn/modules/rnn.py
+source_versions:
+- PyTorch v2.9.0 documented semantics
+files_functions_or_equations:
+- RNN.forward; single-layer tanh equation
+included: Elman tanh recurrent core, full emitted sequence and supplied initial/final hidden state
+excluded:
+- training/gradients
+- tokenization/embedding lookup
+- beam search
+- full translation system
+- original initializer fidelity
+adaptations:
+- No bidirectionality or stacked layers. Fixture-supplied parameters.
+reference_kind: independent NumPy equation transcription, not upstream project execution

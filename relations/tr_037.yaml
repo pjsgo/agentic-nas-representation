@@ -1,0 +1,138 @@
+format_version: local_transition_v1
+transition_id: tr_037
+source_architecture: Transformer
+target_architecture: Linear Transformer
+relation_type: A
+inferred: false
+motivation: Replace quadratic score matrix with fixed-size prefix state for causal attention.
+conditions:
+- CPU float32 inference only; B>=1 and T>=1; two heads and four dimensions per head
+- Explicit transition from arbitrary exclusion mask to inclusive causal prefixes; padding masks unsupported
+- No scaling of q before ELU+1; no softmax
+expected_effects:
+- fixed_size_attention_carry
+- causal_chunk_continuation
+tradeoffs:
+- Different attention kernel; equality with original softmax block is not expected
+- Restricts mask interface and adds external carry
+- No measured speed or quality claim
+changes:
+- before_units:
+  - scale_value
+  - scale_q
+  - turn_k
+  - score_a
+  - mask_shape_a
+  - mask_shape_b
+  - apply_mask
+  - prob_a
+  - mix_a
+  after_units:
+  - linear_causal_core
+  operation: replace_subgraph
+  mechanism: S_t=S_prev+outer(phi(k_t),v_t); Z_t=Z_prev+phi(k_t); out_t=(phi(q_t) dot S_t)/(phi(q_t) dot Z_t+1e-6)
+  wiring: order_q/order_k/order_v -> linear_causal_core -> order_mix
+  state: external S[B,2,4,4] and Z[B,2,4]; update before query readout
+  interface: replace mask input with optional S/Z; return y and updated carries
+  mapping_status: mapped_scoped
+preserve:
+- project_a, partition_a, shape_q, shape_k, shape_v, order_q, order_k, order_v
+- order_mix, join_a, project_b
+- merge_a, normalize_a, stage_b, expand_a, activate_a, contract_a, merge_b, normalize_b
+- p0 through p11 parameter shapes, requires_grad, packed independent q/k/v slices, repeated-call weight sharing
+mapping_status: complete_scoped
+record_status: complete
+unresolved:
+- Full model/training/speed excluded
+- Local operator extension, not Common Schema certification
+- 원본 계보 DB는 미입수; 슬라이드 기반 local_transition_v1 기록이며 DB import 주장 아님
+scope:
+  included: &id001
+  - attention_replacement_inside_existing_encoder_block
+  excluded:
+  - full_model
+  - training
+  - benchmarking
+  - common_schema_certification
+  source_yaml: ../experiments/transformer/20261113-core-completion/representation.yaml
+  target_yaml: ../experiments/linear-transformer/genealogy/representation.yaml
+  path_base: relation_file_directory
+evidence:
+- source: beyond_transformer_slides.pdf
+  page: 68
+  claim: A·037; direction and absence of ? directly confirmed
+  verification: direct_embedded_image_view_this_session
+  availability: User-supplied slides; not redistributed
+- source: beyond_transformer_slides.pdf
+  page:
+  - 41
+  - 68
+  claim: A / 037
+  verification: inherited evidence only; no installed PDF reader
+  historical_evidence_only: true
+  availability: User-supplied slides; not redistributed
+- source: https://proceedings.mlr.press/v119/katharopoulos20a.html
+  section: sections 3.2 through 3.4
+  claim: feature-map attention permits causal recurrent computation
+source_records:
+- authority: read_only_existing_provenance
+  details:
+    paper:
+      title: 'Transformers are RNNs: Fast Autoregressive Transformers with Linear Attention'
+      authors: Katharopoulos et al.
+      version: PMLR 119, 2020, pages 5156-5165
+      url: https://proceedings.mlr.press/v119/katharopoulos20a.html
+      pdf: https://proceedings.mlr.press/v119/katharopoulos20a/katharopoulos20a.pdf
+      sections:
+      - 3.2
+      - 3.3
+      - 3.4
+      reviewed: publication page and available PDF text; exact chosen numerical convention grounded in pinned code
+        below
+    implementation:
+      repository: https://github.com/idiap/fast-transformers
+      commit: 2ad36b97e64cb93862937bd21fcc9568d989561f
+      version: 0.4.0
+      license: MIT
+      local_provenance: parallel_coverage/20261105/linear_transformer/source/provenance.json
+      file: fast_transformers/recurrent/attention/self_attention/linear_attention.py
+      symbol: RecurrentLinearAttention.forward
+      feature_map_file: fast_transformers/feature_maps/base.py
+      reviewed: local pinned source read as text; not imported or executed
+      exact_convention: ELU+1; key-value outer product; key-sum carry; updated-state query read; epsilon 1e-6 outside
+        dot product
+      inference_contract: supplied state tensors updated in place when grad_fn absent; same tensors returned
+      implemented_simplifications: sequence wrapper; no event dispatcher or memory alias; no training branch
+application:
+  executable: false
+  command: null
+  patch_or_script: null
+  availability: descriptive_publication; research transformation runners not distributed
+validation:
+  profile: genealogy_execution_v2
+  status: CHANGE_VERIFIED
+  cases: &id002
+  - single_zero_state
+  - unequal_batch_time_nonzero_prefix
+  - multistep_chunk_and_causality
+  tolerance: &id003
+    rtol: 1.0e-05
+    atol: 1.0e-06
+  claim_boundary: Direction/type/source/path/part-ID consistency only. Producer result evidence is reused; mapping
+    completeness does not certify architecture numerical correctness.
+  publication_check: Paths and component IDs only; no numerical rerun
+historical_execution:
+  executable_in_research_workspace: true
+  status: CHANGE_VERIFIED
+  scope: *id001
+  research_relation: parallel_coverage/20261105/integration/20261115_genealogy_phase1_relations/tr_037.yaml
+  research_result: parallel_coverage/20261105/linear_transformer/experiments/20261113_genealogy_attention_v2/results.json
+  cases: *id002
+  tolerance: *id003
+  note: Existing scoped execution evidence retained; published relation is descriptive and does not bundle its converter.
+provenance:
+  research_source: parallel_coverage/20261105/integration/20261115_genealogy_phase1_relations/tr_037.yaml
+  publication_changes:
+  - repository-relative YAML paths
+  - workspace-only runner references replaced by explicit historical evidence
+  - source metadata trimmed; calculations and component IDs preserved

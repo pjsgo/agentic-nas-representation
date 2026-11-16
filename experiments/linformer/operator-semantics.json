@@ -1,0 +1,7 @@
+{
+  "general": "Factors form a dependency graph. Inputs are ordered operands; dataflow lists edges. Negative axes count from the end. Elementwise arithmetic uses ordinary broadcasting. Resource identity/sharing is part of the computation. B=batch, H=head, N=sequence, D=query/key feature, V=value feature, R=compressed sequence, M=random feature.",
+  "dimension_scale": "Multiply first input by (its size on attributes.axis) raised to attributes.power.",
+  "einsum": "Einstein summation exactly according to attributes.equation; repeated contracted indices are summed.",
+  "softmax": "Exponentiate and normalize along attributes.axis only; stable max subtraction is permitted.",
+  "slice_sequence": "Given matrix A[R,Nmax] and tensor X[B,H,N,C], return the first N columns of A. Require N<=Nmax; this is sequence prefix slicing, not feature slicing."
+}

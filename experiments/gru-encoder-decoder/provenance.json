@@ -1,0 +1,34 @@
+{
+  "format_version": 3,
+  "architecture": "gru-encoder-decoder",
+  "scope": "Cho 2014 Appendix A encoder/context bridge/conditional decoder hidden-state core",
+  "excluded": [
+    "training/gradients",
+    "tokenization/embedding lookup",
+    "beam search",
+    "full translation system",
+    "original initializer fidelity",
+    "maxout output head and factorized vocabulary classifier"
+  ],
+  "candidate_origin": "UNMODIFIED_EXTERNAL_LLM_CODE",
+  "representation": {
+    "file": "representation.yaml",
+    "research_source": "parallel_coverage/20261105/seq2seq/experiments/20261115_genealogy_phase1_rnn/gru_encoder_decoder/architecture.yaml",
+    "publication_changes": "Workspace-only provenance paths relocated; calculation and IDs unchanged"
+  },
+  "candidate": {
+    "file": "generated_model.py",
+    "research_source": "parallel_coverage/20261105/seq2seq/experiments/20261115_genealogy_phase1_rnn/generation/gru_encoder_decoder/generated_model.py",
+    "publication_code_changes": "Whitespace formatting only; calculations unchanged"
+  },
+  "evaluation": {
+    "kind": "summary_of_existing_evidence_no_rerun",
+    "original_verdict": "PASS_WITHIN_DECLARED_SCOPE",
+    "final_verdict": "PASS_WITHIN_DECLARED_SCOPE",
+    "representative_cases": 3,
+    "research_source": "parallel_coverage/20261105/seq2seq/experiments/20261115_genealogy_phase1_rnn/generation/gru_encoder_decoder/result.json",
+    "full_model_training_or_performance_claim": false
+  },
+  "repair_required": false,
+  "repair_reason": null
+}

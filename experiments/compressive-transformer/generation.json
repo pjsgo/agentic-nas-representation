@@ -1,0 +1,11 @@
+{
+  "settings": {
+    "model": "Qwen3.8-27B",
+    "temperature": 0,
+    "max_tokens": 8192,
+    "stream": false
+  },
+  "research_source": "parallel_coverage/20261105/transformer/experiments/20261115_genealogy_phase1_memory/llm_core_review_v1/compressive_transformer/request.json",
+  "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
+  "prompt_and_transport": "Not bundled; YAML and explicit entry contract are published."
+}
