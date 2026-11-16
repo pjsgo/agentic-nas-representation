@@ -59,12 +59,14 @@
     {
       "architecture": "convs2s",
       "title": "ConvS2S",
-      "scope": "단일 encoder/decoder GLU 블록, attention과 residual, 사전 합산 입력 임베딩",
+      "scope": "단일 encoder/decoder GLU 블록, attention과 residual, 명시적 학습 위치 임베딩",
       "representation": "architectures/convs2s/representation.yaml",
       "reconstructed_code": "architectures/convs2s/reconstructed.py",
-      "candidate_origin": "AGENT_REPAIRED_LLM_OUTPUT",
+      "candidate_origin": "LLM_BLOCK_WITH_LOCAL_POSITION_EXTENSION",
       "materials": "architectures/convs2s/README.md",
-      "provenance": "architectures/convs2s/provenance.json"
+      "provenance": "architectures/convs2s/provenance.json",
+      "historical_candidate_origin": "AGENT_REPAIRED_LLM_OUTPUT",
+      "scope_summary": "단일 encoder/decoder GLU 블록, attention과 residual, 명시적 학습 위치 임베딩"
     },
     {
       "architecture": "decomposable-attention",
@@ -537,13 +539,14 @@
     {
       "architecture": "transformer",
       "title": "Transformer",
-      "scope": "Single encoder block, nine CPU float32 eval fixtures",
+      "scope": "단일 encoder block, 명시적 sinusoidal 위치 인코딩과 토큰 스케일링",
       "representation": "architectures/transformer/representation.yaml",
       "reconstructed_code": "architectures/transformer/reconstructed.py",
-      "candidate_origin": "UNMODIFIED_LLM_OUTPUT",
+      "candidate_origin": "LLM_BLOCK_WITH_LOCAL_POSITION_EXTENSION",
       "materials": "architectures/transformer/README.md",
       "provenance": "architectures/transformer/provenance.json",
-      "scope_summary": "Single encoder block, nine CPU float32 eval fixtures"
+      "scope_summary": "단일 encoder block, 명시적 sinusoidal 위치 인코딩과 토큰 스케일링",
+      "historical_candidate_origin": "UNMODIFIED_LLM_OUTPUT"
     },
     {
       "architecture": "transformer-xl",

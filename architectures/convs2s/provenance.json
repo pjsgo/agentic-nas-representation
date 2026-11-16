@@ -8,10 +8,11 @@
       "input_and_encoder_output_projections",
       "single_decoder_attention",
       "source_padding_mask",
-      "residual_scaling"
+      "residual_scaling",
+      "explicit_position_table_lookup",
+      "token_position_addition"
     ],
     "excluded": [
-      "token_and_position_lookup",
       "stacked_blocks",
       "vocabulary_projection",
       "softmax_readout",
@@ -20,10 +21,12 @@
       "training",
       "dropout",
       "weight_norm_parameterization",
-      "backward_gradient_scaling"
+      "backward_gradient_scaling",
+      "token_lookup",
+      "automatic_position_numbering"
     ]
   },
-  "candidate_origin": "AGENT_REPAIRED_LLM_OUTPUT",
+  "candidate_origin": "LLM_BLOCK_WITH_LOCAL_POSITION_EXTENSION",
   "candidate_modified_after_generation": true,
   "reconstruction": "PASS_WITHIN_DECLARED_SCOPE",
   "generation": {
@@ -37,11 +40,11 @@
   "candidate": {
     "file": "reconstructed.py",
     "research_source": "parallel_coverage/20261105/transformer/experiments/20261116_genealogy_phase6_r1/convs2s/repaired_model.py",
-    "computational_changes_by_integration": "None"
+    "computational_changes_by_integration": "Learned position lookup and addition integrated before existing block"
   },
   "representation": {
     "file": "representation.yaml",
-    "publication_changes": "Entry filename and relative reading-rules path only"
+    "publication_changes": "Position operations, ports and graph connections added using existing equation profile"
   },
   "evaluation": {
     "kind": "reused_saved_independent_reference_results",
@@ -59,5 +62,16 @@
   "limits": [
     "Selected scope only; no full-model, training, performance or universal-schema certification",
     "Accepted unmodified code is not equivalent to strict response-format compliance or uniform first-attempt success"
-  ]
+  ],
+  "historical_candidate_origin": "AGENT_REPAIRED_LLM_OUTPUT",
+  "position_integration": {
+    "date": "2026-11-17",
+    "origin": "LOCAL_AGENT_AUTHORED_NOT_EXTERNAL_GENERATION",
+    "implementation": "reconstructed.py",
+    "representation": "representation.yaml",
+    "entry": "forward_with_positions",
+    "historical_block_evaluation": "Existing evaluation below applies to the preembedded block only",
+    "evaluation": "../../docs/position-integration-validation.json",
+    "scope": "Explicit position construction and block connection; no whole-model or official-runtime claim"
+  }
 }

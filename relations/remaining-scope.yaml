@@ -42,7 +42,7 @@ automatic_transform_support: Not implemented
 common_schema_certification: Not claimed
 closed_phase6_relations:
 - 'tr_052: WaveNet source components now restored'
-- 'tr_072: I-authored position sidecars, mapping partial and core complete_scoped'
-position_supplement_limits:
+- 'tr_072: position components integrated in canonical architectures, mapping partial and core complete_scoped'
+position_encoding_limits:
 - explicit positions only; automatic index and upstream padding conventions excluded
 - not external-generated architecture code; no whole-model conversion

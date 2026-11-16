@@ -1,22 +1,44 @@
 representation_version: local_convs2s_block_v1
 operator_profile: self_contained_equations
 architecture: ConvS2S
-architecture_entry: Model
+architecture_entry: Model.forward_with_positions
 scope:
-  included: [one_encoder_GLU_block, one_causal_decoder_GLU_block, input_and_encoder_output_projections, single_decoder_attention, source_padding_mask, residual_scaling]
-  excluded: [token_and_position_lookup, stacked_blocks, vocabulary_projection, softmax_readout, incremental_cache, beam_search, training, dropout, weight_norm_parameterization, backward_gradient_scaling]
+  included:
+  - one_encoder_GLU_block
+  - one_causal_decoder_GLU_block
+  - input_and_encoder_output_projections
+  - single_decoder_attention
+  - source_padding_mask
+  - residual_scaling
+  - explicit_position_table_lookup
+  - token_position_addition
+  excluded:
+  - stacked_blocks
+  - vocabulary_projection
+  - softmax_readout
+  - incremental_cache
+  - beam_search
+  - training
+  - dropout
+  - weight_norm_parameterization
+  - backward_gradient_scaling
+  - token_lookup
+  - automatic_position_numbering
 configuration:
   D: positive integer embedding width; default 3
   C: positive integer convolution width; default 4
   K: positive integer kernel width; default 3
 interface:
   constructor: Model(D=3,C=4,K=3), torch.nn.Module
-  forward: forward(source_embedding, target_embedding, source_padding_mask) -> dict
   dtype: torch.float64
   device: cpu
   inputs:
-    source_embedding: '[B,S,D]; finite sum of token and absolute position embeddings supplied by caller'
-    target_embedding: '[B,T,D]; finite embeddings already shifted by caller; index t contains information for predicting next token'
+    source_words: CPU float64 [B,S,D] finite token vectors
+    target_words: CPU float64 [B,T,D], already shifted token vectors
+    source_positions: CPU int64 [B,S], 0 <= IDs < Ps
+    target_positions: CPU int64 [B,T], 0 <= IDs < Pt; already shifted
+    source_table: CPU float64 [Ps,D], finite supplied learned position vectors
+    target_table: CPU float64 [Pt,D], independent supplied learned position vectors
     source_padding_mask: '[B,S] bool; True excludes position; at least one False per row; positive B,S,T'
   outputs:
     encoder: '[B,S,D], projected encoder states, zero at masked positions'
@@ -25,7 +47,18 @@ interface:
     attention: '[B,T,S]'
     context: '[B,T,D], weighted values times sqrt(valid source count)'
     output: '[B,T,C], block output before vocabulary projection'
-  guards: No extra runtime guards required; caller satisfies shape/domain; all-masked source and target padding outside scope
+  guards: No extra runtime guards required; caller satisfies shape/domain; all-masked source and target
+    padding outside scope
+  block_forward: forward(source_embedding, target_embedding, source_padding_mask) -> dict
+  forward: forward_with_positions(source_words, source_positions, source_table, target_words, target_positions,
+    target_table, source_padding_mask) -> dict
+  block_inputs:
+    source_embedding: '[B,S,D]; finite sum of token and absolute position embeddings supplied by caller'
+    target_embedding: '[B,T,D]; finite embeddings already shifted by caller; index t contains information
+      for predicting next token'
+    source_padding_mask: '[B,S] bool; True excludes position; at least one False per row; positive B,S,T'
+  position_contract: Explicit caller IDs; no automatic indexing or zeroing of padded embeddings. Source
+    mask passed unchanged; target padding excluded.
 parameters:
   enc_in_w: {shape: [C,D], initialization: zeros}
   enc_in_b: {shape: [C], initialization: zeros}
@@ -54,7 +87,13 @@ operators:
   attention: 'q=(linear(decoder_glu,attn_in_w,attn_in_b)+target_embedding)/sqrt(2); logits[b,t,s]=sum_d q[b,t,d]*encoder[b,s,d]; replace masked logits with -inf; attention=softmax(logits,axis=source S), subtract row maximum before exp; no 1/sqrt(D) scale'
   context: 'n[b]=sum_s (not source_padding_mask[b,s]); context[b,t,d]=sqrt(n[b])*sum_s attention[b,t,s]*values[b,s,d]'
   residual: 'attended=(linear(context,attn_out_w,attn_out_b)+decoder_glu)/sqrt(2); output=(attended+d0)/sqrt(2)'
+  position_lookup: "position[b,t,d] = table[positions[b,t],d]"
+  position_add: "embedding[b,t,d] = words[b,t,d] + position[b,t,d]"
 graph:
+- {"id": "source_position_lookup", "op": "position_lookup", "inputs": ["source_positions", "source_table"], "outputs": ["source_position"]}
+- {"id": "source_position_add", "op": "position_add", "inputs": ["source_words", "source_position"], "outputs": ["source_embedding"]}
+- {"id": "target_position_lookup", "op": "position_lookup", "inputs": ["target_positions", "target_table"], "outputs": ["target_position"]}
+- {"id": "target_position_add", "op": "position_add", "inputs": ["target_words", "target_position"], "outputs": ["target_embedding"]}
 - {id: convs2s_encoder_glu, op: encoder_block, inputs: [source_embedding,source_padding_mask,enc_in_w,enc_in_b,enc_conv_w,enc_conv_b], outputs: [eh]}
 - {id: convs2s_encoder_memory, op: encoder_memory, inputs: [eh,source_embedding,source_padding_mask,enc_out_w,enc_out_b], outputs: [encoder,values]}
 - {id: convs2s_causal_decoder_glu, op: decoder_block, inputs: [target_embedding,dec_in_w,dec_in_b,dec_conv_w,dec_conv_b], outputs: [d0,decoder_glu]}

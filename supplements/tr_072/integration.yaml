@@ -1,5 +1,0 @@
-state: INTEGRATED_IN_MAIN_RELATION_CATALOG
-relation: ../../relations/tr_072.yaml
-counts: No new architecture node or external generation success
-mapping: partial
-core_mapping: complete_scoped

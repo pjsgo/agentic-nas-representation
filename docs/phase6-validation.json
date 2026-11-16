@@ -26,5 +26,7 @@
     "origin": "I-authored position sidecars, excluded from external-generation counts"
   },
   "external_generation_this_publication": 0,
-  "innovation_and_limitations_synthesis": "DEFERRED"
+  "innovation_and_limitations_synthesis": "DEFERRED",
+  "historical_record": true,
+  "current_position_integration": "position-integration-validation.json"
 }

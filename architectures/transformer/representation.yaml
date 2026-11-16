@@ -1,9 +1,9 @@
 {
   "representation_version": "0.4-candidate.1",
-  "operator_profile": "tensor_pytorch_2_2_1_v0_3_r1",
+  "operator_profile": "tensor_pytorch_2_2_1_v0_3_r1_trig_v1",
   "architecture": "unit_a",
-  "architecture_entry": "unit",
-  "description": "One eval functional block; positive B,T; fixed feature/head/hidden dimensions. Only explicit boolean exclusion mask. Parameters fixture-supplied. Original Module hierarchy, initialization and training are outside scope.",
+  "architecture_entry": "positioned_unit",
+  "description": "One eval functional block; positive B,T; fixed feature/head/hidden dimensions. Only explicit boolean exclusion mask. Parameters fixture-supplied. Original Module hierarchy, initialization and training are outside scope. Explicit sinusoidal position construction and token scaling precede the block through positioned_unit; unit remains the preembedded block entry.",
   "factors": {
     "unit": {
       "contains": [
@@ -249,7 +249,19 @@
         "eps": 1.0e-05,
         "affine": true
       }
-    }
+    },
+    "positioned_unit": {"contains": ["position_cast", "position_expand", "position_denominators", "position_angles", "position_sin", "position_cos", "position_pairs", "position_sinusoidal", "token_scale_value", "token_scale", "position_add", "unit"]},
+    "position_cast": {"operator": "cast", "attributes": {"dtype": "float32"}},
+    "position_expand": {"operator": "unsqueeze", "attributes": {"dim": 2}},
+    "position_denominators": {"operator": "constant", "attributes": {"value": [1.0, 10.0, 100.0, 1000.0], "dtype": "float32"}},
+    "position_angles": {"operator": "div"},
+    "position_sin": {"operator": "sin"},
+    "position_cos": {"operator": "cos"},
+    "position_pairs": {"operator": "stack", "attributes": {"count": 2, "dim": 3}},
+    "position_sinusoidal": {"operator": "reshape", "attributes": {"shape": ["B", "T", 8]}},
+    "token_scale_value": {"operator": "constant", "attributes": {"value": 2.8284271247461903, "dtype": "float32"}},
+    "token_scale": {"operator": "mul"},
+    "position_add": {"operator": "add", "attributes": {"inplace": false}}
   },
   "dataflow": [
     [
@@ -451,6 +463,70 @@
     [
       "normalize_b.output",
       "unit.y"
+    ],
+    [
+      "positioned_unit.positions",
+      "position_cast.input"
+    ],
+    [
+      "position_cast.output",
+      "position_expand.input"
+    ],
+    [
+      "position_expand.output",
+      "position_angles.left"
+    ],
+    [
+      "position_denominators.output",
+      "position_angles.right"
+    ],
+    [
+      "position_angles.output",
+      "position_sin.input"
+    ],
+    [
+      "position_angles.output",
+      "position_cos.input"
+    ],
+    [
+      "position_sin.output",
+      "position_pairs.input0"
+    ],
+    [
+      "position_cos.output",
+      "position_pairs.input1"
+    ],
+    [
+      "position_pairs.output",
+      "position_sinusoidal.input"
+    ],
+    [
+      "positioned_unit.words",
+      "token_scale.left"
+    ],
+    [
+      "token_scale_value.output",
+      "token_scale.right"
+    ],
+    [
+      "token_scale.output",
+      "position_add.main"
+    ],
+    [
+      "position_sinusoidal.output",
+      "position_add.shortcut"
+    ],
+    [
+      "position_add.output",
+      "unit.x"
+    ],
+    [
+      "positioned_unit.mask",
+      "unit.mask"
+    ],
+    [
+      "unit.y",
+      "positioned_unit.y"
     ]
   ],
   "interface": {
@@ -1687,7 +1763,19 @@
           "dtype": "float32"
         }
       }
-    }
+    },
+    "position_cast": {"inputs": {"input": {"shape": ["B", "T"], "axes": ["a0", "a1"], "dtype": "int64"}}, "outputs": {"output": {"shape": ["B", "T"], "axes": ["a0", "a1"], "dtype": "float32"}}},
+    "position_expand": {"inputs": {"input": {"shape": ["B", "T"], "axes": ["a0", "a1"], "dtype": "float32"}}, "outputs": {"output": {"shape": ["B", "T", 1], "axes": ["a0", "a1", "a2"], "dtype": "float32"}}},
+    "position_denominators": {"inputs": {}, "outputs": {"output": {"shape": [4], "axes": ["a0"], "dtype": "float32"}}},
+    "position_angles": {"inputs": {"left": {"shape": ["B", "T", 1], "axes": ["a0", "a1", "a2"], "dtype": "float32"}, "right": {"shape": [4], "axes": ["a0"], "dtype": "float32"}}, "outputs": {"output": {"shape": ["B", "T", 4], "axes": ["a0", "a1", "a2"], "dtype": "float32"}}},
+    "position_sin": {"inputs": {"input": {"shape": ["B", "T", 4], "axes": ["a0", "a1", "a2"], "dtype": "float32"}}, "outputs": {"output": {"shape": ["B", "T", 4], "axes": ["a0", "a1", "a2"], "dtype": "float32"}}},
+    "position_cos": {"inputs": {"input": {"shape": ["B", "T", 4], "axes": ["a0", "a1", "a2"], "dtype": "float32"}}, "outputs": {"output": {"shape": ["B", "T", 4], "axes": ["a0", "a1", "a2"], "dtype": "float32"}}},
+    "position_pairs": {"inputs": {"input0": {"shape": ["B", "T", 4], "axes": ["a0", "a1", "a2"], "dtype": "float32"}, "input1": {"shape": ["B", "T", 4], "axes": ["a0", "a1", "a2"], "dtype": "float32"}}, "outputs": {"output": {"shape": ["B", "T", 4, 2], "axes": ["a0", "a1", "a2", "a3"], "dtype": "float32"}}},
+    "position_sinusoidal": {"inputs": {"input": {"shape": ["B", "T", 4, 2], "axes": ["a0", "a1", "a2", "a3"], "dtype": "float32"}}, "outputs": {"output": {"shape": ["B", "T", 8], "axes": ["a0", "a1", "a2"], "dtype": "float32"}}},
+    "token_scale_value": {"inputs": {}, "outputs": {"output": {"shape": [], "axes": [], "dtype": "float32"}}},
+    "token_scale": {"inputs": {"left": {"shape": ["B", "T", 8], "axes": ["a0", "a1", "a2"], "dtype": "float32"}, "right": {"shape": [], "axes": [], "dtype": "float32"}}, "outputs": {"output": {"shape": ["B", "T", 8], "axes": ["a0", "a1", "a2"], "dtype": "float32"}}},
+    "position_add": {"inputs": {"main": {"shape": ["B", "T", 8], "axes": ["a0", "a1", "a2"], "dtype": "float32"}, "shortcut": {"shape": ["B", "T", 8], "axes": ["a0", "a1", "a2"], "dtype": "float32"}}, "outputs": {"output": {"shape": ["B", "T", 8], "axes": ["a0", "a1", "a2"], "dtype": "float32"}}},
+    "positioned_unit": {"inputs": {"words": {"shape": ["B", "T", 8], "axes": ["a0", "a1", "a2"], "dtype": "float32"}, "positions": {"shape": ["B", "T"], "axes": ["a0", "a1"], "dtype": "int64"}, "mask": {"shape": ["T", "T"], "axes": ["a0", "a1"], "dtype": "bool"}}, "outputs": {"y": {"shape": ["B", "T", 8], "axes": ["a0", "a1", "a2"], "dtype": "float32"}}, "symbols": {"B": "positive_integer", "T": "positive_integer"}, "contract": "CPU finite unscaled words; nonnegative explicit positions; shared exclusion mask with at least one allowed key per query; no automatic position numbering or padding suppression. UnitA.forward_with_positions(words, positions, mask)."}
   },
   "parameters": {
     "p0": {
@@ -1792,7 +1880,8 @@
     }
   },
   "state_registry": {
-    "root": "unit",
+    "root": "positioned_unit",
     "coverage": "exact"
-  }
+  },
+  "operator_spec": "../../specs/operators/tensor-pytorch-trig-v1.md"
 }

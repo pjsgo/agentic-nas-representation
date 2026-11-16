@@ -1,0 +1,17 @@
+{
+  "status": "PASS_WITHIN_DECLARED_SCOPE",
+  "validation_date": "2026-11-17",
+  "check_count": 36,
+  "reference": "Independent scalar position equations, new YAML graph execution and integrated block connections",
+  "external_api_calls": 0,
+  "unrelated_architecture_reruns": 0,
+  "integrity_admission": "SKIPPED",
+  "limits": [
+    "Explicit positions only; no automatic padding/index conventions",
+    "Existing block numerical evidence is reused; connection checks do not newly certify full models",
+    "No official-runtime or cross-model equivalence claim"
+  ],
+  "max_abs_error": 2.384185791015625e-07,
+  "research_evidence": "parallel_coverage/20261105/integration/20261117_position_integration/validation.json",
+  "position_graphs": "Canonical architecture representation.yaml and reconstructed.py; no relation-specific implementation directory"
+}

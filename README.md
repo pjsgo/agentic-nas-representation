@@ -27,7 +27,7 @@ docs/           읽는 순서, 예시, 자료 관리 안내
 
 ## 아키텍처 자료
 
-53개 아키텍처를 이름순으로 정리했습니다. 각 행은 명시한 계산 범위의 복원이며, 전체 모델 재현을 뜻하지 않습니다. 생성 원본 채택은 26개, 수정본 채택은 27개입니다. 이 수치는 공통 기준의 최초 시도 성공률이 아닙니다. 개별 검증 근거와 수정 이력은 각 아키텍처 자료에 기록합니다.
+53개 아키텍처를 이름순으로 정리했습니다. 각 행은 명시한 계산 범위의 복원이며, 전체 모델 재현을 뜻하지 않습니다. 외부 생성 후보의 과거 채택 기록은 원본 26개, 수정본 27개입니다. 현재 ConvS2S와 Transformer에는 로컬 작성 위치 계산이 통합되어 있으며, 해당 확장은 외부 생성 성공 집계에 포함하지 않습니다. 이 수치는 공통 기준의 최초 시도 성공률이 아닙니다. 개별 검증 근거와 수정 이력은 각 아키텍처 자료에 기록합니다.
 
 | 아키텍처 | 대상 범위 | 복원 YAML | 구현 |
 |---|---|---|---|
@@ -36,7 +36,7 @@ docs/           읽는 순서, 예시, 자료 관리 안내
 | [BigBird](architectures/bigbird/README.md) | 외부 random graph를 받는 local/global/random block attention core | [YAML](architectures/bigbird/representation.yaml) | [코드](architectures/bigbird/reconstructed.py) |
 | [ByteNet](architectures/bytenet/README.md) | ReLU bottleneck residual feature stack, causal 또는 centered convolution | [YAML](architectures/bytenet/representation.yaml) | [코드](architectures/bytenet/reconstructed.py) |
 | [Compressive Transformer](architectures/compressive-transformer/README.md) | 평균 풀링 압축, 두 단계 FIFO memory attention | [YAML](architectures/compressive-transformer/representation.yaml) | [코드](architectures/compressive-transformer/reconstructed.py) |
-| [ConvS2S](architectures/convs2s/README.md) | 단일 encoder/decoder GLU 블록, attention과 residual, 사전 합산 입력 임베딩 | [YAML](architectures/convs2s/representation.yaml) | [코드](architectures/convs2s/reconstructed.py) |
+| [ConvS2S](architectures/convs2s/README.md) | 단일 encoder/decoder GLU 블록, attention과 residual, 명시적 학습 위치 임베딩 | [YAML](architectures/convs2s/representation.yaml) | [코드](architectures/convs2s/reconstructed.py) |
 | [Decomposable Attention](architectures/decomposable-attention/README.md) | 공유 F/G, 양방향 정렬과 masked sum, 분류기 제외 | [YAML](architectures/decomposable-attention/representation.yaml) | [코드](architectures/decomposable-attention/reconstructed.py) |
 | [E2E Memory Network](architectures/e2e-memory-network/README.md) | Memory와 query embedding, soft addressing, multi-hop read, tied 답변 투영 | [YAML](architectures/e2e-memory-network/representation.yaml) | [코드](architectures/e2e-memory-network/reconstructed.py) |
 | [FlashAttention](architectures/flashattention/README.md) | CPU 타일 전방 계산과 online softmax 누적, causal mask | [YAML](architectures/flashattention/representation.yaml) | [코드](architectures/flashattention/reconstructed.py) |
@@ -80,7 +80,7 @@ docs/           읽는 순서, 예시, 자료 관리 안내
 | [Structured Self-Attention](architectures/structured-self-attention/README.md) | bias 없는 다중 hop attention과 행렬 sentence embedding, encoder 제외 | [YAML](architectures/structured-self-attention/representation.yaml) | [코드](architectures/structured-self-attention/reconstructed.py) |
 | [Switch Transformer](architectures/switch-transformer/README.md) | Top-1 routing, 용량 제한과 overflow drop, padding mask, ReLU expert | [YAML](architectures/switch-transformer/representation.yaml) | [코드](architectures/switch-transformer/reconstructed.py) |
 | [Synthesizer](architectures/synthesizer/README.md) | 토큰 조건부 logits, multihead value 집계, mask와 출력 투영 | [YAML](architectures/synthesizer/representation.yaml) | [코드](architectures/synthesizer/reconstructed.py) |
-| [Transformer](architectures/transformer/README.md) | Single encoder block, nine CPU float32 eval fixtures | [YAML](architectures/transformer/representation.yaml) | [코드](architectures/transformer/reconstructed.py) |
+| [Transformer](architectures/transformer/README.md) | 단일 encoder block, 명시적 sinusoidal 위치 인코딩과 토큰 스케일링 | [YAML](architectures/transformer/representation.yaml) | [코드](architectures/transformer/reconstructed.py) |
 | [Transformer-XL](architectures/transformer-xl/README.md) | segment recurrence, 상대 위치 attention sublayer | [YAML](architectures/transformer-xl/representation.yaml) | [코드](architectures/transformer-xl/reconstructed.py) |
 | [TTT](architectures/ttt/README.md) | 단일 head TTT-Linear 내부 학습기, chunk 내 causal 갱신과 경계 상태 이어 계산 | [YAML](architectures/ttt/representation.yaml) | [코드](architectures/ttt/reconstructed.py) |
 | [WaveNet](architectures/wavenet/README.md) | 조건 없는 dilated gated residual/skip feature stack, audio 입출력 제외 | [YAML](architectures/wavenet/representation.yaml) | [코드](architectures/wavenet/reconstructed.py) |

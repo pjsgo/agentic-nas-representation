@@ -19,39 +19,39 @@ mechanism_evidence:
   original_explanatory_pages:
   - 26
   - 19
-  sources: ../supplements/tr_072/sources.yaml
+  sources:
+  - ../architectures/convs2s/sources.yaml
+  - ../architectures/transformer/sources.yaml
 motivation: 순환이 없는 구조에서 위치 정보를 표현한다.
 conditions:
-- Explicit caller position IDs and selected position variants only; original model/block
-  YAML remains unchanged.
-- A descriptive part correspondence, not numerical equivalence or an executable model
-  conversion.
+- Explicit caller position IDs and selected position variants implemented within both architecture representations.
+- A descriptive part correspondence, not numerical equivalence or an executable model conversion.
 expected_effects:
 - positional representation 부품 관계와 token-mixer 대안 관계 tr_025를 분리한다.
 tradeoffs:
-- Learned lookup and sinusoidal encoding have different parameterizations; automatic
-  position numbering, upstream padding conventions, learned Transformer variant and
-  full models remain outside scope.
+- Learned lookup and sinusoidal encoding have different parameterizations; automatic position numbering,
+  upstream padding conventions, learned Transformer variant and full models remain outside scope.
 changes:
 - before_units:
-  - graph.position_lookup
-  - graph.position_add
+  - graph.source_position_lookup
+  - graph.source_position_add
+  - graph.target_position_lookup
+  - graph.target_position_add
   after_units:
-  - graph.position_sinusoidal
-  - graph.position_add
+  - factors.position_sinusoidal
+  - factors.position_add
   operation: descriptive_correspondence
-  mechanism: Learned absolute position lookup plus token addition corresponds by role
-    to sinusoidal absolute position construction plus scaled-token addition. Values/weights
-    are not interchangeable.
+  mechanism: Learned absolute position lookup plus token addition corresponds by role to sinusoidal absolute
+    position construction plus scaled-token addition. Values/weights are not interchangeable.
   mapping_status: partial
   cardinality: semantic_many_to_many_not_tensor_parameter_or_state_identity
-  state_and_resource_contract: Stateless CPU eval, explicit positions and caller-supplied
-    learned table. Original blocks unchanged.
+  state_and_resource_contract: Stateless CPU eval, supplied learned tables and explicit positions; position
+    outputs feed the existing blocks.
 preserve:
 - 토큰 위치 정보를 표현에 제공하는 역할
 scope:
-  source_yaml: ../supplements/tr_072/convs2s.yaml
-  target_yaml: ../supplements/tr_072/transformer.yaml
+  source_yaml: ../architectures/convs2s/representation.yaml
+  target_yaml: ../architectures/transformer/representation.yaml
   path_base: relation_file_directory
   included:
   - original_relation_identity
@@ -66,10 +66,10 @@ scope:
   - performance_validation
   - automatic_position_numbering
   - official_runtime_parity
-  mapping_boundary: Additive sidecar position components; baseline model YAML scope
-    is not retroactively expanded.
-  core_mapping_definition: Actual declared position construction and addition components
-    exist on both sides and pass local numerical checks. Overall mapping remains partial.
+  mapping_boundary: Selected position components inside the canonical architectures; remaining block components
+    are not mapped by this relation.
+  core_mapping_definition: Actual declared position construction and addition components exist on both
+    sides and pass local numerical checks. Overall mapping remains partial.
   endpoint_scope:
     source:
       included:
@@ -95,38 +95,43 @@ scope:
   component_coverage:
     source:
       mapped_units:
-      - graph.position_lookup
-      - graph.position_add
-      unmapped_declared_units: []
+      - graph.source_position_lookup
+      - graph.source_position_add
+      - graph.target_position_lookup
+      - graph.target_position_add
+      unmapped_declared_units:
+      - graph.convs2s_encoder_glu
+      - graph.convs2s_encoder_memory
+      - graph.convs2s_causal_decoder_glu
+      - graph.convs2s_encoder_attention
+      - graph.convs2s_length_scaled_context
+      - graph.convs2s_decoder_residual
+      unmapped_reason: Encoder/decoder blocks are outside this positional correspondence.
     target:
       mapped_units:
-      - graph.position_sinusoidal
-      - graph.position_add
+      - factors.position_sinusoidal
+      - factors.position_add
       unmapped_declared_units:
-      - graph.token_scale
-      unmapped_reason: Transformer-specific token scaling has no ConvS2S counterpart;
-        implemented and tested, not a transferred component.
+      - factors.token_scale
+      - factors.unit
+      unmapped_reason: Token scaling and encoder block are implemented but not transferred from ConvS2S.
 pending_components: []
-source_records: []
+source_records:
+- ../architectures/convs2s/provenance.json
+- ../architectures/transformer/provenance.json
 application:
   executable: false
   command: null
   patch_or_script: null
 validation:
-  status: PASS_WITHIN_DECLARED_SUPPLEMENT_SCOPE
-  numerical_tests: 25_CHECKS_PASS
-  evidence: ../supplements/tr_072/evaluation.yaml
+  status: PASS_WITHIN_DECLARED_SCOPE
+  evidence: ../docs/position-integration-validation.json
   integrity_checks: SKIPPED
-  claim_boundary: I-authored sidecar equations and new connections only; no architecture
-    generation success added
+  claim_boundary: Locally authored position components and connections; historical external-generation
+    verdicts are preserved in provenance.
+  numerical_tests: 36_POSITION_GRAPH_CONNECTION_AND_CONTRACT_CHECKS_PASS
 unresolved:
 - No executable model conversion or weight/state transfer
 - Automatic token-to-position indexing and official padding conventions not reconstructed
 - No full-model or training certification; relation overall remains partial
 ready_evidence: []
-supplement:
-  owner: I
-  implementation_origin: I_AUTHORED_LOCAL_SUPPLEMENT_NOT_EXTERNAL_GENERATION
-  external_api_calls: 0
-  sources: ../supplements/tr_072/sources.yaml
-  implementation: ../supplements/tr_072/position.py

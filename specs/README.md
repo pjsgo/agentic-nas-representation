@@ -9,6 +9,7 @@
 | [Sparse attention v1](operators/sparse-transformer-v1.json) | Sparse Transformer | local/strided 연결과 mask 의미 |
 | [Linformer attention v1](operators/linformer-v1.json) | Linformer | sequence projection, 압축 축 attention |
 | [Performer attention v1](operators/performer-v1.json) | Performer | random feature, 집계 연산 |
+| [Tensor trigonometric extension v1](operators/tensor-pytorch-trig-v1.md) | Transformer 위치 계산 | 기존 tensor profile에 cast, sin, cos 추가 |
 | [Tensor PyTorch 2.2.1 / v0.3-r1](operators/tensor-pytorch-2.2.1-v0.3-r1.txt) | H3의 primitive 복원 표현 | tensor 연산, 호출, scan, 상태 의미 |
 | [local_transition_v1](relations/local-transition-v1.md) | 관계 YAML | 관계 유형, 부품 참조, 범위, 실행 표시 |
 

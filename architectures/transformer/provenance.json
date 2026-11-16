@@ -1,10 +1,10 @@
 {
   "format_version": 2,
   "architecture": "transformer",
-  "scope": "Single encoder block, nine CPU float32 eval fixtures",
+  "scope": "Single encoder block with explicit sinusoidal positions and token scaling, CPU float32 width 8",
   "reconstruction": "PASS_WITHIN_DECLARED_SCOPE",
-  "candidate_origin": "UNMODIFIED_LLM_OUTPUT",
-  "candidate_modified_after_generation": false,
+  "candidate_origin": "LLM_BLOCK_WITH_LOCAL_POSITION_EXTENSION",
+  "candidate_modified_after_generation": true,
   "representation": {
     "file": "architectures/transformer/representation.yaml",
     "research_source": "parallel_coverage/20261105/transformer/experiments/20261112_runtime_trace_fresh_v1/input.yaml"
@@ -33,5 +33,16 @@
       }
     ]
   },
-  "limits": "해당 블록/core와 실행한 fixture 범위. 전체 모델·학습/gradient·GPU·공통 단일 엄격 기준의 7종 성공을 주장하지 않음."
+  "limits": "해당 블록/core와 실행한 fixture 범위. 전체 모델·학습/gradient·GPU·공통 단일 엄격 기준의 7종 성공을 주장하지 않음.",
+  "historical_candidate_origin": "UNMODIFIED_LLM_OUTPUT",
+  "position_integration": {
+    "date": "2026-11-17",
+    "origin": "LOCAL_AGENT_AUTHORED_NOT_EXTERNAL_GENERATION",
+    "implementation": "reconstructed.py",
+    "representation": "representation.yaml",
+    "entry": "forward_with_positions",
+    "historical_block_evaluation": "Existing evaluation below applies to the preembedded block only",
+    "evaluation": "../../docs/position-integration-validation.json",
+    "scope": "Explicit position construction and block connection; no whole-model or official-runtime claim"
+  }
 }

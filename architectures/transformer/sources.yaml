@@ -1,0 +1,14 @@
+architecture: Transformer
+position_encoding:
+  source:
+    architecture: Transformer
+    url: https://papers.nips.cc/paper/7181-attention-is-all-you-need.pdf
+    sections:
+    - '3.4'
+    - '3.5'
+    finding: sqrt(D) token scaling; additive positional representation; selected sinusoidal formula. Learned
+      positional variant is also discussed with citation [8] to ConvS2S.
+  implementation_origin: LOCAL_AGENT_AUTHORED
+  scope: Explicit positions, no automatic numbering, padding convention reconstruction, training or full-model
+    claim
+  official_runtime_executed: false

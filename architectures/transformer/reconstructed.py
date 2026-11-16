@@ -1,3 +1,4 @@
+import math
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -18,6 +19,12 @@ class UnitA(nn.Module):
         self.p9 = nn.Parameter(torch.empty(8, dtype=torch.float32), requires_grad=True)
         self.p10 = nn.Parameter(torch.empty(8, dtype=torch.float32), requires_grad=True)
         self.p11 = nn.Parameter(torch.empty(8, dtype=torch.float32), requires_grad=True)
+
+    def forward_with_positions(self, words, positions, mask):
+        """Unscaled token vectors and explicit positions, then the encoder block."""
+        if words.dtype != torch.float32 or words.shape[-1] != 8:
+            raise ValueError("encoder requires float32 width 8")
+        return self(transformer_position(words, positions), mask)
 
     def forward(self, x, mask):
         # stage_a
@@ -108,3 +115,26 @@ class UnitA(nn.Module):
 
 def create_unit_a():
     return UnitA()
+
+# Locally authored position operations; generation history is in provenance.json.
+def _check(words, positions):
+    if words.device.type != 'cpu' or words.dtype not in (torch.float32, torch.float64):
+        raise ValueError('CPU float32/float64 required')
+    if words.ndim != 3 or min(words.shape) <= 0 or not torch.isfinite(words).all():
+        raise ValueError('finite nonempty B,T,D words required')
+    if positions.device.type != 'cpu' or positions.dtype != torch.int64 or positions.shape != words.shape[:2]:
+        raise ValueError('explicit CPU int64 B,T positions required')
+    if (positions < 0).any():
+        raise ValueError('positions must be nonnegative')
+
+
+def transformer_position(words, positions):
+    """Unscaled token vectors -> sqrt(D)*words + PE. Even D selected."""
+    _check(words, positions)
+    d = words.shape[-1]
+    if d % 2:
+        raise ValueError('selected sinusoidal variant requires even D')
+    exponent = torch.arange(0, d, 2, dtype=words.dtype) / d
+    angles = positions.to(words.dtype).unsqueeze(-1) / torch.pow(10000.0, exponent)
+    pe = torch.stack((torch.sin(angles), torch.cos(angles)), dim=-1).flatten(-2)
+    return math.sqrt(d) * words + pe
