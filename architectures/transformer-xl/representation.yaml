@@ -1,0 +1,196 @@
+representation_version: local_genealogy_core_v1
+operator_profile: explicit_pytorch_tensor_equations_v1
+architecture: Transformer-XL
+architecture_entry: txl.segment_attention
+realization: reconstructed.py:build
+scope:
+  included:
+  - single_postnorm_attention_sublayer
+  - segment_recurrence
+  - sinusoidal_relative_attention
+  - two_global_biases
+  - causal_mask
+  excluded:
+  - ffn
+  - token_embedding
+  - adaptive_softmax
+  - training
+  - dropout
+  - pre_layernorm
+  - same_length_mask
+  - ext_len_nonzero
+  - position_clamp
+config:
+  d_model: 8
+  heads: 2
+  d_head: 4
+  memory_length: 4
+  eps: 1.0e-05
+  ext_len: 0
+interface:
+  inputs:
+    x: float64 [T,B,D]
+    memory: float64 [M,B,D], 0<=M<=memory_length
+  outputs:
+    y: '[T,B,D]'
+    next_memory: '[min(M+T,memory_length),B,D]'
+    scores: '[B,H,T,M+T] masked scaled logits'
+parameters:
+  qkv:
+    shape: '[3*H*d_head,D]'
+    bias: false
+    identity: retained
+  out:
+    shape: '[D,H*d_head]'
+    bias: false
+    identity: retained
+  relative:
+    shape: '[H*d_head,D]'
+    bias: false
+    identity: retained
+  u:
+    shape: '[H,d_head]'
+    role: content_bias
+    identity: retained
+  v:
+    shape: '[H,d_head]'
+    role: position_bias
+    identity: retained
+  gamma:
+    shape: '[D]'
+    role: postnorm_gain
+    identity: retained
+  beta:
+    shape: '[D]'
+    role: postnorm_bias
+    identity: retained
+state:
+  memory:
+    initialization: empty [0,B,D]
+    update: txl.memory_update
+    detached: true
+    inplace: false
+    stores: sublayer_input_x_not_output_y
+factors:
+  txl.segment_attention:
+    contains:
+    - txl.memory_read
+    - txl.qkv
+    - txl.relative_position
+    - txl.relative_score
+    - txl.causal_attention
+    - txl.output
+    - txl.postnorm
+    - txl.memory_update
+  txl.memory_read:
+    operator: cat
+    inputs:
+    - stop_gradient(memory)
+    - x
+    attributes:
+      axis: 0
+      chronological: true
+  txl.qkv:
+    operator: linear_split_heads
+    inputs:
+    - txl.memory_read
+    - qkv
+    attributes:
+      query: last_T_positions
+      key_value: all_positions
+      order: Q_K_V
+  txl.relative_position:
+    operator: sinusoid_linear
+    inputs:
+    - relative
+    attributes:
+      distance: M+i-j for allowed key j<=M+i
+      inv_frequency: 10000**(-2*k/D), k=0..D/2-1
+      layout: sin_half_then_cos_half
+      model_width_even: true
+  txl.relative_score:
+    operator: two_biased_inner_products
+    inputs:
+    - txl.qkv.Q
+    - txl.qkv.K
+    - txl.relative_position
+    - u
+    - v
+    equation: score[b,h,i,j] = ((Q[b,h,i]+u[h]) dot K[b,h,j] + (Q[b,h,i]+v[h]) dot R[M+i-j,h]) / sqrt(d_head)
+  txl.causal_attention:
+    operator: masked_softmax_matmul
+    inputs:
+    - txl.relative_score
+    - txl.qkv.V
+    attributes:
+      mask: j>M+i => -inf
+      softmax_axis: key
+  txl.output:
+    operator: merge_heads_linear
+    inputs:
+    - txl.causal_attention
+    - out
+  txl.postnorm:
+    operator: residual_layer_norm
+    inputs:
+    - x
+    - txl.output
+    - gamma
+    - beta
+    attributes:
+      normalized_shape: '[D]'
+      eps: config.eps
+      variance_correction: 0
+  txl.memory_update:
+    operator: tail_detach
+    inputs:
+    - txl.memory_read
+    attributes:
+      axis: 0
+      length: config.memory_length
+      ext_len: 0
+      zero_capacity: empty
+dataflow:
+- - memory
+  - txl.memory_read.memory
+- - x
+  - txl.memory_read.x
+- - txl.memory_read.output
+  - txl.qkv.input
+- - txl.qkv.Q
+  - txl.relative_score.Q
+- - txl.qkv.K
+  - txl.relative_score.K
+- - txl.relative_position.output
+  - txl.relative_score.R
+- - txl.relative_score.output
+  - txl.causal_attention.logits
+- - txl.qkv.V
+  - txl.causal_attention.V
+- - txl.causal_attention.output
+  - txl.output.input
+- - txl.output.output
+  - txl.postnorm.attention
+- - txl.postnorm.output
+  - y
+- - txl.relative_score.masked
+  - scores
+- - txl.memory_read.output
+  - txl.memory_update.input
+- - txl.memory_update.output
+  - next_memory
+semantics:
+  equations: declarative_mathematics_not_eval_strings
+  execution: candidate_methods_manually_realize_named_factors_and_read_config
+  sharing: same_parameter_objects_across_segments_no_clone_or_reinitialization
+  read_before_write: attention_reads_old_memory_then_next_memory_is_returned
+reuse:
+  prior_transformer_parts:
+  - project_a
+  - prob_a
+  - mix_a
+  - project_b
+  - merge_a
+  - normalize_a
+  prior_yaml: ../transformer/representation.yaml
+  change: relative_terms_and_detached_segment_memory_added_to_attention

@@ -1,0 +1,308 @@
+representation_version: local_attention_graph_v1
+operator_profile: ../../specs/operators/performer-v1.json
+architecture: performer
+architecture_entry: reconstructed.py:build
+interface:
+  q: float64[B,H,N,D]
+  k: float64[B,H,N,D]
+  v: float64[B,H,N,V]
+  output: float64[B,H,N,V]
+  constraints: positive dimensions; finite small CPU fixtures; no padding; evaluation only
+factors:
+  performer_query_scaled:
+    operator: dimension_scale
+    inputs:
+    - q
+    attributes:
+      axis: -1
+      power: -0.25
+  performer_query_projected:
+    operator: einsum
+    inputs:
+    - performer_query_scaled
+    - omega
+    attributes:
+      equation: bhnd,md->bhnm
+  performer_query_square:
+    operator: square
+    inputs:
+    - performer_query_scaled
+    attributes: {}
+  performer_query_norm:
+    operator: sum
+    inputs:
+    - performer_query_square
+    attributes:
+      axes:
+      - -1
+      keepdim: true
+  performer_query_half_norm:
+    operator: scale
+    inputs:
+    - performer_query_norm
+    attributes:
+      value: 0.5
+  performer_query_shift:
+    operator: amax
+    inputs:
+    - performer_query_projected
+    attributes:
+      axes:
+      - -1
+  performer_query_centered:
+    operator: sub
+    inputs:
+    - performer_query_projected
+    - performer_query_half_norm
+    attributes: {}
+  performer_query_stable:
+    operator: sub
+    inputs:
+    - performer_query_centered
+    - performer_query_shift
+    attributes: {}
+  performer_query_exp:
+    operator: exp
+    inputs:
+    - performer_query_stable
+    attributes: {}
+  performer_query_epsilon:
+    operator: add_scalar
+    inputs:
+    - performer_query_exp
+    attributes:
+      value: 1e-06
+  performer_query_features:
+    operator: resource_scale
+    inputs:
+    - performer_query_epsilon
+    - omega
+    attributes:
+      axis: 0
+      power: -0.5
+  performer_key_scaled:
+    operator: dimension_scale
+    inputs:
+    - k
+    attributes:
+      axis: -1
+      power: -0.25
+  performer_key_projected:
+    operator: einsum
+    inputs:
+    - performer_key_scaled
+    - omega
+    attributes:
+      equation: bhnd,md->bhnm
+  performer_key_square:
+    operator: square
+    inputs:
+    - performer_key_scaled
+    attributes: {}
+  performer_key_norm:
+    operator: sum
+    inputs:
+    - performer_key_square
+    attributes:
+      axes:
+      - -1
+      keepdim: true
+  performer_key_half_norm:
+    operator: scale
+    inputs:
+    - performer_key_norm
+    attributes:
+      value: 0.5
+  performer_key_shift:
+    operator: amax
+    inputs:
+    - performer_key_projected
+    attributes:
+      axes:
+      - -2
+      - -1
+  performer_key_centered:
+    operator: sub
+    inputs:
+    - performer_key_projected
+    - performer_key_half_norm
+    attributes: {}
+  performer_key_stable:
+    operator: sub
+    inputs:
+    - performer_key_centered
+    - performer_key_shift
+    attributes: {}
+  performer_key_exp:
+    operator: exp
+    inputs:
+    - performer_key_stable
+    attributes: {}
+  performer_key_epsilon:
+    operator: add_scalar
+    inputs:
+    - performer_key_exp
+    attributes:
+      value: 1e-06
+  performer_key_features:
+    operator: resource_scale
+    inputs:
+    - performer_key_epsilon
+    - omega
+    attributes:
+      axis: 0
+      power: -0.5
+  performer_kv_summary:
+    operator: einsum
+    inputs:
+    - performer_key_features
+    - v
+    attributes:
+      equation: bhnm,bhnv->bhmv
+  performer_key_sum:
+    operator: sum
+    inputs:
+    - performer_key_features
+    attributes:
+      axes:
+      - -2
+      keepdim: false
+  performer_numerator:
+    operator: einsum
+    inputs:
+    - performer_query_features
+    - performer_kv_summary
+    attributes:
+      equation: bhnm,bhmv->bhnv
+  performer_denominator:
+    operator: einsum
+    inputs:
+    - performer_query_features
+    - performer_key_sum
+    attributes:
+      equation: bhnm,bhm->bhn
+  performer_denominator_column:
+    operator: unsqueeze
+    inputs:
+    - performer_denominator
+    attributes:
+      axis: -1
+  performer_output:
+    operator: divide
+    inputs:
+    - performer_numerator
+    - performer_denominator_column
+    attributes: {}
+dataflow:
+- - q
+  - performer_query_scaled
+- - performer_query_scaled
+  - performer_query_projected
+- - omega
+  - performer_query_projected
+- - performer_query_scaled
+  - performer_query_square
+- - performer_query_square
+  - performer_query_norm
+- - performer_query_norm
+  - performer_query_half_norm
+- - performer_query_projected
+  - performer_query_shift
+- - performer_query_projected
+  - performer_query_centered
+- - performer_query_half_norm
+  - performer_query_centered
+- - performer_query_centered
+  - performer_query_stable
+- - performer_query_shift
+  - performer_query_stable
+- - performer_query_stable
+  - performer_query_exp
+- - performer_query_exp
+  - performer_query_epsilon
+- - performer_query_epsilon
+  - performer_query_features
+- - omega
+  - performer_query_features
+- - k
+  - performer_key_scaled
+- - performer_key_scaled
+  - performer_key_projected
+- - omega
+  - performer_key_projected
+- - performer_key_scaled
+  - performer_key_square
+- - performer_key_square
+  - performer_key_norm
+- - performer_key_norm
+  - performer_key_half_norm
+- - performer_key_projected
+  - performer_key_shift
+- - performer_key_projected
+  - performer_key_centered
+- - performer_key_half_norm
+  - performer_key_centered
+- - performer_key_centered
+  - performer_key_stable
+- - performer_key_shift
+  - performer_key_stable
+- - performer_key_stable
+  - performer_key_exp
+- - performer_key_exp
+  - performer_key_epsilon
+- - performer_key_epsilon
+  - performer_key_features
+- - omega
+  - performer_key_features
+- - performer_key_features
+  - performer_kv_summary
+- - v
+  - performer_kv_summary
+- - performer_key_features
+  - performer_key_sum
+- - performer_query_features
+  - performer_numerator
+- - performer_kv_summary
+  - performer_numerator
+- - performer_query_features
+  - performer_denominator
+- - performer_key_sum
+  - performer_denominator
+- - performer_denominator
+  - performer_denominator_column
+- - performer_numerator
+  - performer_output
+- - performer_denominator_column
+  - performer_output
+outputs:
+- performer_output
+- performer_query_features
+- performer_key_features
+- performer_denominator
+resources:
+  omega:
+    kind: buffer
+    shape: '[M,D]'
+    sharing: same fixed matrix for Q/K, all batches and heads
+    update: none; supplied block-orthogonal Gaussian fixture; no redraw
+state:
+  recurrent: false
+  mutation: false
+variant: Noncausal FAVOR+ stabilized positive softmax features; epsilon=1e-6 inside feature map
+scope:
+  included:
+  - D^(-1/4) normalization
+  - fixed random feature map
+  - linear associative normalized aggregation
+  excluded:
+  - full Transformer blocks
+  - QKV and output feature projections
+  - training
+  - dropout
+  - original class hierarchy
+  - performance claims
+  - exact softmax equivalence
+  - causal scan
+  - random redraw schedule
+  - random number generator bit identity
+realization: reconstructed.py:build

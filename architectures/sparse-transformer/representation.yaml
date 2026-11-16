@@ -1,0 +1,156 @@
+representation_version: local_attention_graph_v1
+operator_profile: ../../specs/operators/sparse-transformer-v1.json
+architecture: sparse_transformer
+architecture_entry: reconstructed.py:build
+interface:
+  q: float64[B,H,N,D]
+  k: float64[B,H,N,D]
+  v: float64[B,H,N,V]
+  output: float64[B,H,N,V]
+  constraints: positive dimensions; finite small CPU fixtures; no padding; evaluation only
+factors:
+  sparse_positions:
+    operator: positions
+    inputs:
+    - q
+    attributes: {}
+  sparse_offsets:
+    operator: pairwise_difference
+    inputs:
+    - sparse_positions
+    attributes: {}
+  sparse_causal:
+    operator: ge
+    inputs:
+    - sparse_offsets
+    attributes:
+      value: 0
+  sparse_local_band:
+    operator: lt
+    inputs:
+    - sparse_offsets
+    attributes:
+      value: 3
+  sparse_stride_links:
+    operator: mod_eq
+    inputs:
+    - sparse_offsets
+    attributes:
+      modulus: 3
+      value: 0
+  sparse_local_pattern:
+    operator: and
+    inputs:
+    - sparse_causal
+    - sparse_local_band
+    attributes: {}
+  sparse_strided_pattern:
+    operator: and
+    inputs:
+    - sparse_causal
+    - sparse_stride_links
+    attributes: {}
+  sparse_pattern:
+    operator: select_pattern
+    inputs:
+    - sparse_local_pattern
+    - sparse_strided_pattern
+    attributes:
+      mode: strided
+  sparse_scaled_query:
+    operator: dimension_scale
+    inputs:
+    - q
+    attributes:
+      axis: -1
+      power: -0.5
+  sparse_scores:
+    operator: einsum
+    inputs:
+    - sparse_scaled_query
+    - k
+    attributes:
+      equation: bhid,bhjd->bhij
+  sparse_masked_scores:
+    operator: masked_logits
+    inputs:
+    - sparse_scores
+    - sparse_pattern
+    attributes:
+      fill: -1000000000.0
+  sparse_probabilities:
+    operator: softmax
+    inputs:
+    - sparse_masked_scores
+    attributes:
+      axis: -1
+  sparse_output:
+    operator: einsum
+    inputs:
+    - sparse_probabilities
+    - v
+    attributes:
+      equation: bhij,bhjv->bhiv
+dataflow:
+- - q
+  - sparse_positions
+- - sparse_positions
+  - sparse_offsets
+- - sparse_offsets
+  - sparse_causal
+- - sparse_offsets
+  - sparse_local_band
+- - sparse_offsets
+  - sparse_stride_links
+- - sparse_causal
+  - sparse_local_pattern
+- - sparse_local_band
+  - sparse_local_pattern
+- - sparse_causal
+  - sparse_strided_pattern
+- - sparse_stride_links
+  - sparse_strided_pattern
+- - sparse_local_pattern
+  - sparse_pattern
+- - sparse_strided_pattern
+  - sparse_pattern
+- - q
+  - sparse_scaled_query
+- - sparse_scaled_query
+  - sparse_scores
+- - k
+  - sparse_scores
+- - sparse_scores
+  - sparse_masked_scores
+- - sparse_pattern
+  - sparse_masked_scores
+- - sparse_masked_scores
+  - sparse_probabilities
+- - sparse_probabilities
+  - sparse_output
+- - v
+  - sparse_output
+outputs:
+- sparse_output
+- sparse_pattern
+resources: {}
+state:
+  recurrent: false
+  mutation: false
+variant: Causal strided factor (default stride=3), optional causal local factor (window=3), separate applications,
+  not union
+scope:
+  included:
+  - official local/strided sparse connectivity
+  - scaled masked softmax aggregation
+  excluded:
+  - full Transformer blocks
+  - QKV and output feature projections
+  - training
+  - dropout
+  - original class hierarchy
+  - performance claims
+  - fixed pattern
+  - block-sparse CUDA kernel
+  - layer alternation schedule
+realization: reconstructed.py:build

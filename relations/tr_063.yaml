@@ -56,8 +56,8 @@ scope:
   - training
   - whole_model_conversion
   - weight_or_state_migration
-  source_yaml: ../experiments/mamba/genealogy/representation.yaml
-  target_yaml: ../experiments/mamba2-ssd/representation.yaml
+  source_yaml: ../architectures/mamba/genealogy/representation.yaml
+  target_yaml: ../architectures/mamba2-ssd/representation.yaml
   path_base: relation_file_directory
   mapping_boundary: Mamba-1 selected delta/B/C -> externally supplied dt_logits/B/C; scalar head A, state[B,heads,P,N];
     input projections remain pending

@@ -1,0 +1,53 @@
+{
+  "format_version": 3,
+  "architecture": "mamba2-ssd",
+  "scope": [
+    "scalar_identity_per_head",
+    "selective_dt_B_C_inputs",
+    "multi_feature_heads",
+    "SSD_chunk_diagonal_blocks",
+    "SSD_low_rank_offdiagonal_blocks",
+    "chunk_boundary_state",
+    "D_skip"
+  ],
+  "excluded": [
+    "input_projection",
+    "causal_convolution",
+    "gating_RMSNorm",
+    "output_projection",
+    "grouped_BC",
+    "fused_GPU_kernels",
+    "full_network",
+    "training"
+  ],
+  "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
+  "representation": {
+    "file": "representation.yaml",
+    "research_source": "parallel_coverage/20261105/s4/experiments/20261115_genealogy_phase1_ssm/mamba2_ssd/architecture.yaml",
+    "publication_changes": "Workspace-only provenance paths relocated; calculation and IDs unchanged"
+  },
+  "candidate": {
+    "file": "reconstructed.py",
+    "research_source": "parallel_coverage/20261105/s4/experiments/20261115_genealogy_phase1_ssm/llm_core_review_v1/mamba2_ssd/repaired_model.py",
+    "publication_code_changes": "Whitespace formatting only; calculations unchanged"
+  },
+  "evaluation": {
+    "kind": "summary_of_existing_evidence_no_rerun",
+    "original_verdict": "EXECUTION_FAILED",
+    "final_verdict": "PASS_WITHIN_DECLARED_SCOPE",
+    "representative_cases": 3,
+    "research_source": "parallel_coverage/20261105/s4/experiments/20261115_genealogy_phase1_ssm/llm_core_review_v1/mamba2_ssd/repaired_evaluation.json",
+    "full_model_training_or_performance_claim": false
+  },
+  "repair_required": true,
+  "repair_reason": "Multiple incorrect broadcast, causal-mask and chunk-state axes across the SSD core. These are substantive calculation errors, not cosmetic differences.",
+  "generation": {
+    "settings": {
+      "model": "Qwen3.8-27B",
+      "temperature": 0,
+      "max_tokens": 8192,
+      "stream": false
+    },
+    "research_source": "parallel_coverage/20261105/s4/experiments/20261115_genealogy_phase1_ssm/llm_core_review_v1/mamba2_ssd/request.json"
+  }
+}

@@ -88,8 +88,8 @@ scope:
   - executable H3-to-Mamba conversion
   - full Mamba block reconstruction
   - numerical equality across architectures
-  source_yaml: ../experiments/h3/genealogy/representation.yaml
-  target_yaml: ../experiments/mamba/genealogy/representation.yaml
+  source_yaml: ../architectures/h3/genealogy/representation.yaml
+  target_yaml: ../architectures/mamba/genealogy/representation.yaml
   path_base: relation_file_directory
 evidence:
 - source: beyond_transformer_slides.pdf

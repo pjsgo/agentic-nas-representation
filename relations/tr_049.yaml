@@ -52,8 +52,8 @@ scope:
   - training
   - whole_model_conversion
   - weight_or_state_migration
-  source_yaml: ../experiments/lssl/representation.yaml
-  target_yaml: ../experiments/s4/genealogy/representation.yaml
+  source_yaml: ../architectures/lssl/representation.yaml
+  target_yaml: ../architectures/s4/genealogy/representation.yaml
   path_base: relation_file_directory
   mapping_boundary: fixed real LegS A/B and learned log_dt/C/D -> rank-one conjugate complex DPLR resources; no
     numerical state/basis transfer claimed

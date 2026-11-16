@@ -48,8 +48,8 @@ scope:
   - training
   - whole_model_conversion
   - weight_or_state_migration
-  source_yaml: ../experiments/luong-attention/representation.yaml
-  target_yaml: ../experiments/transformer/20261113-core-completion/representation.yaml
+  source_yaml: ../architectures/luong-attention/representation.yaml
+  target_yaml: ../architectures/transformer/representation.yaml
   path_base: relation_file_directory
   mapping_boundary: general bilinear query/key -> packed independent Q/K/V and heads; target encoder self-attention
     only

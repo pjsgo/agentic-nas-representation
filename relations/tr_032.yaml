@@ -50,8 +50,8 @@ scope:
   - training
   - whole_model_conversion
   - weight_or_state_migration
-  source_yaml: ../experiments/transformer/20261113-core-completion/representation.yaml
-  target_yaml: ../experiments/sparse-transformer/representation.yaml
+  source_yaml: ../architectures/transformer/representation.yaml
+  target_yaml: ../architectures/sparse-transformer/representation.yaml
   path_base: relation_file_directory
   mapping_boundary: preprojected QKV; local/strided modes separate; no parameters/carry in core; finite -1e9 mask
 evidence:

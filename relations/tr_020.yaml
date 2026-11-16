@@ -46,8 +46,8 @@ scope:
   - training
   - whole_model_conversion
   - weight_or_state_migration
-  source_yaml: ../experiments/layernorm/representation.yaml
-  target_yaml: ../experiments/transformer/20261113-core-completion/representation.yaml
+  source_yaml: ../architectures/layernorm/representation.yaml
+  target_yaml: ../architectures/transformer/representation.yaml
   path_base: relation_file_directory
   mapping_boundary: trailing feature population variance, epsilon and gamma/beta; no running buffer
 evidence:

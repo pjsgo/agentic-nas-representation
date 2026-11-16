@@ -53,8 +53,8 @@ scope:
   - training
   - whole_model_conversion
   - weight_or_state_migration
-  source_yaml: ../experiments/transformer-xl/representation.yaml
-  target_yaml: ../experiments/compressive-transformer/representation.yaml
+  source_yaml: ../architectures/transformer-xl/representation.yaml
+  target_yaml: ../architectures/compressive-transformer/representation.yaml
   path_base: relation_file_directory
   mapping_boundary: two fixed-capacity FIFOs; average pooling rate with aligned segments; no compressor parameters/loss;
     Sonnet memory state gradients retained versus TXL detached state

@@ -49,8 +49,8 @@ scope:
   - training
   - whole_model_conversion
   - weight_or_state_migration
-  source_yaml: ../experiments/transformer/20261113-core-completion/representation.yaml
-  target_yaml: ../experiments/linformer/representation.yaml
+  source_yaml: ../architectures/transformer/representation.yaml
+  target_yaml: ../architectures/linformer/representation.yaml
   path_base: relation_file_directory
   mapping_boundary: separate trainable E/F[R,Nmax], shared batch/heads; no causal carry, no padding; feature projection
     bias excluded

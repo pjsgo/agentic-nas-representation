@@ -54,8 +54,8 @@ scope:
   - training
   - whole_model_conversion
   - weight_or_state_migration
-  source_yaml: ../experiments/simple-rnn/representation.yaml
-  target_yaml: ../experiments/lstm/representation.yaml
+  source_yaml: ../architectures/simple-rnn/representation.yaml
+  target_yaml: ../architectures/lstm/representation.yaml
   path_base: relation_file_directory
   mapping_boundary: h-only -> (h,c); IFGO learned gates; 1997 no-forget original remains conceptual
 evidence:

@@ -1,0 +1,216 @@
+{
+  "format_version": 1,
+  "path_base": "project_root (parent of architectures directory)",
+  "architectures": [
+    {
+      "architecture": "resnet",
+      "title": "ResNet",
+      "scope": "Identity shortcut BasicBlock, channels=64, CPU float32 eval",
+      "representation": "architectures/resnet/representation.yaml",
+      "reconstructed_code": "architectures/resnet/reconstructed.py",
+      "candidate_origin": "UNMODIFIED_LLM_OUTPUT",
+      "materials": "architectures/resnet/README.md",
+      "provenance": "architectures/resnet/provenance.json"
+    },
+    {
+      "architecture": "lstm",
+      "title": "LSTM",
+      "scope": "Single-layer unidirectional core, T>=1; tested T=1,3,5, B=2,I=4,H=5",
+      "representation": "architectures/lstm/representation.yaml",
+      "reconstructed_code": "architectures/lstm/reconstructed.py",
+      "candidate_origin": "UNMODIFIED_LLM_OUTPUT",
+      "materials": "architectures/lstm/README.md",
+      "provenance": "architectures/lstm/provenance.json"
+    },
+    {
+      "architecture": "seq2seq",
+      "title": "Seq2Seq",
+      "scope": "Pre-embedded one-layer LSTM encoder/decoder, 100% teacher forcing, three CPU float32 fixtures",
+      "representation": "architectures/seq2seq/representation.yaml",
+      "reconstructed_code": "architectures/seq2seq/reconstructed.py",
+      "candidate_origin": "UNMODIFIED_LLM_OUTPUT",
+      "materials": "architectures/seq2seq/README.md",
+      "provenance": "architectures/seq2seq/provenance.json"
+    },
+    {
+      "architecture": "transformer",
+      "title": "Transformer",
+      "scope": "Single encoder block, nine CPU float32 eval fixtures",
+      "representation": "architectures/transformer/representation.yaml",
+      "reconstructed_code": "architectures/transformer/reconstructed.py",
+      "candidate_origin": "UNMODIFIED_LLM_OUTPUT",
+      "materials": "architectures/transformer/README.md",
+      "provenance": "architectures/transformer/provenance.json"
+    },
+    {
+      "architecture": "linear-transformer",
+      "title": "Linear Transformer",
+      "scope": "ELU+1 recurrent linear-attention core; external q/k/v and in-place S/Z state, four CPU float32 fixtures",
+      "representation": "architectures/linear-transformer/representation.yaml",
+      "reconstructed_code": "architectures/linear-transformer/reconstructed.py",
+      "candidate_origin": "UNMODIFIED_LLM_OUTPUT",
+      "materials": "architectures/linear-transformer/README.md",
+      "provenance": "architectures/linear-transformer/provenance.json"
+    },
+    {
+      "architecture": "s4",
+      "title": "S4",
+      "scope": "Original rank-1 DPLR/NPLR recurrent/impulse-kernel core, Nfull=4,H=channels=1, CPU eval",
+      "representation": "architectures/s4/representation.yaml",
+      "reconstructed_code": "architectures/s4/reconstructed.py",
+      "candidate_origin": "AGENT_REPAIRED_LLM_OUTPUT",
+      "materials": "architectures/s4/README.md",
+      "provenance": "architectures/s4/provenance.json"
+    },
+    {
+      "architecture": "mamba",
+      "title": "Mamba",
+      "scope": "Mamba-1 selective-scan core, channels=3,state_size=2, four CPU float32 fixtures",
+      "representation": "architectures/mamba/representation.yaml",
+      "reconstructed_code": "architectures/mamba/reconstructed.py",
+      "candidate_origin": "UNMODIFIED_LLM_OUTPUT",
+      "materials": "architectures/mamba/README.md",
+      "provenance": "architectures/mamba/provenance.json"
+    },
+    {
+      "architecture": "simple-rnn",
+      "title": "Simple RNN",
+      "scope": "Elman tanh 순환 core",
+      "representation": "architectures/simple-rnn/representation.yaml",
+      "reconstructed_code": "architectures/simple-rnn/reconstructed.py",
+      "candidate_origin": "UNMODIFIED_EXTERNAL_LLM_CODE",
+      "materials": "architectures/simple-rnn/README.md",
+      "provenance": "architectures/simple-rnn/provenance.json"
+    },
+    {
+      "architecture": "gru-encoder-decoder",
+      "title": "RNN Encoder–Decoder / GRU",
+      "scope": "Cho 2014 encoder·고정 context·조건부 GRU decoder",
+      "representation": "architectures/gru-encoder-decoder/representation.yaml",
+      "reconstructed_code": "architectures/gru-encoder-decoder/reconstructed.py",
+      "candidate_origin": "UNMODIFIED_EXTERNAL_LLM_CODE",
+      "materials": "architectures/gru-encoder-decoder/README.md",
+      "provenance": "architectures/gru-encoder-decoder/provenance.json"
+    },
+    {
+      "architecture": "bahdanau-attention",
+      "title": "Bahdanau Attention",
+      "scope": "제공된 encoder memory에 대한 additive attention·조건부 GRU",
+      "representation": "architectures/bahdanau-attention/representation.yaml",
+      "reconstructed_code": "architectures/bahdanau-attention/reconstructed.py",
+      "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
+      "materials": "architectures/bahdanau-attention/README.md",
+      "provenance": "architectures/bahdanau-attention/provenance.json"
+    },
+    {
+      "architecture": "luong-attention",
+      "title": "Luong Attention",
+      "scope": "global/general attention·LSTM·input feeding",
+      "representation": "architectures/luong-attention/representation.yaml",
+      "reconstructed_code": "architectures/luong-attention/reconstructed.py",
+      "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
+      "materials": "architectures/luong-attention/README.md",
+      "provenance": "architectures/luong-attention/provenance.json"
+    },
+    {
+      "architecture": "gnmt",
+      "title": "GNMT",
+      "scope": "3층 encoder–decoder·양방향 하단 encoder·residual·attention",
+      "representation": "architectures/gnmt/representation.yaml",
+      "reconstructed_code": "architectures/gnmt/reconstructed.py",
+      "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
+      "materials": "architectures/gnmt/README.md",
+      "provenance": "architectures/gnmt/provenance.json"
+    },
+    {
+      "architecture": "layernorm",
+      "title": "LayerNorm",
+      "scope": "마지막 축의 population 통계·affine 정규화",
+      "representation": "architectures/layernorm/representation.yaml",
+      "reconstructed_code": "architectures/layernorm/reconstructed.py",
+      "candidate_origin": "UNMODIFIED_EXTERNAL_LLM_CODE",
+      "materials": "architectures/layernorm/README.md",
+      "provenance": "architectures/layernorm/provenance.json"
+    },
+    {
+      "architecture": "transformer-xl",
+      "title": "Transformer-XL",
+      "scope": "segment recurrence·상대 위치 attention sublayer",
+      "representation": "architectures/transformer-xl/representation.yaml",
+      "reconstructed_code": "architectures/transformer-xl/reconstructed.py",
+      "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
+      "materials": "architectures/transformer-xl/README.md",
+      "provenance": "architectures/transformer-xl/provenance.json"
+    },
+    {
+      "architecture": "compressive-transformer",
+      "title": "Compressive Transformer",
+      "scope": "평균 풀링 압축·두 단계 FIFO memory attention",
+      "representation": "architectures/compressive-transformer/representation.yaml",
+      "reconstructed_code": "architectures/compressive-transformer/reconstructed.py",
+      "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
+      "materials": "architectures/compressive-transformer/README.md",
+      "provenance": "architectures/compressive-transformer/provenance.json"
+    },
+    {
+      "architecture": "sparse-transformer",
+      "title": "Sparse Transformer",
+      "scope": "local/strided causal attention core",
+      "representation": "architectures/sparse-transformer/representation.yaml",
+      "reconstructed_code": "architectures/sparse-transformer/reconstructed.py",
+      "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
+      "materials": "architectures/sparse-transformer/README.md",
+      "provenance": "architectures/sparse-transformer/provenance.json"
+    },
+    {
+      "architecture": "linformer",
+      "title": "Linformer",
+      "scope": "sequence 축 low-rank projection attention core",
+      "representation": "architectures/linformer/representation.yaml",
+      "reconstructed_code": "architectures/linformer/reconstructed.py",
+      "candidate_origin": "UNMODIFIED_EXTERNAL_LLM_CODE",
+      "materials": "architectures/linformer/README.md",
+      "provenance": "architectures/linformer/provenance.json"
+    },
+    {
+      "architecture": "performer",
+      "title": "Performer",
+      "scope": "고정 random features의 정규화 attention core",
+      "representation": "architectures/performer/representation.yaml",
+      "reconstructed_code": "architectures/performer/reconstructed.py",
+      "candidate_origin": "UNMODIFIED_EXTERNAL_LLM_CODE",
+      "materials": "architectures/performer/README.md",
+      "provenance": "architectures/performer/provenance.json"
+    },
+    {
+      "architecture": "lssl",
+      "title": "LSSL",
+      "scope": "고정 HiPPO-LegS·bilinear discretization·dense recurrence",
+      "representation": "architectures/lssl/representation.yaml",
+      "reconstructed_code": "architectures/lssl/reconstructed.py",
+      "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
+      "materials": "architectures/lssl/README.md",
+      "provenance": "architectures/lssl/provenance.json"
+    },
+    {
+      "architecture": "mamba2-ssd",
+      "title": "Mamba-2 / SSD",
+      "scope": "scalar-identity multihead SSD chunk core",
+      "representation": "architectures/mamba2-ssd/representation.yaml",
+      "reconstructed_code": "architectures/mamba2-ssd/reconstructed.py",
+      "candidate_origin": "AGENT_REPAIRED_EXTERNAL_LLM_CODE",
+      "materials": "architectures/mamba2-ssd/README.md",
+      "provenance": "architectures/mamba2-ssd/provenance.json"
+    },
+    {
+      "architecture": "h3",
+      "title": "H3",
+      "scope": "scalar-head shift·diagonal SSM gated block",
+      "representation": "architectures/h3/representation.yaml",
+      "reconstructed_code": "architectures/h3/reconstructed.py",
+      "candidate_origin": "UNMODIFIED_EXTERNAL_LLM_CODE",
+      "materials": "architectures/h3/README.md",
+      "provenance": "architectures/h3/provenance.json"
+    }
+  ]
+}

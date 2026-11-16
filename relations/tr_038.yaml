@@ -52,8 +52,8 @@ scope:
   - training
   - whole_model_conversion
   - weight_or_state_migration
-  source_yaml: ../experiments/transformer/20261113-core-completion/representation.yaml
-  target_yaml: ../experiments/performer/representation.yaml
+  source_yaml: ../architectures/transformer/representation.yaml
+  target_yaml: ../architectures/performer/representation.yaml
   path_base: relation_file_directory
   mapping_boundary: omega[M,D] fixed shared buffer; D^-1/4 scaling on both Q/K; epsilon inside feature; noncausal
     core

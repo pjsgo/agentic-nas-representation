@@ -1,0 +1,339 @@
+representation_version: r1_expression_graph_v1
+operator_profile: ../../specs/operators/rnn-expression-v1.yaml
+architecture: gnmt
+architecture_entry: main
+scope: 'Small 3-layer GNMT encoder/decoder: bidirectional bottom encoder, 2 uni layers, top residual, bottom decoder
+  additive attention, previous context broadcast to upper layers'
+excluded:
+- training/gradients
+- tokenization/embedding lookup
+- beam search
+- full translation system
+- original initializer fidelity
+- 8-layer/1024-wide configuration
+- gnmt_v2 current-attention broadcast alternative
+- wordpieces
+- quantization
+- length/coverage beam penalties
+- multi-GPU placement
+- padding/variable lengths within a batch
+- vocabulary projection/softmax
+interface:
+  inputs:
+    source: '[B,S,3], unpadded'
+    target: '[B,T,3], teacher-forced'
+  dtype: float64
+  layout: batch,time,feature
+  constraints: B,S,T>=1; H=5; CPU; eval; no in-place mutation
+  outputs:
+    output: '[B,T,5] residual top output, before vocabulary projection'
+    context: '[B,T,5]'
+    weights: '[B,T,S]'
+    bottom_hidden: '[B,T,5]'
+    memory: '[B,S,5]'
+    decoder_initial: ((h,c),(h,c),(h,c),attention), each [B,5]
+    final_state: ((h,c),(h,c),(h,c),attention), each [B,5]
+parameters:
+  efwi:
+  - 20
+  - 3
+  efwh:
+  - 20
+  - 5
+  efbi:
+  - 20
+  efbh:
+  - 20
+  ebwi:
+  - 20
+  - 3
+  ebwh:
+  - 20
+  - 5
+  ebbi:
+  - 20
+  ebbh:
+  - 20
+  e2wi:
+  - 20
+  - 10
+  e2wh:
+  - 20
+  - 5
+  e2bi:
+  - 20
+  e2bh:
+  - 20
+  e3wi:
+  - 20
+  - 5
+  e3wh:
+  - 20
+  - 5
+  e3bi:
+  - 20
+  e3bh:
+  - 20
+  d1wi:
+  - 20
+  - 8
+  d1wh:
+  - 20
+  - 5
+  d1bi:
+  - 20
+  d1bh:
+  - 20
+  d2wi:
+  - 20
+  - 10
+  d2wh:
+  - 20
+  - 5
+  d2bi:
+  - 20
+  d2bh:
+  - 20
+  d3wi:
+  - 20
+  - 10
+  d3wh:
+  - 20
+  - 5
+  d3bi:
+  - 20
+  d3bh:
+  - 20
+  aW:
+  - 5
+  - 5
+  aU:
+  - 5
+  - 5
+  av:
+  - 1
+  - 5
+functions:
+  ef_cell:
+    args:
+    - x
+    - state
+    nodes:
+    - id: lstm_state
+      expr: lstm(x,state,p['efwi'],p['efwh'],p['efbi'],p['efbh'])
+    return: (lstm_state[0],lstm_state)
+  eb_cell:
+    args:
+    - x
+    - state
+    nodes:
+    - id: lstm_state
+      expr: lstm(x,state,p['ebwi'],p['ebwh'],p['ebbi'],p['ebbh'])
+    return: (lstm_state[0],lstm_state)
+  e2_cell:
+    args:
+    - x
+    - state
+    nodes:
+    - id: lstm_state
+      expr: lstm(x,state,p['e2wi'],p['e2wh'],p['e2bi'],p['e2bh'])
+    return: (lstm_state[0],lstm_state)
+  e3_cell:
+    args:
+    - x
+    - state
+    nodes:
+    - id: lstm_state
+      expr: lstm(x,state,p['e3wi'],p['e3wh'],p['e3bi'],p['e3bh'])
+    return: (lstm_state[0],lstm_state)
+  d1_cell:
+    args:
+    - x
+    - state
+    nodes:
+    - id: lstm_state
+      expr: lstm(x,state,p['d1wi'],p['d1wh'],p['d1bi'],p['d1bh'])
+    return: (lstm_state[0],lstm_state)
+  d2_cell:
+    args:
+    - x
+    - state
+    nodes:
+    - id: lstm_state
+      expr: lstm(x,state,p['d2wi'],p['d2wh'],p['d2bi'],p['d2bh'])
+    return: (lstm_state[0],lstm_state)
+  d3_cell:
+    args:
+    - x
+    - state
+    nodes:
+    - id: lstm_state
+      expr: lstm(x,state,p['d3wi'],p['d3wh'],p['d3bi'],p['d3bh'])
+    return: (lstm_state[0],lstm_state)
+  additive_attention:
+    args:
+    - query
+    - memory
+    - mask
+    nodes:
+    - id: energy
+      expr: linear(tanh(linear(query,p['aW'])[:,None,:]+linear(memory,p['aU'])),p['av']).squeeze(-1)
+    - id: weights
+      expr: masked_softmax(energy,mask)
+    - id: context
+      expr: (weights[:,:,None]*memory).sum(dim=1)
+    return: (context,weights,energy)
+  decoder_step:
+    args:
+    - x
+    - state
+    - memory
+    - mask
+    nodes:
+    - id: bottom
+      expr: d1_cell(cat((x,state[3])),state[0])
+    - id: alignment
+      expr: additive_attention(bottom[0],memory,mask)
+    - id: middle
+      expr: d2_cell(cat((bottom[0],state[3])),state[1])
+    - id: top
+      expr: d3_cell(cat((middle[0],state[3])),state[2])
+    - id: residual_output
+      expr: top[0]+middle[0]
+    return: ((residual_output,alignment[0],alignment[1],bottom[0]),(bottom[1],middle[1],top[1],alignment[0]))
+  main:
+    args:
+    - source
+    - target
+    nodes:
+    - id: zero
+      expr: zeros(source,5)
+    - id: forward_encoder
+      expr: scan(ef_cell,source,(zero,zero))
+    - id: backward_encoder
+      expr: scan(eb_cell,source,(zero,zero),reverse=True)
+    - id: bidirectional_concat
+      expr: cat((forward_encoder[0],backward_encoder[0]))
+    - id: middle_encoder
+      expr: scan(e2_cell,bidirectional_concat,(zero,zero))
+    - id: top_encoder
+      expr: scan(e3_cell,middle_encoder[0],(zero,zero))
+    - id: encoder_residual
+      expr: top_encoder[0]+middle_encoder[0]
+    - id: encoder_state_bridge
+      expr: (backward_encoder[1],middle_encoder[1],top_encoder[1],zero)
+    - id: mask
+      expr: source[:,:,0]==source[:,:,0]
+    - id: decoder_scan
+      expr: 'scan(lambda x,s: decoder_step(x,s,encoder_residual,mask),target,encoder_state_bridge)'
+    return: '{''output'':decoder_scan[0][0],''context'':decoder_scan[0][1],''weights'':decoder_scan[0][2],''bottom_hidden'':decoder_scan[0][3],''memory'':encoder_residual,''decoder_initial'':encoder_state_bridge,''final_state'':decoder_scan[1]}'
+state_contract: State is explicit in function arguments and scan carry. Parameters shared over time; different prefixes
+  are distinct resources.
+candidate_origin: LOCAL_YAML_REALIZATION_NO_EXTERNAL_GENERATION
+common_schema_status: LOCAL_EXTENSION_NOT_COMMON_V0_3_PASS
+variant: tensorflow/nmt attention_architecture=gnmt (previous attention), attention=bahdanau, pass_hidden_state=true,
+  num_encoder_layers=num_decoder_layers=3, residual_layers=1, H=5
+stable_component_ids:
+- ef_cell/lstm_state
+- eb_cell/lstm_state
+- e2_cell/lstm_state
+- e3_cell/lstm_state
+- d1_cell/lstm_state
+- d2_cell/lstm_state
+- d3_cell/lstm_state
+- additive_attention/energy
+- additive_attention/weights
+- additive_attention/context
+- decoder_step/bottom
+- decoder_step/alignment
+- decoder_step/middle
+- decoder_step/top
+- decoder_step/residual_output
+- main/zero
+- main/forward_encoder
+- main/backward_encoder
+- main/bidirectional_concat
+- main/middle_encoder
+- main/top_encoder
+- main/encoder_residual
+- main/encoder_state_bridge
+- main/mask
+- main/decoder_scan
+operator_semantics: ../../specs/operators/rnn-expression-v1.yaml
+components:
+  ef_cell/lstm_state:
+    function: ef_cell
+    node: lstm_state
+  eb_cell/lstm_state:
+    function: eb_cell
+    node: lstm_state
+  e2_cell/lstm_state:
+    function: e2_cell
+    node: lstm_state
+  e3_cell/lstm_state:
+    function: e3_cell
+    node: lstm_state
+  d1_cell/lstm_state:
+    function: d1_cell
+    node: lstm_state
+  d2_cell/lstm_state:
+    function: d2_cell
+    node: lstm_state
+  d3_cell/lstm_state:
+    function: d3_cell
+    node: lstm_state
+  additive_attention/energy:
+    function: additive_attention
+    node: energy
+  additive_attention/weights:
+    function: additive_attention
+    node: weights
+  additive_attention/context:
+    function: additive_attention
+    node: context
+  decoder_step/bottom:
+    function: decoder_step
+    node: bottom
+  decoder_step/alignment:
+    function: decoder_step
+    node: alignment
+  decoder_step/middle:
+    function: decoder_step
+    node: middle
+  decoder_step/top:
+    function: decoder_step
+    node: top
+  decoder_step/residual_output:
+    function: decoder_step
+    node: residual_output
+  main/zero:
+    function: main
+    node: zero
+  main/forward_encoder:
+    function: main
+    node: forward_encoder
+  main/backward_encoder:
+    function: main
+    node: backward_encoder
+  main/bidirectional_concat:
+    function: main
+    node: bidirectional_concat
+  main/middle_encoder:
+    function: main
+    node: middle_encoder
+  main/top_encoder:
+    function: main
+    node: top_encoder
+  main/encoder_residual:
+    function: main
+    node: encoder_residual
+  main/encoder_state_bridge:
+    function: main
+    node: encoder_state_bridge
+  main/mask:
+    function: main
+    node: mask
+  main/decoder_scan:
+    function: main
+    node: decoder_scan
+parameter_adapter: ../../specs/operators/rnn-expression-v1.yaml#source_parameter_adapters.tensorflow_basic_lstm

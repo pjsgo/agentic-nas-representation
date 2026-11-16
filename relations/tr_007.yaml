@@ -45,8 +45,8 @@ scope:
   - training
   - whole_model_conversion
   - weight_or_state_migration
-  source_yaml: ../experiments/seq2seq/representation.yaml
-  target_yaml: ../experiments/bahdanau-attention/representation.yaml
+  source_yaml: ../architectures/seq2seq/representation.yaml
+  target_yaml: ../architectures/bahdanau-attention/representation.yaml
   path_base: relation_file_directory
   mapping_boundary: LSTM h/c bridge -> supplied annotations plus GRU hidden; no state/weight migration
 evidence:

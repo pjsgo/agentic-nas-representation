@@ -1,0 +1,128 @@
+representation_version: local_attention_graph_v1
+operator_profile: ../../specs/operators/linformer-v1.json
+architecture: linformer
+architecture_entry: reconstructed.py:build
+interface:
+  q: float64[B,H,N,D]
+  k: float64[B,H,N,D]
+  v: float64[B,H,N,V]
+  output: float64[B,H,N,V]
+  constraints: positive dimensions; finite small CPU fixtures; no padding; evaluation only
+factors:
+  linformer_E_slice:
+    operator: slice_sequence
+    inputs:
+    - E
+    - k
+    attributes: {}
+  linformer_F_slice:
+    operator: slice_sequence
+    inputs:
+    - F
+    - v
+    attributes: {}
+  linformer_sequence_key:
+    operator: einsum
+    inputs:
+    - linformer_E_slice
+    - k
+    attributes:
+      equation: rn,bhnd->bhrd
+  linformer_sequence_value:
+    operator: einsum
+    inputs:
+    - linformer_F_slice
+    - v
+    attributes:
+      equation: rn,bhnv->bhrv
+  linformer_scaled_query:
+    operator: dimension_scale
+    inputs:
+    - q
+    attributes:
+      axis: -1
+      power: -0.5
+  linformer_scores:
+    operator: einsum
+    inputs:
+    - linformer_scaled_query
+    - linformer_sequence_key
+    attributes:
+      equation: bhnd,bhrd->bhnr
+  linformer_probabilities:
+    operator: softmax
+    inputs:
+    - linformer_scores
+    attributes:
+      axis: -1
+  linformer_output:
+    operator: einsum
+    inputs:
+    - linformer_probabilities
+    - linformer_sequence_value
+    attributes:
+      equation: bhnr,bhrv->bhnv
+dataflow:
+- - E
+  - linformer_E_slice
+- - k
+  - linformer_E_slice
+- - F
+  - linformer_F_slice
+- - v
+  - linformer_F_slice
+- - linformer_E_slice
+  - linformer_sequence_key
+- - k
+  - linformer_sequence_key
+- - linformer_F_slice
+  - linformer_sequence_value
+- - v
+  - linformer_sequence_value
+- - q
+  - linformer_scaled_query
+- - linformer_scaled_query
+  - linformer_scores
+- - linformer_sequence_key
+  - linformer_scores
+- - linformer_scores
+  - linformer_probabilities
+- - linformer_probabilities
+  - linformer_output
+- - linformer_sequence_value
+  - linformer_output
+outputs:
+- linformer_output
+- linformer_sequence_key
+- linformer_sequence_value
+resources:
+  E:
+    kind: parameter
+    shape: '[R,Nmax]'
+    sharing: shared across batch/heads; E and F distinct
+    bias: false
+  F:
+    kind: parameter
+    shape: '[R,Nmax]'
+    sharing: shared across batch/heads; E and F distinct
+    bias: false
+state:
+  recurrent: false
+  mutation: false
+variant: Noncausal; separate E/F; preprojected bias-free Q/K/V; R<N; N<=Nmax
+scope:
+  included:
+  - sequence-axis learned low-rank projection
+  - softmax across compressed sequence
+  excluded:
+  - full Transformer blocks
+  - QKV and output feature projections
+  - training
+  - dropout
+  - original class hierarchy
+  - performance claims
+  - feature projection biases (commuting projection boundary only valid without bias)
+  - incremental cache
+  - padding
+  - causal masking
+realization: reconstructed.py:build

@@ -50,8 +50,8 @@ scope:
   - training
   - whole_model_conversion
   - weight_or_state_migration
-  source_yaml: ../experiments/bahdanau-attention/representation.yaml
-  target_yaml: ../experiments/gnmt/representation.yaml
+  source_yaml: ../architectures/bahdanau-attention/representation.yaml
+  target_yaml: ../architectures/gnmt/representation.yaml
   path_base: relation_file_directory
   mapping_boundary: 3-layer tutorial gnmt variant; bottom consumes previous attention; upper layers consume previous
     context; alignment output becomes next carry

@@ -43,8 +43,8 @@ scope:
   - training
   - whole_model_conversion
   - weight_or_state_migration
-  source_yaml: ../experiments/resnet/generator/input.yaml
-  target_yaml: ../experiments/transformer/20261113-core-completion/representation.yaml
+  source_yaml: ../architectures/resnet/representation.yaml
+  target_yaml: ../architectures/transformer/representation.yaml
   path_base: relation_file_directory
   mapping_boundary: spatial tensor add -> per-token feature add; shape-compatible branches required; BN and conv
     not inherited
