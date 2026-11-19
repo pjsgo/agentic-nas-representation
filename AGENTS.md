@@ -1,10 +1,6 @@
-# Project maintenance
+# 저장소 편집 기준
 
-Read `docs/updating.md` before changing project materials.
-
-- Keep the personal root README introduction brief and include the same alphabetical architecture table as architectures/README.md. Add rows to the existing table; do not append phase-numbered sections or separate lists for new batches.
-- Preserve scoped claims, original failures, repair provenance and dated validation evidence. Presentation cleanup must not change numerical code or results.
-- Keep this project identical at the personal repository root and the shared repository `JunseoPark/` directory. Never overwrite other contributors’ directories or the shared root README.
-- When publication is requested, finish publication to both repositories’ `main` branches. A work-branch push alone is not completion. Respect remote protection rules and report any remaining merge requirement.
-
-- Name public documents and catalog groupings by subject, not internal phase, worker or session. Keep current scope in docs/reconstruction-status.md and preserve dated validation, failures and repairs in architecture provenance. Archive removed publication snapshots in the research workspace; retain original evidence paths and Git history.
+- 모델을 추가하거나 이름을 바꾸면 루트 README와 `architectures/README.md`의 표를 같은 이름순으로 맞춥니다.
+- 계보 관계를 바꾸면 관계 YAML, 관계 목록, 계보도와 양쪽 모델의 README를 함께 갱신합니다.
+- 공개 설명은 구현과 사용법 중심으로 간결하게 쓰고, 가운데점 대신 쉼표나 접속사를 씁니다. 문서를 편집할 때 계산 코드와 실험 근거를 보존합니다.
+- 수정과 게시는 요청받은 저장소에만 반영합니다.
