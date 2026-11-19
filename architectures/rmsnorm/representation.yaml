@@ -1,6 +1,6 @@
 representation_version: local_equational_graph_v1
 operator_profile: inline_equations_below
-reading_rules: specs/representation/reading-rules-v1.md
+reading_rules: docs/representation-guide.md
 architecture: rmsnorm
 architecture_entry: reconstructed.py:rmsnorm
 scope:

@@ -2893,4 +2893,4 @@ state:
     - a2
     initial: external
 dependency: {}
-operator_profile_reference: ../../specs/operators/tensor-pytorch-2.2.1-v0.3-r1.txt
+operator_profile_reference: ../../docs/operator-profiles/tensor-pytorch-2.2.1-v0.3-r1.txt

@@ -1,5 +1,5 @@
 representation_version: local_attention_graph_v1
-operator_profile: ../../specs/operators/linformer-v1.json
+operator_profile: ../../docs/operator-profiles/linformer-v1.json
 architecture: linformer
 architecture_entry: reconstructed.py:build
 interface:

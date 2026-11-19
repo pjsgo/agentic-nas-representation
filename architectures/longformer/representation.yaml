@@ -2,7 +2,7 @@ representation_version: local_equational_graph_v1
 document_revision: 2
 revision_kind: clarification_of_tensor_axes_and_mask_polarity_no_architecture_change
 operator_profile: inline_equations_below
-reading_rules: ../../specs/representation/reading-rules-v1.md
+reading_rules: ../../docs/representation-guide.md
 architecture: longformer
 architecture_entry: reconstructed.py:LongformerCore
 scope:

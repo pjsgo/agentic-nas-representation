@@ -1,12 +1,82 @@
-# 복원 YAML 읽기
+# 복원 표현 읽기 규칙 v1
 
-아키텍처 폴더의 README에서 복원 범위와 사용 계약을 먼저 확인하고, `representation.yaml`과 `reconstructed.py`를 함께 읽습니다.
+이 문서는 모델 내부의 계산을 정의하는 **복원 YAML**의 작성 기준을 설명합니다. 모델 사이의 계승, 변경은 별도의 [관계 YAML 안내](genealogy-guide.md)에서 다룹니다. 개별 구현은 선언된 표현 버전과 연산 규칙을 따르며, 사용법과 실험 결과는 해당 자료에서 관리합니다.
 
-1. YAML의 표현 버전과 연산 규칙을 확인합니다. [명세 목록](../specs/README.md)에서 공통 규칙을 찾을 수 있습니다.
-2. 입출력의 크기, 축, dtype와 초기 상태를 확인합니다. 입력과 가중치의 실제 값은 호출자가 준비합니다.
-3. 연산과 연결을 따라가며 반복, 파라미터 공유, 상태 갱신을 읽습니다.
-4. `provenance.json`에서 확인 범위와 생성 원본/수정본을 구분합니다. 논문과 공식 코드의 근거는 해당 자료의 출처 기록을 확인합니다.
+복원 과정은 논문과 공식 구현 확인 → 범위 결정 → YAML 작성 → 코드 실현 → 독립 참조 비교 순서입니다. 로컬 실현기로 확인한 결과와 외부 LLM이 생성한 코드의 복원 결과는 구분합니다. LLM에는 YAML과 해석 규칙을 제공하고, 원본, 참조 코드와 평가 정답은 제공하지 않습니다.
 
-복원 YAML은 어떤 계산을 연결할지 정하고, 연산 명세는 그 계산의 정확한 의미를 정합니다. 연산의 의미는 이름에서 추측하지 않고 선언된 규칙을 따릅니다.
+## 작성 기준
 
-[복원 방법](reconstruction-method.md) / [표현 읽기 규칙](../specs/representation/reading-rules-v1.md) / [관계 읽기](genealogy-guide.md) / [아키텍처 목록](../architectures/README.md)
+1. **출처와 경계를 명시합니다.** 표현의 근거가 되는 구현과 입력, 출력 경계를 정하고, 계산에 필요한 설정을 확인합니다. 확인되지 않은 정보는 임의로 채우지 않습니다.
+2. **계산을 연산과 연결로 표현합니다.** 연산과 영역을 분해하고, 결과에 영향을 주는 속성과 데이터 흐름을 명시합니다.
+3. **반복과 상태를 명시합니다.** 반복 축, 초기 상태, 다음 단계로 전달되는 상태와 반환 출력을 기록합니다.
+4. **공유와 변경을 명시합니다.** 파라미터, 객체의 재사용 관계와 제자리 갱신 여부를 표현합니다.
+5. **구조와 실행 데이터를 구분합니다.** 입출력 규격과 파라미터 역할은 YAML에 표현하고, 개별 실행의 입력과 가중치 값과 결과는 별도로 관리합니다.
+
+## 필드 양식
+
+| 필드 | 의미 |
+|---|---|
+| `representation_version`, `operator_profile` | 표현 형식과 연산 해석 규칙의 식별자 |
+| `architecture_entry`, `interface` | 진입점과 입력, 출력 규격 |
+| `factors` | 계산을 구성하는 연산 또는 영역 |
+| `contains` | 영역과 하위 요소의 포함 관계 |
+| `operator`, `attributes` | 연산의 종류와 계산 속성 |
+| `dataflow` | 출력 포트와 입력 포트 사이의 직접 연결 |
+| `call`, `scan` | 영역 호출과 반복 계산 |
+| `parameters` | 계산에 사용하는 파라미터의 정의와 역할 |
+| `resource`, `state`, `state_registry` | 자원 공유, 상태 및 등록 관계 |
+
+계산에 해당하는 항목을 사용하며, 구체적인 필드 배치는 선언된 표현 형식을 따릅니다. 아래 원칙은 공통 읽기 기준입니다. 구체적인 순서, 연산 의미는 각 YAML이 선언한 표현 버전과 연산 명세가 우선합니다. 이 문서는 서로 다른 로컬 표현을 단일 스키마로 인증하지 않습니다.
+
+## 해석 원칙
+
+- **포함 관계와 실행 순서를 구분합니다.** `contains`의 나열 순서는 실행 순서를 뜻하지 않습니다. 계산의 의존관계는 `dataflow`와 명시된 호출, 반복 규칙으로 결정합니다.
+- **연산 속성은 계산 의미의 일부입니다.** 축, 정규화, 활성화, 상수와 갱신 방식은 명시된 정의를 따릅니다.
+- **공유는 형태의 일치와 다릅니다.** shape가 같다는 이유로 같은 파라미터나 객체로 해석하지 않습니다. 공유 관계는 명시된 자원 연결을 따릅니다.
+- **상태의 흐름을 보존합니다.** 초기화, 읽기, 갱신, 다음 단계 전달과 반환의 관계를 유지합니다.
+- **이름으로 계산을 보충하지 않습니다.** 아키텍처 이름이나 관례에서 누락된 연산과 연결을 추측하지 않습니다. 의미는 YAML과 선언된 연산 해석 규칙을 함께 읽어 결정합니다.
+- **구현 형태보다 계산 의미를 유지합니다.** 변수명이나 코드 구성은 달라질 수 있지만 연산과 연결, 파라미터 관계, 상태 전달의 의미는 유지합니다.
+
+## 양식 예시
+
+합산 결과에 활성화를 적용하는 부분 표현입니다. `main.output`과 `x`는 앞선 계산에서 전달되는 값이며, 아래는 연결과 속성을 설명하기 위한 발췌입니다.
+
+```yaml
+factors:
+  merge:
+    operator: add
+    attributes: {inplace: true, target: main}
+  activation:
+    operator: relu
+    attributes: {inplace: true, target: input}
+
+dataflow:
+  - [main.output, merge.main]
+  - [x, merge.shortcut]
+  - [merge.output, activation.input]
+  - [activation.output, y]
+```
+
+`out`이 `main.output`이고 `relu`가 제자리 갱신을 수행하도록 정의되어 있다면, 대응하는 계산은 다음과 같습니다.
+
+```python
+out.add_(x)
+y = relu(out)
+```
+
+합산 대상과 갱신 방식은 `attributes`가 정하고, 합산 후 활성화를 적용하는 관계는 `dataflow`가 정합니다. 같은 규칙으로 전체 계보의 연산과 연결을 작성하고 해석합니다.
+
+## 읽는 순서
+
+입출력의 크기, 축, dtype과 초기 상태부터 확인합니다. 이어서 연산의 입력 순서와 연결을 따라가며 파라미터 공유와 상태 갱신을 읽습니다. 각 모델에서 사용하는 연산 규칙은 해당 YAML의 버전과 참조 경로를 따릅니다.
+
+## 모델별 연산 규칙
+
+| 규칙 | 적용 모델 | 정의하는 계산 |
+|---|---|---|
+| [RNN expression v1](operator-profiles/rnn-expression-v1.yaml) | Simple RNN, GRU Encoder–Decoder, Bahdanau, Luong, GNMT | expression, scan, 상태 전달, LSTM 연산 의미 |
+| [Sparse attention v1](operator-profiles/sparse-transformer-v1.json) | Sparse Transformer | local/strided 연결과 mask 의미 |
+| [Linformer attention v1](operator-profiles/linformer-v1.json) | Linformer | sequence projection, 압축 축 attention |
+| [Performer attention v1](operator-profiles/performer-v1.json) | Performer | random feature, 집계 연산 |
+| [Tensor trigonometric extension v1](operator-profiles/tensor-pytorch-trig-v1.md) | Transformer 위치 계산 | 기존 tensor profile에 cast, sin, cos 추가 |
+| [Tensor PyTorch 2.2.1 / v0.3-r1](operator-profiles/tensor-pytorch-2.2.1-v0.3-r1.txt) | H3의 primitive 복원 표현 | tensor 연산, 호출, scan, 상태 의미 |

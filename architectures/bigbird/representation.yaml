@@ -1,6 +1,6 @@
 representation_version: local_bigbird_core_v1
 operator_profile: self_contained_equations_v1
-reading_rules: ../../specs/representation/reading-rules-v1.md
+reading_rules: ../../docs/representation-guide.md
 architecture: bigbird
 architecture_entry: reconstructed.py:attention
 variant: Google BigBird block_sparse, ITC style existing first and last blocks global

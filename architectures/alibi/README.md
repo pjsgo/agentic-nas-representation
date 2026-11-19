@@ -6,8 +6,6 @@
 
 헤드별 기울기는 persistent buffer에 저장합니다. 공식 key-column bias와 정규화 전 score는 행별 상수만큼 다르며 softmax를 적용하면 행별 상수 차이가 사라집니다.
 
-[아키텍처 목록](../README.md)
-
 ## 관련 관계
 
 유형과 대응 범위는 [관계 안내](../../docs/genealogy-guide.md)를 참고합니다. `?`는 추론 관계입니다.

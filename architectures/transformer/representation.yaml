@@ -1883,5 +1883,5 @@
     "root": "positioned_unit",
     "coverage": "exact"
   },
-  "operator_spec": "../../specs/operators/tensor-pytorch-trig-v1.md"
+  "operator_spec": "../../docs/operator-profiles/tensor-pytorch-trig-v1.md"
 }

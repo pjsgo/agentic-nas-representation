@@ -6,8 +6,6 @@
 
 모든 짝수 feature를 인접 쌍으로 회전하며 value는 회전하지 않습니다. 서로 다른 query/key 길이와 위치는 수식 범위의 확장으로, 공식 cross-attention API 실행을 뜻하지 않습니다.
 
-[아키텍처 목록](../README.md)
-
 ## 관련 관계
 
 유형과 대응 범위는 [관계 안내](../../docs/genealogy-guide.md)를 참고합니다. `?`는 추론 관계입니다.

@@ -80,6 +80,6 @@ reuse:
   relation_status: 'Stable component handoff only; no fabricated complete executable relation'
 specifications:
   format: local_equational_graph_v1
-  reading_rules: /workspace/agentic-nas-representation/specs/representation/reading-rules-v1.md
+  reading_rules: ../../docs/representation-guide.md
   shared_changes_needed: []
   certification: 'Inline equations and declared dtype adaptation; no universal common-schema certification'

@@ -1,5 +1,5 @@
 representation_version: r1_expression_graph_v1
-operator_profile: ../../specs/operators/rnn-expression-v1.yaml
+operator_profile: ../../docs/operator-profiles/rnn-expression-v1.yaml
 architecture: simple_rnn
 architecture_entry: main
 scope: Elman tanh recurrent core, full emitted sequence and supplied initial/final hidden state
@@ -60,7 +60,7 @@ stable_component_ids:
 - cell/recurrent_affine
 - cell/hidden
 - main/recurrent_scan
-operator_semantics: ../../specs/operators/rnn-expression-v1.yaml
+operator_semantics: ../../docs/operator-profiles/rnn-expression-v1.yaml
 components:
   cell/input_affine:
     function: cell

@@ -7,11 +7,8 @@
 ```text
 architectures/  아키텍처별 YAML, 구현 코드와 사용법
 relations/      아키텍처 사이의 관계와 대응하는 부품
-specs/          YAML에 쓰인 연산과 연결의 해석 규칙
-docs/           복원 방법과 전체 계보도
+docs/           복원 방법, YAML 해석 규칙과 전체 계보도
 ```
-
-[복원 방법](docs/reconstruction-method.md) / [전체 계보도](docs/genealogy-map.md)
 
 ## 아키텍처 자료
 

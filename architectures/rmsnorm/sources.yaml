@@ -47,6 +47,6 @@ reuse:
   relation_status: 'Component handoff only; no new relation record or historical influence claim authored'
 specifications:
   format: local_equational_graph_v1
-  reading_rules: /workspace/agentic-nas-representation/specs/representation/reading-rules-v1.md
+  reading_rules: ../../docs/representation-guide.md
   shared_changes_needed: []
   certification: 'Local explicit equations only, no universal common-schema PASS claim'

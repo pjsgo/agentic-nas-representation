@@ -68,8 +68,6 @@ a_wi/a_bi/a_wh/a_bh는 encoder, b_wi/b_bi/b_wh/b_bh는 decoder, out_w/out_b는 p
 | `out_w` | `[7, 4]` |
 | `out_b` | `[7]` |
 
-[전체 모델 목록](../../README.md)
-
 ## 관련 관계
 
 유형과 대응 범위는 [관계 안내](../../docs/genealogy-guide.md)를 참고합니다. `?`는 추론 관계입니다.

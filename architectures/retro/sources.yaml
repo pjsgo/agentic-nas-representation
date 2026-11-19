@@ -81,5 +81,5 @@ baseline:
   nodes: 35
   relations: 38
   reuse: Existing completion evidence and public formats read, no numerical rerun.
-  reading_rules: /workspace/agentic-nas-representation/specs/representation/reading-rules-v1.md
+  reading_rules: ../../docs/representation-guide.md
   format_example: /workspace/agentic-nas-representation/architectures/synthesizer/representation.yaml

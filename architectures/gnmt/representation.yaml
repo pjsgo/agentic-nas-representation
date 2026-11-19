@@ -1,5 +1,5 @@
 representation_version: r1_expression_graph_v1
-operator_profile: ../../specs/operators/rnn-expression-v1.yaml
+operator_profile: ../../docs/operator-profiles/rnn-expression-v1.yaml
 architecture: gnmt
 architecture_entry: main
 scope: 'Small 3-layer GNMT encoder/decoder: bidirectional bottom encoder, 2 uni layers, top residual, bottom decoder
@@ -259,7 +259,7 @@ stable_component_ids:
 - main/encoder_state_bridge
 - main/mask
 - main/decoder_scan
-operator_semantics: ../../specs/operators/rnn-expression-v1.yaml
+operator_semantics: ../../docs/operator-profiles/rnn-expression-v1.yaml
 components:
   ef_cell/lstm_state:
     function: ef_cell
@@ -336,4 +336,4 @@ components:
   main/decoder_scan:
     function: main
     node: decoder_scan
-parameter_adapter: ../../specs/operators/rnn-expression-v1.yaml#source_parameter_adapters.tensorflow_basic_lstm
+parameter_adapter: ../../docs/operator-profiles/rnn-expression-v1.yaml#source_parameter_adapters.tensorflow_basic_lstm

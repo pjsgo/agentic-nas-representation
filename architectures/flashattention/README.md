@@ -8,8 +8,6 @@ CPU 타일 전방 계산과 online softmax 누적, causal mask.
 
 각 타일의 최대값에 맞춰 정규화 합과 가중합의 스케일을 조정합니다.
 
-[아키텍처 목록](../README.md)
-
 ## 관련 관계
 
 유형과 대응 범위는 [관계 안내](../../docs/genealogy-guide.md)를 참고합니다. `?`는 추론 관계입니다.

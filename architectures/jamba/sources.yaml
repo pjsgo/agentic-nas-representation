@@ -58,7 +58,7 @@ reuse:
   existing_relations: 38
   project: /workspace/agentic-nas-representation
   read:
-  - specs/representation/reading-rules-v1.md
+  - docs/representation-guide.md
   - architectures/mamba/representation.yaml
   - architectures/mamba/provenance.json
   - architectures/transformer/provenance.json
