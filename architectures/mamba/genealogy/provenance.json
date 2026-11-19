@@ -1,7 +1,0 @@
-{
-  "research_source": "parallel_coverage/20261105/mamba/experiments/20261113_genealogy_s4_mamba_v2/modified_architecture.yaml",
-  "purpose": "Preserve exact relation component IDs and representation scope",
-  "code_research_source": "parallel_coverage/20261105/mamba/experiments/20261113_genealogy_s4_mamba_v2/realization.py",
-  "publication_adjustment": "default YAML filename only",
-  "evidence_reused_without_numerical_rerun": true
-}

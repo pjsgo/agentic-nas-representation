@@ -65,6 +65,8 @@ p0…p6의 역할은 inv_dt, A_real, A_imag, B, C, P, D 순서입니다. 생성 
 
 ## 관련 관계
 
+관계에서 인용하는 부품은 [복원 YAML](representation.yaml)의 최상위 정의에서 찾습니다.
+
 유형과 대응 범위는 [관계 안내](../../docs/genealogy-guide.md)를 참고합니다. `?`는 추론 관계입니다.
 
 - [LSSL → S4](../../relations/tr_049.yaml) — A, tr_049

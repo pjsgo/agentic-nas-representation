@@ -41,5 +41,13 @@
       "stream": false
     },
     "research_source": "parallel_coverage/20261105/s4/experiments/20261113_genealogy_h3_v2/api_v2/generation/request.json"
+  },
+  "relation_representation": {
+    "research_source": "parallel_coverage/20261105/s4/experiments/20261113_genealogy_h3_v2/architecture.yaml",
+    "purpose": "Preserve exact relation component IDs and representation scope",
+    "code_research_source": "parallel_coverage/20261105/s4/experiments/20261113_genealogy_h3_v2/candidate.py",
+    "publication_adjustment": "none",
+    "evidence_reused_without_numerical_rerun": true,
+    "published_section": "relation_view"
   }
 }

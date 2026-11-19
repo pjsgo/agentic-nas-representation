@@ -10,6 +10,7 @@ class YAMLCore(nn.Module):
     def __init__(self, architecture, values):
         super().__init__()
         self.spec = yaml.safe_load(Path(architecture).read_text())
+        self.spec = self.spec.get('relation_view', self.spec)
         if self.spec['format_version'] != 'local_h3_core_v1':
             raise ValueError('unsupported dialect')
         c = self.spec['configuration']

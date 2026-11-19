@@ -55,7 +55,8 @@ scope:
   - benchmarking
   - common_schema_certification
   source_yaml: ../architectures/transformer/representation.yaml
-  target_yaml: ../architectures/linear-transformer/genealogy/representation.yaml
+  target_yaml: ../architectures/linear-transformer/representation.yaml
+  target_section: relation_view
   path_base: relation_file_directory
 evidence:
 - source: beyond_transformer_slides.pdf

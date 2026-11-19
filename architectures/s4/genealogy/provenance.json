@@ -1,7 +1,0 @@
-{
-  "research_source": "parallel_coverage/20261105/s4/experiments/20261113_yaml_lowering_v1/representation.yaml",
-  "purpose": "Preserve exact relation component IDs and representation scope",
-  "code_research_source": null,
-  "publication_adjustment": "none",
-  "evidence_reused_without_numerical_rerun": true
-}

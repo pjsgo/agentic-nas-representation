@@ -15,7 +15,9 @@ def scan(q,k,v,S,Z,eps):
 
 class EditedBlock(nn.Module):
  def __init__(self,architecture):
-  super().__init__(); self.architecture=architecture
+  super().__init__()
+  architecture = architecture.get('relation_view', architecture)
+  self.architecture = architecture
   self.weights=nn.ParameterDict({n:nn.Parameter(torch.empty(s['shape']),requires_grad=s['requires_grad']) for n,s in architecture['parameters'].items()})
  @torch.no_grad()
  def forward(self,x,state=None):

@@ -46,7 +46,8 @@ scope:
   - training
   - whole_model_conversion
   - weight_or_state_migration
-  source_yaml: ../architectures/linear-transformer/genealogy/representation.yaml
+  source_yaml: ../architectures/linear-transformer/representation.yaml
+  source_section: relation_view
   target_yaml: ../architectures/performer/representation.yaml
   path_base: relation_file_directory
   mapping_boundary: causal prefix S/Z -> noncausal whole-sequence summary in selected YAML; omega buffer added;

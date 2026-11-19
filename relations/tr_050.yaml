@@ -59,8 +59,9 @@ scope:
   - executable transition
   - S4 rerun
   - performance claims
-  source_yaml: ../architectures/s4/genealogy/representation.yaml
-  target_yaml: ../architectures/h3/genealogy/representation.yaml
+  source_yaml: ../architectures/s4/representation.yaml
+  target_yaml: ../architectures/h3/representation.yaml
+  target_section: relation_view
   path_base: relation_file_directory
 evidence:
 - source: beyond_transformer_slides.pdf

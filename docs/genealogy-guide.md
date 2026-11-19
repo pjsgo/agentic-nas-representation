@@ -1,5 +1,7 @@
 # 관계 표현 local_transition_v1
 
+관계의 `scope.source_yaml`과 `scope.target_yaml`은 각 모델의 기본 `representation.yaml`을 가리킵니다. 같은 쪽의 `source_section` 또는 `target_section`이 있으면 해당 항목 안에서 부품 ID를 찾습니다. 예를 들어 S4 → Mamba에서 S4의 `sequence_scan`은 기본 `factors`에, Mamba의 `selective_scan`은 `relation_view.factors`에 있습니다. 섹션 지정이 없으면 최상위 정의를 읽습니다.
+
 관계 YAML은 출발 모델과 도착 모델 사이에서 어떤 부품이 계승되고 무엇이 변경되는지 기록합니다. 모델 자체의 계산은 별도의 [복원 YAML](representation-guide.md)이 정의합니다. 관계 YAML은 두 복원 YAML의 파일과 부품 ID를 참조합니다.
 
 ## 두 YAML의 역할

@@ -20,9 +20,9 @@ CPU float32, YAML에 선언된 고정 크기와 외부 상태 계약을 따릅�
 
 제외: full model, training/gradients, FFT/cache backend, initialization equivalence, head_dim>1, automatic relation conversion, performance claims. 세부 연산과 상태 계약은 YAML을 기준으로 읽습니다.
 
-관계 부품 ID는 별도 `genealogy/representation.yaml`을 참조합니다. 기본 복원 YAML은 primitive 표현이며 두 표현의 ID를 혼용하지 않습니다.
-
 ## 관련 관계
+
+관계 YAML에서 `relation_view`를 지정하면 [복원 YAML](representation.yaml)의 같은 이름 항목에서 부품을 찾습니다. 이 항목에는 비교 당시의 계산 범위와 입출력 규약이 담겨 있습니다. [관계용 연구 구현](relation_realization.py)은 이 규약과 선언된 파라미터를 사용합니다.
 
 유형과 대응 범위는 [관계 안내](../../docs/genealogy-guide.md)를 참고합니다. `?`는 추론 관계입니다.
 

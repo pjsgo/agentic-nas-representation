@@ -89,8 +89,9 @@ scope:
   - training
   - initialization equivalence
   - GPU
-  source_yaml: ../architectures/s4/genealogy/representation.yaml
-  target_yaml: ../architectures/mamba/genealogy/representation.yaml
+  source_yaml: ../architectures/s4/representation.yaml
+  target_yaml: ../architectures/mamba/representation.yaml
+  target_section: relation_view
   path_base: relation_file_directory
 evidence:
 - source: beyond_transformer_slides.pdf

@@ -55,7 +55,7 @@ changes:
 preserve:
 - 긴 causal convolution으로 시퀀스를 혼합하는 역할
 scope:
-  source_yaml: ../architectures/s4/genealogy/representation.yaml
+  source_yaml: ../architectures/s4/representation.yaml
   target_yaml: ../architectures/hyena/representation.yaml
   source_yaml_status: available
   target_yaml_status: available
@@ -428,7 +428,7 @@ validation:
   claim_boundary: 관계의 정적 확인은 실현기 또는 LLM 복원 성공 인증이 아니다.
   reference_check:
     source:
-      path: ../architectures/s4/genealogy/representation.yaml
+      path: ../architectures/s4/representation.yaml
       unique_ids: 3
       declared_scope_checked: true
     target:

@@ -33,5 +33,13 @@
       }
     ]
   },
-  "limits": "해당 블록/core와 실행한 fixture 범위. 전체 모델·학습/gradient·GPU·공통 단일 엄격 기준의 7종 성공을 주장하지 않음."
+  "limits": "해당 블록/core와 실행한 fixture 범위. 전체 모델·학습/gradient·GPU·공통 단일 엄격 기준의 7종 성공을 주장하지 않음.",
+  "relation_representation": {
+    "research_source": "parallel_coverage/20261105/mamba/experiments/20261113_genealogy_s4_mamba_v2/modified_architecture.yaml",
+    "purpose": "Preserve exact relation component IDs and representation scope",
+    "code_research_source": "parallel_coverage/20261105/mamba/experiments/20261113_genealogy_s4_mamba_v2/realization.py",
+    "publication_adjustment": "default YAML filename only",
+    "evidence_reused_without_numerical_rerun": true,
+    "published_section": "relation_view"
+  }
 }

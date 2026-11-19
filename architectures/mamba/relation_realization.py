@@ -10,6 +10,7 @@ class ChangedStateLayer(nn.Module):
         super().__init__()
         path = path or Path(__file__).with_name('representation.yaml')
         self.spec = yaml.safe_load(Path(path).read_text())
+        self.spec = self.spec.get('relation_view', self.spec)
         if self.spec['operator_profile'] != 'local_tr061_v1_not_common_schema':
             raise ValueError('This executor supports only local_tr061_v1')
         self.resources = nn.ParameterDict({name:nn.Parameter(torch.zeros(p['shape'],dtype=torch.float32),requires_grad=p['requires_grad']) for name,p in self.spec['parameters'].items()})

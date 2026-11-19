@@ -2893,3 +2893,66 @@ state:
     - a2
     initial: external
 dependency: {}
+
+# 관계에서 참조하는 부품과 입출력 규약
+relation_view:
+  format_version: local_h3_core_v1
+  architecture: H3_scalar_head_block
+  configuration: {d_model: 2, head_dim: 1, d_state: 4, stored_pairs: 2}
+  interface:
+    inputs: [u, shift0, diagonal0]
+    outputs: [y, shift_final, diagonal_final]
+  parameters:
+    q_weight: [2, 2]
+    q_bias: [2]
+    k_weight: [2, 2]
+    k_bias: [2]
+    v_weight: [2, 2]
+    v_bias: [2]
+    out_weight: [2, 2]
+    out_bias: [2]
+    shift_B: [2, 4]
+    shift_C: [2, 4]
+    shift_D: [2]
+    log_dt: [2]
+    inv_A_real: [2, 2]
+    A_imag: [2, 2]
+    diag_B: [2, 2, 2]
+    diag_C: [2, 2, 2]
+    diag_D: [2]
+  parameter_contract:
+    storage: independent float32 nn.Parameters; last axis of diag_B/diag_C is real/imaginary
+    diag_C: stored post-constructor C (already conjugated by official constructor); no extra conjugation
+    sharing: none; one SSM per channel; head_dim=1
+    derived: A, dt, dA and dB are recomputed tensors, never Parameters
+  operators:
+    affine: 'x @ weight.T + bias, preserving B,T'
+    shift_ssm: 's_t = shift_right(s_prev, zero_fill) + B * k_t; z_t = sum(C * s_t, -1)'
+    complex_pairs: 'last dimension [real,imag] -> complex64'
+    bilinear: 'dA=(1+dt*A/2)/(1-dt*A/2); dB=dt*B/(1-dt*A/2), dt broadcast per channel'
+    diagonal_ssm: 's_t=dA*s_prev+dB*v_t; z_t=2*real(sum(C*s_t,-1)); no conjugation of stored C'
+    scale: 'x times channelwise coefficient'
+    negative_exp: '-exp(x)'
+    exp: 'exp(x)'
+    complex: 'real + i*imag'
+    add: 'elementwise add'
+    multiply: 'elementwise product'
+  graph:
+    - {id: q_proj, op: affine, inputs: [u, q_weight, q_bias], outputs: [q]}
+    - {id: k_proj, op: affine, inputs: [u, k_weight, k_bias], outputs: [k]}
+    - {id: v_proj, op: affine, inputs: [u, v_weight, v_bias], outputs: [v]}
+    - {id: shift_memory, op: shift_ssm, inputs: [k, shift0, shift_B, shift_C], outputs: [ks, shift_final]}
+    - {id: shift_skip, op: scale, inputs: [k, shift_D], outputs: [kd]}
+    - {id: shifted_key, op: add, inputs: [ks, kd], outputs: [kbar]}
+    - {id: value_gate, op: multiply, inputs: [kbar, v], outputs: [kv]}
+    - {id: dt, op: exp, inputs: [log_dt], outputs: [dt]}
+    - {id: A_real, op: negative_exp, inputs: [inv_A_real], outputs: [A_real]}
+    - {id: A, op: complex, inputs: [A_real, A_imag], outputs: [A]}
+    - {id: B, op: complex_pairs, inputs: [diag_B], outputs: [B]}
+    - {id: C, op: complex_pairs, inputs: [diag_C], outputs: [C]}
+    - {id: discretize, op: bilinear, inputs: [A, B, dt], outputs: [dA, dB]}
+    - {id: diagonal_memory, op: diagonal_ssm, inputs: [kv, diagonal0, dA, dB, C], outputs: [memory, diagonal_final]}
+    - {id: diagonal_skip, op: scale, inputs: [kv, diag_D], outputs: [direct]}
+    - {id: readout, op: add, inputs: [memory, direct], outputs: [readout]}
+    - {id: query_gate, op: multiply, inputs: [q, readout], outputs: [gated]}
+    - {id: output_projection, op: affine, inputs: [gated, out_weight, out_bias], outputs: [y]}
