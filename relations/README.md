@@ -2,7 +2,7 @@
 
 53개 노드, 76개 설명 관계. 전체 대응 완료 16개, 부분 대응 60개입니다. 선택 core 대응과 전체 대응은 별도입니다.
 
-[전체 관계도](../docs/genealogy-map.md), [복원 자료](../docs/reconstruction-status.md)
+[전체 관계도](../docs/genealogy-map.md)
 
 | ID | 출발 → 도착 | 유형 | 전체 대응 | core 대응 |
 |---|---|---|---|---|
