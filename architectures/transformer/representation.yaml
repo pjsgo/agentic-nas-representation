@@ -1882,6 +1882,5 @@
   "state_registry": {
     "root": "positioned_unit",
     "coverage": "exact"
-  },
-  "operator_spec": "../../docs/operator-profiles/tensor-pytorch-trig-v1.md"
+  }
 }

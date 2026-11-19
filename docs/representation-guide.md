@@ -68,15 +68,4 @@ y = relu(out)
 
 ## 읽는 순서
 
-입출력의 크기, 축, dtype과 초기 상태부터 확인합니다. 이어서 연산의 입력 순서와 연결을 따라가며 파라미터 공유와 상태 갱신을 읽습니다. 각 모델에서 사용하는 연산 규칙은 해당 YAML의 버전과 참조 경로를 따릅니다.
-
-## 모델별 연산 규칙
-
-| 규칙 | 적용 모델 | 정의하는 계산 |
-|---|---|---|
-| [RNN expression v1](operator-profiles/rnn-expression-v1.yaml) | Simple RNN, GRU Encoder–Decoder, Bahdanau, Luong, GNMT | expression, scan, 상태 전달, LSTM 연산 의미 |
-| [Sparse attention v1](operator-profiles/sparse-transformer-v1.json) | Sparse Transformer | local/strided 연결과 mask 의미 |
-| [Linformer attention v1](operator-profiles/linformer-v1.json) | Linformer | sequence projection, 압축 축 attention |
-| [Performer attention v1](operator-profiles/performer-v1.json) | Performer | random feature, 집계 연산 |
-| [Tensor trigonometric extension v1](operator-profiles/tensor-pytorch-trig-v1.md) | Transformer 위치 계산 | 기존 tensor profile에 cast, sin, cos 추가 |
-| [Tensor PyTorch 2.2.1 / v0.3-r1](operator-profiles/tensor-pytorch-2.2.1-v0.3-r1.txt) | H3의 primitive 복원 표현 | tensor 연산, 호출, scan, 상태 의미 |
+입출력의 크기, 축, dtype과 초기 상태부터 확인합니다. 이어서 연산의 입력 순서와 연결을 따라가며 파라미터 공유와 상태 갱신을 읽습니다. 각 연산의 속성은 모델 YAML에서, 계산 과정은 같은 폴더의 구현 코드에서 확인합니다.

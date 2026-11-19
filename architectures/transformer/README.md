@@ -72,7 +72,7 @@ p0/p1은 QKV, p2/p3는 attention output, p4/p5는 첫 LayerNorm, p6/p7, p8/p9는
 | `p10` | `[8]` |
 | `p11` | `[8]` |
 
-위치 연산은 [tensor 연산 확장 v1](../../docs/operator-profiles/tensor-pytorch-trig-v1.md)과 [출처](sources.yaml)에 정의됩니다.
+위치 인코딩의 계산식은 [모델 YAML](representation.yaml)에 있습니다.
 
 ## 관련 관계
 

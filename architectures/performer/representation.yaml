@@ -1,5 +1,4 @@
 representation_version: local_attention_graph_v1
-operator_profile: ../../docs/operator-profiles/performer-v1.json
 architecture: performer
 architecture_entry: reconstructed.py:build
 interface:
