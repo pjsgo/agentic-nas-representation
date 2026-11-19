@@ -1,6 +1,6 @@
 # ResNet
 
-**복원 범위: 입력을 그대로 더하는 shortcut을 가진 채널 64의 BasicBlock.** 해당 범위에서 검증을 마친 YAML과 복원 코드입니다.
+입력을 그대로 더하는 shortcut을 가진 채널 64의 BasicBlock.
 
 [YAML](representation.yaml) / [복원 코드](reconstructed.py) / [출처, 확인 범위](provenance.json)
 
@@ -42,16 +42,6 @@ YAML은 연산과 연결, 속성, 공유, 상태를 기술합니다. 학습된 �
 `model = BasicBlock().eval()` → `y = model(x)`.
 
 Conv/BN Parameter와 BN running buffer를 비교 대상과 같은 값으로 주입한 뒤 평가합니다. 클래스는 PyTorch 기본 초기값을 만들지만 학습된 가중치는 제공하지 않습니다.
-
-코드의 import, 생성, forward 이름은 위 계약을 따릅니다. 원본과 수치 비교하려면 입력, 초기 상태, Parameter/Buffer 값, dtype과 eval 조건을 동일하게 맞춰야 합니다. 저장된 검증 환경은 CPU, PyTorch 2.2.1입니다.
-
-## 확인한 결과와 범위
-
-고정 입력 7개에서 출력 최대 절대 오차 0. Conv/BN 속성, ReLU 객체 공유, in-place 합산과 입력 불변성을 확인했습니다.
-
-stride=1, downsample=None인 단일 블록입니다. 전체 ResNet과 학습 동등성은 포함하지 않습니다.
-
-이 폴더는 최신 사용 자료이며 상세 실험 로그, 검사기, fixture 묶음은 포함하지 않습니다. 검증 근거의 연구 작업 공간 기록은 provenance.json에 있습니다.
 
 [전체 모델 목록](../../README.md)
 

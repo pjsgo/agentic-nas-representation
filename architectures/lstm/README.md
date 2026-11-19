@@ -1,6 +1,6 @@
 # LSTM
 
-**복원 범위: 입력 크기 4, 은닉 크기 5의 단방향 LSTM recurrent core, T≥1.** 해당 범위에서 검증을 마친 YAML과 복원 코드입니다.
+입력 크기 4, 은닉 크기 5의 단방향 LSTM recurrent core, T≥1.
 
 [YAML](representation.yaml) / [복원 코드](reconstructed.py) / [출처, 확인 범위](provenance.json)
 
@@ -59,16 +59,6 @@ p0=[20,4] 입력 weight, p1=[20,5] recurrent weight, p2/p3=[20] bias를 외부�
 | `p1` | `[20, 5]` |
 | `p2` | `[20]` |
 | `p3` | `[20]` |
-
-코드의 import, 생성, forward 이름은 위 계약을 따릅니다. 원본과 수치 비교하려면 입력, 초기 상태, Parameter/Buffer 값, dtype과 eval 조건을 동일하게 맞춰야 합니다. 저장된 검증 환경은 CPU, PyTorch 2.2.1입니다.
-
-## 확인한 결과와 범위
-
-T=1,3,5의 출력, 매 시점 h/c, gate, Parameter 공유, 확장 dataflow를 비교했으며 최대 오차 0입니다.
-
-완료 범위는 T≥1입니다. YAML에는 빈 scan 규칙이 남아 있지만 현재 코드는 T=0을 지원하지 않습니다. 다층, 양방향, projection, dropout은 포함하지 않습니다.
-
-이 폴더는 최신 사용 자료이며 상세 실험 로그, 검사기, fixture 묶음은 포함하지 않습니다. 검증 근거의 연구 작업 공간 기록은 provenance.json에 있습니다.
 
 [전체 모델 목록](../../README.md)
 

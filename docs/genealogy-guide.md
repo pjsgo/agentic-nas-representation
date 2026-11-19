@@ -13,4 +13,4 @@
 
 [관계 필드, 유형, 부품 참조 규칙](../specs/relations/local-transition-v1.md) / [복원 YAML 읽기](representation-guide.md)
 
-[전체 관계도](genealogy-map.md), [복원 범위와 검증](reconstruction-status.md)
+[전체 관계도](genealogy-map.md), [복원 자료](reconstruction-status.md)

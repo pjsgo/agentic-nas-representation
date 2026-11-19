@@ -2,7 +2,7 @@
 
 공유 F/G, 양방향 정렬과 masked sum, 분류기 제외.
 
-[계산 YAML](representation.yaml), [최종 구현](reconstructed.py), [출처](sources.yaml), [검증 및 생성 이력](provenance.json)
+[계산 YAML](representation.yaml), [최종 구현](reconstructed.py), [출처](sources.yaml), [구현 기록](provenance.json)
 
 ## 사용 계약
 
@@ -37,7 +37,7 @@ outputs:
   output: float64[B,2*G], concatenation aggregate_a then aggregate_b
 ```
 
-## 복원 범위와 평가
+## 구현 범위
 
 ```yaml
 included:
@@ -59,8 +59,6 @@ excluded:
 - gradients
 - full_NLI_model
 ```
-
-생성 원본: FAIL. 최종 코드: PASS_WITHIN_DECLARED_SCOPE. 길이가 다른 두 문장의 역방향 mask 축 수정. 기존 독립 참조 대표 사례 3개 결과를 재사용했습니다. 전체 모델과 공식 runtime 동등성은 검증하지 않았습니다.
 
 ## 관련 관계
 

@@ -2,7 +2,7 @@
 
 조건 없는 dilated gated residual/skip feature stack, audio 입출력 제외.
 
-[계산 YAML](representation.yaml), [최종 구현](reconstructed.py), [출처](sources.yaml), [검증 및 생성 이력](provenance.json)
+[계산 YAML](representation.yaml), [최종 구현](reconstructed.py), [출처](sources.yaml), [구현 기록](provenance.json)
 
 ## 사용 계약
 
@@ -27,7 +27,7 @@ returns:
   output: float64 [B,C,T], states[L]
 ```
 
-## 복원 범위와 평가
+## 구현 범위
 
 ```yaml
 variant: Unconditioned bias-free dilated gated residual and skip feature stack
@@ -49,8 +49,6 @@ excluded:
 - training
 - gradients
 ```
-
-생성 원본: FAIL. 최종 코드: PASS_WITHIN_DECLARED_SCOPE. 2차원 weight에 적용한 잘못된 einsum 첨자 수정. 기존 독립 참조 대표 사례 3개 결과를 재사용했습니다. 전체 모델과 공식 runtime 동등성은 검증하지 않았습니다.
 
 ## 관련 관계
 

@@ -1,6 +1,6 @@
 # Mamba
 
-**복원 범위: Mamba-1 selective-scan core, channels=3, state_size=2.** 해당 범위에서 검증을 마친 YAML과 복원 코드입니다.
+Mamba-1 selective-scan core, channels=3, state_size=2.
 
 [YAML](representation.yaml) / [복원 코드](reconstructed.py) / [출처, 확인 범위](provenance.json)
 
@@ -63,16 +63,6 @@ p_A_log=[3,2], p_D=[3]의 두 Parameter를 외부 값으로 주입합니다. B/C
 |---|---|
 | `p_A_log` | `[3, 2]` |
 | `p_D` | `[3]` |
-
-코드의 import, 생성, forward 이름은 위 계약을 따릅니다. 원본과 수치 비교하려면 입력, 초기 상태, Parameter/Buffer 값, dtype과 eval 조건을 동일하게 맞춰야 합니다. 저장된 검증 환경은 CPU, PyTorch 2.2.1입니다.
-
-## 확인한 결과와 범위
-
-네 fixture에서 중간값, 출력, 상태 최대 오차 0. Parameter identity, 입력 불변성, softplus 속성과 출력 버퍼 기록 순서를 확인한 실용 평가 PASS입니다.
-
-기존 exact graph와 Common Schema 판정까지 PASS인 것은 아닙니다. 상위 projection, causal convolution, B/C 생성과 전체 Mamba block은 포함하지 않습니다.
-
-이 폴더는 최신 사용 자료이며 상세 실험 로그, 검사기, fixture 묶음은 포함하지 않습니다. 검증 근거의 연구 작업 공간 기록은 provenance.json에 있습니다.
 
 [전체 모델 목록](../../README.md)
 

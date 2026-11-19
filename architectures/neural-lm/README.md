@@ -2,7 +2,7 @@
 
 고정 문맥 lookup, tanh hidden, direct 경로와 vocabulary readout.
 
-[계산 YAML](representation.yaml), [최종 구현](reconstructed.py), [출처](sources.yaml), [검증 및 생성 이력](provenance.json)
+[계산 YAML](representation.yaml), [최종 구현](reconstructed.py), [출처](sources.yaml), [구현 기록](provenance.json)
 
 ## 사용 계약
 
@@ -33,7 +33,7 @@ invalid_inputs: Raise ValueError for non-tensors, wrong dtype/device/rank/shape,
   floating inputs, empty dimensions, or out-of-range token IDs.
 ```
 
-## 복원 범위와 평가
+## 구현 범위
 
 ```yaml
 included:
@@ -54,8 +54,6 @@ excluded:
 - ngram_interpolation
 - distributed_execution
 ```
-
-생성 원본: PASS_WITHIN_DECLARED_SCOPE. 최종 코드: PASS_WITHIN_DECLARED_SCOPE. 계산 수정 없음; JSON 바깥 Markdown fence 제거만 수행. 기존 독립 참조 대표 사례 3개 결과를 재사용했습니다. 전체 모델과 공식 runtime 동등성은 검증하지 않았습니다.
 
 ## 관련 관계
 

@@ -2,7 +2,7 @@
 
 단일 encoder/decoder GLU 블록, attention과 residual, 명시적 학습 위치 임베딩.
 
-[계산 YAML](representation.yaml), [최종 구현](reconstructed.py), [출처](sources.yaml), [검증 및 생성 이력](provenance.json)
+[계산 YAML](representation.yaml), [최종 구현](reconstructed.py), [출처](sources.yaml), [구현 기록](provenance.json)
 
 ## 사용 계약
 
@@ -34,7 +34,7 @@ guards: No extra runtime guards required; caller satisfies shape/domain; all-mas
   source and target padding outside scope
 ```
 
-## 복원 범위와 평가
+## 구현 범위
 
 ```yaml
 included:
@@ -60,9 +60,7 @@ excluded:
 - backward_gradient_scaling
 ```
 
-생성 원본: FAIL. 최종 코드: PASS_WITHIN_DECLARED_SCOPE. float32 valid-count 제곱근 계산을 float64 입력 dtype에 맞춰 수정. 기존 독립 참조 대표 사례 3개 결과를 재사용했습니다. 전체 모델과 공식 runtime 동등성은 검증하지 않았습니다.
-
-위치 계산은 같은 YAML의 `source_position_lookup/add`, `target_position_lookup/add`와 같은 구현 파일에 정의됩니다. 로컬 작성 이력과 [통합 검증](../../docs/position-integration-validation.json)은 provenance에 구분해 기록합니다.
+위치 계산은 같은 YAML의 `source_position_lookup/add`, `target_position_lookup/add`와 같은 구현 파일에 정의됩니다.
 
 ## 관련 관계
 

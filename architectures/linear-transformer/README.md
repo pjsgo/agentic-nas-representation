@@ -1,6 +1,6 @@
 # Linear Transformer
 
-**복원 범위: ELU+1 feature map을 사용하는 recurrent linear-attention.** 해당 범위에서 검증을 마친 YAML과 복원 코드입니다.
+ELU+1 feature map을 사용하는 recurrent linear-attention.
 
 [YAML](representation.yaml) / [복원 코드](reconstructed.py) / [출처, 확인 범위](provenance.json)
 
@@ -55,16 +55,6 @@ YAML은 연산과 연결, 속성, 공유, 상태를 기술합니다. 학습된 �
 `model = create_unit_c().eval()` → `y, s_final, z_final = model(q, k, v, s, z)`.
 
 별도 Parameter/Buffer가 없습니다. q/k/v는 projection을 마친 외부 입력입니다. s/z는 호출자가 제공하는 누적 상태로 **제자리 갱신**되며 반환 상태는 입력과 같은 객체입니다. 후속 구간에 그대로 전달할 수 있습니다.
-
-코드의 import, 생성, forward 이름은 위 계약을 따릅니다. 원본과 수치 비교하려면 입력, 초기 상태, Parameter/Buffer 값, dtype과 eval 조건을 동일하게 맞춰야 합니다. 저장된 검증 환경은 CPU, PyTorch 2.2.1입니다.
-
-## 확인한 결과와 범위
-
-네 fixture에서 출력, prefix 상태 갱신, 반환 alias, 입력 불변성, 구간 연결을 검사했습니다. 재검증 기록 71개가 일치하고 최대 절대 오차 약 2.38e-7입니다.
-
-해당 평가 기준을 통과했습니다. stateless wrapper Module identity는 이 평가에서 제외했으므로 원본 Common Schema의 identity BLOCKED를 해소한 것은 아닙니다. 전체 Transformer와 projection은 포함하지 않습니다.
-
-이 폴더는 최신 사용 자료이며 상세 실험 로그, 검사기, fixture 묶음은 포함하지 않습니다. 검증 근거의 연구 작업 공간 기록은 provenance.json에 있습니다.
 
 [전체 모델 목록](../../README.md)
 

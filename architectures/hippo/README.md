@@ -1,12 +1,10 @@
 # HiPPO
 
-생성 원문 실패 후 별도 수정본 통과. 독립 참조 대표 사례 3개에서 선언 범위 내 검증을 통과했습니다.
+HiPPO-LegS 연산자, 시간 가변 bilinear 이산화, 계수 상태 scan.
 
 범위: scaled_Legendre_operator_construction; time_varying_bilinear_discretization; coefficient_state_scan
 
-[YAML](representation.yaml), [최종 코드](reconstructed.py), [출처와 한계](sources.yaml), [평가 이력](provenance.json)
-
-전체 모델, 학습, 성능 재현은 주장하지 않습니다. [복원 범위와 검증](../../docs/reconstruction-status.md)을 함께 읽습니다.
+[YAML](representation.yaml), [최종 코드](reconstructed.py), [출처와 한계](sources.yaml), [구현 기록](provenance.json)
 
 ## 관련 관계
 

@@ -1,6 +1,6 @@
 # Transformer
 
-**복원 범위: model dimension 8, head 2, feed-forward dimension 12의 단일 encoder block과 명시적 sinusoidal 위치 인코딩.** 해당 범위에서 검증을 마친 YAML과 복원 코드입니다.
+model dimension 8, head 2, feed-forward dimension 12의 단일 encoder block과 명시적 sinusoidal 위치 인코딩.
 
 [YAML](representation.yaml) / [복원 코드](reconstructed.py) / [출처, 확인 범위](provenance.json)
 
@@ -72,19 +72,7 @@ p0/p1은 QKV, p2/p3는 attention output, p4/p5는 첫 LayerNorm, p6/p7, p8/p9는
 | `p10` | `[8]` |
 | `p11` | `[8]` |
 
-코드의 import, 생성, forward 이름은 위 계약을 따릅니다. 원본과 수치 비교하려면 입력, 초기 상태, Parameter/Buffer 값, dtype과 eval 조건을 동일하게 맞춰야 합니다. 저장된 검증 환경은 CPU, PyTorch 2.2.1입니다.
-
 위치 연산은 [tensor 연산 확장 v1](../../specs/operators/tensor-pytorch-trig-v1.md)과 [출처](sources.yaml)에 정의됩니다.
-
-## 확인한 결과와 범위
-
-기존 사전 합산 입력 블록은 CPU float32 fixture 9개에서 출력 포함 18개 추적값, 구조, 직접 연결, 연산 속성, Parameter 등록/수명을 검사했고 최대 오차 0입니다.
-
-YAML 버전은 등록 상태를 명시하는 0.4-candidate.1입니다. 단일 블록의 eval 검증이며 전체 Transformer, 학습을 포함하지 않습니다. runtime trace 평가 기준은 이전 후보 관찰을 바탕으로 작성됐습니다.
-
-통합 위치 경로는 로컬 작성 코드이며 [통합 검증](../../docs/position-integration-validation.json)과 provenance에 별도 작성 이력을 기록합니다. 기존 외부 생성 결과를 새 확장의 생성 성공으로 간주하지 않습니다.
-
-이 폴더는 최신 사용 자료이며 상세 실험 로그, 검사기, fixture 묶음은 포함하지 않습니다. 검증 근거의 연구 작업 공간 기록은 provenance.json에 있습니다.
 
 [전체 모델 목록](../../README.md)
 

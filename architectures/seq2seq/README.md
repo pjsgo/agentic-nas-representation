@@ -1,6 +1,6 @@
 # Seq2Seq
 
-**복원 범위: 임베딩된 입력을 받는 단층 LSTM encoder/decoder, teacher forcing 100%.** 해당 범위에서 검증을 마친 YAML과 복원 코드입니다.
+임베딩된 입력을 받는 단층 LSTM encoder/decoder, teacher forcing 100%.
 
 [YAML](representation.yaml) / [복원 코드](reconstructed.py) / [출처, 확인 범위](provenance.json)
 
@@ -67,16 +67,6 @@ a_wi/a_bi/a_wh/a_bh는 encoder, b_wi/b_bi/b_wh/b_bh는 decoder, out_w/out_b는 p
 | `b_bh` | `[16]` |
 | `out_w` | `[7, 4]` |
 | `out_b` | `[7]` |
-
-코드의 import, 생성, forward 이름은 위 계약을 따릅니다. 원본과 수치 비교하려면 입력, 초기 상태, Parameter/Buffer 값, dtype과 eval 조건을 동일하게 맞춰야 합니다. 저장된 검증 환경은 CPU, PyTorch 2.2.1입니다.
-
-## 확인한 결과와 범위
-
-세 fixture에서 9개 출력, 매 시점 h/c, bridge 객체 identity와 Parameter 공유를 확인했습니다. 별도 구조 동등성 v1.1 평가 PASS, source 대비 최대 절대 오차 약 5.96e-8입니다.
-
-토큰 embedding과 자유 생성은 포함하지 않습니다. 후속 구조 비교에서는 검증된 zero-allocation 차이를 정규화했으며 원래 raw DAG 검사의 PASS를 뜻하지 않습니다.
-
-이 폴더는 최신 사용 자료이며 상세 실험 로그, 검사기, fixture 묶음은 포함하지 않습니다. 검증 근거의 연구 작업 공간 기록은 provenance.json에 있습니다.
 
 [전체 모델 목록](../../README.md)
 

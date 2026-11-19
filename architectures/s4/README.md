@@ -1,6 +1,6 @@
 # S4
 
-**복원 범위: original rank-1 DPLR/NPLR recurrent, impulse-kernel core, Nfull=4, H=channels=1.** 해당 범위에서 검증을 마친 YAML과 복원 코드입니다.
+original rank-1 DPLR/NPLR recurrent, impulse-kernel core, Nfull=4, H=channels=1.
 
 [YAML](representation.yaml) / [복원 코드](reconstructed.py) / [출처, 확인 범위](provenance.json)
 
@@ -62,16 +62,6 @@ p0…p6의 역할은 inv_dt, A_real, A_imag, B, C, P, D 순서입니다. 생성 
 | `p4` | `[1, 1, 2, 2]` |
 | `p5` | `[1, 1, 2, 2]` |
 | `p6` | `[1, 1]` |
-
-코드의 import, 생성, forward 이름은 위 계약을 따릅니다. 원본과 수치 비교하려면 입력, 초기 상태, Parameter/Buffer 값, dtype과 eval 조건을 동일하게 맞춰야 합니다. 저장된 검증 환경은 CPU, PyTorch 2.2.1입니다.
-
-## 확인한 결과와 범위
-
-기존 엄격 검사에서 그래프, 수치 PASS, 실용 검사 90회 PASS, primitive 중간값 152개와 매 시점 carry 비교 PASS입니다.
-
-원문 생성 코드에서 slice 축 1곳과 scan select 표현 2곳을 수정한 최종본입니다. 전체 FFT/cache 경로, S4D, 일반 rank, 학습은 포함하지 않습니다.
-
-이 폴더는 최신 사용 자료이며 상세 실험 로그, 검사기, fixture 묶음은 포함하지 않습니다. 검증 근거의 연구 작업 공간 기록은 provenance.json에 있습니다.
 
 [전체 모델 목록](../../README.md)
 
