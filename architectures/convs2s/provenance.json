@@ -71,7 +71,6 @@
     "representation": "representation.yaml",
     "entry": "forward_with_positions",
     "historical_block_evaluation": "Existing evaluation below applies to the preembedded block only",
-    "evaluation": "../../docs/position-integration-validation.json",
     "scope": "Explicit position construction and block connection; no whole-model or official-runtime claim"
   }
 }

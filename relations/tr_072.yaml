@@ -125,7 +125,6 @@ application:
   patch_or_script: null
 validation:
   status: PASS_WITHIN_DECLARED_SCOPE
-  evidence: ../docs/position-integration-validation.json
   integrity_checks: SKIPPED
   claim_boundary: Locally authored position components and connections; historical external-generation
     verdicts are preserved in provenance.
