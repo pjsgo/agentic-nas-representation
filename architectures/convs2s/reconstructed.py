@@ -258,7 +258,7 @@ class Model(nn.Module):
             'output': output
         }
 
-# Locally authored position operations; generation history is in provenance.json.
+# Locally authored position operations.
 def _check(words, positions):
     if words.device.type != 'cpu' or words.dtype not in (torch.float32, torch.float64):
         raise ValueError('CPU float32/float64 required')

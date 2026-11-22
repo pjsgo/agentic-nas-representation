@@ -60,9 +60,9 @@ reuse:
   read:
   - architectures/README.md
   - architectures/mamba/representation.yaml
-  - architectures/mamba/provenance.json
-  - architectures/transformer/provenance.json
-  - architectures/sparse-moe/provenance.json
+  - architectures/mamba/provenance.json  # Historical research workspace input
+  - architectures/transformer/provenance.json  # Historical research workspace input
+  - architectures/sparse-moe/provenance.json  # Historical research workspace input
   - architectures/switch-transformer/representation.yaml
   method: Reuse completed scoped evidence and representation conventions, no numerical
     reruns or imports of existing candidates. Mamba selective-scan algebra reused
