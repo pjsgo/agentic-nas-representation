@@ -45,7 +45,7 @@ Conv/BN Parameter와 BN running buffer를 비교 대상과 같은 값으로 주�
 
 ## 관련 관계
 
-관계 유형과 필드 설명은 [관계 안내](../../docs/genealogy-guide.md)를 참고합니다. `?`는 추론 관계입니다.
+유형과 대응 범위는 [관계 안내](../../docs/genealogy-guide.md)를 참고합니다. `?`는 추론 관계입니다.
 
 - [ResNet → GNMT](../../relations/tr_018.yaml) — C, tr_018
 - [ResNet → Transformer](../../relations/tr_019.yaml) — C, tr_019

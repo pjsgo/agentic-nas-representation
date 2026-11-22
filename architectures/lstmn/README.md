@@ -8,7 +8,7 @@ Hidden/cell tape, causal additive attention, read 기반 gate와 상태 갱신.
 
 ## 관련 관계
 
-관계 유형과 필드 설명은 [관계 안내](../../docs/genealogy-guide.md)를 참고합니다. `?`는 추론 관계입니다.
+유형과 대응 범위는 [관계 안내](../../docs/genealogy-guide.md)를 참고합니다. `?`는 추론 관계입니다.
 
 - [LSTM → LSTMN](../../relations/tr_010.yaml) — A, tr_010
 - [E2E Memory Network → LSTMN](../../relations/tr_011.yaml) — I, tr_011

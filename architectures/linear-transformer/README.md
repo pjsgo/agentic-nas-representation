@@ -60,7 +60,7 @@ YAML은 연산과 연결, 속성, 공유, 상태를 기술합니다. 학습된 �
 
 관계 YAML에서 `relation_view`를 지정하면 [복원 YAML](representation.yaml)의 같은 이름 항목에서 부품을 찾습니다. 이 항목에는 비교 당시의 계산 범위와 입출력 규약이 담겨 있습니다. [관계용 연구 구현](relation_realization.py)은 이 규약과 선언된 파라미터를 사용합니다.
 
-관계 유형과 필드 설명은 [관계 안내](../../docs/genealogy-guide.md)를 참고합니다. `?`는 추론 관계입니다.
+유형과 대응 범위는 [관계 안내](../../docs/genealogy-guide.md)를 참고합니다. `?`는 추론 관계입니다.
 
 - [Transformer → Linear Transformer](../../relations/tr_037.yaml) — A, tr_037
 - [Linear Transformer → Performer](../../relations/tr_039.yaml) — I?, tr_039

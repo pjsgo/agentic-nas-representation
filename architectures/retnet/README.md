@@ -8,7 +8,7 @@ Multi-scale causal retention, 병렬 합산과 순환 행렬 상태, 상태 이�
 
 ## 관련 관계
 
-관계 유형과 필드 설명은 [관계 안내](../../docs/genealogy-guide.md)를 참고합니다. `?`는 추론 관계입니다.
+유형과 대응 범위는 [관계 안내](../../docs/genealogy-guide.md)를 참고합니다. `?`는 추론 관계입니다.
 
 - [Transformer → RetNet](../../relations/tr_058.yaml) — X, tr_058
 - [Linear Transformer → RetNet](../../relations/tr_060.yaml) — I?, tr_060
