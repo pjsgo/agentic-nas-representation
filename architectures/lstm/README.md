@@ -34,7 +34,7 @@ flowchart LR
 | `gate_a`…`gate_d`, `retain`, `write`, `update`, `expose` | sigmoid/tanh와 cell, hidden 갱신 |
 | `parameters.p0`…`p3`, scan carry | 모든 시점에서 동일 Parameter와 이전 h/c 사용 |
 
-YAML은 연산과 연결, 속성, 공유, 상태를 기술합니다. 학습된 가중치나 실행 fixture를 저장하는 파일은 아닙니다. [공통 읽기 안내](../../docs/representation-guide.md)를 함께 참고하세요.
+YAML은 연산과 연결, 속성, 공유, 상태를 기술합니다. 학습된 가중치나 실행 fixture를 저장하는 파일은 아닙니다. [공통 읽기 안내](../README.md)를 함께 참고하세요.
 
 ## 입력과 출력
 
@@ -62,7 +62,7 @@ p0=[20,4] 입력 weight, p1=[20,5] recurrent weight, p2/p3=[20] bias를 외부�
 
 ## 관련 관계
 
-유형과 대응 범위는 [관계 안내](../../docs/genealogy-guide.md)를 참고합니다. `?`는 추론 관계입니다.
+관계 유형은 [관계 안내](../../relations/README.md)를 참고합니다. `?`는 추론 관계입니다.
 
 - [Simple RNN → LSTM](../../relations/tr_003.yaml) — A, tr_003
 - [LSTM → Seq2Seq](../../relations/tr_004.yaml) — C, tr_004

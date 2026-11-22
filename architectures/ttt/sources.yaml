@@ -74,6 +74,6 @@ reuse:
   existing_nodes: 35
   existing_relations: 38
   phase4_status: /workspace/resnet_reconstruction/parallel_coverage/20261105/integration/20261116_genealogy_phase4_integration/status.yaml
-  reading_rules: ../../docs/representation-guide.md
+  reading_rules: ../README.md
   action: Existing results and local representation conventions read and retained;
     no prior architecture numerical rerun.

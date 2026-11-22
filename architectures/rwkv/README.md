@@ -8,7 +8,7 @@ RWKV v4 time-mixing core, 안정화 WKV, 명시적 상태 이어 계산.
 
 ## 관련 관계
 
-유형과 대응 범위는 [관계 안내](../../docs/genealogy-guide.md)를 참고합니다. `?`는 추론 관계입니다.
+관계 유형은 [관계 안내](../../relations/README.md)를 참고합니다. `?`는 추론 관계입니다.
 
 - [Linear Transformer → RWKV](../../relations/tr_057.yaml) — I?, tr_057
 - [Transformer → RWKV](../../relations/tr_059.yaml) — X, tr_059

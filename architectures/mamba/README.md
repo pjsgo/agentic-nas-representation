@@ -38,7 +38,7 @@ delta softplus → decay, drive 구성 → state recurrence, readout → D skip 
 | `recurrence.scan`, `step` | 시간별 retained state + drive 및 C readout |
 | `skip`, `pre_gate`, `gate_activation`, `gated` | D skip과 SiLU gate |
 
-YAML은 연산과 연결, 속성, 공유, 상태를 기술합니다. 학습된 가중치나 실행 fixture를 저장하는 파일은 아닙니다. [공통 읽기 안내](../../docs/representation-guide.md)를 함께 참고하세요.
+YAML은 연산과 연결, 속성, 공유, 상태를 기술합니다. 학습된 가중치나 실행 fixture를 저장하는 파일은 아닙니다. [공통 읽기 안내](../README.md)를 함께 참고하세요.
 
 ## 입력과 출력
 
@@ -68,7 +68,7 @@ p_A_log=[3,2], p_D=[3]의 두 Parameter를 외부 값으로 주입합니다. B/C
 
 관계 YAML에서 `relation_view`를 지정하면 [복원 YAML](representation.yaml)의 같은 이름 항목에서 부품을 찾습니다. 이 항목에는 비교 당시의 계산 범위와 입출력 규약이 담겨 있습니다. [관계용 연구 구현](relation_realization.py)은 이 규약과 선언된 파라미터를 사용합니다.
 
-유형과 대응 범위는 [관계 안내](../../docs/genealogy-guide.md)를 참고합니다. `?`는 추론 관계입니다.
+관계 유형은 [관계 안내](../../relations/README.md)를 참고합니다. `?`는 추론 관계입니다.
 
 - [S4 → Mamba](../../relations/tr_061.yaml) — A, tr_061
 - [H3 → Mamba](../../relations/tr_062.yaml) — A, tr_062

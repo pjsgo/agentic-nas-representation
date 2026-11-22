@@ -6,9 +6,10 @@
 
 ```text
 architectures/  아키텍처별 YAML, 구현 코드와 사용법
-relations/      아키텍처 사이의 관계와 대응하는 부품
-docs/           복원 방법, YAML 해석 규칙과 전체 계보도
+relations/      아키텍처 사이의 관계와 근거
 ```
+
+[아키텍처 YAML 필드](architectures/README.md)와 [관계 YAML 필드 및 계보도](relations/README.md)를 참고하세요.
 
 ## 아키텍처 자료
 

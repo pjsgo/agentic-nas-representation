@@ -24,7 +24,7 @@ CPU float32, YAML에 선언된 고정 크기와 외부 상태 계약을 따릅�
 
 관계 YAML에서 `relation_view`를 지정하면 [복원 YAML](representation.yaml)의 같은 이름 항목에서 부품을 찾습니다. 이 항목에는 비교 당시의 계산 범위와 입출력 규약이 담겨 있습니다. [관계용 연구 구현](relation_realization.py)은 이 규약과 선언된 파라미터를 사용합니다.
 
-유형과 대응 범위는 [관계 안내](../../docs/genealogy-guide.md)를 참고합니다. `?`는 추론 관계입니다.
+관계 유형은 [관계 안내](../../relations/README.md)를 참고합니다. `?`는 추론 관계입니다.
 
 - [S4 → H3](../../relations/tr_050.yaml) — C, tr_050
 - [Transformer → H3](../../relations/tr_051.yaml) — X, tr_051

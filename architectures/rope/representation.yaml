@@ -132,4 +132,4 @@ scope:
 semantics_status:
   common_spec_extension_required: false
   explanation: Local self-contained equations; no claim of common v0.3 schema certification.
-reading_rules: ../../docs/representation-guide.md
+reading_rules: ../README.md

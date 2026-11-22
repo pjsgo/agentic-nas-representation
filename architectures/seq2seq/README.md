@@ -31,7 +31,7 @@ source encoder scan → 마지막 h/c 전달 → target decoder scan → vocabul
 | `read_b`, `step_b`, `invoke_b` | 정답의 이전 target embedding을 사용하는 decoder 반복 |
 | `readout`, `parameters` | vocabulary projection과 10개 Parameter |
 
-YAML은 연산과 연결, 속성, 공유, 상태를 기술합니다. 학습된 가중치나 실행 fixture를 저장하는 파일은 아닙니다. [공통 읽기 안내](../../docs/representation-guide.md)를 함께 참고하세요.
+YAML은 연산과 연결, 속성, 공유, 상태를 기술합니다. 학습된 가중치나 실행 fixture를 저장하는 파일은 아닙니다. [공통 읽기 안내](../README.md)를 함께 참고하세요.
 
 ## 입력과 출력
 
@@ -70,7 +70,7 @@ a_wi/a_bi/a_wh/a_bh는 encoder, b_wi/b_bi/b_wh/b_bh는 decoder, out_w/out_b는 p
 
 ## 관련 관계
 
-유형과 대응 범위는 [관계 안내](../../docs/genealogy-guide.md)를 참고합니다. `?`는 추론 관계입니다.
+관계 유형은 [관계 안내](../../relations/README.md)를 참고합니다. `?`는 추론 관계입니다.
 
 - [LSTM → Seq2Seq](../../relations/tr_004.yaml) — C, tr_004
 - [RNN Encoder–Decoder / GRU → Seq2Seq](../../relations/tr_005.yaml) — X?, tr_005

@@ -38,7 +38,7 @@ flowchart LR
 | `stage_b`, `expand_a`, `activate_a`, `contract_a` | feed-forward 경로 |
 | `merge_a/b`, `normalize_a/b`, `state_registry` | residual, LayerNorm 및 등록된 Parameter 유지 |
 
-YAML은 연산과 연결, 속성, 공유, 상태를 기술합니다. 학습된 가중치나 실행 fixture를 저장하는 파일은 아닙니다. [공통 읽기 안내](../../docs/representation-guide.md)를 함께 참고하세요.
+YAML은 연산과 연결, 속성, 공유, 상태를 기술합니다. 학습된 가중치나 실행 fixture를 저장하는 파일은 아닙니다. [공통 읽기 안내](../README.md)를 함께 참고하세요.
 
 ## 입력과 출력
 
@@ -76,7 +76,7 @@ p0/p1은 QKV, p2/p3는 attention output, p4/p5는 첫 LayerNorm, p6/p7, p8/p9는
 
 ## 관련 관계
 
-유형과 대응 범위는 [관계 안내](../../docs/genealogy-guide.md)를 참고합니다. `?`는 추론 관계입니다.
+관계 유형은 [관계 안내](../../relations/README.md)를 참고합니다. `?`는 추론 관계입니다.
 
 - [ResNet → Transformer](../../relations/tr_019.yaml) — C, tr_019
 - [LayerNorm → Transformer](../../relations/tr_020.yaml) — C, tr_020

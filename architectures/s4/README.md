@@ -35,7 +35,7 @@ raw Parameter 준비, 이산화 → sequence scan / impulse-kernel scan → dire
 | `f0167`, `kernel_scan`, `kernel_body` | batch 첫 항목 slice 및 `_kernel_body()`의 impulse recurrence |
 | `f0170`…`f0172` | D, u direct feedthrough와 최종 y |
 
-YAML은 연산과 연결, 속성, 공유, 상태를 기술합니다. 학습된 가중치나 실행 fixture를 저장하는 파일은 아닙니다. [공통 읽기 안내](../../docs/representation-guide.md)를 함께 참고하세요.
+YAML은 연산과 연결, 속성, 공유, 상태를 기술합니다. 학습된 가중치나 실행 fixture를 저장하는 파일은 아닙니다. [공통 읽기 안내](../README.md)를 함께 참고하세요.
 
 ## 입력과 출력
 
@@ -67,7 +67,7 @@ p0…p6의 역할은 inv_dt, A_real, A_imag, B, C, P, D 순서입니다. 생성 
 
 관계에서 인용하는 부품은 [복원 YAML](representation.yaml)의 최상위 정의에서 찾습니다.
 
-유형과 대응 범위는 [관계 안내](../../docs/genealogy-guide.md)를 참고합니다. `?`는 추론 관계입니다.
+관계 유형은 [관계 안내](../../relations/README.md)를 참고합니다. `?`는 추론 관계입니다.
 
 - [LSSL → S4](../../relations/tr_049.yaml) — A, tr_049
 - [S4 → H3](../../relations/tr_050.yaml) — C, tr_050

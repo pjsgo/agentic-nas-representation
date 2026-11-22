@@ -1,6 +1,18 @@
 # 아키텍처 목록
 
-모델별 구현과 사용법을 이름순으로 정리했습니다.
+53개 모델의 `representation.yaml`에는 모두 `architecture`(모델)와 `interface`(입출력 규격)가 있습니다. 나머지 필드는 모델과 표현 형식에 따라 달라집니다.
+
+| 주요 필드 | 의미 |
+|---|---|
+| `scope`, `architecture_entry` | 복원 범위와 계산 시작점 |
+| `representation_version`, `operator_profile` | 표현 버전과 연산 해석 규칙 |
+| `factors`, `graph`, `functions` | 계산을 구성하는 연산, 그래프 또는 함수 |
+| `contains`, `dataflow`, `scan` | 부품의 포함 관계, 값이 흐르는 연결, 반복 계산 |
+| `parameters`, `buffers`, `state` | 학습 파라미터, 보관하는 값, 호출 간 전달하는 상태 |
+
+포함 관계는 `contains`에서, 계산 순서는 데이터 의존성과 명시된 호출·반복에서 읽습니다.
+
+## 모델 목록
 
 | 아키텍처 | 대상 범위 | 복원 YAML | 구현 |
 |---|---|---|---|

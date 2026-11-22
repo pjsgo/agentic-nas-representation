@@ -12,6 +12,6 @@ Pre-LN encoder block, attention과 FFN residual, key padding mask.
 
 ## 관련 관계
 
-유형과 대응 범위는 [관계 안내](../../docs/genealogy-guide.md)를 참고합니다. `?`는 추론 관계입니다.
+관계 유형은 [관계 안내](../../relations/README.md)를 참고합니다. `?`는 추론 관계입니다.
 
 - [Transformer → Pre-LN](../../relations/tr_042.yaml) — C, tr_042

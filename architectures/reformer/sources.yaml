@@ -68,7 +68,7 @@ reference_independence:
   evaluation: 'Three fixtures compare output and discrete hash/sort/connectivity plus round normalizers and weights. No dense-attention equality assumption.'
 representation_basis:
   example: seq2seq/experiments/20261116_genealogy_phase3_alibi/representation.yaml
-  specs: ../../docs/representation-guide.md
+  specs: ../README.md
   format: local_equational_graph_v1
   common_schema_certification: NOT_CLAIMED
   common_specs_changes: []

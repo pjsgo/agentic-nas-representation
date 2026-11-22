@@ -1,6 +1,6 @@
 representation_version: local_equational_graph_v1
 operator_profile: inline_equations_below
-reading_rules: ../../docs/representation-guide.md
+reading_rules: ../README.md
 architecture: retro
 architecture_entry: reconstructed.py:retro_cca
 variant: single_head_listing1_core_with_explicit_residual_wrapper

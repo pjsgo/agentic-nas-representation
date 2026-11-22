@@ -64,7 +64,7 @@ excluded:
 
 ## 관련 관계
 
-유형과 대응 범위는 [관계 안내](../../docs/genealogy-guide.md)를 참고합니다. `?`는 추론 관계입니다.
+관계 유형은 [관계 안내](../../relations/README.md)를 참고합니다. `?`는 추론 관계입니다.
 
 - [ByteNet → ConvS2S](../../relations/tr_016.yaml) — X?, tr_016
 - [Bahdanau Attention → ConvS2S](../../relations/tr_017.yaml) — C, tr_017
