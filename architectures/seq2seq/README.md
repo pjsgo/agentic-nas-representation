@@ -70,7 +70,7 @@ a_wi/a_bi/a_wh/a_bh는 encoder, b_wi/b_bi/b_wh/b_bh는 decoder, out_w/out_b는 p
 
 ## 관련 관계
 
-유형과 대응 범위는 [관계 안내](../../docs/genealogy-guide.md)를 참고합니다. `?`는 추론 관계입니다.
+관계 유형과 필드 설명은 [관계 안내](../../docs/genealogy-guide.md)를 참고합니다. `?`는 추론 관계입니다.
 
 - [LSTM → Seq2Seq](../../relations/tr_004.yaml) — C, tr_004
 - [RNN Encoder–Decoder / GRU → Seq2Seq](../../relations/tr_005.yaml) — X?, tr_005

@@ -1,78 +1,9 @@
-format_version: local_transition_v1
 transition_id: tr_018
 source_architecture: ResNet
 target_architecture: GNMT
 relation_type: C
 inferred: false
-record_status: complete
-mapping_status: partial
-core_mapping_status: complete_scoped
-part_mapping_complete: false
+summary: GNMT uses residual addition around upper recurrent layers to combine each layer's input with its transformed output.
 evidence:
-- source: User-supplied beyond_transformer_slides.pdf (not redistributed)
+  source: beyond_transformer_slides.pdf
   page: 38
-  page_numbering: one_based_PDF
-  label: C 018
-  verification: Direct original embedded image review during phase5 integration; endpoint,
-    direction, type and question mark inspected
-source_records:
-- side: source
-  source_metadata: ../architectures/resnet/provenance.json
-  provenance: ../architectures/resnet/provenance.json
-  authority: Existing scoped node evidence; diagram supplies relation attribution,
-    not a new historical proof
-  source_metadata_note: Legacy node retains source evidence through provenance; no
-    separate sources.yaml published.
-- side: target
-  source_metadata: ../architectures/gnmt/sources.yaml
-  provenance: ../architectures/gnmt/provenance.json
-  authority: Existing scoped node evidence; diagram supplies relation attribution,
-    not a new historical proof
-scope:
-  source_yaml: ../architectures/resnet/representation.yaml
-  target_yaml: ../architectures/gnmt/representation.yaml
-  path_base: relation_file_directory
-  included:
-  - descriptive_relationship
-  - available_core_component_correspondence
-  excluded:
-  - whole_model_conversion
-  - numerical_equivalence_between_endpoints
-  - weight_or_state_migration
-  - training
-  - performance
-  mapping_boundary: CNN convolution·BatchNorm·공간축과 LSTM 시간축의 변환이나 가중치 공유를 뜻하지 않는다.
-changes:
-- before_units:
-  - merge
-  after_units:
-  - main/encoder_residual
-  - decoder_step/residual_output
-  operation: descriptive_correspondence
-  mechanism: 입력과 변환 출력의 가산 shortcut 개념을 GNMT 상위 순환 층의 residual 합산에 대응한다.
-  mapping_status: mapped_scoped
-  cardinality: semantic_many_to_many_not_parameter_identity
-  state_and_resource_contract: CNN convolution·BatchNorm·공간축과 LSTM 시간축의 변환이나 가중치 공유를
-    뜻하지 않는다.
-preserve:
-- 관련 계산 개념의 대응만 보존; 파라미터·출력 동일성은 요구하지 않음
-conditions:
-- CNN convolution·BatchNorm·공간축과 LSTM 시간축의 변환이나 가중치 공유를 뜻하지 않는다.
-expected_effects:
-- 계보 설명과 후속 범위 결정에 이용 가능; 효과의 실험적 증명은 별도
-tradeoffs:
-- 범위가 다른 endpoint를 전체 모델 변환으로 해석할 수 없음
-unresolved:
-- CNN convolution·BatchNorm·공간축과 LSTM 시간축의 변환이나 가중치 공유를 뜻하지 않는다.
-application:
-  executable: false
-  command: null
-  patch_or_script: null
-  availability: descriptive_publication
-validation:
-  status: STATIC_MAPPING_REVIEWED
-  claim_boundary: Source direction and declared part references only; no new numerical
-    transformation
-provenance:
-  origin: Integration completion of seven owner-inventoried omissions
-  historical_source: G phase5 existing_node_omissions; directly rechecked images

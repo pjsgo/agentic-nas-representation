@@ -1,96 +1,9 @@
-format_version: local_transition_v1
 transition_id: tr_020
 source_architecture: LayerNorm
 target_architecture: Transformer
 relation_type: C
 inferred: false
-motivation: 각 token의 feature scale 안정화
-conditions:
-- 원 Transformer post-norm; epsilon과 feature 축 명시; pre-norm과 구분
-expected_effects:
-- batch 통계에 의존하지 않는 안정화
-- 기대 효과이며 이번 세션의 성능 측정 결과가 아님
-tradeoffs:
-- reduction 비용; 정보 scale 제거와 norm 위치 의존성
-changes:
-- before_units:
-  - ln.mean
-  - ln.center
-  - ln.variance
-  - ln.normalize
-  - ln.affine
-  after_units:
-  - normalize_a
-  - normalize_b
-  operation: descriptive_correspondence
-  mechanism: residual 합 뒤 feature-axis mean/variance normalization과 학습 gain/bias 적용
-  mapping_status: mapped_scoped
-  state_and_resource_contract: trailing feature population variance, epsilon and gamma/beta; no running buffer
-preserve:
-- 샘플 내부 통계와 affine gain/bias; running statistics 없음
-conceptual_correspondence:
-- source_concept: LayerNorm의 관련 계산
-  target_concept: residual 합 뒤 feature-axis mean/variance normalization과 학습 gain/bias 적용
-  part_ids: See changes[].before_units/after_units; concepts outside scope remain pending
-  mapping_status: mapped_within_declared_scope
-mapping_status: complete_scoped
-record_status: complete
-unresolved: []
-scope:
-  included:
-  - descriptive_relationship
-  - available_core_component_correspondence
-  excluded:
-  - new_reconstruction
-  - numerical_tests
-  - training
-  - whole_model_conversion
-  - weight_or_state_migration
-  source_yaml: ../architectures/layernorm/representation.yaml
-  target_yaml: ../architectures/transformer/representation.yaml
-  path_base: relation_file_directory
-  mapping_boundary: trailing feature population variance, epsilon and gamma/beta; no running buffer
+summary: The Transformer applies layer normalization across features after residual addition.
 evidence:
-- source: beyond_transformer_slides.pdf
+  source: beyond_transformer_slides.pdf
   page: 67
-  claim: C·020 LayerNorm → Transformer
-  verification: direct_embedded_image_view
-  availability: User-supplied slides; not redistributed
-- source: https://arxiv.org/html/1607.06450v1
-  section: section 3; Transformer section 3.1
-  verification: primary_source_read
-source_records:
-- side: source
-  verification: provenance read; referenced core source inspected as text or equations; no execution
-  official_code:
-    url: https://github.com/pytorch/pytorch/blob/6c8c5ad5eaf47a62fafbb4a2747198cbffbf1ff0/torch/nn/modules/normalization.py
-    version: PyTorch 2.2.1; commit 6c8c5ad5eaf47a62fafbb4a2747198cbffbf1ff0
-    file_function: torch/nn/modules/normalization.py:LayerNorm.forward; torch/nn/functional.py:layer_norm
-- side: target
-  repository: https://github.com/pytorch/pytorch
-  version: 2.2.1
-  commit: 6c8c5ad5eaf47a62fafbb4a2747198cbffbf1ff0
-  files_functions:
-  - torch/nn/modules/transformer.py:TransformerEncoderLayer.forward
-  - torch/nn/functional.py:multi_head_attention_forward, layer_norm
-  provenance: Research workspace evidence (not bundled)
-  authority: official framework implementation underlying completed functional encoder block; not original whole
-    Transformer repository
-  verification: existing source and YAML text; no rerun
-application:
-  executable: false
-  command: null
-  patch_or_script: null
-  availability: descriptive_publication; research transformation runners not distributed
-validation:
-  profile: relation_consistency_only
-  status: RELATION_RECORDED_MAPPING_REVIEWED
-  claim_boundary: Direction/type/source/path/part-ID consistency only. Producer result evidence is reused; mapping
-    completeness does not certify architecture numerical correctness.
-  publication_check: Paths and component IDs only; no numerical rerun
-provenance:
-  research_source: parallel_coverage/20261105/integration/20261115_genealogy_phase1_relations/tr_020.yaml
-  publication_changes:
-  - repository-relative YAML paths
-  - workspace-only runner references replaced by explicit historical evidence
-  - source metadata trimmed; calculations and component IDs preserved

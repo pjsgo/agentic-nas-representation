@@ -1,96 +1,9 @@
-format_version: local_transition_v1
 transition_id: tr_007
 source_architecture: Seq2Seq
 target_architecture: Bahdanau Attention
 relation_type: P
 inferred: false
-motivation: 입력 전체를 마지막 상태 하나로 압축하는 병목에 대응
-conditions:
-- 입력 annotations를 이용할 수 있어야 함; 관계는 병목 대응으로 해석
-expected_effects:
-- 긴 입력의 개별 위치에 접근
-- 기대 효과이며 이번 세션의 성능 측정 결과가 아님
-tradeoffs:
-- 조회 비용 증가; RNN 순차성 미해결
-changes:
-- before_units:
-  - handoff
-  - read_b
-  after_units:
-  - decoder_step/alignment
-  - decoder_step/update
-  - main/decoder_scan
-  operation: descriptive_correspondence
-  mechanism: 마지막 상태 의존만으로 생성하던 구조에 동적 alignment context 도입; 원 논문은 GRU 계열이므로 LSTM weight 변환 아님
-  mapping_status: mapped_scoped
-  state_and_resource_contract: LSTM h/c bridge -> supplied annotations plus GRU hidden; no state/weight migration
-preserve:
-- encoder–decoder 조건부 생성 문제와 recurrent history
-conceptual_correspondence:
-- source_concept: Seq2Seq의 관련 계산
-  target_concept: 마지막 상태 의존만으로 생성하던 구조에 동적 alignment context 도입; 원 논문은 GRU 계열이므로 LSTM weight 변환 아님
-  part_ids: See changes[].before_units/after_units; concepts outside scope remain pending
-  mapping_status: pending_outside_core
-mapping_status: partial
-record_status: complete
-unresolved:
-- LSTM h/c bridge -> supplied annotations plus GRU hidden; no state/weight migration
-scope:
-  included:
-  - descriptive_relationship
-  - available_core_component_correspondence
-  excluded:
-  - new_reconstruction
-  - numerical_tests
-  - training
-  - whole_model_conversion
-  - weight_or_state_migration
-  source_yaml: ../architectures/seq2seq/representation.yaml
-  target_yaml: ../architectures/bahdanau-attention/representation.yaml
-  path_base: relation_file_directory
-  mapping_boundary: LSTM h/c bridge -> supplied annotations plus GRU hidden; no state/weight migration
+summary: Looking up encoder states at each decoding step addresses the bottleneck of compressing the entire input into a single final state.
 evidence:
-- source: beyond_transformer_slides.pdf
+  source: beyond_transformer_slides.pdf
   page: 67
-  claim: P·007 Seq2Seq → Bahdanau
-  verification: direct_embedded_image_view
-  availability: User-supplied slides; not redistributed
-- source: https://arxiv.org/html/1409.0473v7
-  section: sections 2–3; references to Sutskever et al.
-  verification: primary_source_read
-source_records:
-- side: target
-  verification: provenance read; referenced core source inspected as text or equations; no execution
-  source_versions:
-  - arXiv:1409.0473v7
-  files_functions_or_equations:
-  - Appendix A.2.2 s_i, r_i, z_i, c_i, e_ij; Section 3 alignment before decoder update
-  primary_urls:
-  - https://arxiv.org/html/1409.0473v7
-- side: source
-  repository: https://github.com/bentrevett/pytorch-seq2seq
-  commit: b3cd54c72cd6e4e63f672d334c795b4fe744ef92
-  file: 1 - Sequence to Sequence Learning with Neural Networks.ipynb
-  functions:
-  - Encoder.forward
-  - Decoder.forward
-  - Seq2Seq.forward
-  authority: third-party tutorial used by completed reconstruction; NOT original Sutskever implementation
-  verification: text read; existing reconstruction reused
-application:
-  executable: false
-  command: null
-  patch_or_script: null
-  availability: descriptive_publication; research transformation runners not distributed
-validation:
-  profile: relation_consistency_only
-  status: RELATION_RECORDED_MAPPING_REVIEWED
-  claim_boundary: Direction/type/source/path/part-ID consistency only. Producer result evidence is reused; mapping
-    completeness does not certify architecture numerical correctness.
-  publication_check: Paths and component IDs only; no numerical rerun
-provenance:
-  research_source: parallel_coverage/20261105/integration/20261115_genealogy_phase1_relations/tr_007.yaml
-  publication_changes:
-  - repository-relative YAML paths
-  - workspace-only runner references replaced by explicit historical evidence
-  - source metadata trimmed; calculations and component IDs preserved

@@ -22,7 +22,7 @@ CPU float64, YAML에 선언된 크기, dtype, 파라미터, 외부 상태 계약
 
 ## 관련 관계
 
-유형과 대응 범위는 [관계 안내](../../docs/genealogy-guide.md)를 참고합니다. `?`는 추론 관계입니다.
+관계 유형과 필드 설명은 [관계 안내](../../docs/genealogy-guide.md)를 참고합니다. `?`는 추론 관계입니다.
 
 - [Transformer → Transformer-XL](../../relations/tr_029.yaml) — A, tr_029
 - [Relative Position → Transformer-XL](../../relations/tr_030.yaml) — C, tr_030

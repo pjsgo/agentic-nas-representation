@@ -76,7 +76,7 @@ p0/p1은 QKV, p2/p3는 attention output, p4/p5는 첫 LayerNorm, p6/p7, p8/p9는
 
 ## 관련 관계
 
-유형과 대응 범위는 [관계 안내](../../docs/genealogy-guide.md)를 참고합니다. `?`는 추론 관계입니다.
+관계 유형과 필드 설명은 [관계 안내](../../docs/genealogy-guide.md)를 참고합니다. `?`는 추론 관계입니다.
 
 - [ResNet → Transformer](../../relations/tr_019.yaml) — C, tr_019
 - [LayerNorm → Transformer](../../relations/tr_020.yaml) — C, tr_020

@@ -1,81 +1,9 @@
-format_version: local_transition_v1
 transition_id: tr_005
 source_architecture: RNN Encoder–Decoder / GRU
 target_architecture: Seq2Seq
 relation_type: X
 inferred: true
-record_status: complete
-mapping_status: partial
-core_mapping_status: complete_scoped
-part_mapping_complete: false
+summary: Both recurrent encoder-decoder designs pass a fixed-length state to the decoder, using a GRU in one design and LSTMs in the other.
 evidence:
-- source: User-supplied beyond_transformer_slides.pdf (not redistributed)
+  source: beyond_transformer_slides.pdf
   page: 38
-  page_numbering: one_based_PDF
-  label: X? 005
-  verification: Direct original embedded image review during phase5 integration; endpoint,
-    direction, type and question mark inspected
-source_records:
-- side: source
-  source_metadata: ../architectures/gru-encoder-decoder/sources.yaml
-  provenance: ../architectures/gru-encoder-decoder/provenance.json
-  authority: Existing scoped node evidence; diagram supplies relation attribution,
-    not a new historical proof
-- side: target
-  source_metadata: ../architectures/seq2seq/provenance.json
-  provenance: ../architectures/seq2seq/provenance.json
-  authority: Existing scoped node evidence; diagram supplies relation attribution,
-    not a new historical proof
-  source_metadata_note: Legacy node retains source evidence through provenance; no
-    separate sources.yaml published.
-scope:
-  source_yaml: ../architectures/gru-encoder-decoder/representation.yaml
-  target_yaml: ../architectures/seq2seq/representation.yaml
-  path_base: relation_file_directory
-  included:
-  - descriptive_relationship
-  - available_core_component_correspondence
-  excluded:
-  - whole_model_conversion
-  - numerical_equivalence_between_endpoints
-  - weight_or_state_migration
-  - training
-  - performance
-  mapping_boundary: GRU와 LSTM의 파라미터·상태 변환, 학습된 번역 모델의 동등성은 범위 밖이다.
-changes:
-- before_units:
-  - main/encoder_scan
-  - main/fixed_context
-  - main/decoder_scan
-  after_units:
-  - step_a
-  - handoff
-  - step_b
-  operation: descriptive_correspondence
-  mechanism: 고정 길이 encoder context를 decoder에 전달하는 두 순환 구조를 비교한다. GRU hidden과 LSTM
-    (h,c)는 서로 다른 상태 계약이다.
-  mapping_status: mapped_scoped
-  cardinality: semantic_many_to_many_not_parameter_identity
-  state_and_resource_contract: GRU와 LSTM의 파라미터·상태 변환, 학습된 번역 모델의 동등성은 범위 밖이다.
-preserve:
-- 관련 계산 개념의 대응만 보존; 파라미터·출력 동일성은 요구하지 않음
-conditions:
-- GRU와 LSTM의 파라미터·상태 변환, 학습된 번역 모델의 동등성은 범위 밖이다.
-expected_effects:
-- 계보 설명과 후속 범위 결정에 이용 가능; 효과의 실험적 증명은 별도
-tradeoffs:
-- 범위가 다른 endpoint를 전체 모델 변환으로 해석할 수 없음
-unresolved:
-- GRU와 LSTM의 파라미터·상태 변환, 학습된 번역 모델의 동등성은 범위 밖이다.
-application:
-  executable: false
-  command: null
-  patch_or_script: null
-  availability: descriptive_publication
-validation:
-  status: STATIC_MAPPING_REVIEWED
-  claim_boundary: Source direction and declared part references only; no new numerical
-    transformation
-provenance:
-  origin: Integration completion of seven owner-inventoried omissions
-  historical_source: G phase5 existing_node_omissions; directly rechecked images

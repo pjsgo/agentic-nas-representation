@@ -54,7 +54,7 @@ excluded:
 
 ## 관련 관계
 
-유형과 대응 범위는 [관계 안내](../../docs/genealogy-guide.md)를 참고합니다. `?`는 추론 관계입니다.
+관계 유형과 필드 설명은 [관계 안내](../../docs/genealogy-guide.md)를 참고합니다. `?`는 추론 관계입니다.
 
 - [WaveNet → ByteNet](../../relations/tr_015.yaml) — I, tr_015
 - [ByteNet → ConvS2S](../../relations/tr_016.yaml) — X?, tr_016

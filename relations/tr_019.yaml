@@ -1,88 +1,9 @@
-format_version: local_transition_v1
 transition_id: tr_019
 source_architecture: ResNet
 target_architecture: Transformer
 relation_type: C
 inferred: false
-motivation: 깊은 attention/FFN stack의 최적화 경로 확보
-conditions:
-- feature shape 일치; CNN/BatchNorm 전체 block을 이전하지 않음
-expected_effects:
-- 직접 정보·gradient 경로 제공
-- 기대 효과이며 이번 세션의 성능 측정 결과가 아님
-tradeoffs:
-- sublayer 폭 제약; residual만으로 학습 성공 보장 안 됨
-changes:
-- before_units:
-  - merge
-  after_units:
-  - merge_a
-  - merge_b
-  operation: descriptive_correspondence
-  mechanism: identity residual addition을 각 attention/FFN sublayer 주위에 사용; 이후 LayerNorm
-  mapping_status: mapped_scoped
-  state_and_resource_contract: spatial tensor add -> per-token feature add; shape-compatible branches required;
-    BN and conv not inherited
-preserve:
-- identity shortcut와 residual branch 덧셈 역할
-conceptual_correspondence:
-- source_concept: ResNet의 관련 계산
-  target_concept: identity residual addition을 각 attention/FFN sublayer 주위에 사용; 이후 LayerNorm
-  part_ids: See changes[].before_units/after_units; concepts outside scope remain pending
-  mapping_status: mapped_within_declared_scope
-mapping_status: complete_scoped
-record_status: complete
-unresolved: []
-scope:
-  included:
-  - descriptive_relationship
-  - available_core_component_correspondence
-  excluded:
-  - new_reconstruction
-  - numerical_tests
-  - training
-  - whole_model_conversion
-  - weight_or_state_migration
-  source_yaml: ../architectures/resnet/representation.yaml
-  target_yaml: ../architectures/transformer/representation.yaml
-  path_base: relation_file_directory
-  mapping_boundary: spatial tensor add -> per-token feature add; shape-compatible branches required; BN and conv
-    not inherited
+summary: The Transformer uses residual connections around its attention and feedforward sublayers.
 evidence:
-- source: beyond_transformer_slides.pdf
+  source: beyond_transformer_slides.pdf
   page: 67
-  claim: C·019 ResNet → Transformer
-  verification: direct_embedded_image_view
-  availability: User-supplied slides; not redistributed
-- source: https://arxiv.org/html/1706.03762v7
-  section: section 3.1; He et al. cited residual connection
-  verification: primary_source_read
-source_records:
-- side: target
-  repository: https://github.com/pytorch/pytorch
-  version: 2.2.1
-  commit: 6c8c5ad5eaf47a62fafbb4a2747198cbffbf1ff0
-  files_functions:
-  - torch/nn/modules/transformer.py:TransformerEncoderLayer.forward
-  - torch/nn/functional.py:multi_head_attention_forward, layer_norm
-  provenance: Research workspace evidence (not bundled)
-  authority: official framework implementation underlying completed functional encoder block; not original whole
-    Transformer repository
-  verification: existing source and YAML text; no rerun
-application:
-  executable: false
-  command: null
-  patch_or_script: null
-  availability: descriptive_publication; research transformation runners not distributed
-validation:
-  profile: relation_consistency_only
-  status: RELATION_RECORDED_MAPPING_REVIEWED
-  claim_boundary: Direction/type/source/path/part-ID consistency only. Producer result evidence is reused; mapping
-    completeness does not certify architecture numerical correctness.
-  publication_check: Paths and component IDs only; no numerical rerun
-provenance:
-  research_source: parallel_coverage/20261105/integration/20261115_genealogy_phase1_relations/tr_019.yaml
-  publication_changes:
-  - repository-relative YAML paths
-  - workspace-only runner references replaced by explicit historical evidence
-  - source metadata trimmed; calculations and component IDs preserved

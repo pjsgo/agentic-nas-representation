@@ -6,7 +6,7 @@
 
 ```text
 architectures/  아키텍처별 YAML, 구현 코드와 사용법
-relations/      아키텍처 사이의 관계와 대응하는 부품
+relations/      아키텍처 사이의 관계 유형, 영어 요약과 출처
 docs/           복원 방법, YAML 해석 규칙과 전체 계보도
 ```
 
