@@ -3,6 +3,3 @@ source_architecture: Transformer
 target_architecture: Linear Transformer
 relation_type: A
 summary: Linear Transformer accumulates key-value features into a state that each query can read without constructing all pairwise scores.
-evidence:
-  source: beyond_transformer_slides.pdf
-  page: 68

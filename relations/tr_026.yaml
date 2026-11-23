@@ -3,6 +3,3 @@ source_architecture: Seq2Seq
 target_architecture: Transformer
 relation_type: A
 summary: The Transformer retains the encoder-decoder structure and replaces recurrent layers with attention and position-wise feedforward layers.
-evidence:
-  source: beyond_transformer_slides.pdf
-  page: 67

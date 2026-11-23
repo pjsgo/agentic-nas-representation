@@ -3,9 +3,3 @@ source_architecture: Linear Transformer
 target_architecture: RWKV
 relation_type: X
 summary: Both designs read accumulated key-value information, with RWKV using channel-wise decay and gating.
-evidence:
-  source: beyond_transformer_slides.pdf
-  page: 43
-  papers:
-    - https://arxiv.org/pdf/2006.16236
-    - https://arxiv.org/pdf/2305.13048#page=4

@@ -9,7 +9,6 @@
 | `target_architecture` | 화살표가 도착하는 모델 |
 | `relation_type` | 두 모델 사이의 관계 유형 |
 | `summary` | 관계를 설명하는 영어 한 문장 |
-| `evidence` | 근거 자료와 해당 위치 |
 
 ## 관계 유형
 

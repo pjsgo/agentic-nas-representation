@@ -3,6 +3,3 @@ source_architecture: Bahdanau Attention
 target_architecture: Transformer
 relation_type: I
 summary: Both designs use query-dependent weighted aggregation, with additive alignment in Bahdanau attention and scaled dot products in Transformer self-attention.
-evidence:
-  source: beyond_transformer_slides.pdf
-  page: 38

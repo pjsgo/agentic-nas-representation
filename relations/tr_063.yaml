@@ -3,6 +3,3 @@ source_architecture: Mamba
 target_architecture: Mamba-2 / SSD
 relation_type: A
 summary: Mamba-2 restricts state transitions to a scalar multiple of the identity per head and decomposes sequence computation within and across chunks.
-evidence:
-  source: beyond_transformer_slides.pdf
-  page: 43

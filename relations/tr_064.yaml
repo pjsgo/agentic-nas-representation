@@ -3,6 +3,3 @@ source_architecture: Mamba
 target_architecture: Jamba
 relation_type: C
 summary: Jamba uses selective Mamba layers alongside attention layers.
-evidence:
-  source: beyond_transformer_slides.pdf
-  page: 43

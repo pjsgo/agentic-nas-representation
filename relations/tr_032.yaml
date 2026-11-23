@@ -3,6 +3,3 @@ source_architecture: Transformer
 target_architecture: Sparse Transformer
 relation_type: A
 summary: The Sparse Transformer restricts attention to selected positions using sparse patterns such as local or strided connections.
-evidence:
-  source: beyond_transformer_slides.pdf
-  page: 68

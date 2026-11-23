@@ -3,6 +3,3 @@ source_architecture: Relative Position
 target_architecture: RoPE
 relation_type: I
 summary: RoPE encodes relative position in attention scores by rotating queries and keys according to their positions.
-evidence:
-  source: beyond_transformer_slides.pdf
-  page: 44

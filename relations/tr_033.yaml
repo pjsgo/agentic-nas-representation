@@ -3,6 +3,3 @@ source_architecture: Transformer
 target_architecture: Reformer
 relation_type: A
 summary: Reformer hashes and sorts similar tokens to restrict which positions attention compares.
-evidence:
-  source: beyond_transformer_slides.pdf
-  page: 41

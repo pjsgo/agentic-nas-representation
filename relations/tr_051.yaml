@@ -3,6 +3,3 @@ source_architecture: Transformer
 target_architecture: H3
 relation_type: X
 summary: The Transformer mixes sequence information through pairwise softmax attention, while H3 combines state-space filters with multiplicative gates.
-evidence:
-  source: beyond_transformer_slides.pdf
-  page: 43

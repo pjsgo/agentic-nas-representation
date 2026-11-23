@@ -3,6 +3,3 @@ source_architecture: Relative Position
 target_architecture: Transformer-XL
 relation_type: C
 summary: Transformer-XL incorporates relative distance into attention scores using projected sinusoidal distance representations.
-evidence:
-  source: beyond_transformer_slides.pdf
-  page: 42

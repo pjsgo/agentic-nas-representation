@@ -3,8 +3,3 @@ source_architecture: Transformer
 target_architecture: GQA
 relation_type: A
 summary: Grouped-query attention shares keys and values among groups of query heads.
-evidence:
-  source: beyond_transformer_slides.pdf
-  pages:
-  - 41
-  - 68

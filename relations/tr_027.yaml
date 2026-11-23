@@ -3,6 +3,3 @@ source_architecture: QRNN
 target_architecture: Transformer
 relation_type: X
 summary: QRNN combines convolutional gates with recurrent pooling, while the Transformer mixes sequence positions through self-attention.
-evidence:
-  source: beyond_transformer_slides.pdf
-  page: 38

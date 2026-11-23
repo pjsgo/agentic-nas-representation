@@ -3,6 +3,3 @@ source_architecture: RNN Encoder–Decoder / GRU
 target_architecture: Seq2Seq
 relation_type: X
 summary: Both recurrent encoder-decoder designs pass a fixed-length state to the decoder, using a GRU in one design and LSTMs in the other.
-evidence:
-  source: beyond_transformer_slides.pdf
-  page: 38

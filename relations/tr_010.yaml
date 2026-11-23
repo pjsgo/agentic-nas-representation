@@ -3,6 +3,3 @@ source_architecture: LSTM
 target_architecture: LSTMN
 relation_type: A
 summary: LSTMN extends LSTM with a tape of earlier hidden and cell states that it can selectively read at each step.
-evidence:
-  source: beyond_transformer_slides.pdf
-  page: 39

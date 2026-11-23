@@ -3,6 +3,3 @@ source_architecture: WaveNet
 target_architecture: ByteNet
 relation_type: I
 summary: The designs share the idea of expanding sequence context through dilated convolutions and residual connections.
-evidence:
-  source: beyond_transformer_slides.pdf
-  page: 40

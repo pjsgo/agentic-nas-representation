@@ -3,6 +3,3 @@ source_architecture: Luong Attention
 target_architecture: Transformer
 relation_type: C
 summary: The Transformer uses scaled dot products across multiple heads to compute alignment scores, building on dot-product attention.
-evidence:
-  source: beyond_transformer_slides.pdf
-  page: 67

@@ -3,6 +3,3 @@ source_architecture: LSTMN
 target_architecture: Transformer
 relation_type: I
 summary: Both architectures selectively retrieve stored representations, with Transformer self-attention allowing positions to query one another in parallel.
-evidence:
-  source: beyond_transformer_slides.pdf
-  page: 38

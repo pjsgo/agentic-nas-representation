@@ -3,6 +3,3 @@ source_architecture: Simple RNN
 target_architecture: RNN LM
 relation_type: A
 summary: The RNN language model updates the hidden state at each token and uses it to predict the next token.
-evidence:
-  source: beyond_transformer_slides.pdf
-  page: 38

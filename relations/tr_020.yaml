@@ -3,6 +3,3 @@ source_architecture: LayerNorm
 target_architecture: Transformer
 relation_type: C
 summary: The Transformer applies layer normalization across features after residual addition.
-evidence:
-  source: beyond_transformer_slides.pdf
-  page: 67

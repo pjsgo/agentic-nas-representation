@@ -3,8 +3,3 @@ source_architecture: Linear Transformer
 target_architecture: Performer
 relation_type: X
 summary: Linear Transformer replaces softmax with a feature-map kernel, while Performer approximates softmax with random features.
-evidence:
-  source: beyond_transformer_slides.pdf
-  page: 41
-  papers:
-    - https://arxiv.org/pdf/2009.14794#page=1

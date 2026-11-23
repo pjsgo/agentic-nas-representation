@@ -3,6 +3,3 @@ source_architecture: HiPPO
 target_architecture: LSSL
 relation_type: C
 summary: LSSL uses the HiPPO operator in its state-space layer to represent input history through state coefficients.
-evidence:
-  source: beyond_transformer_slides.pdf
-  page: 43

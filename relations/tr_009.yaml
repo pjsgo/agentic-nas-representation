@@ -3,6 +3,3 @@ source_architecture: Memory Network
 target_architecture: E2E Memory Network
 relation_type: A
 summary: The end-to-end memory network replaces discrete supporting-fact selection with weighted memory reads and updates the query across hops.
-evidence:
-  source: beyond_transformer_slides.pdf
-  page: 39

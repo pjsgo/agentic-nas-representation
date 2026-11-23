@@ -3,6 +3,3 @@ source_architecture: Decomposable Attention
 target_architecture: Transformer
 relation_type: I
 summary: Both designs combine attention-based alignment with position-wise transformations.
-evidence:
-  source: beyond_transformer_slides.pdf
-  page: 38

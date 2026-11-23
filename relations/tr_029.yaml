@@ -3,6 +3,3 @@ source_architecture: Transformer
 target_architecture: Transformer-XL
 relation_type: A
 summary: Transformer-XL reuses hidden states from earlier segments as memory and uses relative positions when attending to them.
-evidence:
-  source: beyond_transformer_slides.pdf
-  page: 68

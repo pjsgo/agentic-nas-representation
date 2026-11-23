@@ -3,6 +3,3 @@ source_architecture: GNMT
 target_architecture: Transformer
 relation_type: P
 summary: The Transformer addresses the sequential computation bottleneck of recurrent translation by mixing positions with self-attention.
-evidence:
-  source: beyond_transformer_slides.pdf
-  page: 67

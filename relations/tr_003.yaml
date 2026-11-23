@@ -3,6 +3,3 @@ source_architecture: Simple RNN
 target_architecture: LSTM
 relation_type: A
 summary: LSTM extends the recurrent hidden-state update with a memory cell whose gates control writing and reading.
-evidence:
-  source: beyond_transformer_slides.pdf
-  page: 67

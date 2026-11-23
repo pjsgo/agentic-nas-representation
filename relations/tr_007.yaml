@@ -3,6 +3,3 @@ source_architecture: Seq2Seq
 target_architecture: Bahdanau Attention
 relation_type: P
 summary: Looking up encoder states at each decoding step addresses the bottleneck of compressing the entire input into a single final state.
-evidence:
-  source: beyond_transformer_slides.pdf
-  page: 67

@@ -3,6 +3,3 @@ source_architecture: S4
 target_architecture: Mamba
 relation_type: A
 summary: Mamba extends state-space sequence modeling by making the update interval and the state write and read coefficients input-dependent.
-evidence:
-  source: beyond_transformer_slides.pdf
-  page: 43

@@ -3,6 +3,3 @@ source_architecture: Bahdanau Attention
 target_architecture: GNMT
 relation_type: C
 summary: GNMT uses additive attention to let its recurrent decoder retrieve context from encoder outputs.
-evidence:
-  source: beyond_transformer_slides.pdf
-  page: 67

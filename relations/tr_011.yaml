@@ -3,6 +3,3 @@ source_architecture: E2E Memory Network
 target_architecture: LSTMN
 relation_type: I
 summary: LSTMN applies query-dependent memory retrieval to a growing tape of recurrent states.
-evidence:
-  source: beyond_transformer_slides.pdf
-  page: 39

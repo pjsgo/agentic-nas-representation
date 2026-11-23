@@ -3,6 +3,3 @@ source_architecture: LSSL
 target_architecture: S4
 relation_type: A
 summary: S4 structures linear state-space dynamics using a diagonal-plus-low-rank representation that supports recurrent and convolutional computation.
-evidence:
-  source: beyond_transformer_slides.pdf
-  page: 43

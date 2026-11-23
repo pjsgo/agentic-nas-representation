@@ -3,6 +3,3 @@ source_architecture: ResNet
 target_architecture: Transformer
 relation_type: C
 summary: The Transformer uses residual connections around its attention and feedforward sublayers.
-evidence:
-  source: beyond_transformer_slides.pdf
-  page: 67

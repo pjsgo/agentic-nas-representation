@@ -3,6 +3,3 @@ source_architecture: Structured Self-Attention
 target_architecture: Transformer
 relation_type: I
 summary: Both models use attention to read relationships within a single sequence.
-evidence:
-  source: beyond_transformer_slides.pdf
-  page: 38

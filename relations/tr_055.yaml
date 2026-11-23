@@ -3,6 +3,3 @@ source_architecture: Transformer
 target_architecture: RETRO
 relation_type: C
 summary: RETRO uses cross-attention to read retrieved neighboring text chunks.
-evidence:
-  source: beyond_transformer_slides.pdf
-  page: 42
