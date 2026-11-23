@@ -117,3 +117,15 @@ scope:
 semantics_status:
   common_schema_certification: not_claimed
   basis: Explicit local equations and existing genealogy reading rules
+reconstruction_supplement:
+  scope: Supplement to the original reconstruction specification
+  semantics:
+    time_values: Use local differentiable values for mixed inputs, k, v, receptance, wkv and output at
+      each time step.
+    recurrence: Carry a_next, b_next and p_next into the next step. Preserve the supplied initial state
+      and the specified final state.
+    history: Collect the step values and stack on the time axis after the scan. Compute projections from
+      step values before stacking.
+  acceptance:
+  - Existing forward, trace and state checks pass
+  - Backward from output reaches the expected parameter tensors and one SGD step updates them

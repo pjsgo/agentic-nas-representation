@@ -50,6 +50,11 @@ factors:
     equation: 'u[k+1,d]=u[k,d]+o[k,d]. This updated query drives hop k+1. Execute exactly K hops in increasing k; no learned transform or activation.'
   memn2n_answer:
     operator: tied_projection_softmax
+    matrix_vector_product:
+      left: "E[K] [V,D]"
+      right: "final query u[K] [D]"
+      expression: "logits = E[K] @ u[K]"
+      result: "[V]"
     equation: 'logits[v]=sum_d E[K,v,d]*u[K,d]; answer_probabilities=softmax(logits) over V. Return m as input_memory, c as output_memory, p as probabilities, o as reads, u as queries.'
 contains:
   memn2n_core: [memn2n_embed, memn2n_address, memn2n_read, memn2n_update, memn2n_answer]
@@ -71,3 +76,13 @@ dataflow:
   - [memn2n_update.u_final, memn2n_answer.u]
   - [E, memn2n_answer.E]
 specification_note: Inline equations define a selected official-code-supported configuration; no default PE/TE, training or universal primitive-schema claim.
+reconstruction_supplement:
+  scope: Supplement to the original reconstruction specification
+  semantics:
+    hop_values: Compute score, probability, read and next query as separate differentiable values per
+      hop.
+    history: Collect those values and stack per output after the loop. Include the initial query in queries.
+    parameter_sharing: Use the same E throughout, including adjacent-hop tying and the final logits projection.
+  acceptance:
+  - Existing forward checks pass
+  - Backward from logits reaches E and one SGD step updates E
