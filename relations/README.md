@@ -20,7 +20,10 @@
 | P | 병목 대응 | 앞 설계의 구체적인 한계를 뒤 설계가 완화한다. |
 | X | 대안 비교 | 같은 문제를 푸는 두 방식을 비교한다. 화살표는 비교 방향을 나타낸다. |
 
-## 관계 목록
+## 관계 목록 · 75개
+
+원안 76개에서 5개 관계의 유형을 수정하고 WaveNet → Hyena 1개를 제외했습니다.
+원안 001~051은 같은 번호를 쓰고, 원안 052는 제외했으며, 원안 053~076은 현재 052~075에 해당합니다.
 
 | ID | 출발 → 도착 | 유형 |
 |---|---|---|
@@ -75,30 +78,30 @@
 | [tr_049](tr_049.yaml) | LSSL → S4 | A |
 | [tr_050](tr_050.yaml) | S4 → H3 | C |
 | [tr_051](tr_051.yaml) | Transformer → H3 | X |
-| [tr_053](tr_053.yaml) | S4 → Hyena | X |
-| [tr_054](tr_054.yaml) | Transformer → FlashAttention | P |
-| [tr_055](tr_055.yaml) | Transformer → RETRO | C |
-| [tr_056](tr_056.yaml) | Transformer → GQA | A |
-| [tr_057](tr_057.yaml) | Linear Transformer → RWKV | X |
-| [tr_058](tr_058.yaml) | Transformer → RetNet | X |
-| [tr_059](tr_059.yaml) | Transformer → RWKV | X |
-| [tr_060](tr_060.yaml) | Linear Transformer → RetNet | X |
-| [tr_061](tr_061.yaml) | S4 → Mamba | A |
-| [tr_062](tr_062.yaml) | H3 → Mamba | A |
-| [tr_063](tr_063.yaml) | Mamba → Mamba-2 / SSD | A |
-| [tr_064](tr_064.yaml) | Mamba → Jamba | C |
-| [tr_065](tr_065.yaml) | Transformer → Jamba | A |
-| [tr_066](tr_066.yaml) | Switch Transformer → Jamba | X |
-| [tr_067](tr_067.yaml) | Mamba → TTT | P |
-| [tr_068](tr_068.yaml) | Transformer → TTT | X |
-| [tr_069](tr_069.yaml) | GNMT → Transformer | P |
-| [tr_070](tr_070.yaml) | E2E Memory Network → Transformer | I |
-| [tr_071](tr_071.yaml) | LSTMN → Transformer | I |
-| [tr_072](tr_072.yaml) | ConvS2S → Transformer | C |
-| [tr_073](tr_073.yaml) | LSTM → RNN Encoder–Decoder / GRU | I |
-| [tr_074](tr_074.yaml) | Linear Transformer → H3 | I |
-| [tr_075](tr_075.yaml) | H3 → Hyena | I |
-| [tr_076](tr_076.yaml) | Transformer → Hyena | A |
+| [tr_052](tr_052.yaml) | S4 → Hyena | X |
+| [tr_053](tr_053.yaml) | Transformer → FlashAttention | P |
+| [tr_054](tr_054.yaml) | Transformer → RETRO | C |
+| [tr_055](tr_055.yaml) | Transformer → GQA | A |
+| [tr_056](tr_056.yaml) | Linear Transformer → RWKV | X |
+| [tr_057](tr_057.yaml) | Transformer → RetNet | X |
+| [tr_058](tr_058.yaml) | Transformer → RWKV | X |
+| [tr_059](tr_059.yaml) | Linear Transformer → RetNet | X |
+| [tr_060](tr_060.yaml) | S4 → Mamba | A |
+| [tr_061](tr_061.yaml) | H3 → Mamba | A |
+| [tr_062](tr_062.yaml) | Mamba → Mamba-2 / SSD | A |
+| [tr_063](tr_063.yaml) | Mamba → Jamba | C |
+| [tr_064](tr_064.yaml) | Transformer → Jamba | A |
+| [tr_065](tr_065.yaml) | Switch Transformer → Jamba | X |
+| [tr_066](tr_066.yaml) | Mamba → TTT | P |
+| [tr_067](tr_067.yaml) | Transformer → TTT | X |
+| [tr_068](tr_068.yaml) | GNMT → Transformer | P |
+| [tr_069](tr_069.yaml) | E2E Memory Network → Transformer | I |
+| [tr_070](tr_070.yaml) | LSTMN → Transformer | I |
+| [tr_071](tr_071.yaml) | ConvS2S → Transformer | C |
+| [tr_072](tr_072.yaml) | LSTM → RNN Encoder–Decoder / GRU | I |
+| [tr_073](tr_073.yaml) | Linear Transformer → H3 | I |
+| [tr_074](tr_074.yaml) | H3 → Hyena | I |
+| [tr_075](tr_075.yaml) | Transformer → Hyena | A |
 
 <details>
 <summary>전체 계보도 펼치기</summary>
@@ -209,30 +212,30 @@ flowchart LR
     lssl -->|"A tr_049"| s4
     s4 -->|"C tr_050"| h3
     transformer -->|"X tr_051"| h3
-    s4 -->|"X tr_053"| hyena
-    transformer -->|"P tr_054"| flashattention
-    transformer -->|"C tr_055"| retro
-    transformer -->|"A tr_056"| gqa
-    linear_transformer -->|"X tr_057"| rwkv
-    transformer -->|"X tr_058"| retnet
-    transformer -->|"X tr_059"| rwkv
-    linear_transformer -->|"X tr_060"| retnet
-    s4 -->|"A tr_061"| mamba
-    h3 -->|"A tr_062"| mamba
-    mamba -->|"A tr_063"| mamba2_ssd
-    mamba -->|"C tr_064"| jamba
-    transformer -->|"A tr_065"| jamba
-    switch_transformer -->|"X tr_066"| jamba
-    mamba -->|"P tr_067"| ttt
-    transformer -->|"X tr_068"| ttt
-    gnmt -->|"P tr_069"| transformer
-    e2e_memory_network -->|"I tr_070"| transformer
-    lstmn -->|"I tr_071"| transformer
-    convs2s -->|"C tr_072"| transformer
-    lstm -->|"I tr_073"| gru_encoder_decoder
-    linear_transformer -->|"I tr_074"| h3
-    h3 -->|"I tr_075"| hyena
-    transformer -->|"A tr_076"| hyena
+    s4 -->|"X tr_052"| hyena
+    transformer -->|"P tr_053"| flashattention
+    transformer -->|"C tr_054"| retro
+    transformer -->|"A tr_055"| gqa
+    linear_transformer -->|"X tr_056"| rwkv
+    transformer -->|"X tr_057"| retnet
+    transformer -->|"X tr_058"| rwkv
+    linear_transformer -->|"X tr_059"| retnet
+    s4 -->|"A tr_060"| mamba
+    h3 -->|"A tr_061"| mamba
+    mamba -->|"A tr_062"| mamba2_ssd
+    mamba -->|"C tr_063"| jamba
+    transformer -->|"A tr_064"| jamba
+    switch_transformer -->|"X tr_065"| jamba
+    mamba -->|"P tr_066"| ttt
+    transformer -->|"X tr_067"| ttt
+    gnmt -->|"P tr_068"| transformer
+    e2e_memory_network -->|"I tr_069"| transformer
+    lstmn -->|"I tr_070"| transformer
+    convs2s -->|"C tr_071"| transformer
+    lstm -->|"I tr_072"| gru_encoder_decoder
+    linear_transformer -->|"I tr_073"| h3
+    h3 -->|"I tr_074"| hyena
+    transformer -->|"A tr_075"| hyena
 ```
 
 </details>

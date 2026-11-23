@@ -1,5 +1,5 @@
 transition_id: tr_067
-source_architecture: Mamba
+source_architecture: Transformer
 target_architecture: TTT
-relation_type: P
-summary: TTT addresses the expressiveness limits of a fixed-size recurrent state by treating a small learner's parameters as state and updating them on incoming inputs.
+relation_type: X
+summary: The Transformer stores context as keys and values, while TTT stores it in the parameters of a learner updated by incoming inputs.

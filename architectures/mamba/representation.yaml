@@ -814,7 +814,7 @@ relation_view:
   operator_profile: local_tr061_v1_not_common_schema
   architecture: selective_state_layer_pre_gate
   architecture_entry: unit
-  description: Agent-authored partial tr_061 realization; post-conv input to pre-gate
+  description: Agent-authored partial tr_060 realization (original 061); post-conv input to pre-gate
     output. See scope.yaml.
   factors:
     unit:

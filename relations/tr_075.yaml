@@ -1,5 +1,5 @@
 transition_id: tr_075
-source_architecture: H3
+source_architecture: Transformer
 target_architecture: Hyena
-relation_type: I
-summary: Hyena extends the alternating filter-and-gate design with multiple gating stages and implicit long convolution filters.
+relation_type: A
+summary: Hyena replaces self-attention with token mixing through short and long convolutions and multiplicative gates.

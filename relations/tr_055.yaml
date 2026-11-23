@@ -1,5 +1,5 @@
 transition_id: tr_055
 source_architecture: Transformer
-target_architecture: RETRO
-relation_type: C
-summary: RETRO uses cross-attention to read retrieved neighboring text chunks.
+target_architecture: GQA
+relation_type: A
+summary: Grouped-query attention shares keys and values among groups of query heads.

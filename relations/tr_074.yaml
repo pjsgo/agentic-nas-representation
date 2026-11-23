@@ -1,5 +1,5 @@
 transition_id: tr_074
-source_architecture: Linear Transformer
-target_architecture: H3
+source_architecture: H3
+target_architecture: Hyena
 relation_type: I
-summary: H3 relates key-value memory and query-based readout to state-space filters and multiplicative gates.
+summary: Hyena extends the alternating filter-and-gate design with multiple gating stages and implicit long convolution filters.

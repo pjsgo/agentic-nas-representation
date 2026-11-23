@@ -1,5 +1,5 @@
 transition_id: tr_063
 source_architecture: Mamba
-target_architecture: Mamba-2 / SSD
-relation_type: A
-summary: Mamba-2 restricts state transitions to a scalar multiple of the identity per head and decomposes sequence computation within and across chunks.
+target_architecture: Jamba
+relation_type: C
+summary: Jamba uses selective Mamba layers alongside attention layers.

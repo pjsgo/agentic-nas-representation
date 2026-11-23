@@ -43,7 +43,7 @@ slides:
   inspected_original_text_pages:
   - 48
   - 69
-  meaning: Page 48 associates external corpus retrieval with tr_055. Page 69 identifies
+  meaning: Page 48 associates external corpus retrieval with original relation 055 (current tr_054). Page 69 identifies
     RETRO source implementation as third-party.
   extraction: Read original PDF using existing read-only ToUnicode parser prefix under
     coordinator; no shared-file writes. No claim of complete diagram OCR.

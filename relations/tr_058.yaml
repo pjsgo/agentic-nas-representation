@@ -1,5 +1,5 @@
 transition_id: tr_058
 source_architecture: Transformer
-target_architecture: RetNet
+target_architecture: RWKV
 relation_type: X
-summary: The Transformer combines tokens through softmax attention, while RetNet uses retention with distance-dependent decay.
+summary: The Transformer reads earlier tokens through pairwise attention, while RWKV reads a decayed channel-wise aggregate.

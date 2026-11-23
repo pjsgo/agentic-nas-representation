@@ -1,5 +1,5 @@
 transition_id: tr_059
-source_architecture: Transformer
-target_architecture: RWKV
+source_architecture: Linear Transformer
+target_architecture: RetNet
 relation_type: X
-summary: The Transformer reads earlier tokens through pairwise attention, while RWKV reads a decayed channel-wise aggregate.
+summary: Both approaches accumulate keys and values in a matrix state, with RetNet applying head-specific decay.

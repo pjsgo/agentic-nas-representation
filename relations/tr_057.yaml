@@ -1,5 +1,5 @@
 transition_id: tr_057
-source_architecture: Linear Transformer
-target_architecture: RWKV
+source_architecture: Transformer
+target_architecture: RetNet
 relation_type: X
-summary: Both designs read accumulated key-value information, with RWKV using channel-wise decay and gating.
+summary: The Transformer combines tokens through softmax attention, while RetNet uses retention with distance-dependent decay.

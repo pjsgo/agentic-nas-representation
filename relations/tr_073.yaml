@@ -1,5 +1,5 @@
 transition_id: tr_073
-source_architecture: LSTM
-target_architecture: RNN Encoder–Decoder / GRU
+source_architecture: Linear Transformer
+target_architecture: H3
 relation_type: I
-summary: Both recurrent designs gate memory updates, using a separate cell in LSTM and a gated hidden state in GRU.
+summary: H3 relates key-value memory and query-based readout to state-space filters and multiplicative gates.

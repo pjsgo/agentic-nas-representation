@@ -123,9 +123,9 @@ integration_genealogy_addendum:
   source: User-supplied beyond_transformer_slides.pdf
   page: 40
   relations:
-  - 'tr_053: S4 -> Hyena X?'
-  - 'tr_075: H3 -> Hyena I'
-  - 'tr_076: Transformer -> Hyena A'
-  deferred: 'tr_052: WaveNet -> Hyena I?; WaveNet not restored'
+  - 'tr_052: S4 -> Hyena X (original 053, X?)'
+  - 'tr_074: H3 -> Hyena I (original 075)'
+  - 'tr_075: Transformer -> Hyena A (original 076)'
+  excluded_from_current_genealogy: 'Original 052: WaveNet -> Hyena I?'
   authority: G phase5 direct original-image review; supersedes only earlier limited-page
     observation, not source equations

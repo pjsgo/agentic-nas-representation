@@ -1,5 +1,5 @@
 transition_id: tr_056
-source_architecture: Transformer
-target_architecture: GQA
-relation_type: A
-summary: Grouped-query attention shares keys and values among groups of query heads.
+source_architecture: Linear Transformer
+target_architecture: RWKV
+relation_type: X
+summary: Both designs read accumulated key-value information, with RWKV using channel-wise decay and gating.

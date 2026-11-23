@@ -1,5 +1,5 @@
 transition_id: tr_061
-source_architecture: S4
+source_architecture: H3
 target_architecture: Mamba
 relation_type: A
-summary: Mamba extends state-space sequence modeling by making the update interval and the state write and read coefficients input-dependent.
+summary: Mamba extends gated state-space modeling with input-dependent update intervals and read and write coefficients.

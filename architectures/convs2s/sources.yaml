@@ -9,7 +9,7 @@ original_evidence:
   - tr_016
   - tr_017
   - tr_025
-  - tr_072
+  - tr_071  # Original diagram: 072
   relation_certification_owner: G
 paper:
   title: Convolutional Sequence to Sequence Learning

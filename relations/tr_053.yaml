@@ -1,5 +1,5 @@
 transition_id: tr_053
-source_architecture: S4
-target_architecture: Hyena
-relation_type: X
-summary: S4 processes long contexts with a state-space kernel, while Hyena combines position-dependent filters with multiplicative gates.
+source_architecture: Transformer
+target_architecture: FlashAttention
+relation_type: P
+summary: FlashAttention tiles exact attention to reduce reads and writes to GPU high-bandwidth memory.

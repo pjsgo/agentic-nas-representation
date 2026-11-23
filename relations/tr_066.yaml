@@ -1,5 +1,5 @@
 transition_id: tr_066
-source_architecture: Switch Transformer
-target_architecture: Jamba
-relation_type: X
-summary: Both architectures route tokens to experts, with Switch selecting one expert and Jamba combining outputs from two experts.
+source_architecture: Mamba
+target_architecture: TTT
+relation_type: P
+summary: TTT addresses the expressiveness limits of a fixed-size recurrent state by treating a small learner's parameters as state and updating them on incoming inputs.

@@ -1,5 +1,5 @@
 transition_id: tr_064
-source_architecture: Mamba
+source_architecture: Transformer
 target_architecture: Jamba
-relation_type: C
-summary: Jamba uses selective Mamba layers alongside attention layers.
+relation_type: A
+summary: Jamba combines Transformer attention layers with Mamba layers and uses experts in selected feedforward layers.

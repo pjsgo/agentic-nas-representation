@@ -32,7 +32,8 @@ genealogy:
     to: ByteNet
     type: I
     inferred: false
-  - id: tr_052
+  - original_id: tr_052
+    current_id: null  # Excluded from the published genealogy.
     from: WaveNet
     to: Hyena
     type: I

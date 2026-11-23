@@ -1,5 +1,5 @@
 transition_id: tr_070
-source_architecture: E2E Memory Network
+source_architecture: LSTMN
 target_architecture: Transformer
 relation_type: I
-summary: The architectures share the idea of repeated query-dependent reads, through memory hops in one and successive attention layers in the other.
+summary: Both architectures selectively retrieve stored representations, with Transformer self-attention allowing positions to query one another in parallel.

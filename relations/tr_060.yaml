@@ -1,5 +1,5 @@
 transition_id: tr_060
-source_architecture: Linear Transformer
-target_architecture: RetNet
-relation_type: X
-summary: Both approaches accumulate keys and values in a matrix state, with RetNet applying head-specific decay.
+source_architecture: S4
+target_architecture: Mamba
+relation_type: A
+summary: Mamba extends state-space sequence modeling by making the update interval and the state write and read coefficients input-dependent.

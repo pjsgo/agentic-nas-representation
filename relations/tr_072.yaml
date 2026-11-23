@@ -1,5 +1,5 @@
 transition_id: tr_072
-source_architecture: ConvS2S
-target_architecture: Transformer
-relation_type: C
-summary: Both models add position vectors to token representations, using learned vectors in ConvS2S and sinusoidal vectors in the Transformer variant considered here.
+source_architecture: LSTM
+target_architecture: RNN Encoder–Decoder / GRU
+relation_type: I
+summary: Both recurrent designs gate memory updates, using a separate cell in LSTM and a gated hidden state in GRU.
