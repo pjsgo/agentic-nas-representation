@@ -2,7 +2,6 @@ transition_id: tr_012
 source_architecture: Bahdanau Attention
 target_architecture: Decomposable Attention
 relation_type: I
-inferred: false
 summary: Decomposable Attention applies query-dependent alignment to words in two sentences, aligning each sentence to the other.
 evidence:
   source: beyond_transformer_slides.pdf

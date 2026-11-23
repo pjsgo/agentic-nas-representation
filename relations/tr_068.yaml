@@ -2,7 +2,6 @@ transition_id: tr_068
 source_architecture: Transformer
 target_architecture: TTT
 relation_type: X
-inferred: false
 summary: The Transformer stores context as keys and values, while TTT stores it in the parameters of a learner updated by incoming inputs.
 evidence:
   source: beyond_transformer_slides.pdf

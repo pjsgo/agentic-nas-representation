@@ -2,7 +2,6 @@ transition_id: tr_070
 source_architecture: E2E Memory Network
 target_architecture: Transformer
 relation_type: I
-inferred: false
 summary: The architectures share the idea of repeated query-dependent reads, through memory hops in one and successive attention layers in the other.
 evidence:
   source: beyond_transformer_slides.pdf

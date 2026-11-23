@@ -2,7 +2,6 @@ transition_id: tr_055
 source_architecture: Transformer
 target_architecture: RETRO
 relation_type: C
-inferred: false
 summary: RETRO uses cross-attention to read retrieved neighboring text chunks.
 evidence:
   source: beyond_transformer_slides.pdf

@@ -2,7 +2,6 @@ transition_id: tr_047
 source_architecture: Transformer
 target_architecture: ALiBi
 relation_type: A
-inferred: false
 summary: ALiBi incorporates token distance into attention scores through a head-specific linear distance penalty.
 evidence:
   source: beyond_transformer_slides.pdf

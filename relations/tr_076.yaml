@@ -2,7 +2,6 @@ transition_id: tr_076
 source_architecture: Transformer
 target_architecture: Hyena
 relation_type: A
-inferred: false
 summary: Hyena replaces self-attention with token mixing through short and long convolutions and multiplicative gates.
 evidence:
   source: beyond_transformer_slides.pdf

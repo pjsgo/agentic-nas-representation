@@ -2,7 +2,6 @@ transition_id: tr_058
 source_architecture: Transformer
 target_architecture: RetNet
 relation_type: X
-inferred: false
 summary: The Transformer combines tokens through softmax attention, while RetNet uses retention with distance-dependent decay.
 evidence:
   source: beyond_transformer_slides.pdf

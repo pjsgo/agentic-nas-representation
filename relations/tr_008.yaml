@@ -2,7 +2,6 @@ transition_id: tr_008
 source_architecture: Bahdanau Attention
 target_architecture: Luong Attention
 relation_type: A
-inferred: false
 summary: Luong attention computes alignment from the current decoder state and combines the retrieved context with that state, extending Bahdanau's alignment mechanism.
 evidence:
   source: beyond_transformer_slides.pdf

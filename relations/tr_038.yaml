@@ -2,7 +2,6 @@ transition_id: tr_038
 source_architecture: Transformer
 target_architecture: Performer
 relation_type: A
-inferred: false
 summary: Performer approximates the softmax kernel with positive random features and aggregates values without constructing the full attention matrix.
 evidence:
   source: beyond_transformer_slides.pdf

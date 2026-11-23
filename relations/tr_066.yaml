@@ -1,9 +1,11 @@
 transition_id: tr_066
 source_architecture: Switch Transformer
 target_architecture: Jamba
-relation_type: C
-inferred: true
+relation_type: X
 summary: Both architectures route tokens to experts, with Switch selecting one expert and Jamba combining outputs from two experts.
 evidence:
   source: beyond_transformer_slides.pdf
   page: 43
+  papers:
+    - https://arxiv.org/pdf/2101.03961
+    - https://arxiv.org/pdf/2403.19887#page=2

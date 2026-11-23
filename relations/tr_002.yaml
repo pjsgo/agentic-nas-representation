@@ -2,7 +2,6 @@ transition_id: tr_002
 source_architecture: Neural LM
 target_architecture: RNN LM
 relation_type: P
-inferred: true
 summary: A recurrent language model can address the fixed-context limit of a feedforward language model by carrying information from earlier tokens in its state.
 evidence:
   source: beyond_transformer_slides.pdf

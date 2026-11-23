@@ -2,7 +2,6 @@ transition_id: tr_064
 source_architecture: Mamba
 target_architecture: Jamba
 relation_type: C
-inferred: false
 summary: Jamba uses selective Mamba layers alongside attention layers.
 evidence:
   source: beyond_transformer_slides.pdf

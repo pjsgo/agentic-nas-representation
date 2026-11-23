@@ -1,11 +1,12 @@
 transition_id: tr_054
 source_architecture: Transformer
 target_architecture: FlashAttention
-relation_type: A
-inferred: false
-summary: FlashAttention computes dense attention in tiles while accumulating normalization statistics and outputs.
+relation_type: P
+summary: FlashAttention tiles exact attention to reduce reads and writes to GPU high-bandwidth memory.
 evidence:
   source: beyond_transformer_slides.pdf
   pages:
   - 41
   - 68
+  papers:
+    - https://arxiv.org/pdf/2205.14135#page=4

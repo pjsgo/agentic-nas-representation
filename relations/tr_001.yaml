@@ -2,7 +2,6 @@ transition_id: tr_001
 source_architecture: Simple RNN
 target_architecture: RNN LM
 relation_type: A
-inferred: false
 summary: The RNN language model updates the hidden state at each token and uses it to predict the next token.
 evidence:
   source: beyond_transformer_slides.pdf

@@ -2,7 +2,6 @@ transition_id: tr_059
 source_architecture: Transformer
 target_architecture: RWKV
 relation_type: X
-inferred: false
 summary: The Transformer reads earlier tokens through pairwise attention, while RWKV reads a decayed channel-wise aggregate.
 evidence:
   source: beyond_transformer_slides.pdf

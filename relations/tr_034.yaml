@@ -2,7 +2,6 @@ transition_id: tr_034
 source_architecture: Sparse Transformer
 target_architecture: Longformer
 relation_type: I
-inferred: false
 summary: Longformer applies sparse attention through local windows and global tokens.
 evidence:
   source: beyond_transformer_slides.pdf

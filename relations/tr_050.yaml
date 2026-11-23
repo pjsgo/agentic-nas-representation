@@ -2,7 +2,6 @@ transition_id: tr_050
 source_architecture: S4
 target_architecture: H3
 relation_type: C
-inferred: false
 summary: H3 uses a diagonal state-space filter derived from the S4 family.
 evidence:
   source: beyond_transformer_slides.pdf

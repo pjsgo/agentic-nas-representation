@@ -2,7 +2,6 @@ transition_id: tr_056
 source_architecture: Transformer
 target_architecture: GQA
 relation_type: A
-inferred: false
 summary: Grouped-query attention shares keys and values among groups of query heads.
 evidence:
   source: beyond_transformer_slides.pdf

@@ -1,9 +1,10 @@
 transition_id: tr_039
 source_architecture: Linear Transformer
 target_architecture: Performer
-relation_type: I
-inferred: true
-summary: The two architectures share a feature-map formulation of attention, with Performer using random features to approximate softmax.
+relation_type: X
+summary: Linear Transformer replaces softmax with a feature-map kernel, while Performer approximates softmax with random features.
 evidence:
   source: beyond_transformer_slides.pdf
   page: 41
+  papers:
+    - https://arxiv.org/pdf/2009.14794#page=1

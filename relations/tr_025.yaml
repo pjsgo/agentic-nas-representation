@@ -2,7 +2,6 @@ transition_id: tr_025
 source_architecture: ConvS2S
 target_architecture: Transformer
 relation_type: X
-inferred: false
 summary: ConvS2S and the Transformer mix token information without recurrence using local convolution and self-attention respectively.
 evidence:
   source: beyond_transformer_slides.pdf

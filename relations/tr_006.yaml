@@ -2,7 +2,6 @@ transition_id: tr_006
 source_architecture: RNN Encoder–Decoder / GRU
 target_architecture: Bahdanau Attention
 relation_type: A
-inferred: false
 summary: Bahdanau attention extends the recurrent encoder-decoder by letting the decoder query encoder states anew at each output step.
 evidence:
   source: beyond_transformer_slides.pdf

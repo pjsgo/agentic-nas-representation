@@ -2,7 +2,6 @@ transition_id: tr_037
 source_architecture: Transformer
 target_architecture: Linear Transformer
 relation_type: A
-inferred: false
 summary: Linear Transformer accumulates key-value features into a state that each query can read without constructing all pairwise scores.
 evidence:
   source: beyond_transformer_slides.pdf

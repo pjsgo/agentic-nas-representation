@@ -2,7 +2,6 @@ transition_id: tr_010
 source_architecture: LSTM
 target_architecture: LSTMN
 relation_type: A
-inferred: false
 summary: LSTMN extends LSTM with a tape of earlier hidden and cell states that it can selectively read at each step.
 evidence:
   source: beyond_transformer_slides.pdf

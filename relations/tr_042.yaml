@@ -2,7 +2,6 @@ transition_id: tr_042
 source_architecture: Transformer
 target_architecture: Pre-LN
 relation_type: C
-inferred: false
 summary: Pre-LN moves layer normalization from after residual addition to the inputs of attention and feedforward sublayers.
 evidence:
   source: beyond_transformer_slides.pdf

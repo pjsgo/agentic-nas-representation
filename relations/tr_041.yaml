@@ -2,7 +2,6 @@ transition_id: tr_041
 source_architecture: LayerNorm
 target_architecture: RMSNorm
 relation_type: A
-inferred: false
 summary: RMSNorm simplifies LayerNorm by rescaling features by their root mean square without subtracting the mean.
 evidence:
   source: beyond_transformer_slides.pdf

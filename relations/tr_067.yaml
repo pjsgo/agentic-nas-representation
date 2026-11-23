@@ -2,7 +2,6 @@ transition_id: tr_067
 source_architecture: Mamba
 target_architecture: TTT
 relation_type: P
-inferred: false
 summary: TTT addresses the expressiveness limits of a fixed-size recurrent state by treating a small learner's parameters as state and updating them on incoming inputs.
 evidence:
   source: beyond_transformer_slides.pdf

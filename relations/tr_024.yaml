@@ -2,8 +2,7 @@ transition_id: tr_024
 source_architecture: Structured Self-Attention
 target_architecture: Transformer
 relation_type: I
-inferred: true
-summary: The two designs use multiple attention distributions to read a sequence, through pooling hops in one and attention heads in the other.
+summary: Both models use attention to read relationships within a single sequence.
 evidence:
   source: beyond_transformer_slides.pdf
   page: 38

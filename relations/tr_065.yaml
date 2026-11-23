@@ -2,7 +2,6 @@ transition_id: tr_065
 source_architecture: Transformer
 target_architecture: Jamba
 relation_type: A
-inferred: false
 summary: Jamba combines Transformer attention layers with Mamba layers and uses experts in selected feedforward layers.
 evidence:
   source: beyond_transformer_slides.pdf

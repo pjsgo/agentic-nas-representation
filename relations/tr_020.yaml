@@ -2,7 +2,6 @@ transition_id: tr_020
 source_architecture: LayerNorm
 target_architecture: Transformer
 relation_type: C
-inferred: false
 summary: The Transformer applies layer normalization across features after residual addition.
 evidence:
   source: beyond_transformer_slides.pdf

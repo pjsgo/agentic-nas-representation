@@ -2,7 +2,6 @@ transition_id: tr_075
 source_architecture: H3
 target_architecture: Hyena
 relation_type: I
-inferred: false
 summary: Hyena extends the alternating filter-and-gate design with multiple gating stages and implicit long convolution filters.
 evidence:
   source: beyond_transformer_slides.pdf

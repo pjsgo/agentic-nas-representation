@@ -2,7 +2,6 @@ transition_id: tr_044
 source_architecture: Transformer
 target_architecture: Switch Transformer
 relation_type: A
-inferred: false
 summary: Switch Transformer replaces a dense feedforward layer with expert feedforward networks and routes each token to one expert.
 evidence:
   source: beyond_transformer_slides.pdf

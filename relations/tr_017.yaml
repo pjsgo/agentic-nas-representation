@@ -2,7 +2,6 @@ transition_id: tr_017
 source_architecture: Bahdanau Attention
 target_architecture: ConvS2S
 relation_type: C
-inferred: false
 summary: ConvS2S uses encoder-decoder attention with decoder queries and dot-product scores to combine encoder outputs.
 evidence:
   source: beyond_transformer_slides.pdf

@@ -2,7 +2,6 @@ transition_id: tr_074
 source_architecture: Linear Transformer
 target_architecture: H3
 relation_type: I
-inferred: false
 summary: H3 relates key-value memory and query-based readout to state-space filters and multiplicative gates.
 evidence:
   source: beyond_transformer_slides.pdf

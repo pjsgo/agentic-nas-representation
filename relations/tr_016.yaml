@@ -2,7 +2,6 @@ transition_id: tr_016
 source_architecture: ByteNet
 target_architecture: ConvS2S
 relation_type: X
-inferred: true
 summary: ByteNet and ConvS2S offer two approaches to convolutional translation, using dilated convolutions and gated convolutions respectively.
 evidence:
   source: beyond_transformer_slides.pdf

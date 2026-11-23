@@ -2,7 +2,6 @@ transition_id: tr_073
 source_architecture: LSTM
 target_architecture: RNN Encoder–Decoder / GRU
 relation_type: I
-inferred: false
 summary: Both recurrent designs gate memory updates, using a separate cell in LSTM and a gated hidden state in GRU.
 evidence:
   source: beyond_transformer_slides.pdf

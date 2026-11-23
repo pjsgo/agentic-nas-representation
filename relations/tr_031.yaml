@@ -2,7 +2,6 @@ transition_id: tr_031
 source_architecture: Transformer-XL
 target_architecture: Compressive Transformer
 relation_type: A
-inferred: false
 summary: The Compressive Transformer compresses states evicted from recent memory and attends to both recent and compressed memories.
 evidence:
   source: beyond_transformer_slides.pdf

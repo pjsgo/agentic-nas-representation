@@ -2,7 +2,6 @@ transition_id: tr_028
 source_architecture: Transformer
 target_architecture: Relative Position
 relation_type: A
-inferred: false
 summary: Relative position representations incorporate token distances into attention scores and value aggregation.
 evidence:
   source: beyond_transformer_slides.pdf

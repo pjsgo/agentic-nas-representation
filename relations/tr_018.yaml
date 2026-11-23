@@ -2,7 +2,6 @@ transition_id: tr_018
 source_architecture: ResNet
 target_architecture: GNMT
 relation_type: C
-inferred: false
 summary: GNMT uses residual addition around upper recurrent layers to combine each layer's input with its transformed output.
 evidence:
   source: beyond_transformer_slides.pdf

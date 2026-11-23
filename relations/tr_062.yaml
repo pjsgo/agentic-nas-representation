@@ -2,7 +2,6 @@ transition_id: tr_062
 source_architecture: H3
 target_architecture: Mamba
 relation_type: A
-inferred: false
 summary: Mamba extends gated state-space modeling with input-dependent update intervals and read and write coefficients.
 evidence:
   source: beyond_transformer_slides.pdf

@@ -2,7 +2,6 @@ transition_id: tr_043
 source_architecture: Sparse MoE
 target_architecture: Switch Transformer
 relation_type: C
-inferred: false
 summary: Switch Transformer uses a token router that selects a single expert for each token.
 evidence:
   source: beyond_transformer_slides.pdf

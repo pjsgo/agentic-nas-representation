@@ -2,7 +2,6 @@ transition_id: tr_004
 source_architecture: LSTM
 target_architecture: Seq2Seq
 relation_type: C
-inferred: false
 summary: Seq2Seq uses separate encoder and decoder LSTMs and initializes the decoder with the encoder's final state.
 evidence:
   source: beyond_transformer_slides.pdf

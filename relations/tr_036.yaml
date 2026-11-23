@@ -2,7 +2,6 @@ transition_id: tr_036
 source_architecture: Transformer
 target_architecture: Linformer
 relation_type: A
-inferred: false
 summary: Linformer projects keys and values into a lower-dimensional sequence axis before computing attention.
 evidence:
   source: beyond_transformer_slides.pdf

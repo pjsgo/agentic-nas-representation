@@ -1,9 +1,0 @@
-transition_id: tr_052
-source_architecture: WaveNet
-target_architecture: Hyena
-relation_type: I
-inferred: true
-summary: The two architectures share the idea of gating convolutional features, with Hyena combining short and long filters.
-evidence:
-  source: beyond_transformer_slides.pdf
-  page: 40

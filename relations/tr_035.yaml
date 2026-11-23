@@ -2,7 +2,6 @@ transition_id: tr_035
 source_architecture: Sparse Transformer
 target_architecture: BigBird
 relation_type: I
-inferred: false
 summary: BigBird combines local, global and random block connections to implement sparse attention.
 evidence:
   source: beyond_transformer_slides.pdf

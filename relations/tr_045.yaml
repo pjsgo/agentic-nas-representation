@@ -2,7 +2,6 @@ transition_id: tr_045
 source_architecture: Transformer
 target_architecture: FNet
 relation_type: A
-inferred: false
 summary: FNet replaces self-attention with Fourier transforms across the sequence and feature axes to mix tokens.
 evidence:
   source: beyond_transformer_slides.pdf

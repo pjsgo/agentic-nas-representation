@@ -2,7 +2,6 @@ transition_id: tr_033
 source_architecture: Transformer
 target_architecture: Reformer
 relation_type: A
-inferred: false
 summary: Reformer hashes and sorts similar tokens to restrict which positions attention compares.
 evidence:
   source: beyond_transformer_slides.pdf
